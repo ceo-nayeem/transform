@@ -1,4 +1,9 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRANSFORM - Fitness Tracking</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -9,7 +14,6 @@
 body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:700px;margin:0 auto;padding:0 0 80px}
 
-/* TOP HERO */
 .hero{background:linear-gradient(135deg,#111 0%,#1a0800 100%);padding:24px 20px 20px;border-bottom:1px solid #2a2a2a;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(255,92,0,0.15),transparent 70%);border-radius:50%}
 .hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
@@ -31,17 +35,14 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .ring-stat{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--text);letter-spacing:1px;line-height:1}
 .ring-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
-/* NAV */
 .nav{display:flex;gap:0;background:#111;border-bottom:1px solid #2a2a2a;position:sticky;top:0;z-index:10}
 .nav-btn{flex:1;padding:14px 8px;text-align:center;font-size:11px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;border-bottom:2px solid transparent}
 .nav-btn.active{color:var(--orange);border-bottom:2px solid var(--orange)}
 
-/* SECTIONS */
 .section{display:none;padding:20px 16px}
 .section.active{display:block}
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);margin-bottom:16px}
 
-/* METRICS GRID */
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
 .metric-card{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s}
 .metric-card:hover{border-color:var(--orange)}
@@ -52,7 +53,6 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .metric-trend{font-size:11px;margin-top:6px;font-weight:500}
 .trend-up{color:#00E676}.trend-down{color:#FF5C00}.trend-neu{color:var(--muted)}
 
-/* EDIT METRIC */
 .edit-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .edit-row label{font-size:12px;color:var(--muted);flex:1;text-transform:uppercase;letter-spacing:.5px}
 .edit-row input{background:#111;border:1px solid #333;border-radius:8px;color:var(--text);font-size:15px;padding:8px 12px;width:110px;font-family:'DM Sans',sans-serif;text-align:right}
@@ -60,7 +60,6 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .save-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;margin-top:8px;transition:opacity .2s}
 .save-btn:hover{opacity:.85}
 
-/* WORKOUT */
 .day-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;scrollbar-width:none}
 .day-strip::-webkit-scrollbar{display:none}
 .day-pill{flex-shrink:0;padding:10px 16px;border-radius:20px;border:1px solid #2a2a2a;background:var(--card);cursor:pointer;text-align:center;transition:all .2s}
@@ -86,7 +85,6 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .add-btn{width:100%;background:none;border:1px dashed #333;border-radius:12px;padding:14px;color:var(--muted);font-size:13px;cursor:pointer;margin-top:8px;transition:border-color .2s}
 .add-btn:hover{border-color:var(--orange);color:var(--orange)}
 
-/* NUTRITION */
 .macro-bar-wrap{margin-bottom:20px}
 .macro-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .macro-name{font-size:13px;font-weight:500}
@@ -103,7 +101,6 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .cal-big{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--orange);line-height:1}
 .cal-of{font-size:14px;color:var(--muted)}
 
-/* PROGRESS */
 .before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
 .ba-card{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;padding:20px;text-align:center}
 .ba-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
@@ -121,7 +118,6 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .goal-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--orange2))}
 .goal-dates{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted)}
 
-/* SETTINGS */
 .set-group{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;overflow:hidden;margin-bottom:16px}
 .set-row{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #1a1a1a;cursor:pointer;transition:background .15s}
 .set-row:last-child{border-bottom:none}
@@ -139,16 +135,46 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 .modal{background:#1a1a1a;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:700px;border-top:1px solid #2a2a2a}
 .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;color:var(--orange)}
 .modal-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-top:-4px}
-</style>
+.loading{display:none;text-align:center;padding:20px;color:var(--muted)}
+.loading.active{display:block}
+.sync-badge{position:fixed;bottom:20px;right:20px;background:var(--orange);color:#000;padding:8px 12px;border-radius:20px;font-size:11px;font-weight:600;z-index:50;animation:fadeInOut 3s ease-in-out}
+@keyframes fadeInOut{0%,100%{opacity:0}20%,80%{opacity:1}}
 
-<div class="app">
+.auth-screen{display:none;position:fixed;inset:0;background:var(--black);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:20px}
+.auth-screen.active{display:flex}
+.auth-form{background:var(--card);border:1px solid #2a2a2a;border-radius:20px;padding:30px;max-width:400px;width:90%}
+.auth-form h1{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:20px;color:var(--orange)}
+.auth-form input{width:100%;background:#111;border:1px solid #333;border-radius:8px;color:var(--text);font-size:14px;padding:12px;margin-bottom:12px;font-family:'DM Sans',sans-serif}
+.auth-form input:focus{outline:none;border-color:var(--orange)}
+.auth-form button{width:100%;background:var(--orange);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;margin-bottom:10px}
+.auth-form button:hover{opacity:.9}
+.auth-toggle{text-align:center;font-size:13px;color:var(--muted)}
+.auth-toggle button{width:auto;background:none;padding:0;margin:0;color:var(--orange);text-decoration:underline;font-family:'DM Sans',sans-serif;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="auth-screen active" id="authScreen">
+  <div class="auth-form">
+    <h1 id="authTitle">LOGIN</h1>
+    <input type="email" id="authEmail" placeholder="Email address">
+    <input type="password" id="authPassword" placeholder="Password">
+    <button onclick="handleAuth()" id="authSubmit">LOGIN</button>
+    <div class="auth-toggle">
+      <span id="authToggleText">Don't have an account?</span>
+      <button onclick="toggleAuthMode()">Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="mainApp" style="display:none">
 <div class="hero">
   <div class="hero-top">
     <div>
       <div style="font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Good Morning</div>
       <div class="greeting">BEAST MODE ON 🔥</div>
     </div>
-    <div class="streak"><div class="streak-dot"></div>12 Day Streak</div>
+    <div class="streak"><div class="streak-dot"></div><span id="streakDays">12</span> Day Streak</div>
   </div>
   <div class="progress-ring">
     <div class="ring-wrap">
@@ -160,8 +186,8 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
     </div>
     <div class="ring-info">
       <div class="ring-title">Calories Burned</div>
-      <div class="ring-stat">483 <span style="font-size:16px;color:var(--muted)">kcal</span></div>
-      <div class="ring-sub">Goal: 700 kcal · 4 exercises done</div>
+      <div class="ring-stat"><span id="caloriesBurned">483</span> <span style="font-size:16px;color:var(--muted)">kcal</span></div>
+      <div class="ring-sub">Goal: <span id="burnGoal">700</span> kcal · <span id="exerciseCount">4</span> exercises done</div>
     </div>
   </div>
 </div>
@@ -192,19 +218,19 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
     </div>
     <div class="metric-card" onclick="openEdit()">
       <div class="metric-icon" style="background:#00001a">📏</div>
-      <div><span class="metric-val">175</span><span class="metric-unit">cm</span></div>
+      <div><span class="metric-val" id="heightVal">175</span><span class="metric-unit">cm</span></div>
       <div class="metric-name">Height</div>
       <div class="metric-trend trend-neu">— No change</div>
     </div>
     <div class="metric-card" onclick="openEdit()">
       <div class="metric-icon" style="background:#1a0000">❤️</div>
-      <div><span class="metric-val">68</span><span class="metric-unit">bpm</span></div>
+      <div><span class="metric-val" id="hrVal">68</span><span class="metric-unit">bpm</span></div>
       <div class="metric-name">Resting HR</div>
       <div class="metric-trend trend-up">▲ Getting stronger</div>
     </div>
     <div class="metric-card" onclick="openEdit()">
       <div class="metric-icon" style="background:#1a0800">🔥</div>
-      <div><span class="metric-val">1840</span><span class="metric-unit">kcal</span></div>
+      <div><span class="metric-val" id="tdeeVal">1840</span><span class="metric-unit">kcal</span></div>
       <div class="metric-name">Daily TDEE</div>
       <div class="metric-trend trend-neu">— Maintenance</div>
     </div>
@@ -221,39 +247,12 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
 <!-- WORKOUT -->
 <div class="section" id="section-workout">
   <div class="section-title">This Week</div>
-  <div class="day-strip">
-    <div class="day-pill done"><div class="day-name">Mon</div><div class="day-num">21</div></div>
-    <div class="day-pill done"><div class="day-name">Tue</div><div class="day-num">22</div></div>
-    <div class="day-pill done"><div class="day-name">Wed</div><div class="day-num">23</div></div>
-    <div class="day-pill active"><div class="day-name">Thu</div><div class="day-num">24</div></div>
-    <div class="day-pill"><div class="day-name">Fri</div><div class="day-num">25</div></div>
-    <div class="day-pill"><div class="day-name">Sat</div><div class="day-num">26</div></div>
-    <div class="day-pill"><div class="day-name">Sun</div><div class="day-num">27</div></div>
+  <div class="day-strip" id="dayStrip">
   </div>
-  <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Thursday — Push Day 💥</div>
+  <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" id="workoutDayLabel">Thursday — Push Day 💥</div>
   <div id="exerciseList">
-    <div class="workout-card done-ex" onclick="toggleEx(this)">
-      <div class="wk-top"><span class="wk-name">Bench Press</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Chest</span><div class="check-circle">✓</div></div></div>
-      <div class="wk-detail"><span><b>4</b> Sets</span><span><b>8-10</b> Reps</span><span><b>70</b> kg</span><span><b>90s</b> Rest</span></div>
-    </div>
-    <div class="workout-card done-ex" onclick="toggleEx(this)">
-      <div class="wk-top"><span class="wk-name">Overhead Press</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Shoulders</span><div class="check-circle">✓</div></div></div>
-      <div class="wk-detail"><span><b>3</b> Sets</span><span><b>10</b> Reps</span><span><b>45</b> kg</span><span><b>75s</b> Rest</span></div>
-    </div>
-    <div class="workout-card" onclick="toggleEx(this)">
-      <div class="wk-top"><span class="wk-name">Incline Dumbbell</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Chest</span><div class="check-circle"></div></div></div>
-      <div class="wk-detail"><span><b>3</b> Sets</span><span><b>12</b> Reps</span><span><b>24</b> kg</span><span><b>60s</b> Rest</span></div>
-    </div>
-    <div class="workout-card" onclick="toggleEx(this)">
-      <div class="wk-top"><span class="wk-name">Tricep Dips</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Triceps</span><div class="check-circle"></div></div></div>
-      <div class="wk-detail"><span><b>3</b> Sets</span><span><b>12</b> Reps</span><span><b>BW</b></span><span><b>60s</b> Rest</span></div>
-    </div>
-    <div class="workout-card" onclick="toggleEx(this)">
-      <div class="wk-top"><span class="wk-name">Lateral Raises</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Shoulders</span><div class="check-circle"></div></div></div>
-      <div class="wk-detail"><span><b>4</b> Sets</span><span><b>15</b> Reps</span><span><b>12</b> kg</span><span><b>45s</b> Rest</span></div>
-    </div>
   </div>
-  <button class="add-btn" onclick="sendPrompt('আমার workout plan এ নতুন exercise যোগ করে দাও')">+ Add Exercise</button>
+  <button class="add-btn" onclick="addExercise()">+ Add Exercise</button>
 </div>
 
 <!-- NUTRITION -->
@@ -277,21 +276,9 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
       <div class="bar-bg"><div class="bar-fill" id="fatBar" style="width:58%;background:#2196F3"></div></div>
     </div>
   </div>
-  <div class="meals">
-    <div class="meal-card">
-      <div class="meal-top"><span class="meal-name">Breakfast · 7:30 AM</span><span class="meal-cal">420 kcal</span></div>
-      <div class="meal-items">Oats with banana · 2 boiled eggs · Black coffee</div>
-    </div>
-    <div class="meal-card">
-      <div class="meal-top"><span class="meal-name">Lunch · 1:00 PM</span><span class="meal-cal">560 kcal</span></div>
-      <div class="meal-items">Chicken breast 200g · Brown rice · Mixed salad</div>
-    </div>
-    <div class="meal-card">
-      <div class="meal-top"><span class="meal-name">Pre-Workout · 4:30 PM</span><span class="meal-cal">360 kcal</span></div>
-      <div class="meal-items">Protein shake · Banana · Peanut butter toast</div>
-    </div>
+  <div class="meals" id="mealsList">
   </div>
-  <button class="add-btn" onclick="sendPrompt('আমার nutrition plan এ আরো meal যোগ করে দাও এবং macro customize করে দাও')">+ Log Meal</button>
+  <button class="add-btn" onclick="addMeal()">+ Log Meal</button>
 </div>
 
 <!-- PROGRESS -->
@@ -300,20 +287,20 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
   <div class="before-after">
     <div class="ba-card">
       <div class="ba-label">Start Weight</div>
-      <div class="ba-val" style="color:var(--muted)">82.4 <span style="font-size:16px">kg</span></div>
-      <div class="ba-date">Mar 1, 2025</div>
+      <div class="ba-val" style="color:var(--muted)" id="startWeight">82.4 <span style="font-size:16px">kg</span></div>
+      <div class="ba-date" id="startDate">Mar 1, 2025</div>
     </div>
     <div class="ba-card">
       <div class="ba-label">Current Weight</div>
-      <div class="ba-val" style="color:var(--green)">78 <span style="font-size:16px">kg</span></div>
-      <div class="ba-date">Apr 24, 2025</div>
+      <div class="ba-val" style="color:var(--green)" id="currentWeight">78 <span style="font-size:16px">kg</span></div>
+      <div class="ba-date" id="currentDate">Apr 24, 2025</div>
     </div>
   </div>
 
   <div class="chart-area">
     <div class="chart-title">Weight Progress (last 8 weeks)</div>
     <div class="mini-chart">
-      <svg class="chart-line" viewBox="0 0 300 80" preserveAspectRatio="none">
+      <svg class="chart-line" id="weightChart" viewBox="0 0 300 80" preserveAspectRatio="none">
         <defs><linearGradient id="grd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF5C00" stop-opacity=".3"/><stop offset="100%" stop-color="#FF5C00" stop-opacity="0"/></linearGradient></defs>
         <path d="M0,20 L38,25 L76,30 L114,28 L152,38 L190,45 L228,52 L266,60 L300,65" fill="none" stroke="#FF5C00" stroke-width="2" stroke-linecap="round"/>
         <path d="M0,20 L38,25 L76,30 L114,28 L152,38 L190,45 L228,52 L266,60 L300,65 L300,80 L0,80 Z" fill="url(#grd)"/>
@@ -323,16 +310,16 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
   </div>
 
   <div class="goal-card">
-    <div class="goal-top"><span class="goal-name">Target: 74 kg</span><span class="goal-pct">55%</span></div>
+    <div class="goal-top"><span class="goal-name">Target: <span id="targetWeight">74</span> kg</span><span class="goal-pct" id="goalProgress">55%</span></div>
     <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:55%"></div></div>
     <div class="goal-dates"><span>Mar 1</span><span>Target: Jun 1</span></div>
   </div>
   <div class="goal-card">
-    <div class="goal-top"><span class="goal-name">Body Fat: 15% target</span><span class="goal-pct">40%</span></div>
+    <div class="goal-top"><span class="goal-name">Body Fat: <span id="bfTarget">15%</span> target</span><span class="goal-pct" id="bfProgress">40%</span></div>
     <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:40%"></div></div>
-    <div class="goal-dates"><span>18% now</span><span>Target: Jul 1</span></div>
+    <div class="goal-dates"><span id="bfCurrent">18%</span> now<span>Target: Jul 1</span></div>
   </div>
-  <button class="add-btn" onclick="sendPrompt('আমার progress দেখে নতুন goal set করতে সাহায্য করো')">+ Set New Goal ↗</button>
+  <button class="add-btn" onclick="setNewGoal()">+ Set New Goal ↗</button>
 </div>
 
 <!-- SETTINGS -->
@@ -341,18 +328,18 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Goals</div>
   <div class="set-group">
     <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Daily Calorie Goal</span><span class="set-sub">Adjust your target</span></div><span class="set-val" id="setCalGoal">2,200 kcal</span></div>
-    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Protein Goal</span><span class="set-sub">Per day</span></div><span class="set-val">160g</span></div>
-    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Daily Water Goal</span><span class="set-sub">Hydration target</span></div><span class="set-val">3.0 L</span></div>
+    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Protein Goal</span><span class="set-sub">Per day</span></div><span class="set-val" id="setProtGoal">160g</span></div>
+    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Daily Water Goal</span><span class="set-sub">Hydration target</span></div><span class="set-val" id="setWaterGoal">3.0 L</span></div>
     <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Workout Days</span><span class="set-sub">Per week</span></div><span class="set-val">5 days</span></div>
   </div>
   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Reminders</div>
   <div class="set-group">
-    <div class="set-row"><div class="set-left"><span class="set-label">Workout Reminder</span><span class="set-sub">5:30 PM daily</span></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
-    <div class="set-row"><div class="set-left"><span class="set-label">Meal Logging</span><span class="set-sub">Before meals</span></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
-    <div class="set-row"><div class="set-left"><span class="set-label">Water Reminders</span><span class="set-sub">Every 2 hours</span></div><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
-    <div class="set-row"><div class="set-left"><span class="set-label">Weekly Report</span><span class="set-sub">Every Sunday</span></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Workout Reminder</span><span class="set-sub">5:30 PM daily</span></div><div class="toggle on" onclick="this.classList.toggle('on');saveReminders()"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Meal Logging</span><span class="set-sub">Before meals</span></div><div class="toggle on" onclick="this.classList.toggle('on');saveReminders()"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Water Reminders</span><span class="set-sub">Every 2 hours</span></div><div class="toggle" onclick="this.classList.toggle('on');saveReminders()"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Weekly Report</span><span class="set-sub">Every Sunday</span></div><div class="toggle on" onclick="this.classList.toggle('on');saveReminders()"><div class="toggle-thumb"></div></div></div>
   </div>
-  <button class="save-btn" onclick="sendPrompt('আমার fitness app এর জন্য custom workout plan বানিয়ে দাও')">GET AI WORKOUT PLAN ↗</button>
+  <button class="save-btn" onclick="logout()">LOGOUT</button>
 </div>
 </div>
 
@@ -363,49 +350,314 @@ body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;
   <div class="modal-title">UPDATE YOUR STATS</div>
   <div class="edit-row"><label>Weight (kg)</label><input type="number" id="inWeight" value="78" step="0.1"/></div>
   <div class="edit-row"><label>Body Fat (%)</label><input type="number" id="inBf" value="18" step="0.1"/></div>
+  <div class="edit-row"><label>Height (cm)</label><input type="number" id="inHeight" value="175" step="0.1"/></div>
+  <div class="edit-row"><label>Resting HR (bpm)</label><input type="number" id="inHr" value="68" step="1"/></div>
   <div class="edit-row"><label>Water (L)</label><input type="number" id="inWater" value="2.1" step="0.1"/></div>
-  <div class="edit-row"><label>Daily Calories</label><input type="number" id="inCal" value="2200"/></div>
+  <div class="edit-row"><label>Daily Calories Goal</label><input type="number" id="inCal" value="2200"/></div>
   <div class="edit-row"><label>Protein Goal (g)</label><input type="number" id="inProt" value="160"/></div>
   <button class="save-btn" onclick="saveStats()">SAVE STATS</button>
 </div>
 </div>
 
+<div class="sync-badge" id="syncBadge">✓ Synced to Firebase</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 <script>
-function showSection(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('section-'+id).classList.add('active');
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyC8y4IYzcU_T3CQ4LfZsZH6a-kmVx7UlsI",
+  authDomain: "transform-v1.firebaseapp.com",
+  projectId: "transform-v1",
+  storageBucket: "transform-v1.firebasestorage.app",
+  messagingSenderId: "552977260205",
+  appId: "1:552977260205:web:c43346ab972d2d72ed3024"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+let currentUser = null;
+let authMode = 'login';
+
+// ===== AUTH FUNCTIONS =====
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  document.getElementById('authTitle').textContent = authMode === 'login' ? 'LOGIN' : 'SIGN UP';
+  document.getElementById('authToggleText').textContent = authMode === 'login' ? "Don't have an account?" : 'Already have an account?';
+  document.getElementById('authSubmit').textContent = authMode === 'login' ? 'LOGIN' : 'CREATE ACCOUNT';
+}
+
+function handleAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  
+  if (!email || !password) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  if (authMode === 'login') {
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log('Login successful');
+      })
+      .catch(err => {
+        alert('Login failed: ' + err.message);
+      });
+  } else {
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log('Account created');
+      })
+      .catch(err => {
+        alert('Signup failed: ' + err.message);
+      });
+  }
+}
+
+// Monitor auth state changes
+auth.onAuthStateChanged(user => {
+  if (user) {
+    currentUser = user;
+    document.getElementById('authScreen').classList.remove('active');
+    document.getElementById('mainApp').style.display = 'block';
+    loadUserData();
+    setupRealtimeListeners();
+  } else {
+    currentUser = null;
+    document.getElementById('authScreen').classList.add('active');
+    document.getElementById('mainApp').style.display = 'none';
+  }
+});
+
+function logout() {
+  auth.signOut().then(() => {
+    console.log('Logged out');
+  });
+}
+
+// ===== DATA FUNCTIONS =====
+function loadUserData() {
+  if (!currentUser) return;
+  
+  const userRef = db.ref('users/' + currentUser.uid);
+  userRef.once('value').then(snapshot => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      updateUIFromData(data);
+    }
+  });
+}
+
+function setupRealtimeListeners() {
+  if (!currentUser) return;
+  
+  const userRef = db.ref('users/' + currentUser.uid);
+  userRef.on('value', snapshot => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      updateUIFromData(data);
+    }
+  });
+}
+
+function updateUIFromData(data) {
+  if (!data) return;
+
+  // Body Stats
+  if (data.stats) {
+    document.getElementById('weightVal').textContent = data.stats.weight || 78;
+    document.getElementById('bfVal').textContent = data.stats.bodyFat || 18;
+    document.getElementById('heightVal').textContent = data.stats.height || 175;
+    document.getElementById('hrVal').textContent = data.stats.restingHR || 68;
+    document.getElementById('tdeeVal').textContent = data.stats.tdee || 1840;
+    document.getElementById('waterVal').textContent = (data.stats.water || 2.1).toFixed(1);
+  }
+
+  // Nutrition
+  if (data.nutrition) {
+    document.getElementById('calEaten').textContent = (data.nutrition.caloriesEaten || 1340).toLocaleString();
+    document.getElementById('calGoal').textContent = (data.nutrition.calorieGoal || 2200).toLocaleString();
+    document.getElementById('protEaten').textContent = data.nutrition.proteinEaten || 98;
+    document.getElementById('protGoal').textContent = data.nutrition.proteinGoal || 160;
+    document.getElementById('carbEaten').textContent = data.nutrition.carbsEaten || 145;
+    document.getElementById('carbGoal').textContent = data.nutrition.carbsGoal || 220;
+    document.getElementById('fatEaten').textContent = data.nutrition.fatEaten || 38;
+    document.getElementById('fatGoal').textContent = data.nutrition.fatGoal || 65;
+    
+    updateNutritionBars();
+  }
+
+  // Workouts
+  if (data.workouts) {
+    renderWorkouts(data.workouts);
+  }
+
+  // Goals
+  if (data.goals) {
+    document.getElementById('targetWeight').textContent = data.goals.targetWeight || 74;
+    document.getElementById('bfTarget').textContent = data.goals.bfTarget || 15;
+  }
+
+  // Settings
+  if (data.settings) {
+    document.getElementById('setCalGoal').textContent = (data.settings.calGoal || 2200) + ' kcal';
+    document.getElementById('setProtGoal').textContent = (data.settings.protGoal || 160) + 'g';
+    document.getElementById('setWaterGoal').textContent = (data.settings.waterGoal || 3.0) + ' L';
+  }
+}
+
+function saveStats() {
+  if (!currentUser) return;
+
+  const stats = {
+    weight: parseFloat(document.getElementById('inWeight').value),
+    bodyFat: parseFloat(document.getElementById('inBf').value),
+    height: parseInt(document.getElementById('inHeight').value),
+    restingHR: parseInt(document.getElementById('inHr').value),
+    water: parseFloat(document.getElementById('inWater').value),
+    tdee: parseInt(document.getElementById('inCal').value)
+  };
+
+  const settings = {
+    calGoal: parseInt(document.getElementById('inCal').value),
+    protGoal: parseInt(document.getElementById('inProt').value)
+  };
+
+  const updates = {};
+  updates['users/' + currentUser.uid + '/stats'] = stats;
+  updates['users/' + currentUser.uid + '/settings'] = settings;
+
+  db.ref().update(updates).then(() => {
+    showSyncBadge();
+    closeEdit();
+  }).catch(err => alert('Save failed: ' + err.message));
+}
+
+function showSyncBadge() {
+  const badge = document.getElementById('syncBadge');
+  badge.style.display = 'block';
+  setTimeout(() => badge.style.display = 'none', 3000);
+}
+
+function renderWorkouts(workouts) {
+  const list = document.getElementById('exerciseList');
+  list.innerHTML = '';
+  
+  if (workouts && Object.keys(workouts).length > 0) {
+    Object.keys(workouts).forEach(key => {
+      const ex = workouts[key];
+      const card = document.createElement('div');
+      card.className = 'workout-card' + (ex.completed ? ' done-ex' : '');
+      card.innerHTML = `
+        <div class="wk-top">
+          <span class="wk-name">${ex.name}</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="wk-badge">${ex.category}</span>
+            <div class="check-circle" onclick="toggleExercise('${key}', this)">${ex.completed ? '✓' : ''}</div>
+          </div>
+        </div>
+        <div class="wk-detail">
+          <span><b>${ex.sets}</b> Sets</span>
+          <span><b>${ex.reps}</b> Reps</span>
+          <span><b>${ex.weight}</b></span>
+          <span><b>${ex.rest}s</b> Rest</span>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+}
+
+function toggleExercise(key, element) {
+  if (!currentUser) return;
+  
+  db.ref('users/' + currentUser.uid + '/workouts/' + key).once('value').then(snap => {
+    if (snap.exists()) {
+      const data = snap.val();
+      db.ref('users/' + currentUser.uid + '/workouts/' + key + '/completed').set(!data.completed)
+        .then(() => showSyncBadge())
+        .catch(err => alert('Update failed: ' + err.message));
+    }
+  });
+}
+
+function addExercise() {
+  const name = prompt('Exercise name:');
+  if (!name) return;
+  const category = prompt('Category (Chest, Legs, etc):');
+  const sets = prompt('Sets:', '3');
+  const reps = prompt('Reps:', '10');
+  const weight = prompt('Weight (kg or BW):');
+  const rest = prompt('Rest (seconds):', '60');
+
+  if (!currentUser) return;
+
+  const newEx = {
+    name: name,
+    category: category || 'General',
+    sets: sets,
+    reps: reps,
+    weight: weight || 'BW',
+    rest: rest,
+    completed: false
+  };
+
+  db.ref('users/' + currentUser.uid + '/workouts').push(newEx)
+    .then(() => showSyncBadge())
+    .catch(err => alert('Add failed: ' + err.message));
+}
+
+function addMeal() {
+  alert('Meal logging feature coming soon! You can update calories in UPDATE STATS.');
+}
+
+function setNewGoal() {
+  alert('Goal setting coming soon! Update target weight in UPDATE STATS.');
+}
+
+function updateNutritionBars() {
+  const protEaten = parseInt(document.getElementById('protEaten').textContent);
+  const protGoal = parseInt(document.getElementById('protGoal').textContent);
+  document.getElementById('protBar').style.width = (protEaten / protGoal * 100) + '%';
+  
+  const carbEaten = parseInt(document.getElementById('carbEaten').textContent);
+  const carbGoal = parseInt(document.getElementById('carbGoal').textContent);
+  document.getElementById('carbBar').style.width = (carbEaten / carbGoal * 100) + '%';
+  
+  const fatEaten = parseInt(document.getElementById('fatEaten').textContent);
+  const fatGoal = parseInt(document.getElementById('fatGoal').textContent);
+  document.getElementById('fatBar').style.width = (fatEaten / fatGoal * 100) + '%';
+}
+
+function saveReminders() {
+  if (!currentUser) return;
+  // Reminder settings saved to Firebase here
+  showSyncBadge();
+}
+
+function openEdit() {
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEdit() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
   event.target.classList.add('active');
 }
-function toggleEx(card){
-  card.classList.toggle('done-ex');
-  const c=card.querySelector('.check-circle');
-  c.textContent=card.classList.contains('done-ex')?'✓':'';
-  updateRing();
-}
-function updateRing(){
-  const all=document.querySelectorAll('.workout-card').length;
-  const done=document.querySelectorAll('.workout-card.done-ex').length;
-  const pct=Math.round(done/all*100);
-  const circ=213.6;
-  document.getElementById('mainRing').style.strokeDashoffset=circ-(circ*pct/100);
-  document.getElementById('ringPct').textContent=pct+'%';
-}
-function openEdit(){document.getElementById('editModal').classList.add('open')}
-function closeEdit(){document.getElementById('editModal').classList.remove('open')}
-function saveStats(){
-  const w=parseFloat(document.getElementById('inWeight').value);
-  const bf=parseFloat(document.getElementById('inBf').value);
-  const wa=parseFloat(document.getElementById('inWater').value);
-  const cal=parseInt(document.getElementById('inCal').value);
-  const prot=parseInt(document.getElementById('inProt').value);
-  document.getElementById('weightVal').textContent=w;
-  document.getElementById('bfVal').textContent=bf;
-  document.getElementById('waterVal').textContent=wa.toFixed(1);
-  document.getElementById('calGoal').textContent=cal.toLocaleString();
-  document.getElementById('protGoal').textContent=prot;
-  document.getElementById('setCalGoal').textContent=cal.toLocaleString()+' kcal';
-  closeEdit();
-}
-updateRing();
+
+// Initialize
+updateNutritionBars();
 </script>
+</body>
+</html>

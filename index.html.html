@@ -1,0 +1,411 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0a0a0a;--dark:#111;--card:#1a1a1a;--card2:#222;
+  --orange:#FF5C00;--orange2:#FF8C42;--green:#00E676;--text:#f0f0f0;--muted:#888;
+}
+body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.app{max-width:700px;margin:0 auto;padding:0 0 80px}
+
+/* TOP HERO */
+.hero{background:linear-gradient(135deg,#111 0%,#1a0800 100%);padding:24px 20px 20px;border-bottom:1px solid #2a2a2a;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(255,92,0,0.15),transparent 70%);border-radius:50%}
+.hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.greeting{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--orange)}
+.streak{display:flex;align-items:center;gap:6px;background:#2a1500;border:1px solid #3a1800;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--orange2)}
+.streak-dot{width:8px;height:8px;background:var(--orange);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.3)}}
+
+.progress-ring{display:flex;align-items:center;gap:20px;background:#0f0f0f;border-radius:16px;padding:16px}
+.ring-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
+.ring-svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#2a2a2a;stroke-width:6}
+.ring-prog{fill:none;stroke:var(--orange);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--orange);line-height:1}
+.ring-label{font-size:9px;color:var(--muted);letter-spacing:1px}
+.ring-info{flex:1}
+.ring-title{font-size:13px;color:var(--muted);margin-bottom:4px}
+.ring-stat{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--text);letter-spacing:1px;line-height:1}
+.ring-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* NAV */
+.nav{display:flex;gap:0;background:#111;border-bottom:1px solid #2a2a2a;position:sticky;top:0;z-index:10}
+.nav-btn{flex:1;padding:14px 8px;text-align:center;font-size:11px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;border-bottom:2px solid transparent}
+.nav-btn.active{color:var(--orange);border-bottom:2px solid var(--orange)}
+
+/* SECTIONS */
+.section{display:none;padding:20px 16px}
+.section.active{display:block}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);margin-bottom:16px}
+
+/* METRICS GRID */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.metric-card{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s}
+.metric-card:hover{border-color:var(--orange)}
+.metric-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px}
+.metric-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--text);letter-spacing:1px;line-height:1}
+.metric-unit{font-size:13px;color:var(--muted);font-weight:300;margin-left:2px}
+.metric-name{font-size:11px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-top:4px}
+.metric-trend{font-size:11px;margin-top:6px;font-weight:500}
+.trend-up{color:#00E676}.trend-down{color:#FF5C00}.trend-neu{color:var(--muted)}
+
+/* EDIT METRIC */
+.edit-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.edit-row label{font-size:12px;color:var(--muted);flex:1;text-transform:uppercase;letter-spacing:.5px}
+.edit-row input{background:#111;border:1px solid #333;border-radius:8px;color:var(--text);font-size:15px;padding:8px 12px;width:110px;font-family:'DM Sans',sans-serif;text-align:right}
+.edit-row input:focus{outline:none;border-color:var(--orange)}
+.save-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.save-btn:hover{opacity:.85}
+
+/* WORKOUT */
+.day-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;scrollbar-width:none}
+.day-strip::-webkit-scrollbar{display:none}
+.day-pill{flex-shrink:0;padding:10px 16px;border-radius:20px;border:1px solid #2a2a2a;background:var(--card);cursor:pointer;text-align:center;transition:all .2s}
+.day-pill.active{background:var(--orange);border-color:var(--orange)}
+.day-pill.done{background:#0f2a0f;border-color:#1a5c1a}
+.day-name{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.day-pill.active .day-name{color:rgba(255,255,255,.7)}
+.day-num{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1}
+.day-pill.done .day-num{color:var(--green)}
+
+.workout-card{background:var(--card);border:1px solid #2a2a2a;border-radius:16px;padding:18px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+.workout-card:hover{border-color:#444}
+.workout-card.done-ex{border-color:#1a5c1a;background:#0a1a0a}
+.wk-top{display:flex;justify-content:space-between;align-items:center}
+.wk-name{font-weight:600;font-size:15px}
+.wk-badge{background:#2a2a2a;border-radius:20px;padding:4px 10px;font-size:11px;color:var(--muted)}
+.wk-detail{display:flex;gap:16px;margin-top:10px}
+.wk-detail span{font-size:12px;color:var(--muted)}
+.wk-detail b{color:var(--text);font-weight:500}
+.check-circle{width:24px;height:24px;border-radius:50%;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex-shrink:0}
+.workout-card.done-ex .check-circle{background:var(--green);border-color:var(--green);color:#000}
+
+.add-btn{width:100%;background:none;border:1px dashed #333;border-radius:12px;padding:14px;color:var(--muted);font-size:13px;cursor:pointer;margin-top:8px;transition:border-color .2s}
+.add-btn:hover{border-color:var(--orange);color:var(--orange)}
+
+/* NUTRITION */
+.macro-bar-wrap{margin-bottom:20px}
+.macro-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.macro-name{font-size:13px;font-weight:500}
+.macro-grams{font-size:13px;color:var(--muted)}
+.bar-bg{height:8px;background:#222;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.meals{margin-top:20px}
+.meal-card{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;padding:16px;margin-bottom:10px}
+.meal-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.meal-name{font-weight:500;font-size:14px}
+.meal-cal{font-size:13px;color:var(--orange)}
+.meal-items{font-size:12px;color:var(--muted);line-height:1.6}
+.cal-target{display:flex;align-items:baseline;gap:8px;margin-bottom:20px}
+.cal-big{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--orange);line-height:1}
+.cal-of{font-size:14px;color:var(--muted)}
+
+/* PROGRESS */
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.ba-card{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;padding:20px;text-align:center}
+.ba-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.ba-val{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px}
+.ba-date{font-size:11px;color:var(--muted);margin-top:4px}
+.chart-area{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;padding:20px;margin-bottom:16px}
+.chart-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+.mini-chart{position:relative;height:80px}
+.chart-line{width:100%;height:100%}
+.goal-card{background:linear-gradient(135deg,#1a0800,#2a1000);border:1px solid #3a1800;border-radius:14px;padding:20px;margin-bottom:12px}
+.goal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.goal-name{font-weight:500;font-size:14px}
+.goal-pct{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange)}
+.goal-bar-bg{height:6px;background:#2a2a2a;border-radius:3px}
+.goal-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--orange2))}
+.goal-dates{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted)}
+
+/* SETTINGS */
+.set-group{background:var(--card);border:1px solid #2a2a2a;border-radius:14px;overflow:hidden;margin-bottom:16px}
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #1a1a1a;cursor:pointer;transition:background .15s}
+.set-row:last-child{border-bottom:none}
+.set-row:hover{background:#1f1f1f}
+.set-left{display:flex;flex-direction:column;gap:3px}
+.set-label{font-size:14px;font-weight:500}
+.set-sub{font-size:12px;color:var(--muted)}
+.set-val{font-size:13px;color:var(--orange);font-weight:500}
+.toggle{width:42px;height:24px;border-radius:12px;background:#333;position:relative;cursor:pointer;transition:background .2s}
+.toggle.on{background:var(--orange)}
+.toggle-thumb{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s}
+.toggle.on .toggle-thumb{left:20px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#1a1a1a;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:700px;border-top:1px solid #2a2a2a}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;color:var(--orange)}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-top:-4px}
+</style>
+
+<div class="app">
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div style="font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Good Morning</div>
+      <div class="greeting">BEAST MODE ON 🔥</div>
+    </div>
+    <div class="streak"><div class="streak-dot"></div>12 Day Streak</div>
+  </div>
+  <div class="progress-ring">
+    <div class="ring-wrap">
+      <svg class="ring-svg" width="80" height="80" viewBox="0 0 80 80">
+        <circle class="ring-bg" cx="40" cy="40" r="34"/>
+        <circle class="ring-prog" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="64" id="mainRing"/>
+      </svg>
+      <div class="ring-text"><span class="ring-pct" id="ringPct">70%</span><span class="ring-label">TODAY</span></div>
+    </div>
+    <div class="ring-info">
+      <div class="ring-title">Calories Burned</div>
+      <div class="ring-stat">483 <span style="font-size:16px;color:var(--muted)">kcal</span></div>
+      <div class="ring-sub">Goal: 700 kcal · 4 exercises done</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showSection('body')">Body</button>
+  <button class="nav-btn" onclick="showSection('workout')">Workout</button>
+  <button class="nav-btn" onclick="showSection('nutrition')">Nutrition</button>
+  <button class="nav-btn" onclick="showSection('progress')">Progress</button>
+  <button class="nav-btn" onclick="showSection('settings')">Settings</button>
+</div>
+
+<!-- BODY STATS -->
+<div class="section active" id="section-body">
+  <div class="section-title">Your Body Stats</div>
+  <div class="metrics" id="metricsGrid">
+    <div class="metric-card" onclick="openEdit()">
+      <div class="metric-icon" style="background:#1a0800">⚖️</div>
+      <div><span class="metric-val" id="weightVal">78</span><span class="metric-unit">kg</span></div>
+      <div class="metric-name">Weight</div>
+      <div class="metric-trend trend-down">▼ 2.4 kg this month</div>
+    </div>
+    <div class="metric-card" onclick="openEdit()">
+      <div class="metric-icon" style="background:#001a0a">💪</div>
+      <div><span class="metric-val" id="bfVal">18</span><span class="metric-unit">%</span></div>
+      <div class="metric-name">Body Fat</div>
+      <div class="metric-trend trend-down">▼ 1.2% this month</div>
+    </div>
+    <div class="metric-card" onclick="openEdit()">
+      <div class="metric-icon" style="background:#00001a">📏</div>
+      <div><span class="metric-val">175</span><span class="metric-unit">cm</span></div>
+      <div class="metric-name">Height</div>
+      <div class="metric-trend trend-neu">— No change</div>
+    </div>
+    <div class="metric-card" onclick="openEdit()">
+      <div class="metric-icon" style="background:#1a0000">❤️</div>
+      <div><span class="metric-val">68</span><span class="metric-unit">bpm</span></div>
+      <div class="metric-name">Resting HR</div>
+      <div class="metric-trend trend-up">▲ Getting stronger</div>
+    </div>
+    <div class="metric-card" onclick="openEdit()">
+      <div class="metric-icon" style="background:#1a0800">🔥</div>
+      <div><span class="metric-val">1840</span><span class="metric-unit">kcal</span></div>
+      <div class="metric-name">Daily TDEE</div>
+      <div class="metric-trend trend-neu">— Maintenance</div>
+    </div>
+    <div class="metric-card" onclick="openEdit()">
+      <div class="metric-icon" style="background:#001a1a">💧</div>
+      <div><span class="metric-val" id="waterVal">2.1</span><span class="metric-unit">L</span></div>
+      <div class="metric-name">Water Today</div>
+      <div class="metric-trend trend-up">▲ +0.5L from avg</div>
+    </div>
+  </div>
+  <button class="save-btn" onclick="openEdit()">+ UPDATE STATS</button>
+</div>
+
+<!-- WORKOUT -->
+<div class="section" id="section-workout">
+  <div class="section-title">This Week</div>
+  <div class="day-strip">
+    <div class="day-pill done"><div class="day-name">Mon</div><div class="day-num">21</div></div>
+    <div class="day-pill done"><div class="day-name">Tue</div><div class="day-num">22</div></div>
+    <div class="day-pill done"><div class="day-name">Wed</div><div class="day-num">23</div></div>
+    <div class="day-pill active"><div class="day-name">Thu</div><div class="day-num">24</div></div>
+    <div class="day-pill"><div class="day-name">Fri</div><div class="day-num">25</div></div>
+    <div class="day-pill"><div class="day-name">Sat</div><div class="day-num">26</div></div>
+    <div class="day-pill"><div class="day-name">Sun</div><div class="day-num">27</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Thursday — Push Day 💥</div>
+  <div id="exerciseList">
+    <div class="workout-card done-ex" onclick="toggleEx(this)">
+      <div class="wk-top"><span class="wk-name">Bench Press</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Chest</span><div class="check-circle">✓</div></div></div>
+      <div class="wk-detail"><span><b>4</b> Sets</span><span><b>8-10</b> Reps</span><span><b>70</b> kg</span><span><b>90s</b> Rest</span></div>
+    </div>
+    <div class="workout-card done-ex" onclick="toggleEx(this)">
+      <div class="wk-top"><span class="wk-name">Overhead Press</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Shoulders</span><div class="check-circle">✓</div></div></div>
+      <div class="wk-detail"><span><b>3</b> Sets</span><span><b>10</b> Reps</span><span><b>45</b> kg</span><span><b>75s</b> Rest</span></div>
+    </div>
+    <div class="workout-card" onclick="toggleEx(this)">
+      <div class="wk-top"><span class="wk-name">Incline Dumbbell</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Chest</span><div class="check-circle"></div></div></div>
+      <div class="wk-detail"><span><b>3</b> Sets</span><span><b>12</b> Reps</span><span><b>24</b> kg</span><span><b>60s</b> Rest</span></div>
+    </div>
+    <div class="workout-card" onclick="toggleEx(this)">
+      <div class="wk-top"><span class="wk-name">Tricep Dips</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Triceps</span><div class="check-circle"></div></div></div>
+      <div class="wk-detail"><span><b>3</b> Sets</span><span><b>12</b> Reps</span><span><b>BW</b></span><span><b>60s</b> Rest</span></div>
+    </div>
+    <div class="workout-card" onclick="toggleEx(this)">
+      <div class="wk-top"><span class="wk-name">Lateral Raises</span><div style="display:flex;gap:8px;align-items:center"><span class="wk-badge">Shoulders</span><div class="check-circle"></div></div></div>
+      <div class="wk-detail"><span><b>4</b> Sets</span><span><b>15</b> Reps</span><span><b>12</b> kg</span><span><b>45s</b> Rest</span></div>
+    </div>
+  </div>
+  <button class="add-btn" onclick="sendPrompt('আমার workout plan এ নতুন exercise যোগ করে দাও')">+ Add Exercise</button>
+</div>
+
+<!-- NUTRITION -->
+<div class="section" id="section-nutrition">
+  <div class="section-title">Today's Nutrition</div>
+  <div class="cal-target">
+    <span class="cal-big" id="calEaten">1,340</span>
+    <span class="cal-of">/ <span id="calGoal">2,200</span> kcal</span>
+  </div>
+  <div class="macro-bar-wrap">
+    <div style="margin-bottom:14px">
+      <div class="macro-row"><span class="macro-name" style="color:#FF8C42">Protein</span><span class="macro-grams"><span id="protEaten">98</span>g / <span id="protGoal">160</span>g</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="protBar" style="width:61%;background:#FF5C00"></div></div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="macro-row"><span class="macro-name" style="color:#4CAF50">Carbs</span><span class="macro-grams"><span id="carbEaten">145</span>g / <span id="carbGoal">220</span>g</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="carbBar" style="width:66%;background:#4CAF50"></div></div>
+    </div>
+    <div>
+      <div class="macro-row"><span class="macro-name" style="color:#2196F3">Fat</span><span class="macro-grams"><span id="fatEaten">38</span>g / <span id="fatGoal">65</span>g</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="fatBar" style="width:58%;background:#2196F3"></div></div>
+    </div>
+  </div>
+  <div class="meals">
+    <div class="meal-card">
+      <div class="meal-top"><span class="meal-name">Breakfast · 7:30 AM</span><span class="meal-cal">420 kcal</span></div>
+      <div class="meal-items">Oats with banana · 2 boiled eggs · Black coffee</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-top"><span class="meal-name">Lunch · 1:00 PM</span><span class="meal-cal">560 kcal</span></div>
+      <div class="meal-items">Chicken breast 200g · Brown rice · Mixed salad</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-top"><span class="meal-name">Pre-Workout · 4:30 PM</span><span class="meal-cal">360 kcal</span></div>
+      <div class="meal-items">Protein shake · Banana · Peanut butter toast</div>
+    </div>
+  </div>
+  <button class="add-btn" onclick="sendPrompt('আমার nutrition plan এ আরো meal যোগ করে দাও এবং macro customize করে দাও')">+ Log Meal</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="section" id="section-progress">
+  <div class="section-title">Transformation</div>
+  <div class="before-after">
+    <div class="ba-card">
+      <div class="ba-label">Start Weight</div>
+      <div class="ba-val" style="color:var(--muted)">82.4 <span style="font-size:16px">kg</span></div>
+      <div class="ba-date">Mar 1, 2025</div>
+    </div>
+    <div class="ba-card">
+      <div class="ba-label">Current Weight</div>
+      <div class="ba-val" style="color:var(--green)">78 <span style="font-size:16px">kg</span></div>
+      <div class="ba-date">Apr 24, 2025</div>
+    </div>
+  </div>
+
+  <div class="chart-area">
+    <div class="chart-title">Weight Progress (last 8 weeks)</div>
+    <div class="mini-chart">
+      <svg class="chart-line" viewBox="0 0 300 80" preserveAspectRatio="none">
+        <defs><linearGradient id="grd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF5C00" stop-opacity=".3"/><stop offset="100%" stop-color="#FF5C00" stop-opacity="0"/></linearGradient></defs>
+        <path d="M0,20 L38,25 L76,30 L114,28 L152,38 L190,45 L228,52 L266,60 L300,65" fill="none" stroke="#FF5C00" stroke-width="2" stroke-linecap="round"/>
+        <path d="M0,20 L38,25 L76,30 L114,28 L152,38 L190,45 L228,52 L266,60 L300,65 L300,80 L0,80 Z" fill="url(#grd)"/>
+        <circle cx="300" cy="65" r="4" fill="#FF5C00"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="goal-card">
+    <div class="goal-top"><span class="goal-name">Target: 74 kg</span><span class="goal-pct">55%</span></div>
+    <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:55%"></div></div>
+    <div class="goal-dates"><span>Mar 1</span><span>Target: Jun 1</span></div>
+  </div>
+  <div class="goal-card">
+    <div class="goal-top"><span class="goal-name">Body Fat: 15% target</span><span class="goal-pct">40%</span></div>
+    <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:40%"></div></div>
+    <div class="goal-dates"><span>18% now</span><span>Target: Jul 1</span></div>
+  </div>
+  <button class="add-btn" onclick="sendPrompt('আমার progress দেখে নতুন goal set করতে সাহায্য করো')">+ Set New Goal ↗</button>
+</div>
+
+<!-- SETTINGS -->
+<div class="section" id="section-settings">
+  <div class="section-title">Customize</div>
+  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Goals</div>
+  <div class="set-group">
+    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Daily Calorie Goal</span><span class="set-sub">Adjust your target</span></div><span class="set-val" id="setCalGoal">2,200 kcal</span></div>
+    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Protein Goal</span><span class="set-sub">Per day</span></div><span class="set-val">160g</span></div>
+    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Daily Water Goal</span><span class="set-sub">Hydration target</span></div><span class="set-val">3.0 L</span></div>
+    <div class="set-row" onclick="openEdit()"><div class="set-left"><span class="set-label">Workout Days</span><span class="set-sub">Per week</span></div><span class="set-val">5 days</span></div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Reminders</div>
+  <div class="set-group">
+    <div class="set-row"><div class="set-left"><span class="set-label">Workout Reminder</span><span class="set-sub">5:30 PM daily</span></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Meal Logging</span><span class="set-sub">Before meals</span></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Water Reminders</span><span class="set-sub">Every 2 hours</span></div><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+    <div class="set-row"><div class="set-left"><span class="set-label">Weekly Report</span><span class="set-sub">Every Sunday</span></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+  </div>
+  <button class="save-btn" onclick="sendPrompt('আমার fitness app এর জন্য custom workout plan বানিয়ে দাও')">GET AI WORKOUT PLAN ↗</button>
+</div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEdit()">
+<div class="modal">
+  <button class="modal-close" onclick="closeEdit()">×</button>
+  <div class="modal-title">UPDATE YOUR STATS</div>
+  <div class="edit-row"><label>Weight (kg)</label><input type="number" id="inWeight" value="78" step="0.1"/></div>
+  <div class="edit-row"><label>Body Fat (%)</label><input type="number" id="inBf" value="18" step="0.1"/></div>
+  <div class="edit-row"><label>Water (L)</label><input type="number" id="inWater" value="2.1" step="0.1"/></div>
+  <div class="edit-row"><label>Daily Calories</label><input type="number" id="inCal" value="2200"/></div>
+  <div class="edit-row"><label>Protein Goal (g)</label><input type="number" id="inProt" value="160"/></div>
+  <button class="save-btn" onclick="saveStats()">SAVE STATS</button>
+</div>
+</div>
+
+<script>
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function toggleEx(card){
+  card.classList.toggle('done-ex');
+  const c=card.querySelector('.check-circle');
+  c.textContent=card.classList.contains('done-ex')?'✓':'';
+  updateRing();
+}
+function updateRing(){
+  const all=document.querySelectorAll('.workout-card').length;
+  const done=document.querySelectorAll('.workout-card.done-ex').length;
+  const pct=Math.round(done/all*100);
+  const circ=213.6;
+  document.getElementById('mainRing').style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('ringPct').textContent=pct+'%';
+}
+function openEdit(){document.getElementById('editModal').classList.add('open')}
+function closeEdit(){document.getElementById('editModal').classList.remove('open')}
+function saveStats(){
+  const w=parseFloat(document.getElementById('inWeight').value);
+  const bf=parseFloat(document.getElementById('inBf').value);
+  const wa=parseFloat(document.getElementById('inWater').value);
+  const cal=parseInt(document.getElementById('inCal').value);
+  const prot=parseInt(document.getElementById('inProt').value);
+  document.getElementById('weightVal').textContent=w;
+  document.getElementById('bfVal').textContent=bf;
+  document.getElementById('waterVal').textContent=wa.toFixed(1);
+  document.getElementById('calGoal').textContent=cal.toLocaleString();
+  document.getElementById('protGoal').textContent=prot;
+  document.getElementById('setCalGoal').textContent=cal.toLocaleString()+' kcal';
+  closeEdit();
+}
+updateRing();
+</script>

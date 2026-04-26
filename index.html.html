@@ -4,9 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FIT//OS — Fitness Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
+/* ===== TERMINAL THEME (default dark) ===== */
 :root{
   --bg:#030c0a;--sb:#060f0d;--panel:#081210;--card:#0c1a17;--card2:#101f1c;
   --g:#00ff88;--g2:#00cc66;--g3:#003322;--gd:rgba(0,255,136,0.07);
@@ -15,7 +17,223 @@
   --t:#b8ffd0;--t2:#5a9a70;--t3:#1a4a2a;
   --border:#0f2a1e;--mono:'Share Tech Mono',monospace;--raj:'Rajdhani',sans-serif;
 }
-body{background:var(--bg);color:var(--t);font-family:var(--mono);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ===== ALPHA THEME (light, powerful) ===== */
+html.alpha{
+  --bg:#f0f2f5;--sb:#ffffff;--panel:#ffffff;--card:#ffffff;--card2:#f8f9fc;
+  --g:#00a651;--g2:#007a3d;--g3:#d4f5e2;--gd:rgba(0,166,81,0.08);
+  --o:#e85d04;--o2:#f48c06;--c:#0077b6;--c2:#0096c7;
+  --p:#7209b7;--red:#d62828;--y:#e9c46a;
+  --t:#1a1a2e;--t2:#5c677d;--t3:#e8ecf0;
+  --border:#dde1e7;--mono:'DM Sans',sans-serif;--raj:'Barlow Condensed',sans-serif;
+}
+
+/* ===== THEME TOGGLE BUTTON ===== */
+.theme-toggle{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  background:var(--card);border:1px solid var(--border);
+  padding:5px 10px 5px 6px;transition:all .2s;user-select:none;
+}
+.theme-toggle:hover{border-color:var(--g)}
+.toggle-track{
+  width:36px;height:18px;background:var(--t3);border:1px solid var(--border);
+  border-radius:9px;position:relative;transition:all .3s;flex-shrink:0;
+}
+html.alpha .toggle-track{background:var(--g3);border-color:var(--g2)}
+.toggle-knob{
+  width:12px;height:12px;background:var(--t2);border-radius:50%;
+  position:absolute;top:2px;left:2px;transition:all .3s;
+}
+html.alpha .toggle-knob{left:20px;background:var(--g)}
+.toggle-label{font-size:9px;letter-spacing:1.5px;color:var(--t2);font-family:var(--mono);text-transform:uppercase}
+html.alpha .toggle-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px}
+
+/* ===== ALPHA OVERRIDES ===== */
+html.alpha body{background:var(--bg);font-family:'DM Sans',sans-serif}
+html.alpha .topbar{
+  background:#ffffff;border-bottom:3px solid var(--g);
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+html.alpha .app-brand{
+  font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;
+  letter-spacing:1px;color:var(--t);
+}
+html.alpha .app-brand span{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--t2);letter-spacing:.5px}
+html.alpha .streak-chip{background:linear-gradient(135deg,var(--o),var(--o2));border:none;color:#fff;border-radius:20px;font-weight:600;font-family:'DM Sans',sans-serif}
+html.alpha .dot-pulse{background:#fff}
+html.alpha .date-disp{color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:500;font-size:11px}
+
+/* Alpha Sidebar */
+html.alpha .sb{background:#fff;border-right:1px solid var(--border);box-shadow:2px 0 8px rgba(0,0,0,.04)}
+html.alpha .sb-user{border-bottom:2px solid var(--border);background:linear-gradient(135deg,#f8fff4,#f0f8ff)}
+html.alpha .avatar{
+  width:40px;height:40px;background:linear-gradient(135deg,var(--g),var(--c));
+  border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:900;letter-spacing:1px;
+  box-shadow:0 4px 12px rgba(0,166,81,.3);
+}
+html.alpha .user-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.5px;color:var(--t)}
+html.alpha .user-stat{color:var(--t2);font-family:'DM Sans',sans-serif}
+html.alpha .sb-sec{color:#b0bec5;font-family:'DM Sans',sans-serif;font-weight:600;font-size:9px;padding:12px 16px 4px}
+html.alpha .sb-item{border-left:3px solid transparent;padding:10px 16px;border-radius:0}
+html.alpha .sb-item:hover{background:#f5f9ff;border-left-color:var(--c2)}
+html.alpha .sb-item.active{
+  background:linear-gradient(90deg,rgba(0,166,81,.08),transparent);
+  border-left-color:var(--g);
+}
+html.alpha .sb-item.active .sb-label{color:var(--g);font-weight:600}
+html.alpha .sb-label{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--t)}
+html.alpha .sb-badge{background:var(--g);color:#fff;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-weight:700}
+
+/* Alpha Page header */
+html.alpha .page-header{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04)}
+html.alpha .page-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:1px;color:var(--t)}
+html.alpha .page-title::before{content:'';display:none}
+html.alpha .page-path{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--t2);font-weight:500}
+html.alpha .content{background:var(--bg)}
+
+/* Alpha Cards */
+html.alpha .card{
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);transition:box-shadow .2s,transform .15s;
+}
+html.alpha .card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-1px)}
+html.alpha .card-label{font-family:'DM Sans',sans-serif;font-weight:600;font-size:9px;color:var(--t2);letter-spacing:1.5px}
+html.alpha .card-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900}
+html.alpha .card-sub{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--t2)}
+html.alpha .card-bar{height:4px;border-radius:2px;background:#eee}
+html.alpha .card-bar-fill{border-radius:2px}
+html.alpha .card-accent{width:4px;border-radius:0 0 0 12px}
+
+/* Alpha Section heads */
+html.alpha .sec-head{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;
+  letter-spacing:2px;color:var(--t);text-transform:uppercase;
+  border-bottom:2px solid var(--border);padding-bottom:6px;margin-bottom:12px;
+}
+html.alpha .sec-head::after{display:none}
+
+/* Alpha Inputs */
+html.alpha .inp{
+  background:#fff;border:1.5px solid var(--border);color:var(--t);
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  border-radius:8px;padding:9px 12px;
+}
+html.alpha .inp:focus{border-color:var(--c);box-shadow:0 0 0 3px rgba(0,119,182,.12)}
+html.alpha .inp-label{font-family:'DM Sans',sans-serif;font-weight:700;font-size:10px;color:var(--t2);letter-spacing:.5px}
+html.alpha select.inp option{background:#fff;color:var(--t)}
+
+/* Alpha Buttons */
+html.alpha .btn{
+  border-radius:8px;border:none;
+  background:linear-gradient(135deg,var(--g),var(--g2));
+  color:#fff;font-family:'DM Sans',sans-serif;font-weight:700;
+  font-size:11px;letter-spacing:.5px;padding:10px 18px;
+  box-shadow:0 3px 10px rgba(0,166,81,.3);transition:all .2s;
+}
+html.alpha .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,166,81,.4);background:linear-gradient(135deg,var(--g2),var(--g))}
+html.alpha .btn.danger{background:linear-gradient(135deg,var(--red),#b01e1e);box-shadow:0 3px 10px rgba(214,40,40,.3)}
+html.alpha .btn.danger:hover{box-shadow:0 6px 16px rgba(214,40,40,.4)}
+html.alpha .btn.sm{padding:6px 12px;font-size:10px}
+html.alpha .btn-ghost{border-radius:8px;border:1.5px dashed var(--border);color:var(--t2);font-family:'DM Sans',sans-serif}
+html.alpha .btn-ghost:hover{border-color:var(--g);color:var(--g);background:var(--gd)}
+
+/* Alpha Exercise cards */
+html.alpha .ex-card{background:#fff;border:1.5px solid var(--border);border-left:4px solid var(--border);border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+html.alpha .ex-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
+html.alpha .ex-card.done{border-left-color:var(--g);background:linear-gradient(90deg,#f0fff6,#fff)}
+html.alpha .ex-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--t)}
+html.alpha .ex-tag{background:var(--t3);border-radius:12px;border:none;color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px}
+html.alpha .ex-meta{font-family:'DM Sans',sans-serif}
+html.alpha .ex-meta b{color:var(--t)}
+html.alpha .check-sq{border-radius:6px;border:2px solid var(--border);width:22px;height:22px}
+html.alpha .ex-card.done .check-sq{background:var(--g);border-color:var(--g);color:#fff}
+
+/* Alpha Habits */
+html.alpha .habit-item{background:#fff;border:1.5px solid var(--border);border-left:4px solid var(--border);border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+html.alpha .habit-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+html.alpha .habit-item.done{border-left-color:var(--g);background:linear-gradient(90deg,#f0fff6,#fff)}
+html.alpha .habit-name{font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;color:var(--t)}
+html.alpha .habit-meta{font-family:'DM Sans',sans-serif;font-size:10px}
+html.alpha .wd{border-radius:3px;width:10px;height:10px}
+html.alpha .wd.done{background:var(--g);border-color:var(--g)}
+html.alpha .check-sq{border-radius:6px}
+
+/* Alpha Water */
+html.alpha .water-visual{background:#fff;border:1px solid var(--border);border-radius:12px;gap:6px}
+html.alpha .glass{border-radius:6px;border-width:1.5px;width:34px;height:44px}
+html.alpha .glass.full .glass-fill{background:var(--c)}
+html.alpha .glass:hover{border-color:var(--c)}
+
+/* Alpha Vitals */
+html.alpha .vital-card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+html.alpha .vital-big{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900}
+html.alpha .vital-sub{font-family:'DM Sans',sans-serif;font-weight:600}
+html.alpha .s-ok{background:#e8f9ef;border-color:#a8ddb5;color:var(--g2);border-radius:12px}
+html.alpha .s-warn{background:#fff3e0;border-color:#ffcc80;color:#e65100;border-radius:12px}
+html.alpha .s-bad{background:#fde8e8;border-color:#f5a5a5;color:var(--red);border-radius:12px}
+
+/* Alpha Measurements */
+html.alpha .meas-card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+html.alpha .meas-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900}
+html.alpha .meas-label{font-family:'DM Sans',sans-serif;font-weight:600}
+
+/* Alpha Goals */
+html.alpha .goal-card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+html.alpha .goal-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--t)}
+html.alpha .goal-bar{border-radius:4px;height:6px;background:#eee}
+html.alpha .goal-fill{border-radius:4px;background:linear-gradient(90deg,var(--g),var(--c))}
+html.alpha .goal-pct{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:var(--g)}
+html.alpha .goal-dates{font-family:'DM Sans',sans-serif;font-size:10px}
+
+/* Alpha Meal items */
+html.alpha .meal-item{background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+html.alpha .meal-name{font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;color:var(--t)}
+html.alpha .meal-cal{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--o)}
+html.alpha .meal-detail{font-family:'DM Sans',sans-serif}
+
+/* Alpha overview ring */
+html.alpha .ov-panel{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+html.alpha .ring-pct{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900}
+html.alpha .r-fg{stroke:url(#ringGrad)}
+html.alpha .ov-k{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--t2)}
+html.alpha .ov-v{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;color:var(--t)}
+html.alpha .ov-v.hi{color:var(--g)}
+
+/* Alpha bar rows */
+html.alpha .bar-bg{background:#eee;border-radius:4px;height:7px}
+html.alpha .bar-fill{border-radius:4px}
+html.alpha .bar-meta{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600}
+
+/* Alpha Day strip */
+html.alpha .day-pill{border-radius:10px;border:1.5px solid var(--border);background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+html.alpha .day-pill:hover{border-color:var(--c2);background:#f0f8ff}
+html.alpha .day-pill.active{background:linear-gradient(135deg,var(--g),var(--c));border-color:transparent;box-shadow:0 4px 12px rgba(0,166,81,.3)}
+html.alpha .day-pill.active .dp-name,.alpha .day-pill.active .dp-num{color:#fff}
+html.alpha .day-pill.done{border-color:var(--g3)}
+html.alpha .dp-name{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:700;letter-spacing:.5px;color:var(--t2)}
+html.alpha .dp-num{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--t)}
+
+/* Alpha chart wrap */
+html.alpha .chart-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+
+/* Alpha Toast */
+html.alpha .toast{background:var(--t);color:#fff;border-color:var(--t);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+/* Alpha Edit form */
+html.alpha .edit-form{background:#f8f9fc;border:1.5px solid var(--border);border-top:2px solid var(--g);border-radius:0 0 10px 10px}
+
+/* Alpha Scrollbar */
+html.alpha ::-webkit-scrollbar-thumb{background:#d0d7df;border-radius:4px}
+
+/* Alpha content boxes - inline style overrides via JS class */
+html.alpha .content .inp-section{border-radius:12px}
+html.alpha .modal{border-radius:16px;border-top:3px solid var(--g)}
+html.alpha .edit-btn{color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:600;font-size:11px}
+html.alpha .edit-btn:hover{color:var(--c)}
+html.alpha .del-btn:hover{color:var(--red)}
+body{background:var(--bg);color:var(--t);font-family:var(--mono);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
+body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .os{display:grid;grid-template-columns:190px 1fr;flex:1;overflow:hidden}
 
 /* TOPBAR */
@@ -228,8 +446,12 @@ canvas{display:block;width:100%}
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div><span class="app-brand">FIT//OS <span>PERSONAL FITNESS SYSTEM</span></span></div>
+  <div><span class="app-brand" id="appBrand">FIT//OS <span>PERSONAL FITNESS SYSTEM</span></span></div>
   <div class="topbar-right">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Switch Theme">
+      <div class="toggle-track"><div class="toggle-knob"></div></div>
+      <span class="toggle-label" id="themeLabel">TERMINAL</span>
+    </div>
     <div class="streak-chip"><div class="dot-pulse"></div><span id="streakDisp">12 DAY STREAK</span></div>
     <div class="date-disp" id="dateDisp"></div>
   </div>
@@ -281,6 +503,12 @@ canvas{display:block;width:100%}
   <div class="ov-panel">
     <div class="ring-wrap">
       <svg class="ring-svg" width="90" height="90" viewBox="0 0 90 90">
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00a651"/>
+            <stop offset="100%" style="stop-color:#0096c7"/>
+          </linearGradient>
+        </defs>
         <circle class="r-bg" cx="45" cy="45" r="36"/>
         <circle class="r-fg" cx="45" cy="45" r="36" stroke-dasharray="226" id="mainRing" stroke-dashoffset="226"/>
       </svg>
@@ -759,21 +987,33 @@ function renderWeightChart() {
   canvas.height = 100;
   var W = canvas.width, H = canvas.height, pad = 30;
   ctx.clearRect(0,0,W,H);
+  var isAlpha = document.documentElement.classList.contains('alpha');
+  var lineColor = isAlpha ? '#00a651' : '#00ff88';
+  var dotColor = isAlpha ? '#00a651' : '#00ff88';
+  var gridColor = isAlpha ? '#e8ecf0' : '#0f2a1e';
+  var textColor = isAlpha ? '#5c677d' : '#2a5a40';
   var pts = S.measurements.slice(-10).map(m => ({d:m.date, v:parseFloat(m.weight)})).filter(p => p.v);
   if (pts.length < 2) {
-    ctx.fillStyle = '#2a5a40'; ctx.font = '11px Share Tech Mono';
+    ctx.fillStyle = textColor; ctx.font = isAlpha ? '11px DM Sans' : '11px Share Tech Mono';
     ctx.fillText('Not enough data. Log measurements to see weight trend.', 10, H/2); return;
   }
   var vals = pts.map(p => p.v);
   var mn = Math.min(...vals)-1, mx = Math.max(...vals)+1;
   var xStep = (W - pad*2) / (pts.length - 1);
-  ctx.strokeStyle = '#0f2a1e'; ctx.setLineDash([3,3]);
+  ctx.strokeStyle = gridColor; ctx.setLineDash([3,3]);
   [0.25,0.5,0.75].forEach(f => {
     var y = pad + (1-f)*(H-pad*2);
     ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
   });
   ctx.setLineDash([]);
-  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2;
+  if (isAlpha) {
+    var grad = ctx.createLinearGradient(0,0,W,0);
+    grad.addColorStop(0,'#00a651'); grad.addColorStop(1,'#0096c7');
+    ctx.strokeStyle = grad;
+  } else {
+    ctx.strokeStyle = lineColor;
+  }
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
   pts.forEach((p,i) => {
     var x = pad + i*xStep;
@@ -784,10 +1024,11 @@ function renderWeightChart() {
   pts.forEach((p,i) => {
     var x = pad + i*xStep;
     var y = pad + (1-(p.v-mn)/(mx-mn))*(H-pad*2);
-    ctx.fillStyle = '#00ff88'; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = dotColor; ctx.beginPath(); ctx.arc(x,y,isAlpha?4:3,0,Math.PI*2); ctx.fill();
+    if (isAlpha) { ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill(); }
     if (i===0 || i===pts.length-1) {
-      ctx.fillStyle = '#5a9a70'; ctx.font = '9px Share Tech Mono';
-      ctx.fillText(p.v+'kg', x-(i===pts.length-1?24:0), y-8);
+      ctx.fillStyle = textColor; ctx.font = isAlpha ? 'bold 10px DM Sans' : '9px Share Tech Mono';
+      ctx.fillText(p.v+'kg', x-(i===pts.length-1?24:0), y-10);
     }
   });
 }
@@ -1487,9 +1728,34 @@ function calcStreak() {
   document.getElementById('streakDisp').textContent = streak + ' DAY STREAK';
 }
 
+// ===================== THEME TOGGLE =====================
+function toggleTheme() {
+  var isAlpha = document.documentElement.classList.toggle('alpha');
+  document.getElementById('themeLabel').textContent = isAlpha ? 'ALPHA' : 'TERMINAL';
+  var brand = document.getElementById('appBrand');
+  if (isAlpha) {
+    brand.innerHTML = '⚡ FIT·OS <span>ALPHA EDITION</span>';
+  } else {
+    brand.innerHTML = 'FIT//OS <span>PERSONAL FITNESS SYSTEM</span>';
+  }
+  try { localStorage.setItem('fitos_theme', isAlpha ? 'alpha' : 'terminal'); } catch(e) {}
+  if (document.getElementById('page-dashboard').classList.contains('active')) {
+    setTimeout(renderWeightChart, 50);
+  }
+}
+
 // ===================== INIT =====================
 function init() {
   load();
+  // Load saved theme
+  try {
+    var savedTheme = localStorage.getItem('fitos_theme');
+    if (savedTheme === 'alpha') {
+      document.documentElement.classList.add('alpha');
+      document.getElementById('themeLabel').textContent = 'ALPHA';
+      document.getElementById('appBrand').innerHTML = '⚡ FIT·OS <span>ALPHA EDITION</span>';
+    }
+  } catch(e) {}
   S.today = today();
   document.getElementById('dateDisp').textContent = todayLabel();
   document.getElementById('userNameDisp').textContent = (S.cfg.name||'BEAST_MODE').toUpperCase();

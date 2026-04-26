@@ -167,6 +167,13 @@ canvas{display:block;width:100%}
 .meal-detail{font-size:10px;color:var(--t2);margin-top:4px}
 .del-btn{background:none;border:none;color:var(--border);cursor:pointer;font-size:12px;transition:color .2s}
 .del-btn:hover{color:var(--red)}
+.edit-btn{background:none;border:none;color:var(--border);cursor:pointer;font-size:11px;transition:color .2s;font-family:var(--mono);letter-spacing:.5px}
+.edit-btn:hover{color:var(--g)}
+/* INLINE EDIT FORM */
+.edit-form{background:var(--card2);border:1px solid var(--g3);border-top:1px solid var(--g);padding:12px;margin-top:6px;display:none}
+.edit-form.open{display:block}
+.edit-form .inp-row{flex-wrap:wrap}
+.edit-form-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
 
 /* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center}
@@ -810,14 +817,35 @@ function renderNutrition() {
   var list = document.getElementById('mealList');
   if (!d.meals.length) { list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No meals logged yet. Add your first meal above.</div>'; return; }
   var colors = {Breakfast:'var(--o)',Lunch:'var(--c2)',Dinner:'var(--p)',Snack:'var(--t2)','Pre-workout':'var(--g2)','Post-workout':'var(--g)'};
+  var mealTypes = ['Breakfast','Lunch','Dinner','Snack','Pre-workout','Post-workout'];
   list.innerHTML = d.meals.map((m,i) => `
     <div class="meal-item" style="border-left-color:${colors[m.type]||'var(--t2)'}">
       <div class="meal-top">
         <div><div class="meal-name">${m.name} <span style="font-size:9px;color:var(--t2);letter-spacing:1px">${m.type.toUpperCase()} · ${m.time||''}</span></div>
         <div class="meal-detail">P: ${m.protein}g · C: ${m.carbs}g · F: ${m.fat}g · Fiber: ${m.fiber||0}g${m.notes?' · '+m.notes:''}</div></div>
-        <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
           <div class="meal-cal">${m.kcal} kcal</div>
+          <button class="edit-btn" onclick="toggleMealEdit(${i})">✎ EDIT</button>
           <button class="del-btn" onclick="delMeal(${i})">✕</button>
+        </div>
+      </div>
+      <div class="edit-form" id="meal-edit-${i}">
+        <div class="inp-row" style="margin-bottom:8px;flex-wrap:wrap">
+          <div class="inp-group" style="flex:2;min-width:140px"><div class="inp-label">MEAL NAME</div><input class="inp" id="me-name-${i}" type="text" value="${m.name.replace(/"/g,'&quot;')}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">TIME</div><input class="inp" id="me-time-${i}" type="time" value="${m.time||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:100px"><div class="inp-label">TYPE</div><select class="inp" id="me-type-${i}">${mealTypes.map(t=>`<option${t===m.type?' selected':''}>${t}</option>`).join('')}</select></div>
+        </div>
+        <div class="inp-row" style="flex-wrap:wrap">
+          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">KCAL</div><input class="inp" id="me-kcal-${i}" type="number" value="${m.kcal}"/></div>
+          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">PROTEIN</div><input class="inp" id="me-p-${i}" type="number" value="${m.protein}"/></div>
+          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">CARBS</div><input class="inp" id="me-c-${i}" type="number" value="${m.carbs}"/></div>
+          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">FAT</div><input class="inp" id="me-f-${i}" type="number" value="${m.fat}"/></div>
+          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">FIBER</div><input class="inp" id="me-fb-${i}" type="number" value="${m.fiber||0}"/></div>
+        </div>
+        <div class="inp-group" style="margin-top:6px"><div class="inp-label">NOTES</div><input class="inp" id="me-notes-${i}" type="text" value="${(m.notes||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="edit-form-actions">
+          <button class="btn sm" onclick="saveMealEdit(${i})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="toggleMealEdit(${i})">[ CANCEL ]</button>
         </div>
       </div>
     </div>`).join('');
@@ -843,6 +871,26 @@ function addMeal() {
 function delMeal(i) {
   getDay(S.today).meals.splice(i,1);
   save(); renderNutrition(); toast('Meal removed');
+}
+
+function toggleMealEdit(i) {
+  var f = document.getElementById('meal-edit-'+i);
+  if (f) f.classList.toggle('open');
+}
+
+function saveMealEdit(i) {
+  var d = getDay(S.today);
+  var m = d.meals[i];
+  m.name = document.getElementById('me-name-'+i).value.trim() || m.name;
+  m.time = document.getElementById('me-time-'+i).value;
+  m.type = document.getElementById('me-type-'+i).value;
+  m.kcal = parseInt(document.getElementById('me-kcal-'+i).value)||0;
+  m.protein = parseInt(document.getElementById('me-p-'+i).value)||0;
+  m.carbs = parseInt(document.getElementById('me-c-'+i).value)||0;
+  m.fat = parseInt(document.getElementById('me-f-'+i).value)||0;
+  m.fiber = parseInt(document.getElementById('me-fb-'+i).value)||0;
+  m.notes = document.getElementById('me-notes-'+i).value.trim();
+  save(); renderNutrition(); toast('Meal updated!');
 }
 
 // ===================== WORKOUT =====================
@@ -876,6 +924,7 @@ function renderWorkout() {
   document.getElementById('wkBadge').textContent = done+'/'+d.exercises.length;
   var list = document.getElementById('exList');
   if (!d.exercises.length) { list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No exercises added yet. Use the form below.</div>'; return; }
+  var muscles = ['Chest','Back','Shoulders','Biceps','Triceps','Legs','Core','Cardio','Full Body'];
   list.innerHTML = d.exercises.map((e,i) => `
     <div class="ex-card ${e.done?'done':''}" onclick="toggleEx(${i},this)">
       <div class="ex-top">
@@ -883,6 +932,7 @@ function renderWorkout() {
         <div style="display:flex;gap:8px;align-items:center">
           <span class="ex-tag">${e.muscle}</span>
           <div class="check-sq">${e.done?'OK':''}</div>
+          <button class="edit-btn" onclick="event.stopPropagation();toggleExEdit(${i})">✎</button>
           <button class="del-btn" onclick="event.stopPropagation();delEx(${i})" style="font-size:12px">✕</button>
         </div>
       </div>
@@ -891,6 +941,22 @@ function renderWorkout() {
         <span><b>${e.reps}</b> REPS</span>
         <span><b>${e.weight}</b> KG</span>
         <span><b>${e.rest}</b>s REST</span>
+      </div>
+      <div class="edit-form" id="ex-edit-${i}" onclick="event.stopPropagation()">
+        <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
+          <div class="inp-group" style="flex:2;min-width:120px"><div class="inp-label">NAME</div><input class="inp" id="ee-name-${i}" type="text" value="${e.name.replace(/"/g,'&quot;')}"/></div>
+          <div class="inp-group" style="flex:2;min-width:100px"><div class="inp-label">MUSCLE</div><select class="inp" id="ee-muscle-${i}">${muscles.map(m=>`<option${m===e.muscle?' selected':''}>${m}</option>`).join('')}</select></div>
+        </div>
+        <div class="inp-row" style="flex-wrap:wrap">
+          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">SETS</div><input class="inp" id="ee-sets-${i}" type="number" value="${e.sets}"/></div>
+          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">REPS</div><input class="inp" id="ee-reps-${i}" type="text" value="${e.reps}"/></div>
+          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">WEIGHT</div><input class="inp" id="ee-weight-${i}" type="text" value="${e.weight}"/></div>
+          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">REST(s)</div><input class="inp" id="ee-rest-${i}" type="number" value="${e.rest}"/></div>
+        </div>
+        <div class="edit-form-actions">
+          <button class="btn sm" onclick="saveExEdit(${i})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="toggleExEdit(${i})">[ CANCEL ]</button>
+        </div>
       </div>
     </div>`).join('');
 }
@@ -906,6 +972,23 @@ function toggleEx(i, card) {
 function delEx(i) {
   getDay(wkDate).exercises.splice(i,1);
   save(); renderWorkout(); toast('Exercise removed');
+}
+
+function toggleExEdit(i) {
+  var f = document.getElementById('ex-edit-'+i);
+  if (f) f.classList.toggle('open');
+}
+
+function saveExEdit(i) {
+  var d = getDay(wkDate);
+  var e = d.exercises[i];
+  e.name = document.getElementById('ee-name-'+i).value.trim() || e.name;
+  e.muscle = document.getElementById('ee-muscle-'+i).value;
+  e.sets = parseInt(document.getElementById('ee-sets-'+i).value)||e.sets;
+  e.reps = document.getElementById('ee-reps-'+i).value || e.reps;
+  e.weight = document.getElementById('ee-weight-'+i).value || e.weight;
+  e.rest = parseInt(document.getElementById('ee-rest-'+i).value)||e.rest;
+  save(); renderWorkout(); toast('Exercise updated!');
 }
 
 function addExercise() {
@@ -952,14 +1035,28 @@ function renderHabits() {
   var weekDates2 = [];
   var base2 = new Date(); base2.setDate(base2.getDate()-base2.getDay()+1);
   for(var i=0;i<7;i++){var nd=new Date(base2);nd.setDate(base2.getDate()+i);weekDates2.push(nd.toISOString().split('T')[0]);}
+  var habCats = ['Fitness','Nutrition','Sleep','Mindfulness','Productivity','Other'];
   list.innerHTML = S.habits.map((h,i) => {
     var streak=0,d2=new Date();
     for(var j=0;j<90;j++){var k=d2.toISOString().split('T')[0];if(h.logs[k]){streak++;}else break;d2.setDate(d2.getDate()-1);}
     return `<div class="habit-item ${h.logs[S.today]?'done':''}" onclick="toggleHabit(${i})">
-      <div>
-        <div class="habit-name">${h.name} <span style="font-size:9px;color:var(--t2);letter-spacing:1px">${h.cat}</span></div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="habit-name">${h.name} <span style="font-size:9px;color:var(--t2);letter-spacing:1px">${h.cat}</span></div>
+          <button class="edit-btn" onclick="event.stopPropagation();toggleHabitEdit(${i})">✎ EDIT</button>
+        </div>
         <div class="habit-meta">${streak} day streak</div>
         <div class="week-dots">${weekDates2.map(wd=>`<div class="wd ${h.logs[wd]?'done':''}"></div>`).join('')}</div>
+        <div class="edit-form" id="hab-edit-${i}" onclick="event.stopPropagation()">
+          <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
+            <div class="inp-group" style="flex:2;min-width:140px"><div class="inp-label">HABIT NAME</div><input class="inp" id="he-name-${i}" type="text" value="${h.name.replace(/"/g,'&quot;')}"/></div>
+            <div class="inp-group" style="flex:1;min-width:100px"><div class="inp-label">CATEGORY</div><select class="inp" id="he-cat-${i}">${habCats.map(c=>`<option${c===h.cat?' selected':''}>${c}</option>`).join('')}</select></div>
+          </div>
+          <div class="edit-form-actions">
+            <button class="btn sm" onclick="saveHabitEdit(${i})">[ SAVE ]</button>
+            <button class="btn sm danger" onclick="toggleHabitEdit(${i})">[ CANCEL ]</button>
+          </div>
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <div class="check-sq">${h.logs[S.today]?'OK':''}</div>
@@ -976,6 +1073,20 @@ function toggleHabit(i) {
 
 function delHabit(i) {
   S.habits.splice(i,1); save(); renderHabits(); toast('Habit removed');
+}
+
+function toggleHabitEdit(i) {
+  var f = document.getElementById('hab-edit-'+i);
+  if (f) f.classList.toggle('open');
+}
+
+function saveHabitEdit(i) {
+  var name = document.getElementById('he-name-'+i).value.trim();
+  var cat = document.getElementById('he-cat-'+i).value;
+  if (!name) { toast('Habit name cannot be empty'); return; }
+  S.habits[i].name = name;
+  S.habits[i].cat = cat;
+  save(); renderHabits(); toast('Habit updated!');
 }
 
 function addHabit() {
@@ -1053,15 +1164,41 @@ function renderVitals() {
   }
   var hist = document.getElementById('vitalHistory');
   if (!S.vitals.length) { hist.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No vitals logged yet.</div>'; return; }
-  hist.innerHTML = S.vitals.slice().reverse().slice(0,10).map((v,i) => `
-    <div style="background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-size:10px;color:var(--t2);letter-spacing:1px;margin-bottom:4px">${v.date}</div>
-        <div style="font-size:11px">HR: ${v.hr||'--'} bpm · BP: ${v.sys||'--'}/${v.dia||'--'} · Sleep: ${v.sleep||'--'}h · Quality: ${v.quality||'--'}/10</div>
-        ${v.notes?`<div style="font-size:10px;color:var(--t2);margin-top:3px">${v.notes}</div>`:''}
+  hist.innerHTML = S.vitals.slice().reverse().slice(0,10).map((v,i) => {
+    var realIdx = S.vitals.length-1-i;
+    return `
+    <div style="background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:10px;color:var(--t2);letter-spacing:1px;margin-bottom:4px">${v.date}</div>
+          <div style="font-size:11px">HR: ${v.hr||'--'} bpm · BP: ${v.sys||'--'}/${v.dia||'--'} · Sleep: ${v.sleep||'--'}h · Quality: ${v.quality||'--'}/10</div>
+          ${v.notes?`<div style="font-size:10px;color:var(--t2);margin-top:3px">${v.notes}</div>`:''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="edit-btn" onclick="toggleVitalEdit(${realIdx})">✎ EDIT</button>
+          <button class="del-btn" onclick="delVital(${realIdx})">✕</button>
+        </div>
       </div>
-      <button class="del-btn" onclick="delVital(${S.vitals.length-1-i})">✕</button>
-    </div>`).join('');
+      <div class="edit-form" id="vit-edit-${realIdx}">
+        <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">HEART RATE</div><input class="inp" id="ve-hr-${realIdx}" type="number" value="${v.hr||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">SYSTOLIC</div><input class="inp" id="ve-sys-${realIdx}" type="number" value="${v.sys||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">DIASTOLIC</div><input class="inp" id="ve-dia-${realIdx}" type="number" value="${v.dia||''}"/></div>
+        </div>
+        <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">SLEEP (hrs)</div><input class="inp" id="ve-sleep-${realIdx}" type="number" step="0.5" value="${v.sleep||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">QUALITY</div><input class="inp" id="ve-q-${realIdx}" type="number" min="1" max="10" value="${v.quality||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">BED TIME</div><input class="inp" id="ve-bed-${realIdx}" type="time" value="${v.bed||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">WAKE TIME</div><input class="inp" id="ve-wake-${realIdx}" type="time" value="${v.wake||''}"/></div>
+        </div>
+        <div class="inp-group" style="margin-bottom:8px"><div class="inp-label">NOTES</div><input class="inp" id="ve-notes-${realIdx}" type="text" value="${(v.notes||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="edit-form-actions">
+          <button class="btn sm" onclick="saveVitalEdit(${realIdx})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="toggleVitalEdit(${realIdx})">[ CANCEL ]</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function logVitals() {
@@ -1078,6 +1215,24 @@ function logVitals() {
 }
 
 function delVital(i) { S.vitals.splice(i,1); save(); renderVitals(); toast('Entry removed'); }
+
+function toggleVitalEdit(i) {
+  var f = document.getElementById('vit-edit-'+i);
+  if (f) f.classList.toggle('open');
+}
+
+function saveVitalEdit(i) {
+  var v = S.vitals[i];
+  v.hr = parseInt(document.getElementById('ve-hr-'+i).value)||0;
+  v.sys = parseInt(document.getElementById('ve-sys-'+i).value)||0;
+  v.dia = parseInt(document.getElementById('ve-dia-'+i).value)||0;
+  v.sleep = parseFloat(document.getElementById('ve-sleep-'+i).value)||0;
+  v.quality = parseInt(document.getElementById('ve-q-'+i).value)||0;
+  v.bed = document.getElementById('ve-bed-'+i).value;
+  v.wake = document.getElementById('ve-wake-'+i).value;
+  v.notes = document.getElementById('ve-notes-'+i).value.trim();
+  save(); renderVitals(); toast('Vitals updated!');
+}
 
 // ===================== MEASUREMENTS =====================
 function renderMeasurements() {
@@ -1111,14 +1266,39 @@ function renderMeasurements() {
   });
   var hist = document.getElementById('measHistory');
   if (!S.measurements.length) { hist.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No measurements logged yet.</div>'; return; }
-  hist.innerHTML = S.measurements.slice().reverse().slice(0,5).map((m,i) => `
-    <div style="background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-size:10px;color:var(--t2);letter-spacing:1px;margin-bottom:4px">${m.date}</div>
-        <div style="font-size:11px">Wt: ${m.weight||'--'}kg · BF: ${m.bf||'--'}% · Chest: ${m.chest||'--'} · Waist: ${m.waist||'--'} · Arm: ${m.arm||'--'} cm</div>
+  hist.innerHTML = S.measurements.slice().reverse().slice(0,5).map((m,i) => {
+    var realIdx = S.measurements.length-1-i;
+    return `
+    <div style="background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:10px;color:var(--t2);letter-spacing:1px;margin-bottom:4px">${m.date}</div>
+          <div style="font-size:11px">Wt: ${m.weight||'--'}kg · BF: ${m.bf||'--'}% · Chest: ${m.chest||'--'} · Waist: ${m.waist||'--'} · Arm: ${m.arm||'--'} cm</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="edit-btn" onclick="toggleMeasEdit(${realIdx})">✎ EDIT</button>
+          <button class="del-btn" onclick="delMeas(${realIdx})">✕</button>
+        </div>
       </div>
-      <button class="del-btn" onclick="delMeas(${S.measurements.length-1-i})">✕</button>
-    </div>`).join('');
+      <div class="edit-form" id="meas-edit-${realIdx}">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+          <div class="inp-group"><div class="inp-label">WEIGHT (kg)</div><input class="inp" id="mee-weight-${realIdx}" type="number" step="0.1" value="${m.weight||''}"/></div>
+          <div class="inp-group"><div class="inp-label">BODY FAT (%)</div><input class="inp" id="mee-bf-${realIdx}" type="number" step="0.1" value="${m.bf||''}"/></div>
+          <div class="inp-group"><div class="inp-label">HEIGHT (cm)</div><input class="inp" id="mee-height-${realIdx}" type="number" value="${m.height||''}"/></div>
+          <div class="inp-group"><div class="inp-label">CHEST (cm)</div><input class="inp" id="mee-chest-${realIdx}" type="number" step="0.5" value="${m.chest||''}"/></div>
+          <div class="inp-group"><div class="inp-label">WAIST (cm)</div><input class="inp" id="mee-waist-${realIdx}" type="number" step="0.5" value="${m.waist||''}"/></div>
+          <div class="inp-group"><div class="inp-label">HIPS (cm)</div><input class="inp" id="mee-hips-${realIdx}" type="number" step="0.5" value="${m.hips||''}"/></div>
+          <div class="inp-group"><div class="inp-label">ARM (cm)</div><input class="inp" id="mee-arm-${realIdx}" type="number" step="0.5" value="${m.arm||''}"/></div>
+          <div class="inp-group"><div class="inp-label">THIGH (cm)</div><input class="inp" id="mee-thigh-${realIdx}" type="number" step="0.5" value="${m.thigh||''}"/></div>
+          <div class="inp-group"><div class="inp-label">CALF (cm)</div><input class="inp" id="mee-calf-${realIdx}" type="number" step="0.5" value="${m.calf||''}"/></div>
+        </div>
+        <div class="edit-form-actions">
+          <button class="btn sm" onclick="saveMeasEdit(${realIdx})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="toggleMeasEdit(${realIdx})">[ CANCEL ]</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function logMeasurements() {
@@ -1135,6 +1315,21 @@ function logMeasurements() {
 
 function delMeas(i) { S.measurements.splice(i,1); save(); renderMeasurements(); toast('Entry removed'); }
 
+function toggleMeasEdit(i) {
+  var f = document.getElementById('meas-edit-'+i);
+  if (f) f.classList.toggle('open');
+}
+
+function saveMeasEdit(i) {
+  var m = S.measurements[i];
+  ['weight','bf','height','chest','waist','hips','arm','thigh','calf'].forEach(f => {
+    var el = document.getElementById('mee-'+f+'-'+i);
+    if (el && el.value !== '') m[f] = parseFloat(el.value);
+    else if (el && el.value === '') delete m[f];
+  });
+  save(); renderMeasurements(); toast('Measurements updated!');
+}
+
 // ===================== GOALS =====================
 function renderGoals() {
   var active = S.goals.filter(g=>!g.complete);
@@ -1145,6 +1340,7 @@ function renderGoals() {
   sel.innerHTML = active.map((g,i)=>`<option value="${S.goals.indexOf(g)}">${g.name}</option>`).join('');
   var list = document.getElementById('goalList');
   if (!S.goals.length) { list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No goals set yet. Add your first goal below.</div>'; return; }
+  var goalCats = ['Weight Loss','Muscle Gain','Body Fat','Strength','Cardio','Habit','Other'];
   list.innerHTML = S.goals.map((g,i) => {
     var range = Math.abs(parseFloat(g.target)-parseFloat(g.start));
     var done2 = Math.abs(parseFloat(g.cur)-parseFloat(g.start));
@@ -1152,14 +1348,31 @@ function renderGoals() {
     return `<div class="goal-card ${g.complete?'opacity:.6':''}">
       <div class="goal-top">
         <div><div class="goal-name">${g.name}</div><div style="font-size:9px;color:var(--t2);margin-top:2px">${g.cat} · Target: ${g.target} ${g.unit} by ${g.date||'—'}</div></div>
-        <div style="display:flex;gap:10px;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center">
           <span class="goal-pct">${pct}%</span>
+          <button class="edit-btn" onclick="toggleGoalEdit(${i})">✎ EDIT</button>
           ${!g.complete?`<button class="btn sm" onclick="completeGoal(${i})">✓ DONE</button>`:'<span style="font-size:9px;color:var(--g2);letter-spacing:1px">COMPLETED</span>'}
           <button class="del-btn" onclick="delGoal(${i})">✕</button>
         </div>
       </div>
       <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
       <div class="goal-dates"><span>START: ${g.start} ${g.unit}</span><span>NOW: ${g.cur} ${g.unit}</span><span>TARGET: ${g.target} ${g.unit}</span></div>
+      <div class="edit-form" id="goal-edit-${i}">
+        <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
+          <div class="inp-group" style="flex:3;min-width:140px"><div class="inp-label">GOAL NAME</div><input class="inp" id="ge-name-${i}" type="text" value="${g.name.replace(/"/g,'&quot;')}"/></div>
+          <div class="inp-group" style="flex:2;min-width:100px"><div class="inp-label">CATEGORY</div><select class="inp" id="ge-cat-${i}">${goalCats.map(c=>`<option${c===g.cat?' selected':''}>${c}</option>`).join('')}</select></div>
+        </div>
+        <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">CURRENT</div><input class="inp" id="ge-cur-${i}" type="number" step="0.1" value="${g.cur}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">TARGET</div><input class="inp" id="ge-tar-${i}" type="number" step="0.1" value="${g.target}"/></div>
+          <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">UNIT</div><input class="inp" id="ge-unit-${i}" type="text" value="${g.unit||''}"/></div>
+          <div class="inp-group" style="flex:1;min-width:100px"><div class="inp-label">TARGET DATE</div><input class="inp" id="ge-date-${i}" type="date" value="${g.date||''}"/></div>
+        </div>
+        <div class="edit-form-actions">
+          <button class="btn sm" onclick="saveGoalEdit(${i})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="toggleGoalEdit(${i})">[ CANCEL ]</button>
+        </div>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1188,6 +1401,24 @@ function updateGoalProgress() {
 
 function completeGoal(i) { S.goals[i].complete=true; save(); renderGoals(); toast('Goal completed!'); }
 function delGoal(i) { S.goals.splice(i,1); save(); renderGoals(); toast('Goal removed'); }
+
+function toggleGoalEdit(i) {
+  var f = document.getElementById('goal-edit-'+i);
+  if (f) f.classList.toggle('open');
+}
+
+function saveGoalEdit(i) {
+  var g = S.goals[i];
+  var name = document.getElementById('ge-name-'+i).value.trim();
+  if (!name) { toast('Goal name cannot be empty'); return; }
+  g.name = name;
+  g.cat = document.getElementById('ge-cat-'+i).value;
+  g.cur = parseFloat(document.getElementById('ge-cur-'+i).value)||g.cur;
+  g.target = parseFloat(document.getElementById('ge-tar-'+i).value)||g.target;
+  g.unit = document.getElementById('ge-unit-'+i).value;
+  g.date = document.getElementById('ge-date-'+i).value;
+  save(); renderGoals(); toast('Goal updated!');
+}
 
 // ===================== SETTINGS =====================
 function loadSettings() {

@@ -226,7 +226,106 @@ html.alpha .edit-form{background:#f8f9fc;border:1.5px solid var(--border);border
 /* Alpha Scrollbar */
 html.alpha ::-webkit-scrollbar-thumb{background:#d0d7df;border-radius:4px}
 
-/* Alpha content boxes - inline style overrides via JS class */
+/* ===== TIMER & STOPWATCH STYLES ===== */
+.timer-tab{
+  flex:1;background:var(--card);border:none;border-right:1px solid var(--border);
+  color:var(--t2);font-family:var(--mono);font-size:10px;letter-spacing:1px;
+  padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center;
+}
+.timer-tab:last-child{border-right:none}
+.timer-tab:hover{background:var(--card2);color:var(--t)}
+.timer-tab.active{background:var(--gd);color:var(--g);border-bottom:2px solid var(--g)}
+.timer-mode{display:none}
+.timer-mode.active{display:block}
+
+/* Ring display */
+.timer-display-wrap{
+  position:relative;width:280px;height:280px;margin:0 auto 20px;display:flex;
+  align-items:center;justify-content:center;
+}
+.timer-ring-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.timer-ring-bg{fill:none;stroke:var(--t3);stroke-width:10}
+.timer-ring-fg{
+  fill:none;stroke:var(--g);stroke-width:10;stroke-linecap:round;
+  transition:stroke-dashoffset .4s linear, stroke .3s;
+}
+.timer-display-inner{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+}
+.timer-big{
+  font-family:var(--raj);font-size:52px;font-weight:700;color:var(--t);
+  letter-spacing:2px;line-height:1;transition:color .3s;font-variant-numeric:tabular-nums;
+}
+.timer-big.running{color:var(--g)}
+.timer-big.resting{color:var(--c)}
+.timer-big.warning{color:var(--o2);animation:timerWarn .5s infinite alternate}
+.timer-big.done{color:var(--red)}
+@keyframes timerWarn{from{opacity:1}to{opacity:.4}}
+.timer-mode-lbl{
+  font-size:11px;letter-spacing:3px;color:var(--t2);font-family:var(--mono);
+  text-transform:uppercase;
+}
+
+/* Preset buttons */
+.preset-btn{
+  background:var(--card);border:1px solid var(--border);color:var(--t2);
+  font-family:var(--mono);font-size:9px;letter-spacing:1px;
+  padding:6px 12px;cursor:pointer;transition:all .15s;
+}
+.preset-btn:hover{background:var(--gd);border-color:var(--g);color:var(--g)}
+.preset-btn.active{background:var(--gd);border-color:var(--g);color:var(--g)}
+
+/* Saved timer cards */
+.saved-timer-card{
+  background:var(--card);border:1px solid var(--border);padding:12px;
+  margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;
+  border-left:2px solid var(--border);transition:all .15s;
+}
+.saved-timer-card:hover{background:var(--card2);border-left-color:var(--g)}
+.saved-timer-name{font-family:var(--raj);font-size:13px;font-weight:600;letter-spacing:.5px}
+.saved-timer-dur{font-size:11px;color:var(--g);letter-spacing:1px}
+
+/* Lap list */
+.lap-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;
+  background:var(--card);
+}
+.lap-item:first-child{border-top:1px solid var(--border)}
+.lap-num{color:var(--t2);letter-spacing:1px;font-size:9px}
+.lap-time{font-family:var(--raj);font-size:14px;font-weight:600;color:var(--t)}
+.lap-delta{font-size:10px}
+.lap-item.best .lap-time{color:var(--g)}
+.lap-item.worst .lap-time{color:var(--red)}
+
+/* Interval progress bar */
+.iv-progress-wrap{
+  height:6px;background:var(--t3);margin-bottom:14px;overflow:hidden;
+}
+.iv-progress-fill{height:100%;background:var(--o);transition:width .4s linear}
+
+/* Sound indicator */
+.sound-btn{
+  background:none;border:1px solid var(--border);color:var(--t2);
+  font-family:var(--mono);font-size:10px;padding:5px 10px;cursor:pointer;
+  transition:all .2s;letter-spacing:1px;
+}
+.sound-btn:hover{border-color:var(--g);color:var(--g)}
+.sound-btn.muted{color:var(--red);border-color:var(--red)}
+
+/* Alpha timer overrides */
+html.alpha .timer-tab{background:#fff;color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:600;font-size:11px}
+html.alpha .timer-tab.active{background:#f0fff6;color:var(--g);border-bottom:3px solid var(--g)}
+html.alpha .timer-big{font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:900}
+html.alpha .timer-mode-lbl{font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:2px}
+html.alpha .timer-ring-bg{stroke:#e8ecf0}
+html.alpha .preset-btn{background:#fff;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px}
+html.alpha .preset-btn:hover{background:var(--gd)}
+html.alpha .saved-timer-card{background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+html.alpha .lap-item{background:#fff;border-radius:0}
+html.alpha .saved-timer-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800}
+html.alpha .sound-btn{border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600}
 html.alpha .content .inp-section{border-radius:12px}
 html.alpha .modal{border-radius:16px;border-top:3px solid var(--g)}
 html.alpha .edit-btn{color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:600;font-size:11px}
@@ -469,21 +568,24 @@ canvas{display:block;width:100%}
   </div>
   <div class="sb-nav">
     <div class="sb-sec">OVERVIEW</div>
-    <div class="sb-item active" onclick="nav(this,'dashboard')"><span class="sb-icon">📊</span><span class="sb-label">Dashboard</span></div>
+    <div class="sb-item active" onclick="nav(this,'dashboard')"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
 
     <div class="sb-sec">DAILY TRACKING</div>
     <div class="sb-item" onclick="nav(this,'nutrition')"><span class="sb-icon">◉</span><span class="sb-label">Nutrition</span></div>
-    <div class="sb-item" onclick="nav(this,'workout')"><span class="sb-icon">🏋️‍♂️</span><span class="sb-label">Workout</span><span class="sb-badge" id="wkBadge">0/0</span></div>
-    <div class="sb-item" onclick="nav(this,'habits')"><span class="sb-icon">👣</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
-    <div class="sb-item" onclick="nav(this,'water')"><span class="sb-icon">🫗</span><span class="sb-label">Water</span></div>
+    <div class="sb-item" onclick="nav(this,'workout')"><span class="sb-icon">⊞</span><span class="sb-label">Workout</span><span class="sb-badge" id="wkBadge">0/0</span></div>
+    <div class="sb-item" onclick="nav(this,'habits')"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
+    <div class="sb-item" onclick="nav(this,'water')"><span class="sb-icon">◈</span><span class="sb-label">Water</span></div>
 
     <div class="sb-sec">HEALTH</div>
-    <div class="sb-item" onclick="nav(this,'vitals')"><span class="sb-icon">💓</span><span class="sb-label">Vitals</span></div>
-    <div class="sb-item" onclick="nav(this,'measurements')"><span class="sb-icon">⚖️</span><span class="sb-label">Measurements</span></div>
+    <div class="sb-item" onclick="nav(this,'vitals')"><span class="sb-icon">♡</span><span class="sb-label">Vitals</span></div>
+    <div class="sb-item" onclick="nav(this,'measurements')"><span class="sb-icon">◫</span><span class="sb-label">Measurements</span></div>
 
     <div class="sb-sec">PLANNING</div>
     <div class="sb-item" onclick="nav(this,'goals')"><span class="sb-icon">◎</span><span class="sb-label">Goals & Progress</span></div>
-    <div class="sb-item" onclick="nav(this,'settings')"><span class="sb-icon">⚙️</span><span class="sb-label">Settings</span></div>
+
+    <div class="sb-sec">TOOLS</div>
+    <div class="sb-item" onclick="nav(this,'timer')"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
+    <div class="sb-item" onclick="nav(this,'settings')"><span class="sb-icon">◧</span><span class="sb-label">Settings</span></div>
   </div>
 </div>
 
@@ -836,6 +938,139 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
+<!-- ============ TIMER & STOPWATCH ============ -->
+<div class="page" id="page-timer">
+
+  <!-- MODE TABS -->
+  <div style="display:flex;gap:0;margin-bottom:16px;border:1px solid var(--border);overflow:hidden">
+    <button class="timer-tab active" id="tab-timer" onclick="switchTimerMode('timer')">⏱ COUNTDOWN TIMER</button>
+    <button class="timer-tab" id="tab-stopwatch" onclick="switchTimerMode('stopwatch')">⏲ STOPWATCH</button>
+    <button class="timer-tab" id="tab-interval" onclick="switchTimerMode('interval')">🔄 INTERVAL TRAINER</button>
+  </div>
+
+  <!-- ===== COUNTDOWN TIMER ===== -->
+  <div id="tm-timer" class="timer-mode active">
+    <!-- Big display -->
+    <div class="timer-display-wrap">
+      <svg class="timer-ring-svg" viewBox="0 0 280 280" width="280" height="280">
+        <circle class="timer-ring-bg" cx="140" cy="140" r="120"/>
+        <circle class="timer-ring-fg" id="t-ring" cx="140" cy="140" r="120" stroke-dasharray="754" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-display-inner">
+        <div class="timer-big" id="t-display">00:00</div>
+        <div class="timer-mode-lbl" id="t-phase-lbl">READY</div>
+      </div>
+    </div>
+
+    <!-- Quick presets -->
+    <div class="sec-head">QUICK PRESETS</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="t-presets">
+      <button class="preset-btn" onclick="setTimerPreset(30,'Rest 30s')">REST 30s</button>
+      <button class="preset-btn" onclick="setTimerPreset(60,'Rest 1m')">REST 1m</button>
+      <button class="preset-btn" onclick="setTimerPreset(90,'Rest 90s')">REST 90s</button>
+      <button class="preset-btn" onclick="setTimerPreset(120,'Rest 2m')">REST 2m</button>
+      <button class="preset-btn" onclick="setTimerPreset(180,'Warm Up 3m')">WARM UP 3m</button>
+      <button class="preset-btn" onclick="setTimerPreset(300,'Round 5m')">ROUND 5m</button>
+      <button class="preset-btn" onclick="setTimerPreset(600,'Workout 10m')">WORKOUT 10m</button>
+      <button class="preset-btn" onclick="setTimerPreset(1200,'Cardio 20m')">CARDIO 20m</button>
+    </div>
+
+    <!-- Custom timer -->
+    <div class="sec-head">CUSTOM TIMER</div>
+    <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px">
+        <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">HOURS</div><input class="inp" id="t-h" type="number" min="0" max="23" placeholder="0" value="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">MINUTES</div><input class="inp" id="t-m" type="number" min="0" max="59" placeholder="0" value="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">SECONDS</div><input class="inp" id="t-s" type="number" min="0" max="59" placeholder="30" value="30"/></div>
+        <div class="inp-group" style="flex:2;min-width:120px"><div class="inp-label">LABEL (optional)</div><input class="inp" id="t-label" type="text" placeholder="Rest / Exercise name..."/></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="startCustomTimer()">[ ▶ START ]</button>
+        <button class="btn" id="t-pause-btn" onclick="pauseTimer()" style="display:none">[ ⏸ PAUSE ]</button>
+        <button class="btn danger" onclick="resetTimer()">[ ↺ RESET ]</button>
+      </div>
+    </div>
+
+    <!-- Saved custom timers -->
+    <div class="sec-head">SAVE CUSTOM TIMER
+      <button class="btn sm" style="margin-left:8px" onclick="saveCustomTimer()">+ SAVE</button>
+    </div>
+    <div id="savedTimers" style="margin-bottom:14px">
+      <div style="font-size:10px;color:var(--t2);padding:10px">No saved timers yet. Set a custom timer and click SAVE.</div>
+    </div>
+  </div>
+
+  <!-- ===== STOPWATCH ===== -->
+  <div id="tm-stopwatch" class="timer-mode">
+    <div class="timer-display-wrap">
+      <svg class="timer-ring-svg" viewBox="0 0 280 280" width="280" height="280">
+        <circle class="timer-ring-bg" cx="140" cy="140" r="120"/>
+        <circle class="timer-ring-fg sw-spin" id="sw-ring" cx="140" cy="140" r="120" stroke-dasharray="754" stroke-dashoffset="754" style="stroke:var(--c)"/>
+      </svg>
+      <div class="timer-display-inner">
+        <div class="timer-big" id="sw-display">00:00.0</div>
+        <div class="timer-mode-lbl" id="sw-phase">READY</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn" id="sw-start-btn" onclick="swStart()">[ ▶ START ]</button>
+      <button class="btn" id="sw-lap-btn" onclick="swLap()" style="display:none">[ ⬡ LAP ]</button>
+      <button class="btn danger" onclick="swReset()">[ ↺ RESET ]</button>
+    </div>
+    <div class="sec-head">LAP TIMES</div>
+    <div id="sw-laps" style="max-height:240px;overflow-y:auto">
+      <div style="font-size:10px;color:var(--t2);padding:10px">No laps recorded yet.</div>
+    </div>
+  </div>
+
+  <!-- ===== INTERVAL TRAINER ===== -->
+  <div id="tm-interval" class="timer-mode">
+    <div class="timer-display-wrap">
+      <svg class="timer-ring-svg" viewBox="0 0 280 280" width="280" height="280">
+        <circle class="timer-ring-bg" cx="140" cy="140" r="120"/>
+        <circle class="timer-ring-fg" id="iv-ring" cx="140" cy="140" r="120" stroke-dasharray="754" stroke-dashoffset="0" style="stroke:var(--o)"/>
+      </svg>
+      <div class="timer-display-inner">
+        <div class="timer-big" id="iv-display">00:00</div>
+        <div class="timer-mode-lbl" id="iv-phase">WORK</div>
+        <div style="font-size:10px;color:var(--t2);margin-top:4px" id="iv-round-lbl">ROUND 0/0</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn" id="iv-start-btn" onclick="ivStart()">[ ▶ START ]</button>
+      <button class="btn" id="iv-pause-btn" onclick="ivPause()" style="display:none">[ ⏸ PAUSE ]</button>
+      <button class="btn danger" onclick="ivReset()">[ ↺ RESET ]</button>
+    </div>
+
+    <div class="sec-head">INTERVAL SETTINGS</div>
+    <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <div class="inp-group"><div class="inp-label">WORK TIME (sec)</div><input class="inp" id="iv-work" type="number" min="5" max="3600" value="40"/></div>
+        <div class="inp-group"><div class="inp-label">REST TIME (sec)</div><input class="inp" id="iv-rest" type="number" min="5" max="3600" value="20"/></div>
+        <div class="inp-group"><div class="inp-label">ROUNDS</div><input class="inp" id="iv-rounds" type="number" min="1" max="99" value="8"/></div>
+        <div class="inp-group"><div class="inp-label">WARMUP (sec)</div><input class="inp" id="iv-warmup" type="number" min="0" max="300" value="10"/></div>
+        <div class="inp-group"><div class="inp-label">COOLDOWN (sec)</div><input class="inp" id="iv-cooldown" type="number" min="0" max="300" value="10"/></div>
+        <div class="inp-group"><div class="inp-label">EXERCISE NAME</div><input class="inp" id="iv-name" type="text" placeholder="HIIT / Tabata..."/></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="ivApplySettings()">[ ✓ APPLY & RESET ]</button>
+        <button class="btn sm" onclick="ivSavePreset()">+ SAVE PRESET</button>
+      </div>
+    </div>
+
+    <div class="sec-head">INTERVAL PRESETS</div>
+    <div id="iv-presets-list" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="preset-btn" onclick="ivLoadPreset(40,20,8,10,10,'Tabata')">TABATA</button>
+      <button class="preset-btn" onclick="ivLoadPreset(30,10,10,10,10,'EMOM 30s')">EMOM 30s</button>
+      <button class="preset-btn" onclick="ivLoadPreset(60,30,6,15,15,'AMRAP')">AMRAP</button>
+      <button class="preset-btn" onclick="ivLoadPreset(20,10,20,10,10,'Quick HIIT')">QUICK HIIT</button>
+    </div>
+
+    <div id="iv-saved-presets"></div>
+  </div>
+
+</div><!-- end timer page -->
+
 <!-- ============ SETTINGS ============ -->
 <div class="page" id="page-settings">
   <div class="sec-head">PROFILE</div>
@@ -912,7 +1147,7 @@ function load() {
 }
 
 // ===================== NAV =====================
-var pageTitles = {dashboard:'DASHBOARD',nutrition:'NUTRITION',workout:'WORKOUT',habits:'HABITS',water:'WATER',vitals:'VITALS',measurements:'MEASUREMENTS',goals:'GOALS & PROGRESS',settings:'SETTINGS'};
+var pageTitles = {dashboard:'DASHBOARD',nutrition:'NUTRITION',workout:'WORKOUT',habits:'HABITS',water:'WATER',vitals:'VITALS',measurements:'MEASUREMENTS',goals:'GOALS & PROGRESS',timer:'TIMER & STOPWATCH',settings:'SETTINGS'};
 function nav(btn, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
@@ -930,6 +1165,7 @@ function nav(btn, id) {
   if (id === 'settings') loadSettings();
   if (id === 'nutrition') renderNutrition();
   if (id === 'dashboard') renderDashboard();
+  if (id === 'timer') renderTimerPage();
 }
 
 // ===================== TOAST =====================
@@ -1726,6 +1962,448 @@ function calcStreak() {
   }
   S.streak=streak;
   document.getElementById('streakDisp').textContent = streak + ' DAY STREAK';
+}
+
+// ===================== TIMER & STOPWATCH =====================
+var TM = {
+  mode: 'timer',
+  // Countdown timer
+  t: { total:30, remaining:30, running:false, interval:null, label:'Timer' },
+  savedTimers: [],
+  // Stopwatch
+  sw: { running:false, startMs:0, elapsed:0, interval:null, laps:[] },
+  // Interval
+  iv: {
+    work:40, rest:20, rounds:8, warmup:10, cooldown:10, name:'Tabata',
+    running:false, paused:false, interval:null,
+    phase:'warmup', // warmup | work | rest | cooldown | done
+    currentRound:0, phaseRemaining:0, totalRounds:0
+  },
+  ivSavedPresets: [],
+  soundEnabled: true
+};
+
+function renderTimerPage() {
+  renderSavedTimers();
+  renderIvPresets();
+}
+
+function switchTimerMode(mode) {
+  TM.mode = mode;
+  document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.timer-mode').forEach(m => m.classList.remove('active'));
+  document.getElementById('tab-'+mode).classList.add('active');
+  document.getElementById('tm-'+mode).classList.add('active');
+}
+
+// ---- Beep Sound ----
+function beep(freq, dur, vol) {
+  if (!TM.soundEnabled) return;
+  try {
+    var ctx = new (window.AudioContext||window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = freq || 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(vol||0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur||0.2));
+    osc.start(); osc.stop(ctx.currentTime + (dur||0.2));
+  } catch(e) {}
+}
+function beepDone() { beep(660,0.15,0.3); setTimeout(()=>beep(880,0.15,0.3),180); setTimeout(()=>beep(1100,0.3,0.4),360); }
+function beepStart() { beep(660,0.1,0.3); setTimeout(()=>beep(880,0.2,0.4),120); }
+function beepTick() { beep(440,0.05,0.15); }
+
+// ---- Countdown Timer ----
+function fmtTime(sec) {
+  var h = Math.floor(sec/3600);
+  var m = Math.floor((sec%3600)/60);
+  var s = sec % 60;
+  if (h > 0) return pad2(h)+':'+pad2(m)+':'+pad2(s);
+  return pad2(m)+':'+pad2(s);
+}
+function pad2(n) { return n < 10 ? '0'+n : ''+n; }
+
+function setTimerPreset(sec, label) {
+  resetTimer();
+  TM.t.total = sec; TM.t.remaining = sec; TM.t.label = label;
+  document.getElementById('t-h').value = Math.floor(sec/3600);
+  document.getElementById('t-m').value = Math.floor((sec%3600)/60);
+  document.getElementById('t-s').value = sec % 60;
+  document.getElementById('t-label').value = label;
+  updateTimerDisplay();
+  toast('Timer: ' + label);
+}
+
+function startCustomTimer() {
+  var h = parseInt(document.getElementById('t-h').value)||0;
+  var m = parseInt(document.getElementById('t-m').value)||0;
+  var s = parseInt(document.getElementById('t-s').value)||0;
+  var total = h*3600 + m*60 + s;
+  if (total <= 0) { toast('Set a time first'); return; }
+  TM.t.label = document.getElementById('t-label').value || 'Timer';
+  TM.t.total = total; TM.t.remaining = total;
+  startTimer();
+}
+
+function startTimer() {
+  if (TM.t.running) return;
+  if (TM.t.remaining <= 0) TM.t.remaining = TM.t.total;
+  TM.t.running = true;
+  document.getElementById('t-pause-btn').style.display = '';
+  document.getElementById('t-phase-lbl').textContent = TM.t.label.toUpperCase();
+  beepStart();
+  TM.t.interval = setInterval(() => {
+    TM.t.remaining--;
+    updateTimerDisplay();
+    if (TM.t.remaining <= 3 && TM.t.remaining > 0) beepTick();
+    if (TM.t.remaining <= 0) {
+      clearInterval(TM.t.interval);
+      TM.t.running = false;
+      document.getElementById('t-pause-btn').style.display = 'none';
+      document.getElementById('t-display').className = 'timer-big done';
+      document.getElementById('t-phase-lbl').textContent = 'DONE!';
+      beepDone(); toast('⏱ ' + TM.t.label + ' — TIME UP!');
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  var disp = document.getElementById('t-display');
+  var ring = document.getElementById('t-ring');
+  disp.textContent = fmtTime(TM.t.remaining);
+  var pct = TM.t.total > 0 ? TM.t.remaining / TM.t.total : 0;
+  ring.style.strokeDashoffset = 754 * (1 - pct);
+  if (TM.t.remaining <= 0) { disp.className='timer-big done'; ring.style.stroke='var(--red)'; }
+  else if (TM.t.remaining <= 5) { disp.className='timer-big warning'; ring.style.stroke='var(--o2)'; }
+  else if (TM.t.remaining <= TM.t.total * 0.3) { disp.className='timer-big resting'; ring.style.stroke='var(--o)'; }
+  else { disp.className='timer-big running'; ring.style.stroke='var(--g)'; }
+}
+
+function pauseTimer() {
+  if (TM.t.running) {
+    clearInterval(TM.t.interval); TM.t.running = false;
+    document.getElementById('t-pause-btn').textContent = '[ ▶ RESUME ]';
+    document.getElementById('t-phase-lbl').textContent = 'PAUSED';
+  } else {
+    document.getElementById('t-pause-btn').textContent = '[ ⏸ PAUSE ]';
+    startTimer();
+  }
+}
+
+function resetTimer() {
+  clearInterval(TM.t.interval); TM.t.running = false;
+  TM.t.remaining = TM.t.total;
+  var disp = document.getElementById('t-display');
+  if (disp) { disp.textContent = fmtTime(TM.t.total); disp.className = 'timer-big'; }
+  var ring = document.getElementById('t-ring');
+  if (ring) { ring.style.strokeDashoffset = '0'; ring.style.stroke = 'var(--g)'; }
+  var lbl = document.getElementById('t-phase-lbl');
+  if (lbl) lbl.textContent = 'READY';
+  var pb = document.getElementById('t-pause-btn');
+  if (pb) { pb.style.display='none'; pb.textContent='[ ⏸ PAUSE ]'; }
+}
+
+function saveCustomTimer() {
+  var h = parseInt(document.getElementById('t-h').value)||0;
+  var m = parseInt(document.getElementById('t-m').value)||0;
+  var s = parseInt(document.getElementById('t-s').value)||0;
+  var total = h*3600 + m*60 + s;
+  var label = document.getElementById('t-label').value.trim() || 'Custom Timer';
+  if (total <= 0) { toast('Set a time first'); return; }
+  TM.savedTimers.push({id:Date.now(), label, total});
+  saveTimerState(); renderSavedTimers(); toast('Timer saved: '+label);
+}
+
+function renderSavedTimers() {
+  var el = document.getElementById('savedTimers');
+  if (!el) return;
+  if (!TM.savedTimers.length) {
+    el.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No saved timers yet.</div>'; return;
+  }
+  el.innerHTML = TM.savedTimers.map((t,i) => `
+    <div class="saved-timer-card">
+      <div>
+        <div class="saved-timer-name">${t.label}</div>
+        <div class="saved-timer-dur">${fmtTime(t.total)}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn sm" onclick="setTimerPreset(${t.total},'${t.label.replace(/'/g,"\\'")}')">▶ USE</button>
+        <button class="del-btn" onclick="deleteSavedTimer(${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function deleteSavedTimer(i) {
+  TM.savedTimers.splice(i,1); saveTimerState(); renderSavedTimers(); toast('Timer deleted');
+}
+
+// ---- Stopwatch ----
+function swStart() {
+  if (TM.sw.running) return;
+  TM.sw.running = true;
+  TM.sw.startMs = Date.now() - TM.sw.elapsed;
+  document.getElementById('sw-start-btn').textContent = '[ ⏸ PAUSE ]';
+  document.getElementById('sw-start-btn').onclick = swPause;
+  document.getElementById('sw-lap-btn').style.display = '';
+  document.getElementById('sw-phase').textContent = 'RUNNING';
+  TM.sw.interval = setInterval(swTick, 100);
+  beepStart();
+}
+
+function swPause() {
+  clearInterval(TM.sw.interval); TM.sw.running = false;
+  TM.sw.elapsed = Date.now() - TM.sw.startMs;
+  document.getElementById('sw-start-btn').textContent = '[ ▶ RESUME ]';
+  document.getElementById('sw-start-btn').onclick = swStart;
+  document.getElementById('sw-phase').textContent = 'PAUSED';
+}
+
+function swReset() {
+  clearInterval(TM.sw.interval);
+  TM.sw.running = false; TM.sw.elapsed = 0; TM.sw.laps = [];
+  document.getElementById('sw-display').textContent = '00:00.0';
+  document.getElementById('sw-display').className = 'timer-big';
+  document.getElementById('sw-ring').style.strokeDashoffset = '754';
+  document.getElementById('sw-start-btn').textContent = '[ ▶ START ]';
+  document.getElementById('sw-start-btn').onclick = swStart;
+  document.getElementById('sw-lap-btn').style.display = 'none';
+  document.getElementById('sw-phase').textContent = 'READY';
+  renderLaps();
+}
+
+function swTick() {
+  TM.sw.elapsed = Date.now() - TM.sw.startMs;
+  var total = TM.sw.elapsed;
+  var ms = Math.floor((total % 1000) / 100);
+  var s = Math.floor(total / 1000) % 60;
+  var m = Math.floor(total / 60000) % 60;
+  var h = Math.floor(total / 3600000);
+  var disp = h > 0 ? pad2(h)+':'+pad2(m)+':'+pad2(s)+'.'+ms : pad2(m)+':'+pad2(s)+'.'+ms;
+  document.getElementById('sw-display').textContent = disp;
+  document.getElementById('sw-display').className = 'timer-big running';
+  // Spinning ring — one revolution every 60s
+  var deg = (total / 60000 % 1) * 754;
+  document.getElementById('sw-ring').style.strokeDashoffset = 754 - deg;
+}
+
+function swLap() {
+  var lapTime = TM.sw.elapsed;
+  var prev = TM.sw.laps.length ? TM.sw.laps[TM.sw.laps.length-1].total : 0;
+  TM.sw.laps.push({total: lapTime, delta: lapTime - prev, num: TM.sw.laps.length+1});
+  beepTick(); renderLaps();
+}
+
+function renderLaps() {
+  var el = document.getElementById('sw-laps');
+  if (!el) return;
+  if (!TM.sw.laps.length) { el.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No laps recorded yet.</div>'; return; }
+  var laps = TM.sw.laps;
+  var deltas = laps.map(l => l.delta);
+  var best = Math.min(...deltas), worst = Math.max(...deltas);
+  el.innerHTML = laps.slice().reverse().map(l => {
+    var cls = l.num > 1 ? (l.delta === best ? 'best' : l.delta === worst ? 'worst' : '') : '';
+    var ms = Math.floor((l.total % 1000) / 100);
+    var s = Math.floor(l.total/1000)%60;
+    var m = Math.floor(l.total/60000)%60;
+    var h = Math.floor(l.total/3600000);
+    var tStr = h>0 ? pad2(h)+':'+pad2(m)+':'+pad2(s) : pad2(m)+':'+pad2(s)+'.'+ms;
+    var dMs = Math.floor((l.delta%1000)/100);
+    var dS = Math.floor(l.delta/1000)%60;
+    var dM = Math.floor(l.delta/60000)%60;
+    var dStr = dM>0 ? '+'+pad2(dM)+':'+pad2(dS) : '+'+(dS)+'.'+dMs+'s';
+    return `<div class="lap-item ${cls}">
+      <span class="lap-num">LAP ${l.num}</span>
+      <span class="lap-time">${tStr}</span>
+      <span class="lap-delta ${cls==='best'?'t-up':cls==='worst'?'t-dn':'t-neu'}">${l.num===1?'—':dStr}</span>
+    </div>`;
+  }).join('');
+}
+
+// ---- Interval Trainer ----
+function ivApplySettings() {
+  TM.iv.work = parseInt(document.getElementById('iv-work').value)||40;
+  TM.iv.rest = parseInt(document.getElementById('iv-rest').value)||20;
+  TM.iv.rounds = parseInt(document.getElementById('iv-rounds').value)||8;
+  TM.iv.warmup = parseInt(document.getElementById('iv-warmup').value)||0;
+  TM.iv.cooldown = parseInt(document.getElementById('iv-cooldown').value)||0;
+  TM.iv.name = document.getElementById('iv-name').value || 'Interval';
+  ivReset(); toast('Settings applied!');
+}
+
+function ivLoadPreset(work, rest, rounds, warmup, cooldown, name) {
+  document.getElementById('iv-work').value = work;
+  document.getElementById('iv-rest').value = rest;
+  document.getElementById('iv-rounds').value = rounds;
+  document.getElementById('iv-warmup').value = warmup;
+  document.getElementById('iv-cooldown').value = cooldown;
+  document.getElementById('iv-name').value = name;
+  ivApplySettings();
+}
+
+function ivSavePreset() {
+  var p = {
+    id: Date.now(),
+    name: document.getElementById('iv-name').value || 'My Interval',
+    work: parseInt(document.getElementById('iv-work').value)||40,
+    rest: parseInt(document.getElementById('iv-rest').value)||20,
+    rounds: parseInt(document.getElementById('iv-rounds').value)||8,
+    warmup: parseInt(document.getElementById('iv-warmup').value)||0,
+    cooldown: parseInt(document.getElementById('iv-cooldown').value)||0
+  };
+  TM.ivSavedPresets.push(p);
+  saveTimerState(); renderIvPresets(); toast('Preset saved: '+p.name);
+}
+
+function renderIvPresets() {
+  var el = document.getElementById('iv-saved-presets');
+  if (!el || !TM.ivSavedPresets.length) return;
+  el.innerHTML = '<div class="sec-head">MY PRESETS</div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+    TM.ivSavedPresets.map((p,i) => `
+      <div style="position:relative;display:inline-flex;align-items:center;gap:0">
+        <button class="preset-btn" onclick="ivLoadPreset(${p.work},${p.rest},${p.rounds},${p.warmup||0},${p.cooldown||0},'${p.name.replace(/'/g,"\\'")}')">
+          ${p.name}<br><span style="font-size:8px;opacity:.7">${p.work}W/${p.rest}R×${p.rounds}</span>
+        </button>
+        <button class="del-btn" style="padding:0 4px;font-size:10px" onclick="ivDeletePreset(${i})">✕</button>
+      </div>`).join('') + '</div>';
+}
+
+function ivDeletePreset(i) {
+  TM.ivSavedPresets.splice(i,1); saveTimerState(); renderIvPresets(); toast('Preset deleted');
+}
+
+function ivReset() {
+  clearInterval(TM.iv.interval); TM.iv.running = false; TM.iv.paused = false;
+  TM.iv.currentRound = 0; TM.iv.phase = 'warmup';
+  TM.iv.phaseRemaining = TM.iv.warmup > 0 ? TM.iv.warmup : TM.iv.work;
+  if (TM.iv.warmup === 0) TM.iv.phase = 'work';
+  document.getElementById('iv-display').textContent = fmtTime(TM.iv.phaseRemaining);
+  document.getElementById('iv-display').className = 'timer-big';
+  document.getElementById('iv-phase').textContent = TM.iv.warmup>0 ? 'WARMUP' : 'WORK';
+  document.getElementById('iv-round-lbl').textContent = 'ROUND 0/'+TM.iv.rounds;
+  document.getElementById('iv-ring').style.strokeDashoffset = '0';
+  document.getElementById('iv-ring').style.stroke = 'var(--o)';
+  document.getElementById('iv-start-btn').style.display = '';
+  document.getElementById('iv-pause-btn').style.display = 'none';
+}
+
+function ivStart() {
+  if (TM.iv.running) return;
+  TM.iv.running = true;
+  if (!TM.iv.paused) {
+    TM.iv.currentRound = TM.iv.warmup > 0 ? 0 : 1;
+    TM.iv.phase = TM.iv.warmup > 0 ? 'warmup' : 'work';
+    TM.iv.phaseRemaining = TM.iv.warmup > 0 ? TM.iv.warmup : TM.iv.work;
+  }
+  TM.iv.paused = false;
+  document.getElementById('iv-start-btn').style.display = 'none';
+  document.getElementById('iv-pause-btn').style.display = '';
+  beepStart(); ivUpdateDisplay();
+  TM.iv.interval = setInterval(ivTick, 1000);
+}
+
+function ivPause() {
+  if (!TM.iv.running) return;
+  clearInterval(TM.iv.interval); TM.iv.running = false; TM.iv.paused = true;
+  document.getElementById('iv-start-btn').style.display = '';
+  document.getElementById('iv-start-btn').textContent = '[ ▶ RESUME ]';
+  document.getElementById('iv-pause-btn').style.display = 'none';
+  document.getElementById('iv-phase').textContent = 'PAUSED';
+}
+
+function ivTick() {
+  TM.iv.phaseRemaining--;
+  if (TM.iv.phaseRemaining <= 3 && TM.iv.phaseRemaining > 0) beepTick();
+  if (TM.iv.phaseRemaining <= 0) {
+    ivNextPhase();
+  } else {
+    ivUpdateDisplay();
+  }
+}
+
+function ivNextPhase() {
+  var iv = TM.iv;
+  if (iv.phase === 'warmup') {
+    iv.phase = 'work'; iv.currentRound = 1; iv.phaseRemaining = iv.work;
+    beepStart();
+  } else if (iv.phase === 'work') {
+    if (iv.currentRound >= iv.rounds) {
+      iv.phase = iv.cooldown > 0 ? 'cooldown' : 'done';
+      iv.phaseRemaining = iv.cooldown;
+      if (iv.phase === 'done') { ivDone(); return; }
+      beepTick();
+    } else {
+      iv.phase = 'rest'; iv.phaseRemaining = iv.rest;
+      beepTick(); beep(550,0.1,0.2);
+    }
+  } else if (iv.phase === 'rest') {
+    iv.phase = 'work'; iv.currentRound++; iv.phaseRemaining = iv.work;
+    beepStart();
+  } else if (iv.phase === 'cooldown') {
+    iv.phase = 'done'; ivDone(); return;
+  }
+  ivUpdateDisplay();
+}
+
+function ivDone() {
+  clearInterval(TM.iv.interval); TM.iv.running = false;
+  document.getElementById('iv-display').textContent = 'DONE!';
+  document.getElementById('iv-display').className = 'timer-big done';
+  document.getElementById('iv-phase').textContent = '🎉 COMPLETED!';
+  document.getElementById('iv-round-lbl').textContent = TM.iv.rounds+'/'+TM.iv.rounds+' ROUNDS';
+  document.getElementById('iv-start-btn').style.display = '';
+  document.getElementById('iv-start-btn').textContent = '[ ↺ RESTART ]';
+  document.getElementById('iv-start-btn').onclick = function(){ ivReset(); document.getElementById('iv-start-btn').onclick=ivStart; };
+  document.getElementById('iv-pause-btn').style.display = 'none';
+  beepDone(); toast('🎉 Interval complete! ' + TM.iv.rounds + ' rounds done!');
+}
+
+function ivUpdateDisplay() {
+  var iv = TM.iv;
+  var phaseSec = iv.phase==='work' ? iv.work : iv.phase==='rest' ? iv.rest : iv.phase==='warmup' ? iv.warmup : iv.cooldown;
+  var pct = phaseSec > 0 ? iv.phaseRemaining / phaseSec : 0;
+  var ring = document.getElementById('iv-ring');
+  var disp = document.getElementById('iv-display');
+  var phaseLbl = document.getElementById('iv-phase');
+  var roundLbl = document.getElementById('iv-round-lbl');
+
+  disp.textContent = fmtTime(iv.phaseRemaining);
+  ring.style.strokeDashoffset = 754 * (1 - pct);
+
+  if (iv.phase === 'work') {
+    disp.className = 'timer-big running';
+    phaseLbl.textContent = iv.name ? iv.name.toUpperCase() : 'WORK';
+    ring.style.stroke = 'var(--g)';
+    roundLbl.textContent = 'ROUND ' + iv.currentRound + '/' + iv.rounds;
+  } else if (iv.phase === 'rest') {
+    disp.className = 'timer-big resting';
+    phaseLbl.textContent = 'REST';
+    ring.style.stroke = 'var(--c)';
+    roundLbl.textContent = 'NEXT: ROUND ' + (iv.currentRound+1) + '/' + iv.rounds;
+  } else if (iv.phase === 'warmup') {
+    disp.className = 'timer-big';
+    phaseLbl.textContent = 'WARM UP';
+    ring.style.stroke = 'var(--o2)';
+    roundLbl.textContent = 'GET READY';
+  } else if (iv.phase === 'cooldown') {
+    disp.className = 'timer-big';
+    phaseLbl.textContent = 'COOL DOWN';
+    ring.style.stroke = 'var(--p)';
+    roundLbl.textContent = 'FINISHING UP';
+  }
+  if (iv.phaseRemaining <= 5 && iv.phaseRemaining > 0) disp.className = 'timer-big warning';
+}
+
+function saveTimerState() {
+  try { localStorage.setItem('fitos_timer', JSON.stringify({savedTimers:TM.savedTimers, ivSavedPresets:TM.ivSavedPresets})); } catch(e) {}
+}
+function loadTimerState() {
+  try {
+    var raw = localStorage.getItem('fitos_timer');
+    if (raw) { var d = JSON.parse(raw); TM.savedTimers = d.savedTimers||[]; TM.ivSavedPresets = d.ivSavedPresets||[]; }
+  } catch(e) {}
 }
 
 // ===================== THEME TOGGLE =====================

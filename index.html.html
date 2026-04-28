@@ -1790,11 +1790,41 @@ function renderMealLibrary() {
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           <button class="btn sm" onclick="logLibraryMealById(${m.id})" title="Log to today">▶ LOG TODAY</button>
+          <button class="edit-btn" onclick="toggleLibraryEdit(${m.id})" title="Edit meal">✎ EDIT</button>
           <button class="del-btn" onclick="deleteLibraryMeal(${idx})" title="Delete from library">✕</button>
         </div>
       </div>
       ${ingrHtml}
       <div style="font-size:9px;color:var(--t3);margin-top:4px;font-family:var(--mono)">saved: ${m.savedAt||''}</div>
+      <div class="edit-form" id="lib-edit-${m.id}">
+        <div class="inp-row" style="flex-wrap:wrap;gap:8px;margin-bottom:8px">
+          <div class="inp-group" style="flex:2;min-width:140px">
+            <div class="inp-label">MEAL NAME</div>
+            <input class="inp" id="le-name-${m.id}" value="${m.name.replace(/"/g,'&quot;')}">
+          </div>
+          <div class="inp-group" style="min-width:120px">
+            <div class="inp-label">TYPE</div>
+            <select class="inp" id="le-type-${m.id}">
+              ${['Breakfast','Lunch','Dinner','Snack','Pre-workout','Post-workout','Meal'].map(t=>`<option${t===m.type?' selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="inp-row" style="flex-wrap:wrap;gap:8px;margin-bottom:8px">
+          <div class="inp-group" style="min-width:70px"><div class="inp-label">KCAL</div><input class="inp" type="number" id="le-kcal-${m.id}" value="${m.kcal}"></div>
+          <div class="inp-group" style="min-width:70px"><div class="inp-label">PROTEIN (g)</div><input class="inp" type="number" id="le-prot-${m.id}" value="${m.protein}"></div>
+          <div class="inp-group" style="min-width:70px"><div class="inp-label">CARBS (g)</div><input class="inp" type="number" id="le-carb-${m.id}" value="${m.carbs}"></div>
+          <div class="inp-group" style="min-width:70px"><div class="inp-label">FAT (g)</div><input class="inp" type="number" id="le-fat-${m.id}" value="${m.fat}"></div>
+          <div class="inp-group" style="min-width:70px"><div class="inp-label">FIBER (g)</div><input class="inp" type="number" id="le-fiber-${m.id}" value="${m.fiber||0}"></div>
+        </div>
+        <div class="inp-group" style="margin-bottom:8px">
+          <div class="inp-label">NOTES</div>
+          <input class="inp" id="le-notes-${m.id}" value="${(m.notes||'').replace(/"/g,'&quot;')}">
+        </div>
+        <div class="edit-form-actions">
+          <button class="btn sm danger" onclick="toggleLibraryEdit(${m.id})">[ CANCEL ]</button>
+          <button class="btn sm" onclick="saveLibraryMealEdit(${m.id})">[ SAVE CHANGES ]</button>
+        </div>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1814,6 +1844,37 @@ function logLibraryMealById(id) {
   });
   save();
   toast('✅ ' + m.name + ' logged for today!');
+}
+
+function toggleLibraryEdit(id) {
+  var el = document.getElementById('lib-edit-' + id);
+  if (!el) return;
+  el.classList.toggle('open');
+}
+
+function saveLibraryMealEdit(id) {
+  var idx = S.mealLibrary.findIndex(m => m.id === id);
+  if (idx === -1) return;
+  var name = document.getElementById('le-name-' + id).value.trim();
+  if (!name) { toast('Meal name cannot be empty'); return; }
+  // Check duplicate name (excluding self)
+  var dupExists = S.mealLibrary.some((m, i) => i !== idx && m.name.toLowerCase() === name.toLowerCase());
+  if (dupExists) { toast('Another meal with this name already exists!'); return; }
+  S.mealLibrary[idx] = {
+    ...S.mealLibrary[idx],
+    name,
+    type:    document.getElementById('le-type-'  + id).value,
+    kcal:    parseInt(document.getElementById('le-kcal-'  + id).value) || 0,
+    protein: parseFloat(document.getElementById('le-prot-' + id).value) || 0,
+    carbs:   parseFloat(document.getElementById('le-carb-' + id).value) || 0,
+    fat:     parseFloat(document.getElementById('le-fat-'  + id).value) || 0,
+    fiber:   parseFloat(document.getElementById('le-fiber-'+ id).value) || 0,
+    notes:   document.getElementById('le-notes-' + id).value.trim()
+  };
+  save();
+  renderMealLibrary();
+  updateLibraryDropdown();
+  toast('✅ Meal updated!');
 }
 
 function deleteLibraryMeal(idx) {

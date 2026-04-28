@@ -584,6 +584,7 @@ canvas{display:block;width:100%}
     <div class="sb-item" onclick="nav(this,'goals')"><span class="sb-icon">◎</span><span class="sb-label">Goals & Progress</span></div>
 
     <div class="sb-sec">TOOLS</div>
+    <div class="sb-item" onclick="nav(this,'meallibrary')"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
     <div class="sb-item" onclick="nav(this,'timer')"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
     <div class="sb-item" onclick="nav(this,'settings')"><span class="sb-icon">◧</span><span class="sb-label">Settings</span></div>
   </div>
@@ -689,8 +690,18 @@ canvas{display:block;width:100%}
 
   <div class="sec-head">ADD MEAL</div>
   <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
-    <div class="inp-row" style="margin-bottom:8px">
-      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME</div><input class="inp" id="n-name" type="text" placeholder="e.g. Chicken Breast + Rice"/></div>
+    <!-- FROM LIBRARY ROW -->
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;padding:8px 10px;background:var(--gd);border:1px solid var(--g3);border-left:3px solid var(--g)">
+      <span style="font-size:10px;color:var(--g2);font-family:var(--mono);letter-spacing:1px;flex:1">📚 QUICK LOG FROM LIBRARY</span>
+      <select class="inp" id="n-from-lib" style="flex:2;min-width:140px" onchange="previewLibraryMeal()">
+        <option value="">— select saved meal —</option>
+      </select>
+      <button class="btn sm" onclick="logMealFromLibrary()" style="white-space:nowrap">+ LOG IT</button>
+    </div>
+    <div id="n-lib-preview" style="display:none;font-size:10px;font-family:var(--mono);color:var(--t2);padding:6px 10px;margin-bottom:8px;background:var(--card2);border:1px solid var(--border)"></div>
+
+    <div class="inp-row" style="margin-bottom:10px">
+      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME</div><input class="inp" id="n-name" type="text" placeholder="e.g. Chicken + Rice Bowl"/></div>
       <div class="inp-group" style="flex:1"><div class="inp-label">TIME</div><input class="inp" id="n-time" type="time"/></div>
       <div class="inp-group" style="flex:1">
         <div class="inp-label">MEAL TYPE</div>
@@ -700,15 +711,45 @@ canvas{display:block;width:100%}
         </select>
       </div>
     </div>
-    <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:1"><div class="inp-label">CALORIES</div><input class="inp" id="n-kcal" type="number" placeholder="0" min="0"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">PROTEIN (g)</div><input class="inp" id="n-p" type="number" placeholder="0" min="0"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">CARBS (g)</div><input class="inp" id="n-c" type="number" placeholder="0" min="0"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">FAT (g)</div><input class="inp" id="n-f" type="number" placeholder="0" min="0"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">FIBER (g)</div><input class="inp" id="n-fb" type="number" placeholder="0" min="0"/></div>
+
+    <!-- INGREDIENTS SECTION -->
+    <div style="border:1px solid var(--border);border-left:3px solid var(--c2);padding:12px;margin-bottom:10px;background:var(--card2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="inp-label" style="color:var(--c2);letter-spacing:1.5px">⊕ INGREDIENTS</div>
+        <div id="ingr-macro-preview" style="font-size:10px;color:var(--t2);font-family:var(--mono)">Add ingredients below</div>
+      </div>
+      <div id="ingr-list" style="margin-bottom:8px"></div>
+      <!-- Add ingredient row -->
+      <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+        <div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="ig-name" type="text" placeholder="e.g. Chicken Breast"/></div>
+        <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">WEIGHT (g)</div><input class="inp" id="ig-wt" type="number" placeholder="100" min="0" oninput="updateIngrPreview()"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">CAL</div><input class="inp" id="ig-cal" type="number" placeholder="0" min="0" oninput="updateIngrPreview()"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">PRO(g)</div><input class="inp" id="ig-pro" type="number" placeholder="0" min="0" oninput="updateIngrPreview()"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">CARB(g)</div><input class="inp" id="ig-carb" type="number" placeholder="0" min="0" oninput="updateIngrPreview()"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">FAT(g)</div><input class="inp" id="ig-fat" type="number" placeholder="0" min="0" oninput="updateIngrPreview()"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">FIBER(g)</div><input class="inp" id="ig-fiber" type="number" placeholder="0" min="0" oninput="updateIngrPreview()"/></div>
+        <button class="btn sm" style="margin-bottom:1px" onclick="addIngredient()">+ ADD</button>
+      </div>
     </div>
-    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="n-notes" type="text" placeholder="ingredients, portions..."/></div>
-    <button class="btn full" onclick="addMeal()">[ + LOG MEAL ]</button>
+
+    <!-- TOTAL MACRO SUMMARY -->
+    <div id="meal-macro-summary" style="display:none;background:var(--gd);border:1px solid var(--g3);padding:10px;margin-bottom:10px;font-size:10px;font-family:var(--mono)">
+      <div style="color:var(--g);letter-spacing:1px;margin-bottom:4px">▸ TOTAL MACROS FROM INGREDIENTS</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <span>CAL: <b id="ms-cal" style="color:var(--o2)">0</b> kcal</span>
+        <span>PROTEIN: <b id="ms-pro" style="color:var(--o)">0</b>g</span>
+        <span>CARBS: <b id="ms-carb" style="color:var(--c2)">0</b>g</span>
+        <span>FAT: <b id="ms-fat" style="color:var(--g2)">0</b>g</span>
+        <span>FIBER: <b id="ms-fiber" style="color:var(--p)">0</b>g</span>
+        <span>WEIGHT: <b id="ms-wt" style="color:var(--t)">0</b>g</span>
+      </div>
+    </div>
+
+    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="n-notes" type="text" placeholder="extra notes..."/></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn full" onclick="addMeal()" style="flex:2">[ + LOG MEAL ]</button>
+      <button class="btn" onclick="addMealAndSaveToLibrary()" style="flex:1;background:var(--card2);border:1px solid var(--g);color:var(--g);box-shadow:none" title="Log today AND save to library">[ 📚 LOG + SAVE ]</button>
+    </div>
   </div>
 
   <div class="sec-head">TODAY'S MEALS</div>
@@ -1071,6 +1112,63 @@ canvas{display:block;width:100%}
 
 </div><!-- end timer page -->
 
+<!-- ============ MEAL LIBRARY ============ -->
+<div class="page" id="page-meallibrary">
+  <div class="g4" style="margin-bottom:12px">
+    <div class="card"><div class="card-label">TOTAL SAVED</div><div class="card-val" id="ml-total">0</div><div class="card-sub">meals</div></div>
+    <div class="card"><div class="card-label">CATEGORIES</div><div class="card-val" id="ml-cats">0</div><div class="card-sub">meal types</div></div>
+    <div class="card"><div class="card-label">AVG CALORIES</div><div class="card-val" style="color:var(--o2)" id="ml-avgcal">0</div><div class="card-sub">per meal</div></div>
+    <div class="card"><div class="card-label">AVG PROTEIN</div><div class="card-val" style="color:var(--o)" id="ml-avgpro">0g</div><div class="card-sub">per meal</div></div>
+  </div>
+
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+    <input class="inp" id="ml-search" type="text" placeholder="Search meals..." style="flex:1;min-width:160px" oninput="renderMealLibrary()"/>
+    <select class="inp" id="ml-filter" style="min-width:120px" onchange="renderMealLibrary()">
+      <option value="">All Types</option>
+      <option>Breakfast</option><option>Lunch</option><option>Dinner</option>
+      <option>Snack</option><option>Pre-workout</option><option>Post-workout</option>
+    </select>
+  </div>
+
+  <div class="sec-head">SAVED MEALS <span style="font-size:10px;color:var(--t2);font-weight:400;letter-spacing:0">— click to log today</span></div>
+  <div id="mlList"><div style="font-size:10px;color:var(--t2);padding:10px">No meals saved yet. Log a meal and click "Save to Library".</div></div>
+
+  <div class="sec-head" style="margin-top:16px">ADD NEW MEAL TO LIBRARY</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
+    <div class="inp-row" style="margin-bottom:10px">
+      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME</div><input class="inp" id="mla-name" type="text" placeholder="e.g. Chicken + Rice Bowl"/></div>
+      <div class="inp-group" style="flex:1">
+        <div class="inp-label">MEAL TYPE</div>
+        <select class="inp" id="mla-type">
+          <option>Breakfast</option><option>Lunch</option><option>Dinner</option>
+          <option>Snack</option><option>Pre-workout</option><option>Post-workout</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="border:1px solid var(--border);border-left:3px solid var(--c2);padding:12px;margin-bottom:10px;background:var(--card2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="inp-label" style="color:var(--c2);letter-spacing:1.5px">⊕ INGREDIENTS</div>
+        <div id="mla-ingr-preview" style="font-size:10px;color:var(--t2);font-family:var(--mono)">Add ingredients below</div>
+      </div>
+      <div id="mla-ingr-list" style="margin-bottom:8px"></div>
+      <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+        <div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="mla-ig-name" type="text" placeholder="e.g. Chicken Breast"/></div>
+        <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">WEIGHT (g)</div><input class="inp" id="mla-ig-wt" type="number" placeholder="100" min="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">CAL</div><input class="inp" id="mla-ig-cal" type="number" placeholder="0" min="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">PRO(g)</div><input class="inp" id="mla-ig-pro" type="number" placeholder="0" min="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">CARB(g)</div><input class="inp" id="mla-ig-carb" type="number" placeholder="0" min="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">FAT(g)</div><input class="inp" id="mla-ig-fat" type="number" placeholder="0" min="0"/></div>
+        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">FIBER(g)</div><input class="inp" id="mla-ig-fiber" type="number" placeholder="0" min="0"/></div>
+        <button class="btn sm" style="margin-bottom:1px" onclick="mlaAddIngredient()">+ ADD</button>
+      </div>
+    </div>
+
+    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="mla-notes" type="text" placeholder="extra notes..."/></div>
+    <button class="btn full" onclick="saveMealToLibrary()">[ 📚 SAVE TO LIBRARY ]</button>
+  </div>
+</div>
+
 <!-- ============ SETTINGS ============ -->
 <div class="page" id="page-settings">
   <div class="sec-head">PROFILE</div>
@@ -1125,6 +1223,7 @@ var S = {
   goals: [],      // [{id, name, cat, cur, target, unit, date, start}]
   measurements: [],// [{date, weight, bf, height, chest, waist, hips, arm, thigh, calf}]
   vitals: [],     // [{date, hr, sys, dia, sleep, quality, bed, wake, notes}]
+  mealLibrary: [], // [{id, name, type, kcal, protein, carbs, fat, fiber, notes, ingredients, savedAt}]
   streak: 0
 };
 
@@ -1147,7 +1246,7 @@ function load() {
 }
 
 // ===================== NAV =====================
-var pageTitles = {dashboard:'DASHBOARD',nutrition:'NUTRITION',workout:'WORKOUT',habits:'HABITS',water:'WATER',vitals:'VITALS',measurements:'MEASUREMENTS',goals:'GOALS & PROGRESS',timer:'TIMER & STOPWATCH',settings:'SETTINGS'};
+var pageTitles = {dashboard:'DASHBOARD',nutrition:'NUTRITION',workout:'WORKOUT',habits:'HABITS',water:'WATER',vitals:'VITALS',measurements:'MEASUREMENTS',goals:'GOALS & PROGRESS',meallibrary:'MEAL LIBRARY',timer:'TIMER & STOPWATCH',settings:'SETTINGS'};
 function nav(btn, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
@@ -1166,6 +1265,7 @@ function nav(btn, id) {
   if (id === 'nutrition') renderNutrition();
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
+  if (id === 'meallibrary') renderMealLibrary();
 }
 
 // ===================== TOAST =====================
@@ -1271,6 +1371,7 @@ function renderWeightChart() {
 
 // ===================== NUTRITION =====================
 function renderNutrition() {
+  updateLibraryDropdown();
   var d = getDay(S.today);
   var totCal=0,totProt=0,totCarb=0,totFat=0,totFib=0;
   d.meals.forEach(m => { totCal+=m.kcal; totProt+=m.protein; totCarb+=m.carbs; totFat+=m.fat; totFib+=m.fiber||0; });
@@ -1295,53 +1396,182 @@ function renderNutrition() {
   if (!d.meals.length) { list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No meals logged yet. Add your first meal above.</div>'; return; }
   var colors = {Breakfast:'var(--o)',Lunch:'var(--c2)',Dinner:'var(--p)',Snack:'var(--t2)','Pre-workout':'var(--g2)','Post-workout':'var(--g)'};
   var mealTypes = ['Breakfast','Lunch','Dinner','Snack','Pre-workout','Post-workout'];
-  list.innerHTML = d.meals.map((m,i) => `
+  list.innerHTML = d.meals.map((m,i) => {
+    var ingrs = m.ingredients||[];
+    var ingrHTML = '';
+    if (ingrs.length) {
+      ingrHTML = `<div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
+        <div style="font-size:9px;color:var(--c2);letter-spacing:1px;margin-bottom:4px">INGREDIENTS (${ingrs.length})</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+        ${ingrs.map((ig,j)=>`
+          <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t2);font-family:var(--mono)">
+            <span style="color:var(--t);min-width:100px">${ig.name}</span>
+            <span style="background:var(--t3);padding:1px 6px;border-radius:2px">${ig.weight}g</span>
+            <span style="color:var(--o2)">${ig.cal}cal</span>
+            <span>P:${ig.pro}g</span>
+            <span>C:${ig.carb}g</span>
+            <span>F:${ig.fat}g</span>
+            <span style="color:var(--p)">Fb:${ig.fiber}g</span>
+            <button onclick="event.stopPropagation();delIngredientFromMeal(${i},${j})" style="background:none;border:none;color:var(--border);cursor:pointer;font-size:10px;margin-left:auto" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button>
+          </div>`).join('')}
+        </div>
+        <div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--border);font-size:10px;font-family:var(--mono);display:flex;gap:12px;flex-wrap:wrap">
+          <span style="color:var(--t2)">TOTAL → </span>
+          <span style="color:var(--o2)">CAL: <b>${ingrs.reduce((a,ig)=>a+ig.cal,0)}</b></span>
+          <span>PRO: <b style="color:var(--o)">${ingrs.reduce((a,ig)=>a+ig.pro,0)}g</b></span>
+          <span>CARB: <b style="color:var(--c2)">${ingrs.reduce((a,ig)=>a+ig.carb,0)}g</b></span>
+          <span>FAT: <b style="color:var(--g2)">${ingrs.reduce((a,ig)=>a+ig.fat,0)}g</b></span>
+          <span>FIBER: <b style="color:var(--p)">${ingrs.reduce((a,ig)=>a+ig.fiber,0)}g</b></span>
+          <span>WT: <b>${ingrs.reduce((a,ig)=>a+ig.weight,0)}g</b></span>
+        </div>
+      </div>`;
+    }
+    // Edit form with ingredient editor
+    var editIngrHTML = (m.ingredients||[]).map((ig,j)=>`
+      <div id="edit-igr-${i}-${j}" style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:4px;background:var(--card);border:1px solid var(--border);margin-bottom:4px;border-radius:2px">
+        <input class="inp" style="flex:2;min-width:90px;font-size:10px;padding:4px 6px" id="eignm-${i}-${j}" type="text" value="${ig.name.replace(/"/g,'&quot;')}"/>
+        <input class="inp" style="flex:1;min-width:45px;font-size:10px;padding:4px 6px" id="eigwt-${i}-${j}" type="number" value="${ig.weight}" placeholder="g"/>
+        <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:4px 6px" id="eigcal-${i}-${j}" type="number" value="${ig.cal}" placeholder="cal"/>
+        <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:4px 6px" id="eigpro-${i}-${j}" type="number" value="${ig.pro}" placeholder="pro"/>
+        <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:4px 6px" id="eigcarb-${i}-${j}" type="number" value="${ig.carb}" placeholder="carb"/>
+        <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:4px 6px" id="eigfat-${i}-${j}" type="number" value="${ig.fat}" placeholder="fat"/>
+        <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:4px 6px" id="eigfib-${i}-${j}" type="number" value="${ig.fiber}" placeholder="fib"/>
+        <button onclick="saveIngrEdit(${i},${j})" style="background:var(--g3);border:1px solid var(--g2);color:var(--g);font-size:9px;padding:3px 6px;cursor:pointer;font-family:var(--mono)">✓</button>
+        <button onclick="delIngredientFromMeal(${i},${j})" style="background:none;border:1px solid var(--border);color:var(--red);font-size:9px;padding:3px 6px;cursor:pointer">✕</button>
+      </div>`).join('');
+    return `
     <div class="meal-item" style="border-left-color:${colors[m.type]||'var(--t2)'}">
       <div class="meal-top">
-        <div><div class="meal-name">${m.name} <span style="font-size:9px;color:var(--t2);letter-spacing:1px">${m.type.toUpperCase()} · ${m.time||''}</span></div>
-        <div class="meal-detail">P: ${m.protein}g · C: ${m.carbs}g · F: ${m.fat}g · Fiber: ${m.fiber||0}g${m.notes?' · '+m.notes:''}</div></div>
+        <div style="flex:1">
+          <div class="meal-name">${m.name} <span style="font-size:9px;color:var(--t2);letter-spacing:1px">${m.type.toUpperCase()} · ${m.time||''}</span></div>
+          <div class="meal-detail">P: ${m.protein}g · C: ${m.carbs}g · F: ${m.fat}g · Fiber: ${m.fiber||0}g${m.notes?' · '+m.notes:''}</div>
+        </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="meal-cal">${m.kcal} kcal</div>
           <button class="edit-btn" onclick="toggleMealEdit(${i})">✎ EDIT</button>
           <button class="del-btn" onclick="delMeal(${i})">✕</button>
         </div>
       </div>
+      ${ingrHTML}
       <div class="edit-form" id="meal-edit-${i}">
         <div class="inp-row" style="margin-bottom:8px;flex-wrap:wrap">
           <div class="inp-group" style="flex:2;min-width:140px"><div class="inp-label">MEAL NAME</div><input class="inp" id="me-name-${i}" type="text" value="${m.name.replace(/"/g,'&quot;')}"/></div>
           <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">TIME</div><input class="inp" id="me-time-${i}" type="time" value="${m.time||''}"/></div>
           <div class="inp-group" style="flex:1;min-width:100px"><div class="inp-label">TYPE</div><select class="inp" id="me-type-${i}">${mealTypes.map(t=>`<option${t===m.type?' selected':''}>${t}</option>`).join('')}</select></div>
         </div>
-        <div class="inp-row" style="flex-wrap:wrap">
-          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">KCAL</div><input class="inp" id="me-kcal-${i}" type="number" value="${m.kcal}"/></div>
-          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">PROTEIN</div><input class="inp" id="me-p-${i}" type="number" value="${m.protein}"/></div>
-          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">CARBS</div><input class="inp" id="me-c-${i}" type="number" value="${m.carbs}"/></div>
-          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">FAT</div><input class="inp" id="me-f-${i}" type="number" value="${m.fat}"/></div>
-          <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">FIBER</div><input class="inp" id="me-fb-${i}" type="number" value="${m.fiber||0}"/></div>
+        <!-- Edit ingredients -->
+        <div style="margin-bottom:8px">
+          <div class="inp-label" style="color:var(--c2);margin-bottom:6px">EDIT INGREDIENTS</div>
+          <div id="edit-ingr-list-${i}">${editIngrHTML}</div>
+          <!-- add new ingredient in edit mode -->
+          <div style="display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)">
+            <input class="inp" style="flex:2;min-width:90px;font-size:10px;padding:5px 8px" id="ean-${i}" type="text" placeholder="New ingredient name"/>
+            <input class="inp" style="flex:1;min-width:45px;font-size:10px;padding:5px 8px" id="eawt-${i}" type="number" placeholder="g"/>
+            <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:5px 8px" id="eacal-${i}" type="number" placeholder="cal"/>
+            <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:5px 8px" id="eapro-${i}" type="number" placeholder="pro"/>
+            <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:5px 8px" id="eacarb-${i}" type="number" placeholder="carb"/>
+            <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:5px 8px" id="eafat-${i}" type="number" placeholder="fat"/>
+            <input class="inp" style="flex:1;min-width:40px;font-size:10px;padding:5px 8px" id="eafib-${i}" type="number" placeholder="fib"/>
+            <button onclick="addIngredientToExistingMeal(${i})" class="btn sm">+ ADD</button>
+          </div>
         </div>
-        <div class="inp-group" style="margin-top:6px"><div class="inp-label">NOTES</div><input class="inp" id="me-notes-${i}" type="text" value="${(m.notes||'').replace(/"/g,'&quot;')}"/></div>
+        <div class="inp-group" style="margin-bottom:8px"><div class="inp-label">NOTES</div><input class="inp" id="me-notes-${i}" type="text" value="${(m.notes||'').replace(/"/g,'&quot;')}"/></div>
         <div class="edit-form-actions">
           <button class="btn sm" onclick="saveMealEdit(${i})">[ SAVE ]</button>
           <button class="btn sm danger" onclick="toggleMealEdit(${i})">[ CANCEL ]</button>
         </div>
       </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- INGREDIENT BUILDER (temp list before logging) ----
+var pendingIngredients = [];
+
+function updateIngrPreview() {
+  // just live-previews the current input row, no-op needed here
+}
+
+function addIngredient() {
+  var name = document.getElementById('ig-name').value.trim();
+  if (!name) { toast('Enter ingredient name'); return; }
+  var ig = {
+    name,
+    weight: parseFloat(document.getElementById('ig-wt').value)||0,
+    cal:    parseInt(document.getElementById('ig-cal').value)||0,
+    pro:    parseFloat(document.getElementById('ig-pro').value)||0,
+    carb:   parseFloat(document.getElementById('ig-carb').value)||0,
+    fat:    parseFloat(document.getElementById('ig-fat').value)||0,
+    fiber:  parseFloat(document.getElementById('ig-fiber').value)||0
+  };
+  pendingIngredients.push(ig);
+  ['ig-name','ig-wt','ig-cal','ig-pro','ig-carb','ig-fat','ig-fiber'].forEach(id=>document.getElementById(id).value='');
+  renderPendingIngredients();
+}
+
+function renderPendingIngredients() {
+  var list = document.getElementById('ingr-list');
+  var summary = document.getElementById('meal-macro-summary');
+  if (!pendingIngredients.length) {
+    list.innerHTML = '';
+    summary.style.display = 'none';
+    document.getElementById('ingr-macro-preview').textContent = 'Add ingredients below';
+    return;
+  }
+  var totCal=0,totPro=0,totCarb=0,totFat=0,totFib=0,totWt=0;
+  pendingIngredients.forEach(ig=>{totCal+=ig.cal;totPro+=ig.pro;totCarb+=ig.carb;totFat+=ig.fat;totFib+=ig.fiber;totWt+=ig.weight;});
+  list.innerHTML = pendingIngredients.map((ig,j)=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 6px;background:var(--card);border:1px solid var(--border);margin-bottom:3px;font-size:10px;font-family:var(--mono);border-left:2px solid var(--c2)">
+      <span style="color:var(--t);flex:1;min-width:80px">${ig.name}</span>
+      <span style="background:var(--t3);padding:1px 5px;font-size:9px">${ig.weight}g</span>
+      <span style="color:var(--o2)">${ig.cal}cal</span>
+      <span>P:${ig.pro}g</span>
+      <span>C:${ig.carb}g</span>
+      <span>F:${ig.fat}g</span>
+      <span style="color:var(--p)">Fb:${ig.fiber}g</span>
+      <button onclick="removePendingIngr(${j})" style="background:none;border:none;color:var(--border);cursor:pointer;font-size:11px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button>
     </div>`).join('');
+  document.getElementById('ingr-macro-preview').innerHTML = `<span style="color:var(--g)">↳ ${pendingIngredients.length} items · ${totCal}cal · P:${totPro}g C:${totCarb}g F:${totFat}g</span>`;
+  summary.style.display = 'block';
+  document.getElementById('ms-cal').textContent = totCal;
+  document.getElementById('ms-pro').textContent = totPro;
+  document.getElementById('ms-carb').textContent = totCarb;
+  document.getElementById('ms-fat').textContent = totFat;
+  document.getElementById('ms-fiber').textContent = totFib;
+  document.getElementById('ms-wt').textContent = totWt;
+}
+
+function removePendingIngr(j) {
+  pendingIngredients.splice(j,1);
+  renderPendingIngredients();
+}
+
+function calcMacrosFromIngredients(ingrs) {
+  return {
+    kcal:    ingrs.reduce((a,ig)=>a+ig.cal,0),
+    protein: ingrs.reduce((a,ig)=>a+ig.pro,0),
+    carbs:   ingrs.reduce((a,ig)=>a+ig.carb,0),
+    fat:     ingrs.reduce((a,ig)=>a+ig.fat,0),
+    fiber:   ingrs.reduce((a,ig)=>a+ig.fiber,0)
+  };
 }
 
 function addMeal() {
   var name = document.getElementById('n-name').value.trim();
-  var kcal = parseInt(document.getElementById('n-kcal').value)||0;
   if (!name) { toast('Enter meal name'); return; }
+  var ingrs = pendingIngredients.slice();
+  var macros = ingrs.length ? calcMacrosFromIngredients(ingrs) : {kcal:0,protein:0,carbs:0,fat:0,fiber:0};
   getDay(S.today).meals.push({
     name, type: document.getElementById('n-type').value,
     time: document.getElementById('n-time').value,
-    kcal, protein: parseInt(document.getElementById('n-p').value)||0,
-    carbs: parseInt(document.getElementById('n-c').value)||0,
-    fat: parseInt(document.getElementById('n-f').value)||0,
-    fiber: parseInt(document.getElementById('n-fb').value)||0,
-    notes: document.getElementById('n-notes').value.trim()
+    kcal: macros.kcal, protein: macros.protein,
+    carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber,
+    notes: document.getElementById('n-notes').value.trim(),
+    ingredients: ingrs
   });
-  ['n-name','n-kcal','n-p','n-c','n-f','n-fb','n-notes'].forEach(id => document.getElementById(id).value='');
+  ['n-name','n-notes'].forEach(id => document.getElementById(id).value='');
+  pendingIngredients = [];
+  renderPendingIngredients();
   save(); renderNutrition(); toast('Meal logged!');
 }
 
@@ -1361,13 +1591,263 @@ function saveMealEdit(i) {
   m.name = document.getElementById('me-name-'+i).value.trim() || m.name;
   m.time = document.getElementById('me-time-'+i).value;
   m.type = document.getElementById('me-type-'+i).value;
-  m.kcal = parseInt(document.getElementById('me-kcal-'+i).value)||0;
-  m.protein = parseInt(document.getElementById('me-p-'+i).value)||0;
-  m.carbs = parseInt(document.getElementById('me-c-'+i).value)||0;
-  m.fat = parseInt(document.getElementById('me-f-'+i).value)||0;
-  m.fiber = parseInt(document.getElementById('me-fb-'+i).value)||0;
   m.notes = document.getElementById('me-notes-'+i).value.trim();
+  // Recalculate from ingredients if present
+  if (m.ingredients && m.ingredients.length) {
+    var mac = calcMacrosFromIngredients(m.ingredients);
+    m.kcal = mac.kcal; m.protein = mac.protein; m.carbs = mac.carbs; m.fat = mac.fat; m.fiber = mac.fiber;
+  }
   save(); renderNutrition(); toast('Meal updated!');
+}
+
+function delIngredientFromMeal(mealIdx, ingrIdx) {
+  var m = getDay(S.today).meals[mealIdx];
+  if (!m || !m.ingredients) return;
+  m.ingredients.splice(ingrIdx,1);
+  var mac = calcMacrosFromIngredients(m.ingredients);
+  m.kcal = mac.kcal; m.protein = mac.protein; m.carbs = mac.carbs; m.fat = mac.fat; m.fiber = mac.fiber;
+  save(); renderNutrition(); toast('Ingredient removed');
+}
+
+function saveIngrEdit(mealIdx, ingrIdx) {
+  var m = getDay(S.today).meals[mealIdx];
+  if (!m || !m.ingredients) return;
+  var ig = m.ingredients[ingrIdx];
+  ig.name   = document.getElementById('eignm-'+mealIdx+'-'+ingrIdx).value.trim() || ig.name;
+  ig.weight = parseFloat(document.getElementById('eigwt-'+mealIdx+'-'+ingrIdx).value)||0;
+  ig.cal    = parseInt(document.getElementById('eigcal-'+mealIdx+'-'+ingrIdx).value)||0;
+  ig.pro    = parseFloat(document.getElementById('eigpro-'+mealIdx+'-'+ingrIdx).value)||0;
+  ig.carb   = parseFloat(document.getElementById('eigcarb-'+mealIdx+'-'+ingrIdx).value)||0;
+  ig.fat    = parseFloat(document.getElementById('eigfat-'+mealIdx+'-'+ingrIdx).value)||0;
+  ig.fiber  = parseFloat(document.getElementById('eigfib-'+mealIdx+'-'+ingrIdx).value)||0;
+  var mac = calcMacrosFromIngredients(m.ingredients);
+  m.kcal = mac.kcal; m.protein = mac.protein; m.carbs = mac.carbs; m.fat = mac.fat; m.fiber = mac.fiber;
+  save(); renderNutrition(); toast('Ingredient updated!');
+}
+
+function addIngredientToExistingMeal(mealIdx) {
+  var name = document.getElementById('ean-'+mealIdx).value.trim();
+  if (!name) { toast('Enter ingredient name'); return; }
+  var m = getDay(S.today).meals[mealIdx];
+  if (!m.ingredients) m.ingredients = [];
+  m.ingredients.push({
+    name,
+    weight: parseFloat(document.getElementById('eawt-'+mealIdx).value)||0,
+    cal:    parseInt(document.getElementById('eacal-'+mealIdx).value)||0,
+    pro:    parseFloat(document.getElementById('eapro-'+mealIdx).value)||0,
+    carb:   parseFloat(document.getElementById('eacarb-'+mealIdx).value)||0,
+    fat:    parseFloat(document.getElementById('eafat-'+mealIdx).value)||0,
+    fiber:  parseFloat(document.getElementById('eafib-'+mealIdx).value)||0
+  });
+  var mac = calcMacrosFromIngredients(m.ingredients);
+  m.kcal = mac.kcal; m.protein = mac.protein; m.carbs = mac.carbs; m.fat = mac.fat; m.fiber = mac.fiber;
+  save(); renderNutrition(); toast('Ingredient added!');
+}
+
+// ===================== MEAL LIBRARY =====================
+var mlaPendingIngredients = [];
+
+function mlaAddIngredient() {
+  var name = document.getElementById('mla-ig-name').value.trim();
+  if (!name) { toast('Enter ingredient name'); return; }
+  var ig = {
+    name,
+    weight: parseFloat(document.getElementById('mla-ig-wt').value)||0,
+    cal:    parseInt(document.getElementById('mla-ig-cal').value)||0,
+    pro:    parseFloat(document.getElementById('mla-ig-pro').value)||0,
+    carb:   parseFloat(document.getElementById('mla-ig-carb').value)||0,
+    fat:    parseFloat(document.getElementById('mla-ig-fat').value)||0,
+    fiber:  parseFloat(document.getElementById('mla-ig-fiber').value)||0
+  };
+  mlaPendingIngredients.push(ig);
+  ['mla-ig-name','mla-ig-wt','mla-ig-cal','mla-ig-pro','mla-ig-carb','mla-ig-fat','mla-ig-fiber'].forEach(id=>document.getElementById(id).value='');
+  renderMlaIngredients();
+}
+
+function renderMlaIngredients() {
+  var list = document.getElementById('mla-ingr-list');
+  var prev = document.getElementById('mla-ingr-preview');
+  if (!list) return;
+  if (!mlaPendingIngredients.length) {
+    list.innerHTML = '';
+    prev.textContent = 'Add ingredients below';
+    return;
+  }
+  var totCal=0,totPro=0,totCarb=0,totFat=0;
+  mlaPendingIngredients.forEach(ig=>{totCal+=ig.cal;totPro+=ig.pro;totCarb+=ig.carb;totFat+=ig.fat;});
+  list.innerHTML = mlaPendingIngredients.map((ig,j)=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 6px;background:var(--card);border:1px solid var(--border);margin-bottom:3px;font-size:10px;font-family:var(--mono);border-left:2px solid var(--c2)">
+      <span style="color:var(--t);flex:1">${ig.name}</span>
+      <span style="background:var(--t3);padding:1px 5px;font-size:9px">${ig.weight}g</span>
+      <span style="color:var(--o2)">${ig.cal}cal</span>
+      <span>P:${ig.pro}g C:${ig.carb}g F:${ig.fat}g</span>
+      <button onclick="mlaPendingIngredients.splice(${j},1);renderMlaIngredients()" style="background:none;border:none;color:var(--border);cursor:pointer;font-size:11px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button>
+    </div>`).join('');
+  prev.innerHTML = `<span style="color:var(--g)">↳ ${mlaPendingIngredients.length} items · ${totCal}cal · P:${totPro}g C:${totCarb}g F:${totFat}g</span>`;
+}
+
+function saveMealToLibrary(mealObj) {
+  // Can be called directly with a meal object, or from the library form
+  if (!mealObj) {
+    var name = document.getElementById('mla-name').value.trim();
+    if (!name) { toast('Enter meal name'); return; }
+    var ingrs = mlaPendingIngredients.slice();
+    var macros = ingrs.length ? calcMacrosFromIngredients(ingrs) : {kcal:0,protein:0,carbs:0,fat:0,fiber:0};
+    mealObj = {
+      name, type: document.getElementById('mla-type').value,
+      kcal: macros.kcal, protein: macros.protein,
+      carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber,
+      notes: document.getElementById('mla-notes').value.trim(),
+      ingredients: ingrs
+    };
+    // Reset form
+    document.getElementById('mla-name').value = '';
+    document.getElementById('mla-notes').value = '';
+    mlaPendingIngredients = [];
+    renderMlaIngredients();
+  }
+  // Check for duplicate name
+  var exists = S.mealLibrary.some(m => m.name.toLowerCase() === mealObj.name.toLowerCase());
+  if (exists) { toast('A meal with this name already exists in library!'); return; }
+  S.mealLibrary.push({
+    id: Date.now(),
+    name: mealObj.name, type: mealObj.type||'Meal',
+    kcal: mealObj.kcal||0, protein: mealObj.protein||0,
+    carbs: mealObj.carbs||0, fat: mealObj.fat||0, fiber: mealObj.fiber||0,
+    notes: mealObj.notes||'',
+    ingredients: mealObj.ingredients||[],
+    savedAt: new Date().toLocaleDateString()
+  });
+  save(); renderMealLibrary(); updateLibraryDropdown(); toast('✅ Saved to Meal Library!');
+}
+
+function addMealAndSaveToLibrary() {
+  var name = document.getElementById('n-name').value.trim();
+  if (!name) { toast('Enter meal name'); return; }
+  var ingrs = pendingIngredients.slice();
+  var macros = ingrs.length ? calcMacrosFromIngredients(ingrs) : {kcal:0,protein:0,carbs:0,fat:0,fiber:0};
+  var mealObj = {
+    name, type: document.getElementById('n-type').value,
+    kcal: macros.kcal, protein: macros.protein,
+    carbs: macros.carbs, fat: macros.fat, fiber: macros.fiber,
+    notes: document.getElementById('n-notes').value.trim(),
+    ingredients: ingrs
+  };
+  // Log it
+  getDay(S.today).meals.push({...mealObj, time: document.getElementById('n-time').value});
+  ['n-name','n-notes'].forEach(id => document.getElementById(id).value='');
+  pendingIngredients = [];
+  renderPendingIngredients();
+  save(); renderNutrition();
+  // Save to library
+  saveMealToLibrary(mealObj);
+}
+
+function renderMealLibrary() {
+  var search = (document.getElementById('ml-search')||{value:''}).value.toLowerCase();
+  var filter = (document.getElementById('ml-filter')||{value:''}).value;
+  var list = document.getElementById('mlList');
+  if (!list) return;
+
+  // Stats
+  var total = S.mealLibrary.length;
+  var cats = [...new Set(S.mealLibrary.map(m=>m.type))].length;
+  var avgCal = total ? Math.round(S.mealLibrary.reduce((a,m)=>a+m.kcal,0)/total) : 0;
+  var avgPro = total ? Math.round(S.mealLibrary.reduce((a,m)=>a+m.protein,0)/total) : 0;
+  if (document.getElementById('ml-total')) document.getElementById('ml-total').textContent = total;
+  if (document.getElementById('ml-cats')) document.getElementById('ml-cats').textContent = cats;
+  if (document.getElementById('ml-avgcal')) document.getElementById('ml-avgcal').textContent = avgCal;
+  if (document.getElementById('ml-avgpro')) document.getElementById('ml-avgpro').textContent = avgPro+'g';
+  if (document.getElementById('mlBadge')) document.getElementById('mlBadge').textContent = total;
+
+  var filtered = S.mealLibrary.filter(m => {
+    var matchSearch = !search || m.name.toLowerCase().includes(search) || (m.notes||'').toLowerCase().includes(search);
+    var matchType = !filter || m.type === filter;
+    return matchSearch && matchType;
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = `<div style="font-size:10px;color:var(--t2);padding:10px">${total ? 'No meals match your search.' : 'No meals saved yet. Log a meal and click "LOG + SAVE", or add directly below.'}</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map((m, i) => {
+    var idx = S.mealLibrary.indexOf(m);
+    var ingrHtml = (m.ingredients && m.ingredients.length) ?
+      `<div style="margin-top:6px;padding:6px 8px;background:var(--card2);border-left:2px solid var(--c2);font-size:9px;font-family:var(--mono);color:var(--t2)">
+        ${m.ingredients.map(ig=>`<span style="margin-right:8px">${ig.name} ${ig.weight}g</span>`).join('')}
+      </div>` : '';
+    return `<div class="meal-item" style="cursor:default;margin-bottom:8px;border-left:3px solid var(--g3)">
+      <div class="meal-top">
+        <div>
+          <div class="meal-name">${m.name}</div>
+          <div class="meal-detail" style="margin-top:3px">
+            <span style="background:var(--t3);padding:1px 6px;font-size:9px;margin-right:6px">${m.type}</span>
+            <span style="color:var(--o2);font-weight:600">${m.kcal} kcal</span>
+            <span style="color:var(--t2);font-size:9px;margin-left:6px">P:${m.protein}g C:${m.carbs}g F:${m.fat}g</span>
+            ${m.notes ? `<span style="color:var(--t2);font-size:9px;margin-left:6px">· ${m.notes}</span>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn sm" onclick="logLibraryMealById(${m.id})" title="Log to today">▶ LOG TODAY</button>
+          <button class="del-btn" onclick="deleteLibraryMeal(${idx})" title="Delete from library">✕</button>
+        </div>
+      </div>
+      ${ingrHtml}
+      <div style="font-size:9px;color:var(--t3);margin-top:4px;font-family:var(--mono)">saved: ${m.savedAt||''}</div>
+    </div>`;
+  }).join('');
+}
+
+function logLibraryMealById(id) {
+  var m = S.mealLibrary.find(x=>x.id===id);
+  if (!m) return;
+  var now = new Date();
+  var hh = String(now.getHours()).padStart(2,'0');
+  var mm2 = String(now.getMinutes()).padStart(2,'0');
+  getDay(S.today).meals.push({
+    name: m.name, type: m.type,
+    time: hh+':'+mm2,
+    kcal: m.kcal, protein: m.protein,
+    carbs: m.carbs, fat: m.fat, fiber: m.fiber,
+    notes: m.notes, ingredients: m.ingredients||[]
+  });
+  save();
+  toast('✅ ' + m.name + ' logged for today!');
+}
+
+function deleteLibraryMeal(idx) {
+  if (!confirm('Remove "' + S.mealLibrary[idx].name + '" from library?')) return;
+  S.mealLibrary.splice(idx, 1);
+  save(); renderMealLibrary(); updateLibraryDropdown(); toast('Meal removed from library');
+}
+
+function updateLibraryDropdown() {
+  var sel = document.getElementById('n-from-lib');
+  if (!sel) return;
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">— select saved meal —</option>' +
+    S.mealLibrary.map(m => `<option value="${m.id}">${m.name} (${m.kcal} kcal)</option>`).join('');
+  sel.value = cur;
+}
+
+function previewLibraryMeal() {
+  var id = parseInt(document.getElementById('n-from-lib').value);
+  var prev = document.getElementById('n-lib-preview');
+  if (!id || !prev) { if(prev) prev.style.display='none'; return; }
+  var m = S.mealLibrary.find(x=>x.id===id);
+  if (!m) { prev.style.display='none'; return; }
+  prev.style.display = 'block';
+  prev.innerHTML = `<span style="color:var(--t)">${m.name}</span> · <span style="color:var(--o2)">${m.kcal} kcal</span> · P:${m.protein}g C:${m.carbs}g F:${m.fat}g${m.notes ? ' · '+m.notes : ''}`;
+}
+
+function logMealFromLibrary() {
+  var id = parseInt(document.getElementById('n-from-lib').value);
+  if (!id) { toast('Select a meal from library first'); return; }
+  logLibraryMealById(id);
+  document.getElementById('n-from-lib').value = '';
+  document.getElementById('n-lib-preview').style.display = 'none';
+  renderNutrition();
 }
 
 // ===================== WORKOUT =====================

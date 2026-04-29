@@ -463,6 +463,46 @@ canvas{display:block;width:100%}
   padding:4px 8px;border:1px solid var(--border);background:var(--card);
 }
 html.alpha .sync-indicator{border-radius:20px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px;}
+/* ===== INGREDIENT LIBRARY PAGE ===== */
+.ilib-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.ilib-search-wrap{position:relative;flex:1;min-width:180px}
+.ilib-search-wrap input{padding-right:28px}
+.ilib-search-wrap::after{content:'⌕';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--t2);font-size:14px;pointer-events:none}
+.ilib-stats{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.ilib-stat{background:var(--card);border:1px solid var(--border);padding:10px 14px;flex:1;min-width:90px}
+.ilib-stat-label{font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.ilib-stat-val{font-family:var(--raj);font-size:20px;font-weight:700;color:var(--g)}
+.ilib-table-wrap{background:var(--card);border:1px solid var(--border);overflow-x:auto}
+.ilib-table{width:100%;border-collapse:collapse;min-width:640px}
+.ilib-table th{font-size:8px;letter-spacing:2px;color:var(--t2);text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--card2);font-weight:600;white-space:nowrap}
+.ilib-table th.right,.ilib-table td.right{text-align:right}
+.ilib-table th.center,.ilib-table td.center{text-align:center}
+.ilib-table td{padding:9px 12px;font-size:10px;border-bottom:1px solid var(--border);vertical-align:middle;transition:background .15s}
+.ilib-table tr:last-child td{border-bottom:none}
+.ilib-table tbody tr:hover td{background:var(--gd)}
+.ilib-table tr.editing td{background:rgba(0,229,255,.04);border-top:1px solid var(--c2)}
+.ilib-name-cell{font-family:var(--raj);font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--t)}
+.ilib-macro{font-family:var(--mono);font-size:10px}
+.ilib-actions{display:flex;gap:4px;justify-content:flex-end}
+.ilib-badge{display:inline-block;padding:2px 7px;font-size:8px;letter-spacing:1px;border:1px solid;font-family:var(--mono)}
+.ilib-empty{text-align:center;padding:40px 20px;color:var(--t2);font-size:10px;letter-spacing:1px}
+.ilib-empty-icon{font-size:28px;margin-bottom:8px;opacity:.4}
+.ilib-inline-edit{background:var(--card2);border-top:1px solid var(--c2) !important}
+.ilib-inline-edit td{padding:12px !important}
+.ilib-inline-form{display:grid;grid-template-columns:2fr 1fr repeat(5,1fr);gap:6px;align-items:end}
+.ilib-inline-form .inp{padding:6px 8px;font-size:10px}
+.ilib-inline-form .inp-label{font-size:8px}
+.ilib-sort-btn{background:none;border:none;color:var(--t2);cursor:pointer;font-family:var(--mono);font-size:8px;letter-spacing:1px;padding:0 2px;transition:color .15s}
+.ilib-sort-btn:hover,.ilib-sort-btn.active{color:var(--g)}
+.ilib-col-name::after,.ilib-col-bwt::after{content:' ⇅'}
+.ilib-sort-asc .ilib-col-name::after,.ilib-sort-asc .ilib-col-bwt::after{content:' ↑'}
+.ilib-sort-desc .ilib-col-name::after,.ilib-sort-desc .ilib-col-bwt::after{content:' ↓'}
+/* Modal for ingredient lib */
+.ilib-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html.alpha .ilib-table th{font-family:'DM Sans',sans-serif}
+html.alpha .ilib-name-cell{font-family:'Barlow Condensed',sans-serif;font-size:13px}
+html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
+
 </style>
 </head>
 <body>
@@ -536,6 +576,7 @@ html.alpha .sync-indicator{border-radius:20px;font-family:'DM Sans',sans-serif;f
 
     <div class="sb-sec">TOOLS</div>
     <div class="sb-item" onclick="nav(this,'meallibrary')"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
+    <div class="sb-item" onclick="nav(this,'ingredientlib')"><span class="sb-icon">⊛</span><span class="sb-label">Ingredient Library</span><span class="sb-badge" id="ilBadge">0</span></div>
     <div class="sb-item" onclick="nav(this,'timer')"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
 
     <div class="sb-sec">ACCOUNT</div>
@@ -1029,6 +1070,114 @@ html.alpha .sync-indicator{border-radius:20px;font-family:'DM Sans',sans-serif;f
   </div>
 </div>
 
+
+<!-- ============ INGREDIENT LIBRARY ============ -->
+<div class="page" id="page-ingredientlib">
+
+  <!-- Stats Bar -->
+  <div class="ilib-stats" id="il-stats">
+    <div class="ilib-stat"><div class="ilib-stat-label">TOTAL INGREDIENTS</div><div class="ilib-stat-val" id="il-stat-total">0</div></div>
+    <div class="ilib-stat"><div class="ilib-stat-label">AVG CAL/100g</div><div class="ilib-stat-val" id="il-stat-cal" style="color:var(--o2)">—</div></div>
+    <div class="ilib-stat"><div class="ilib-stat-label">AVG PROTEIN/100g</div><div class="ilib-stat-val" id="il-stat-pro" style="color:var(--o)">—</div></div>
+    <div class="ilib-stat"><div class="ilib-stat-label">HIGH PROTEIN</div><div class="ilib-stat-val" id="il-stat-top" style="color:var(--g);font-size:12px;letter-spacing:0">—</div></div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="ilib-toolbar">
+    <div class="ilib-search-wrap">
+      <input class="inp" id="il-search" type="text" placeholder="Search by name..." oninput="renderIngredientLib()"/>
+    </div>
+    <select class="inp" id="il-sort-field" onchange="renderIngredientLib()" style="min-width:130px">
+      <option value="name">Sort: Name</option>
+      <option value="cal">Sort: Calories</option>
+      <option value="pro">Sort: Protein</option>
+      <option value="carb">Sort: Carbs</option>
+      <option value="fat">Sort: Fat</option>
+      <option value="bwt">Sort: Base Wt</option>
+    </select>
+    <select class="inp" id="il-sort-dir" onchange="renderIngredientLib()" style="min-width:90px">
+      <option value="asc">↑ Asc</option>
+      <option value="desc">↓ Desc</option>
+    </select>
+    <button class="btn" onclick="openIlModal()" style="white-space:nowrap;border-color:var(--p);color:var(--p)">[ + ADD INGREDIENT ]</button>
+  </div>
+
+  <!-- Table -->
+  <div class="ilib-table-wrap">
+    <table class="ilib-table">
+      <thead>
+        <tr>
+          <th style="min-width:160px">INGREDIENT NAME</th>
+          <th class="center">BASE WT (g)</th>
+          <th class="right" style="color:var(--o2)">CAL</th>
+          <th class="right" style="color:var(--o)">PRO (g)</th>
+          <th class="right" style="color:var(--c2)">CARB (g)</th>
+          <th class="right" style="color:var(--g2)">FAT (g)</th>
+          <th class="right" style="color:var(--p)">FIBER (g)</th>
+          <th class="right">PER 100g CAL</th>
+          <th class="right" style="min-width:110px">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody id="il-tbody">
+        <tr><td colspan="9" class="ilib-empty"><div class="ilib-empty-icon">📖</div><div>No ingredients yet. Add your first ingredient above.</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- INGREDIENT LIBRARY MODAL (Add / Edit) -->
+<div class="modal-bg" id="il-modal">
+  <div class="modal" style="max-width:500px;width:94%">
+    <div class="modal-title" id="il-modal-title">ADD INGREDIENT</div>
+    <div class="inp-group" style="margin-bottom:12px">
+      <div class="inp-label">INGREDIENT NAME</div>
+      <input class="inp" id="il-m-name" type="text" placeholder="e.g. Chicken Breast, Brown Rice, Oats"/>
+    </div>
+    <div class="inp-group" style="margin-bottom:12px">
+      <div class="inp-label">BASE WEIGHT (g) — all macros are measured at this weight</div>
+      <input class="inp" id="il-m-bwt" type="number" value="100" min="1" placeholder="100"/>
+    </div>
+    <div style="font-size:8px;color:var(--p);letter-spacing:2px;margin-bottom:8px;font-family:var(--mono)">MACROS AT BASE WEIGHT</div>
+    <div class="ilib-modal-grid" style="margin-bottom:14px">
+      <div class="inp-group">
+        <div class="inp-label" style="color:var(--o2)">CALORIES (kcal)</div>
+        <input class="inp" id="il-m-cal" type="number" placeholder="0" min="0" step="0.1"/>
+      </div>
+      <div class="inp-group">
+        <div class="inp-label" style="color:var(--o)">PROTEIN (g)</div>
+        <input class="inp" id="il-m-pro" type="number" placeholder="0" min="0" step="0.1"/>
+      </div>
+      <div class="inp-group">
+        <div class="inp-label" style="color:var(--c2)">CARBS (g)</div>
+        <input class="inp" id="il-m-carb" type="number" placeholder="0" min="0" step="0.1"/>
+      </div>
+      <div class="inp-group">
+        <div class="inp-label" style="color:var(--g2)">FAT (g)</div>
+        <input class="inp" id="il-m-fat" type="number" placeholder="0" min="0" step="0.1"/>
+      </div>
+      <div class="inp-group">
+        <div class="inp-label" style="color:var(--p)">FIBER (g)</div>
+        <input class="inp" id="il-m-fiber" type="number" placeholder="0" min="0" step="0.1"/>
+      </div>
+    </div>
+    <!-- Live preview -->
+    <div id="il-m-preview" style="font-size:9px;font-family:var(--mono);color:var(--t2);padding:8px 10px;background:var(--card2);border:1px solid var(--border);margin-bottom:14px;display:none">
+      <span style="color:var(--g);letter-spacing:1px;margin-right:8px">PER 100g →</span>
+      Cal:<b id="il-m-p-cal" style="color:var(--o2)">0</b>
+      Pro:<b id="il-m-p-pro" style="color:var(--o)">0</b>g
+      Carb:<b id="il-m-p-carb" style="color:var(--c2)">0</b>g
+      Fat:<b id="il-m-p-fat" style="color:var(--g2)">0</b>g
+      Fiber:<b id="il-m-p-fiber" style="color:var(--p)">0</b>g
+    </div>
+    <input type="hidden" id="il-m-edit-id"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeIlModal()" style="border-color:var(--border);color:var(--t2)">CANCEL</button>
+      <button class="btn" onclick="saveIlIngredient()" style="border-color:var(--p);color:var(--p)">[ SAVE INGREDIENT ]</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ PROFILE & SETTINGS ============ -->
 <div class="page" id="page-profile">
   <div style="text-align:center;margin-bottom:20px">
@@ -1200,6 +1349,7 @@ function getDefaultState(id) {
     measurements: [],
     vitals: [],
     mealLibrary: [],
+    ingredientLibrary: [],
     streak: 0
   };
 }
@@ -1239,6 +1389,7 @@ var S = {
   measurements: [],
   vitals: [],
   mealLibrary: [],
+  ingredientLibrary: [],
   streak: 0
 };
 
@@ -1287,7 +1438,7 @@ function saveToFirebase(cb) {
 var pageTitles = {
   dashboard:'DASHBOARD', nutrition:'NUTRITION', workout:'WORKOUT', habits:'HABITS',
   water:'WATER', vitals:'VITALS', measurements:'MEASUREMENTS', goals:'GOALS & PROGRESS',
-  meallibrary:'MEAL LIBRARY', timer:'TIMER & STOPWATCH', profile:'PROFILE & SETTINGS'
+  meallibrary:'MEAL LIBRARY', ingredientlib:'INGREDIENT LIBRARY', timer:'TIMER & STOPWATCH', profile:'PROFILE & SETTINGS'
 };
 function nav(btn, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1308,6 +1459,7 @@ function nav(btn, id) {
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
   if (id === 'meallibrary') renderMealLibrary();
+  if (id === 'ingredientlib') renderIngredientLib();
 }
 
 // ===================== TOAST =====================
@@ -1943,6 +2095,7 @@ function updateSidebarBadges() {
   var d=getDay(S.today); var done=d.exercises.filter(e=>e.done).length;
   document.getElementById('wkBadge').textContent=done+'/'+d.exercises.length;
   document.getElementById('habitNotif').style.display=S.habits.filter(h=>!h.logs[S.today]).length>0?'block':'none';
+  var ilb=document.getElementById('ilBadge'); if(ilb) ilb.textContent=(S.ingredientLibrary||[]).length;
 }
 
 // ===================== STREAK =====================
@@ -2008,6 +2161,207 @@ function toggleTheme(){
 }
 
 // ===================== INIT =====================
+
+// ===================== INGREDIENT LIBRARY =====================
+// Schema: { id, name, baseWeight, cal, pro, carb, fat, fiber, createdAt }
+
+function ilGetAll() { return S.ingredientLibrary || []; }
+
+function renderIngredientLib() {
+  var lib = ilGetAll();
+  var q = (document.getElementById('il-search')||{value:''}).value.trim().toLowerCase();
+  var sortField = (document.getElementById('il-sort-field')||{value:'name'}).value;
+  var sortDir = (document.getElementById('il-sort-dir')||{value:'asc'}).value;
+
+  // Filter
+  var items = q ? lib.filter(i => i.name.toLowerCase().includes(q)) : lib.slice();
+
+  // Sort
+  items.sort((a,b) => {
+    var av = sortField==='name' ? a.name.toLowerCase() : (parseFloat(a[sortField])||0);
+    var bv = sortField==='name' ? b.name.toLowerCase() : (parseFloat(b[sortField])||0);
+    if (av < bv) return sortDir==='asc' ? -1 : 1;
+    if (av > bv) return sortDir==='asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Stats
+  var statTot = document.getElementById('il-stat-total');
+  var statCal = document.getElementById('il-stat-cal');
+  var statPro = document.getElementById('il-stat-pro');
+  var statTop = document.getElementById('il-stat-top');
+  if (statTot) statTot.textContent = lib.length;
+  if (lib.length) {
+    var avgCal = (lib.reduce((s,i)=>{var bw=i.baseWeight||100;return s+(i.cal/bw*100);},0)/lib.length).toFixed(0);
+    var avgPro = (lib.reduce((s,i)=>{var bw=i.baseWeight||100;return s+(i.pro/bw*100);},0)/lib.length).toFixed(1);
+    var topPro = lib.slice().sort((a,b)=>{
+      var ap=a.pro/(a.baseWeight||100)*100, bp=b.pro/(b.baseWeight||100)*100;
+      return bp-ap;
+    })[0];
+    if (statCal) statCal.textContent = avgCal;
+    if (statPro) statPro.textContent = avgPro + 'g';
+    if (statTop) statTop.textContent = topPro ? topPro.name.toUpperCase().slice(0,12) : '—';
+  } else {
+    if (statCal) statCal.textContent = '—';
+    if (statPro) statPro.textContent = '—';
+    if (statTop) statTop.textContent = '—';
+  }
+
+  // Badge
+  var ilb = document.getElementById('ilBadge');
+  if (ilb) ilb.textContent = lib.length;
+
+  // Table body
+  var tbody = document.getElementById('il-tbody');
+  if (!tbody) return;
+  if (!items.length) {
+    tbody.innerHTML = '<tr><td colspan="9" class="ilib-empty"><div class="ilib-empty-icon">📖</div><div>' +
+      (q ? 'No ingredients match "'+q+'".' : 'No ingredients yet. Add your first ingredient above.') +
+      '</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = items.map(function(item) {
+    var bw = item.baseWeight || 100;
+    var per100Cal = (item.cal / bw * 100).toFixed(0);
+    var per100Pro = (item.pro / bw * 100).toFixed(1);
+    return '<tr id="il-row-'+item.id+'">' +
+      '<td class="ilib-name-cell">'+escHtml(item.name)+'</td>' +
+      '<td class="ilib-macro center">'+bw+'g</td>' +
+      '<td class="ilib-macro right" style="color:var(--o2)">'+item.cal+'</td>' +
+      '<td class="ilib-macro right" style="color:var(--o)">'+item.pro+'</td>' +
+      '<td class="ilib-macro right" style="color:var(--c2)">'+item.carb+'</td>' +
+      '<td class="ilib-macro right" style="color:var(--g2)">'+item.fat+'</td>' +
+      '<td class="ilib-macro right" style="color:var(--p)">'+(item.fiber||0)+'</td>' +
+      '<td class="ilib-macro right" style="color:var(--t2)">'+per100Cal+'</td>' +
+      '<td>' +
+        '<div class="ilib-actions">' +
+          '<button class="edit-btn" onclick="openIlModal(''+item.id+'')" title="Edit">[ EDIT ]</button>' +
+          '<button class="del-btn" onclick="deleteIlIngredient(''+item.id+'')" title="Delete">✕</button>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Modal ──────────────────────────────────────────────────────────────────
+function openIlModal(editId) {
+  var modal = document.getElementById('il-modal');
+  var titleEl = document.getElementById('il-modal-title');
+  var editIdEl = document.getElementById('il-m-edit-id');
+
+  // Reset
+  ['il-m-name','il-m-bwt','il-m-cal','il-m-pro','il-m-carb','il-m-fat','il-m-fiber'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = id==='il-m-bwt' ? '100' : '';
+  });
+  document.getElementById('il-m-preview').style.display = 'none';
+  editIdEl.value = editId || '';
+
+  if (editId) {
+    var item = ilGetAll().find(function(i){ return i.id === editId; });
+    if (!item) return;
+    titleEl.textContent = 'EDIT INGREDIENT';
+    document.getElementById('il-m-name').value  = item.name;
+    document.getElementById('il-m-bwt').value   = item.baseWeight || 100;
+    document.getElementById('il-m-cal').value   = item.cal  || 0;
+    document.getElementById('il-m-pro').value   = item.pro  || 0;
+    document.getElementById('il-m-carb').value  = item.carb || 0;
+    document.getElementById('il-m-fat').value   = item.fat  || 0;
+    document.getElementById('il-m-fiber').value = item.fiber|| 0;
+    ilUpdatePreview();
+  } else {
+    titleEl.textContent = 'ADD INGREDIENT';
+  }
+
+  modal.classList.add('open');
+  setTimeout(function(){ var n=document.getElementById('il-m-name'); if(n)n.focus(); }, 80);
+}
+
+function closeIlModal() {
+  document.getElementById('il-modal').classList.remove('open');
+}
+
+function ilUpdatePreview() {
+  var bw = parseFloat(document.getElementById('il-m-bwt').value) || 100;
+  var fields = {cal:'il-m-cal',pro:'il-m-pro',carb:'il-m-carb',fat:'il-m-fat',fiber:'il-m-fiber'};
+  var anyVal = false;
+  var prev = document.getElementById('il-m-preview');
+  Object.keys(fields).forEach(function(k){
+    var v = parseFloat(document.getElementById(fields[k]).value)||0;
+    var per100 = (v/bw*100).toFixed(1);
+    var el = document.getElementById('il-m-p-'+k);
+    if (el) el.textContent = per100;
+    if (v > 0) anyVal = true;
+  });
+  if (prev) prev.style.display = anyVal ? '' : 'none';
+}
+
+// Attach live preview to modal inputs
+(function attachIlPreview(){
+  var ids = ['il-m-bwt','il-m-cal','il-m-pro','il-m-carb','il-m-fat','il-m-fiber'];
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', ilUpdatePreview);
+  });
+})();
+
+function saveIlIngredient() {
+  var name  = (document.getElementById('il-m-name').value||'').trim();
+  var bwt   = parseFloat(document.getElementById('il-m-bwt').value)||100;
+  var cal   = parseFloat(document.getElementById('il-m-cal').value)||0;
+  var pro   = parseFloat(document.getElementById('il-m-pro').value)||0;
+  var carb  = parseFloat(document.getElementById('il-m-carb').value)||0;
+  var fat   = parseFloat(document.getElementById('il-m-fat').value)||0;
+  var fiber = parseFloat(document.getElementById('il-m-fiber').value)||0;
+  var editId = document.getElementById('il-m-edit-id').value;
+
+  if (!name) { toast('Enter ingredient name'); return; }
+  if (bwt <= 0) { toast('Base weight must be > 0'); return; }
+
+  if (!S.ingredientLibrary) S.ingredientLibrary = [];
+
+  if (editId) {
+    // Update existing
+    var idx = S.ingredientLibrary.findIndex(function(i){ return i.id === editId; });
+    if (idx !== -1) {
+      S.ingredientLibrary[idx] = Object.assign(S.ingredientLibrary[idx], {
+        name:name, baseWeight:bwt, cal:cal, pro:pro, carb:carb, fat:fat, fiber:fiber,
+        updatedAt: new Date().toISOString()
+      });
+      toast('✓ Ingredient updated!');
+    }
+  } else {
+    // Check duplicate name
+    var dup = S.ingredientLibrary.find(function(i){ return i.name.toLowerCase()===name.toLowerCase(); });
+    if (dup) { toast('"'+name+'" already in library'); return; }
+    S.ingredientLibrary.push({
+      id: 'il_'+Date.now()+'_'+Math.floor(Math.random()*9999),
+      name:name, baseWeight:bwt, cal:cal, pro:pro, carb:carb, fat:fat, fiber:fiber,
+      createdAt: new Date().toISOString()
+    });
+    toast('✓ "'+name+'" added to library!');
+  }
+
+  save();
+  closeIlModal();
+  renderIngredientLib();
+}
+
+function deleteIlIngredient(id) {
+  var item = (S.ingredientLibrary||[]).find(function(i){ return i.id===id; });
+  if (!item) return;
+  if (!confirm('Delete "'+item.name+'" from Ingredient Library?')) return;
+  S.ingredientLibrary = (S.ingredientLibrary||[]).filter(function(i){ return i.id!==id; });
+  save();
+  renderIngredientLib();
+  toast('Removed "'+item.name+'"');
+}
+
 function init() {
   // Load saved theme
   try{var savedTheme=localStorage.getItem('fitos_theme');if(savedTheme==='alpha'){document.documentElement.classList.add('alpha');document.getElementById('themeLabel').textContent='ALPHA';document.getElementById('appBrand').innerHTML='⚡ FIT·OS <span>ALPHA EDITION</span>';}}catch(e){}

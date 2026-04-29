@@ -1300,6 +1300,10 @@ function doLogin() {
           try {
             var loaded = JSON.parse(userData.data);
             Object.assign(S, loaded);
+            // Ensure new fields exist for older accounts
+            if (!S.ingredientLibrary) S.ingredientLibrary = [];
+            if (!S.mealLibrary) S.mealLibrary = [];
+            if (!S.dailyData) S.dailyData = {};
           } catch(e) {}
         }
         loginSuccess(id, docId);
@@ -1331,6 +1335,8 @@ function loginSuccess(id, docId) {
   CURRENT_USER_ID = id;
   CURRENT_USER_DOC_ID = docId;
   S.today = today();
+  ntrDate = S.today;
+  wkDate = S.today;
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('userNameDisp').textContent = (S.cfg.name || id).toUpperCase();
   document.getElementById('avatarEl').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
@@ -1545,7 +1551,7 @@ function renderNtrDayStrip() {
   strip.innerHTML = dates.map(function(d) {
     var hasMeals = S.dailyData[d] && S.dailyData[d].meals && S.dailyData[d].meals.length;
     var isActive = d === ntrDate;
-    return '<div class="day-pill '+(isActive?'active':'')+(hasMeals&&!isActive?' done':'')+'" onclick="selectNtrDate(''+d+'')">'
+    return '<div class="day-pill '+(isActive?'active':'')+(hasMeals&&!isActive?' done':'')+'" onclick="selectNtrDate("'+d+'")">'
       + '<div class="dp-name">'+dayNames[new Date(d+'T12:00').getDay()]+'</div>'
       + '<div class="dp-num">'+parseInt(d.split('-')[2])+'</div>'
       + '</div>';
@@ -1849,11 +1855,10 @@ function logMealFromLibrary() {
 var wkDate = '';
 function renderWorkout() {
   if (!wkDate) wkDate = S.today;
-  var dates=[],base=new Date(); base.setDate(base.getDate()-base.getDay()+1);
-  for(var i=0;i<7;i++){var d=new Date(base);d.setDate(base.getDate()+i);dates.push(d.toISOString().split('T')[0]);}
   var dayNames=['MON','TUE','WED','THU','FRI','SAT','SUN'];
-  // Show week of wkDate, not always current week
-  var wkBase=new Date(wkDate+'T12:00');var dow=wkBase.getDay();var mon=new Date(wkBase);mon.setDate(wkBase.getDate()-(dow===0?6:dow-1));dates=[];for(var i=0;i<7;i++){var nd=new Date(mon);nd.setDate(mon.getDate()+i);dates.push(nd.toISOString().split('T')[0]);}
+  // Build week from wkDate
+  var wkBase=new Date(wkDate+'T12:00');var dow=wkBase.getDay();var mon=new Date(wkBase);mon.setDate(wkBase.getDate()-(dow===0?6:dow-1));
+  var dates=[];for(var wi=0;wi<7;wi++){var nd=new Date(mon);nd.setDate(mon.getDate()+wi);dates.push(nd.toISOString().split('T')[0]);}
   document.getElementById('dayStrip').innerHTML=dates.map((d,i)=>{var dd=getDay(d);var hasDone=dd.exercises.some(e=>e.done);return`<div class="day-pill ${d===wkDate?'active':''} ${hasDone&&d!==wkDate?'done':''}" onclick="selectWkDay('${d}',null)"><div class="dp-name">${dayNames[i]}</div><div class="dp-num">${parseInt(d.split('-')[2])}</div></div>`;}).join('');
   var pick=document.getElementById('wk-date-pick');if(pick)pick.value=wkDate;
   document.getElementById('wkDayLabel').textContent=new Date(wkDate+'T12:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()+(wkDate===S.today?' — TODAY':'');

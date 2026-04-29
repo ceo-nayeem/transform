@@ -650,6 +650,11 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
 
 <!-- ============ NUTRITION ============ -->
 <div class="page" id="page-nutrition">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
+    <div class="day-strip" id="ntr-day-strip" style="flex:1;margin-bottom:0"></div>
+    <input type="date" class="inp" id="ntr-date-pick" style="width:130px;font-size:10px" onchange="selectNtrDate(this.value)"/>
+  </div>
+  <div style="font-size:9px;color:var(--t2);letter-spacing:1px;margin-bottom:10px" id="ntr-day-label"></div>
   <div class="g4" style="margin-bottom:12px">
     <div class="card"><div class="card-label">EATEN</div><div class="card-val" style="color:var(--o2)" id="n-cal">0</div><div class="card-sub">kcal</div></div>
     <div class="card"><div class="card-label">REMAINING</div><div class="card-val" id="n-rem">0</div><div class="card-sub">kcal</div></div>
@@ -663,6 +668,7 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
     <div class="bar-row"><div class="bar-meta"><span style="color:var(--g2)">FAT</span><span id="bm-fat">0 / 0g</span></div><div class="bar-bg"><div class="bar-fill" id="bf-fat" style="background:var(--g2);width:0%"></div></div></div>
     <div class="bar-row" style="margin-bottom:0"><div class="bar-meta"><span style="color:var(--p)">FIBER</span><span id="bm-fiber">0 / 0g</span></div><div class="bar-bg"><div class="bar-fill" id="bf-fiber" style="background:var(--p);width:0%"></div></div></div>
   </div>
+  <div id="ntr-add-section">
   <div class="sec-head">ADD MEAL</div>
   <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;padding:8px 10px;background:var(--gd);border:1px solid var(--g3);border-left:3px solid var(--g)">
@@ -737,13 +743,14 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
       <button class="btn" onclick="addMealAndSaveToLibrary()" style="flex:1;background:var(--card2);border:1px solid var(--g);color:var(--g)" title="Log today AND save to library">[ 📚 LOG + SAVE ]</button>
     </div>
   </div>
-  <div class="sec-head">TODAY'S MEALS</div>
+  </div><!-- end ntr-add-section -->
+  <div class="sec-head" id="ntr-meals-head">TODAY'S MEALS</div>
   <div id="mealList"><div style="font-size:10px;color:var(--t2);padding:10px">No meals logged yet.</div></div>
 </div>
 
 <!-- ============ WORKOUT ============ -->
 <div class="page" id="page-workout">
-  <div class="day-strip" id="dayStrip"></div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="day-strip" id="dayStrip" style="flex:1;margin-bottom:0"></div><input type="date" class="inp" id="wk-date-pick" style="width:130px;font-size:10px" onchange="selectWkDay(this.value,null)"/></div>
   <div style="font-size:9px;color:var(--t2);letter-spacing:1px;margin-bottom:12px" id="wkDayLabel"></div>
   <div class="g4" style="margin-bottom:12px">
     <div class="card"><div class="card-label">DONE</div><div class="card-val" id="wk-done">0</div><div class="card-sub">exercises</div></div>
@@ -753,6 +760,7 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
   </div>
   <div class="sec-head">EXERCISES</div>
   <div id="exList"><div style="font-size:10px;color:var(--t2);padding:10px">No exercises for this day yet.</div></div>
+  <div id="wk-add-section">
   <div class="sec-head">ADD EXERCISE</div>
   <div style="background:var(--card);border:1px solid var(--border);padding:14px">
     <div class="inp-row" style="margin-bottom:8px">
@@ -765,8 +773,9 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
       <div class="inp-group" style="flex:1"><div class="inp-label">WEIGHT (kg)</div><input class="inp" id="ex-weight" type="text" placeholder="BW or kg"/></div>
       <div class="inp-group" style="flex:1"><div class="inp-label">REST (sec)</div><input class="inp" id="ex-rest" type="number" placeholder="90"/></div>
     </div>
-    <button class="btn full" onclick="addExercise()">[ + ADD TO TODAY ]</button>
+    <button class="btn full" onclick="addExercise()">[ + ADD EXERCISE ]</button>
   </div>
+  </div><!-- end wk-add-section -->
 </div>
 
 <!-- ============ HABITS ============ -->
@@ -1419,7 +1428,7 @@ function nav(btn, id) {
   if (id === 'measurements') renderMeasurements();
   if (id === 'goals') renderGoals();
   if (id === 'profile') loadProfile();
-  if (id === 'nutrition') renderNutrition();
+  if (id === 'nutrition') { if(!ntrDate) ntrDate = S.today; renderNutrition(); }
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
   if (id === 'meallibrary') renderMealLibrary();
@@ -1518,9 +1527,47 @@ function renderWeightChart() {
 }
 
 // ===================== NUTRITION =====================
+var ntrDate = '';
+function selectNtrDate(d) {
+  ntrDate = d;
+  renderNutrition();
+}
+function renderNtrDayStrip() {
+  var strip = document.getElementById('ntr-day-strip');
+  if (!strip) return;
+  var dates = [], base = new Date();
+  base.setDate(base.getDate() - 6);
+  for (var i = 0; i < 7; i++) {
+    var nd = new Date(base); nd.setDate(base.getDate() + i);
+    dates.push(nd.toISOString().split('T')[0]);
+  }
+  var dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  strip.innerHTML = dates.map(function(d) {
+    var hasMeals = S.dailyData[d] && S.dailyData[d].meals && S.dailyData[d].meals.length;
+    var isActive = d === ntrDate;
+    return '<div class="day-pill '+(isActive?'active':'')+(hasMeals&&!isActive?' done':'')+'" onclick="selectNtrDate(''+d+'')">'
+      + '<div class="dp-name">'+dayNames[new Date(d+'T12:00').getDay()]+'</div>'
+      + '<div class="dp-num">'+parseInt(d.split('-')[2])+'</div>'
+      + '</div>';
+  }).join('');
+  var pick = document.getElementById('ntr-date-pick');
+  if (pick) pick.value = ntrDate;
+  var lbl = document.getElementById('ntr-day-label');
+  if (lbl) {
+    var isToday = ntrDate === S.today;
+    lbl.textContent = new Date(ntrDate+'T12:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase() + (isToday ? ' — TODAY' : ' — HISTORY');
+    lbl.style.color = isToday ? 'var(--g2)' : 'var(--c2)';
+  }
+  var addSec = document.getElementById('ntr-add-section');
+  if (addSec) addSec.style.display = (ntrDate === S.today) ? '' : 'none';
+  var mhd = document.getElementById('ntr-meals-head');
+  if (mhd) mhd.textContent = (ntrDate === S.today) ? "TODAY'S MEALS" : "MEALS ON THIS DAY";
+}
 function renderNutrition() {
+  if (!ntrDate) ntrDate = S.today;
+  renderNtrDayStrip();
   updateLibraryDropdown();
-  var d = getDay(S.today);
+  var d = getDay(ntrDate);
   var totCal=0,totProt=0,totCarb=0,totFat=0,totFib=0;
   d.meals.forEach(m => { totCal+=m.kcal; totProt+=m.protein; totCarb+=m.carbs; totFat+=m.fat; totFib+=m.fiber||0; });
   var rem = Math.max(0, S.cfg.calGoal - totCal);
@@ -1657,15 +1704,15 @@ function addMeal() {
   if (!name) { toast('Enter meal name'); return; }
   var ingrs = pendingIngredients.slice();
   var macros = ingrs.length ? calcMacrosFromIngredients(ingrs) : {kcal:0,protein:0,carbs:0,fat:0,fiber:0};
-  getDay(S.today).meals.push({name, type:document.getElementById('n-type').value, time:document.getElementById('n-time').value, kcal:macros.kcal, protein:macros.protein, carbs:macros.carbs, fat:macros.fat, fiber:macros.fiber, notes:document.getElementById('n-notes').value.trim(), ingredients:ingrs});
+  getDay(ntrDate).meals.push({name, type:document.getElementById('n-type').value, time:document.getElementById('n-time').value, kcal:macros.kcal, protein:macros.protein, carbs:macros.carbs, fat:macros.fat, fiber:macros.fiber, notes:document.getElementById('n-notes').value.trim(), ingredients:ingrs});
   ['n-name','n-notes'].forEach(id=>document.getElementById(id).value='');
   pendingIngredients=[]; renderPendingIngredients();
   save(); renderNutrition(); toast('Meal logged!');
 }
-function delMeal(i) { getDay(S.today).meals.splice(i,1); save(); renderNutrition(); toast('Meal removed'); }
+function delMeal(i) { getDay(ntrDate).meals.splice(i,1); save(); renderNutrition(); toast('Meal removed'); }
 function toggleMealEdit(i) { var f=document.getElementById('meal-edit-'+i); if(f) f.classList.toggle('open'); }
 function saveMealEdit(i) {
-  var m=getDay(S.today).meals[i];
+  var m=getDay(ntrDate).meals[i];
   m.name=document.getElementById('me-name-'+i).value.trim()||m.name;
   m.time=document.getElementById('me-time-'+i).value;
   m.type=document.getElementById('me-type-'+i).value;
@@ -1673,7 +1720,7 @@ function saveMealEdit(i) {
   save(); renderNutrition(); toast('Meal updated!');
 }
 function delIngredientFromMeal(mealIdx, ingrIdx) {
-  var m=getDay(S.today).meals[mealIdx]; if(!m||!m.ingredients) return;
+  var m=getDay(ntrDate).meals[mealIdx]; if(!m||!m.ingredients) return;
   m.ingredients.splice(ingrIdx,1);
   var mac=calcMacrosFromIngredients(m.ingredients); m.kcal=mac.kcal; m.protein=mac.protein; m.carbs=mac.carbs; m.fat=mac.fat; m.fiber=mac.fiber;
   save(); renderNutrition(); toast('Ingredient removed');
@@ -1683,7 +1730,7 @@ function addMealAndSaveToLibrary() {
   var ingrs=pendingIngredients.slice();
   var macros=ingrs.length?calcMacrosFromIngredients(ingrs):{kcal:0,protein:0,carbs:0,fat:0,fiber:0};
   var mealObj={name,type:document.getElementById('n-type').value,kcal:macros.kcal,protein:macros.protein,carbs:macros.carbs,fat:macros.fat,fiber:macros.fiber,notes:document.getElementById('n-notes').value.trim(),ingredients:ingrs};
-  getDay(S.today).meals.push({...mealObj,time:document.getElementById('n-time').value});
+  getDay(ntrDate).meals.push({...mealObj,time:document.getElementById('n-time').value});
   ['n-name','n-notes'].forEach(id=>document.getElementById(id).value='');
   pendingIngredients=[]; renderPendingIngredients();
   save(); renderNutrition(); saveMealToLibrary(mealObj);
@@ -1776,7 +1823,7 @@ function renderMealLibrary() {
 function logLibraryMealById(id) {
   var m=S.mealLibrary.find(x=>x.id===id); if(!m) return;
   var now=new Date(); var hh=String(now.getHours()).padStart(2,'0'); var mm2=String(now.getMinutes()).padStart(2,'0');
-  getDay(S.today).meals.push({name:m.name,type:m.type,time:hh+':'+mm2,kcal:m.kcal,protein:m.protein,carbs:m.carbs,fat:m.fat,fiber:m.fiber,notes:m.notes,ingredients:m.ingredients||[]});
+  getDay(ntrDate||S.today).meals.push({name:m.name,type:m.type,time:hh+':'+mm2,kcal:m.kcal,protein:m.protein,carbs:m.carbs,fat:m.fat,fiber:m.fiber,notes:m.notes,ingredients:m.ingredients||[]});
   save(); toast('✅ '+m.name+' logged!');
 }
 function deleteLibraryMeal(idx) {
@@ -1805,8 +1852,11 @@ function renderWorkout() {
   var dates=[],base=new Date(); base.setDate(base.getDate()-base.getDay()+1);
   for(var i=0;i<7;i++){var d=new Date(base);d.setDate(base.getDate()+i);dates.push(d.toISOString().split('T')[0]);}
   var dayNames=['MON','TUE','WED','THU','FRI','SAT','SUN'];
-  document.getElementById('dayStrip').innerHTML=dates.map((d,i)=>{var dd=getDay(d);var hasDone=dd.exercises.some(e=>e.done);return`<div class="day-pill ${d===wkDate?'active':''} ${hasDone&&d!==wkDate?'done':''}" onclick="selectWkDay('${d}',this)"><div class="dp-name">${dayNames[i]}</div><div class="dp-num">${parseInt(d.split('-')[2])}</div></div>`;}).join('');
-  document.getElementById('wkDayLabel').textContent=new Date(wkDate+'T12:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+  // Show week of wkDate, not always current week
+  var wkBase=new Date(wkDate+'T12:00');var dow=wkBase.getDay();var mon=new Date(wkBase);mon.setDate(wkBase.getDate()-(dow===0?6:dow-1));dates=[];for(var i=0;i<7;i++){var nd=new Date(mon);nd.setDate(mon.getDate()+i);dates.push(nd.toISOString().split('T')[0]);}
+  document.getElementById('dayStrip').innerHTML=dates.map((d,i)=>{var dd=getDay(d);var hasDone=dd.exercises.some(e=>e.done);return`<div class="day-pill ${d===wkDate?'active':''} ${hasDone&&d!==wkDate?'done':''}" onclick="selectWkDay('${d}',null)"><div class="dp-name">${dayNames[i]}</div><div class="dp-num">${parseInt(d.split('-')[2])}</div></div>`;}).join('');
+  var pick=document.getElementById('wk-date-pick');if(pick)pick.value=wkDate;
+  document.getElementById('wkDayLabel').textContent=new Date(wkDate+'T12:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()+(wkDate===S.today?' — TODAY':'');
   var d=getDay(wkDate);
   var done=d.exercises.filter(e=>e.done).length;
   var vol=d.exercises.filter(e=>e.done).reduce((a,e)=>{var kg=parseFloat(e.weight)||0;return a+kg*(parseInt(e.sets)||1);},0);
@@ -1814,6 +1864,7 @@ function renderWorkout() {
   document.getElementById('wk-done').textContent=done; document.getElementById('wk-total').textContent=d.exercises.length;
   document.getElementById('wk-vol').textContent=vol; document.getElementById('wk-sets').textContent=sets;
   document.getElementById('wkBadge').textContent=done+'/'+d.exercises.length;
+  var wkAddSec=document.getElementById('wk-add-section');if(wkAddSec)wkAddSec.style.display=(wkDate===S.today)?'':'none';
   var list=document.getElementById('exList');
   if(!d.exercises.length){list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No exercises yet.</div>';return;}
   var muscles=['Chest','Back','Shoulders','Biceps','Triceps','Legs','Core','Cardio','Full Body'];

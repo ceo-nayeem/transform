@@ -2225,22 +2225,23 @@ function renderIngredientLib() {
     var bw = item.baseWeight || 100;
     var per100Cal = (item.cal / bw * 100).toFixed(0);
     var per100Pro = (item.pro / bw * 100).toFixed(1);
-    return '<tr id="il-row-'+item.id+'">' +
-      '<td class="ilib-name-cell">'+escHtml(item.name)+'</td>' +
-      '<td class="ilib-macro center">'+bw+'g</td>' +
-      '<td class="ilib-macro right" style="color:var(--o2)">'+item.cal+'</td>' +
-      '<td class="ilib-macro right" style="color:var(--o)">'+item.pro+'</td>' +
-      '<td class="ilib-macro right" style="color:var(--c2)">'+item.carb+'</td>' +
-      '<td class="ilib-macro right" style="color:var(--g2)">'+item.fat+'</td>' +
-      '<td class="ilib-macro right" style="color:var(--p)">'+(item.fiber||0)+'</td>' +
-      '<td class="ilib-macro right" style="color:var(--t2)">'+per100Cal+'</td>' +
-      '<td>' +
-        '<div class="ilib-actions">' +
-          '<button class="edit-btn" onclick="openIlModal(''+item.id+'')" title="Edit">[ EDIT ]</button>' +
-          '<button class="del-btn" onclick="deleteIlIngredient(''+item.id+'')" title="Delete">✕</button>' +
-        '</div>' +
-      '</td>' +
-    '</tr>';
+    
+    return `<tr id="il-row-${item.id}">
+      <td class="ilib-name-cell">${escHtml(item.name)}</td>
+      <td class="ilib-macro center">${bw}g</td>
+      <td class="ilib-macro right" style="color:var(--o2)">${item.cal}</td>
+      <td class="ilib-macro right" style="color:var(--o)">${item.pro}</td>
+      <td class="ilib-macro right" style="color:var(--c2)">${item.carb}</td>
+      <td class="ilib-macro right" style="color:var(--g2)">${item.fat}</td>
+      <td class="ilib-macro right" style="color:var(--p)">${item.fiber||0}</td>
+      <td class="ilib-macro right" style="color:var(--t2)">${per100Cal}</td>
+      <td>
+        <div class="ilib-actions">
+          <button class="edit-btn" onclick="openIlModal('${item.id}')" title="Edit">[ EDIT ]</button>
+          <button class="del-btn" onclick="deleteIlIngredient('${item.id}')" title="Delete">✕</button>
+        </div>
+      </td>
+    </tr>`;
   }).join('');
 }
 

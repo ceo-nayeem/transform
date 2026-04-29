@@ -2343,7 +2343,7 @@ function ilswSearch(p) {
 
 function ilswSelect(p, id) {
   var lib = S.ingredientLibrary || [];
-  var item = lib.find(function(i){ return i.id === id; });
+  var item = lib.find(function(i){ return String(i.id) === String(id); });
   if (!item) return;
   _ilswSel[p] = item;
   _ilswDD(p).style.display = 'none';

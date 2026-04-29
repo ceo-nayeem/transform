@@ -463,46 +463,31 @@ canvas{display:block;width:100%}
   padding:4px 8px;border:1px solid var(--border);background:var(--card);
 }
 html.alpha .sync-indicator{border-radius:20px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px;}
-/* ===== INGREDIENT LIBRARY PAGE ===== */
-.ilib-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-.ilib-search-wrap{position:relative;flex:1;min-width:180px}
-.ilib-search-wrap input{padding-right:28px}
-.ilib-search-wrap::after{content:'⌕';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--t2);font-size:14px;pointer-events:none}
-.ilib-stats{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.ilib-stat{background:var(--card);border:1px solid var(--border);padding:10px 14px;flex:1;min-width:90px}
-.ilib-stat-label{font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
-.ilib-stat-val{font-family:var(--raj);font-size:20px;font-weight:700;color:var(--g)}
-.ilib-table-wrap{background:var(--card);border:1px solid var(--border);overflow-x:auto}
-.ilib-table{width:100%;border-collapse:collapse;min-width:640px}
-.ilib-table th{font-size:8px;letter-spacing:2px;color:var(--t2);text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--card2);font-weight:600;white-space:nowrap}
-.ilib-table th.right,.ilib-table td.right{text-align:right}
-.ilib-table th.center,.ilib-table td.center{text-align:center}
-.ilib-table td{padding:9px 12px;font-size:10px;border-bottom:1px solid var(--border);vertical-align:middle;transition:background .15s}
-.ilib-table tr:last-child td{border-bottom:none}
-.ilib-table tbody tr:hover td{background:var(--gd)}
-.ilib-table tr.editing td{background:rgba(0,229,255,.04);border-top:1px solid var(--c2)}
-.ilib-name-cell{font-family:var(--raj);font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--t)}
-.ilib-macro{font-family:var(--mono);font-size:10px}
-.ilib-actions{display:flex;gap:4px;justify-content:flex-end}
-.ilib-badge{display:inline-block;padding:2px 7px;font-size:8px;letter-spacing:1px;border:1px solid;font-family:var(--mono)}
-.ilib-empty{text-align:center;padding:40px 20px;color:var(--t2);font-size:10px;letter-spacing:1px}
-.ilib-empty-icon{font-size:28px;margin-bottom:8px;opacity:.4}
-.ilib-inline-edit{background:var(--card2);border-top:1px solid var(--c2) !important}
-.ilib-inline-edit td{padding:12px !important}
-.ilib-inline-form{display:grid;grid-template-columns:2fr 1fr repeat(5,1fr);gap:6px;align-items:end}
-.ilib-inline-form .inp{padding:6px 8px;font-size:10px}
-.ilib-inline-form .inp-label{font-size:8px}
-.ilib-sort-btn{background:none;border:none;color:var(--t2);cursor:pointer;font-family:var(--mono);font-size:8px;letter-spacing:1px;padding:0 2px;transition:color .15s}
-.ilib-sort-btn:hover,.ilib-sort-btn.active{color:var(--g)}
-.ilib-col-name::after,.ilib-col-bwt::after{content:' ⇅'}
-.ilib-sort-asc .ilib-col-name::after,.ilib-sort-asc .ilib-col-bwt::after{content:' ↑'}
-.ilib-sort-desc .ilib-col-name::after,.ilib-sort-desc .ilib-col-bwt::after{content:' ↓'}
-/* Modal for ingredient lib */
-.ilib-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-html.alpha .ilib-table th{font-family:'DM Sans',sans-serif}
-html.alpha .ilib-name-cell{font-family:'Barlow Condensed',sans-serif;font-size:13px}
-html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
 
+/* ── Ingredient-Library Search Widget (shared by Nutrition & MealLibrary) ── */
+.ilsw{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--p);padding:10px 12px;margin-bottom:10px}
+.ilsw-head{display:flex;align-items:center;gap:8px;margin-bottom:0}
+.ilsw-label{font-size:8px;color:var(--p);letter-spacing:2px;font-family:var(--mono);text-transform:uppercase;flex-shrink:0}
+.ilsw-inp{flex:1;position:relative}
+.ilsw-inp input{width:100%;padding-right:26px}
+.ilsw-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t2);cursor:pointer;font-size:12px;padding:0;line-height:1}
+.ilsw-clear:hover{color:var(--red)}
+.ilsw-dropdown{background:var(--card);border:1px solid var(--border);border-top:none;max-height:170px;overflow-y:auto;display:none;position:relative;z-index:10}
+.ilsw-dd-item{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s}
+.ilsw-dd-item:last-child{border-bottom:none}
+.ilsw-dd-item:hover{background:var(--gd)}
+.ilsw-dd-name{font-family:var(--mono);font-size:10px;color:var(--t);letter-spacing:.3px}
+.ilsw-dd-meta{font-size:9px;color:var(--t2);font-family:var(--mono)}
+.ilsw-dd-empty{padding:10px 12px;font-size:9px;color:var(--t2);font-family:var(--mono);letter-spacing:1px}
+.ilsw-selected{display:none;margin-top:8px;border-top:1px dashed var(--border);padding-top:8px}
+.ilsw-sel-name{font-family:var(--mono);font-size:10px;color:var(--p);letter-spacing:.5px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.ilsw-sel-base{font-size:9px;color:var(--t2);font-family:var(--mono);margin-bottom:7px}
+.ilsw-wt-row{display:flex;gap:8px;align-items:flex-end}
+.ilsw-wt-row .inp-group{margin-bottom:0;flex:0 0 110px}
+.ilsw-calc-out{flex:1;font-size:9px;font-family:var(--mono);color:var(--t2);line-height:1.7;padding:4px 0}
+.ilsw-add-btn{white-space:nowrap;flex-shrink:0}
+html.alpha .ilsw{border-radius:8px}
+html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
 </style>
 </head>
 <body>
@@ -576,7 +561,7 @@ html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
 
     <div class="sb-sec">TOOLS</div>
     <div class="sb-item" onclick="nav(this,'meallibrary')"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
-    <div class="sb-item" onclick="nav(this,'ingredientlib')"><span class="sb-icon">⊛</span><span class="sb-label">Ingredient Library</span><span class="sb-badge" id="ilBadge">0</span></div>
+    <div class="sb-item" onclick="nav(this,'ingredientlibrary')"><span class="sb-icon">◈</span><span class="sb-label">Ingredient Library</span><span class="sb-badge" id="ilBadge">0</span></div>
     <div class="sb-item" onclick="nav(this,'timer')"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
 
     <div class="sb-sec">ACCOUNT</div>
@@ -697,6 +682,33 @@ html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
         <div id="ingr-macro-preview" style="font-size:10px;color:var(--t2);font-family:var(--mono)">Add ingredients below</div>
       </div>
       <div id="ingr-list" style="margin-bottom:8px"></div>
+      <!-- ── Library Search Widget ── -->
+      <div class="ilsw" id="ntr-ilsw">
+        <div class="ilsw-head">
+          <span class="ilsw-label">📖 FROM LIBRARY</span>
+          <div class="ilsw-inp">
+            <input class="inp" id="ntr-il-q" type="text" placeholder="Search ingredient library..." autocomplete="off"
+              oninput="ilswSearch('ntr')" onfocus="ilswSearch('ntr')"/>
+            <button class="ilsw-clear" id="ntr-il-clr" onclick="ilswClearSearch('ntr')" style="display:none">✕</button>
+          </div>
+        </div>
+        <div class="ilsw-dropdown" id="ntr-il-dd"></div>
+        <div class="ilsw-selected" id="ntr-il-sel">
+          <div class="ilsw-sel-name">
+            <span id="ntr-il-sel-name">—</span>
+            <button onclick="ilswDeselect('ntr')" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:10px;font-family:var(--mono)" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--t2)'">✕ CLEAR</button>
+          </div>
+          <div class="ilsw-sel-base" id="ntr-il-sel-base"></div>
+          <div class="ilsw-wt-row">
+            <div class="inp-group"><div class="inp-label">CONSUMED (g)</div>
+              <input class="inp" id="ntr-il-wt" type="number" placeholder="e.g. 150" min="0" oninput="ilswCalc('ntr')"/>
+            </div>
+            <div class="ilsw-calc-out" id="ntr-il-out"></div>
+            <button class="btn sm ilsw-add-btn" onclick="ilswAddToIngredients('ntr')">↳ ADD</button>
+          </div>
+        </div>
+      </div>
+      <!-- ── Manual Entry ── -->
       <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
         <div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="ig-name" type="text" placeholder="e.g. Chicken Breast"/></div>
         <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">WEIGHT (g)</div><input class="inp" id="ig-wt" type="number" placeholder="100" min="0"/></div>
@@ -1054,6 +1066,33 @@ html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
         <div id="mla-ingr-preview" style="font-size:10px;color:var(--t2);font-family:var(--mono)">Add ingredients below</div>
       </div>
       <div id="mla-ingr-list" style="margin-bottom:8px"></div>
+      <!-- ── Library Search Widget ── -->
+      <div class="ilsw" id="mla-ilsw">
+        <div class="ilsw-head">
+          <span class="ilsw-label">📖 FROM LIBRARY</span>
+          <div class="ilsw-inp">
+            <input class="inp" id="mla-il-q" type="text" placeholder="Search ingredient library..." autocomplete="off"
+              oninput="ilswSearch('mla')" onfocus="ilswSearch('mla')"/>
+            <button class="ilsw-clear" id="mla-il-clr" onclick="ilswClearSearch('mla')" style="display:none">✕</button>
+          </div>
+        </div>
+        <div class="ilsw-dropdown" id="mla-il-dd"></div>
+        <div class="ilsw-selected" id="mla-il-sel">
+          <div class="ilsw-sel-name">
+            <span id="mla-il-sel-name">—</span>
+            <button onclick="ilswDeselect('mla')" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:10px;font-family:var(--mono)" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--t2)'">✕ CLEAR</button>
+          </div>
+          <div class="ilsw-sel-base" id="mla-il-sel-base"></div>
+          <div class="ilsw-wt-row">
+            <div class="inp-group"><div class="inp-label">CONSUMED (g)</div>
+              <input class="inp" id="mla-il-wt" type="number" placeholder="e.g. 150" min="0" oninput="ilswCalc('mla')"/>
+            </div>
+            <div class="ilsw-calc-out" id="mla-il-out"></div>
+            <button class="btn sm ilsw-add-btn" onclick="ilswAddToIngredients('mla')">↳ ADD</button>
+          </div>
+        </div>
+      </div>
+      <!-- ── Manual Entry ── -->
       <div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
         <div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="mla-ig-name" type="text" placeholder="e.g. Chicken Breast"/></div>
         <div class="inp-group" style="flex:1;min-width:60px"><div class="inp-label">WEIGHT (g)</div><input class="inp" id="mla-ig-wt" type="number" placeholder="100" min="0"/></div>
@@ -1067,114 +1106,6 @@ html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
     </div>
     <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="mla-notes" type="text" placeholder="extra notes..."/></div>
     <button class="btn full" onclick="saveMealToLibrary()">[ 📚 SAVE TO LIBRARY ]</button>
-  </div>
-</div>
-
-
-<!-- ============ INGREDIENT LIBRARY ============ -->
-<div class="page" id="page-ingredientlib">
-
-  <!-- Stats Bar -->
-  <div class="ilib-stats" id="il-stats">
-    <div class="ilib-stat"><div class="ilib-stat-label">TOTAL INGREDIENTS</div><div class="ilib-stat-val" id="il-stat-total">0</div></div>
-    <div class="ilib-stat"><div class="ilib-stat-label">AVG CAL/100g</div><div class="ilib-stat-val" id="il-stat-cal" style="color:var(--o2)">—</div></div>
-    <div class="ilib-stat"><div class="ilib-stat-label">AVG PROTEIN/100g</div><div class="ilib-stat-val" id="il-stat-pro" style="color:var(--o)">—</div></div>
-    <div class="ilib-stat"><div class="ilib-stat-label">HIGH PROTEIN</div><div class="ilib-stat-val" id="il-stat-top" style="color:var(--g);font-size:12px;letter-spacing:0">—</div></div>
-  </div>
-
-  <!-- Toolbar -->
-  <div class="ilib-toolbar">
-    <div class="ilib-search-wrap">
-      <input class="inp" id="il-search" type="text" placeholder="Search by name..." oninput="renderIngredientLib()"/>
-    </div>
-    <select class="inp" id="il-sort-field" onchange="renderIngredientLib()" style="min-width:130px">
-      <option value="name">Sort: Name</option>
-      <option value="cal">Sort: Calories</option>
-      <option value="pro">Sort: Protein</option>
-      <option value="carb">Sort: Carbs</option>
-      <option value="fat">Sort: Fat</option>
-      <option value="bwt">Sort: Base Wt</option>
-    </select>
-    <select class="inp" id="il-sort-dir" onchange="renderIngredientLib()" style="min-width:90px">
-      <option value="asc">↑ Asc</option>
-      <option value="desc">↓ Desc</option>
-    </select>
-    <button class="btn" onclick="openIlModal()" style="white-space:nowrap;border-color:var(--p);color:var(--p)">[ + ADD INGREDIENT ]</button>
-  </div>
-
-  <!-- Table -->
-  <div class="ilib-table-wrap">
-    <table class="ilib-table">
-      <thead>
-        <tr>
-          <th style="min-width:160px">INGREDIENT NAME</th>
-          <th class="center">BASE WT (g)</th>
-          <th class="right" style="color:var(--o2)">CAL</th>
-          <th class="right" style="color:var(--o)">PRO (g)</th>
-          <th class="right" style="color:var(--c2)">CARB (g)</th>
-          <th class="right" style="color:var(--g2)">FAT (g)</th>
-          <th class="right" style="color:var(--p)">FIBER (g)</th>
-          <th class="right">PER 100g CAL</th>
-          <th class="right" style="min-width:110px">ACTIONS</th>
-        </tr>
-      </thead>
-      <tbody id="il-tbody">
-        <tr><td colspan="9" class="ilib-empty"><div class="ilib-empty-icon">📖</div><div>No ingredients yet. Add your first ingredient above.</div></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
-
-<!-- INGREDIENT LIBRARY MODAL (Add / Edit) -->
-<div class="modal-bg" id="il-modal">
-  <div class="modal" style="max-width:500px;width:94%">
-    <div class="modal-title" id="il-modal-title">ADD INGREDIENT</div>
-    <div class="inp-group" style="margin-bottom:12px">
-      <div class="inp-label">INGREDIENT NAME</div>
-      <input class="inp" id="il-m-name" type="text" placeholder="e.g. Chicken Breast, Brown Rice, Oats"/>
-    </div>
-    <div class="inp-group" style="margin-bottom:12px">
-      <div class="inp-label">BASE WEIGHT (g) — all macros are measured at this weight</div>
-      <input class="inp" id="il-m-bwt" type="number" value="100" min="1" placeholder="100"/>
-    </div>
-    <div style="font-size:8px;color:var(--p);letter-spacing:2px;margin-bottom:8px;font-family:var(--mono)">MACROS AT BASE WEIGHT</div>
-    <div class="ilib-modal-grid" style="margin-bottom:14px">
-      <div class="inp-group">
-        <div class="inp-label" style="color:var(--o2)">CALORIES (kcal)</div>
-        <input class="inp" id="il-m-cal" type="number" placeholder="0" min="0" step="0.1"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label" style="color:var(--o)">PROTEIN (g)</div>
-        <input class="inp" id="il-m-pro" type="number" placeholder="0" min="0" step="0.1"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label" style="color:var(--c2)">CARBS (g)</div>
-        <input class="inp" id="il-m-carb" type="number" placeholder="0" min="0" step="0.1"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label" style="color:var(--g2)">FAT (g)</div>
-        <input class="inp" id="il-m-fat" type="number" placeholder="0" min="0" step="0.1"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label" style="color:var(--p)">FIBER (g)</div>
-        <input class="inp" id="il-m-fiber" type="number" placeholder="0" min="0" step="0.1"/>
-      </div>
-    </div>
-    <!-- Live preview -->
-    <div id="il-m-preview" style="font-size:9px;font-family:var(--mono);color:var(--t2);padding:8px 10px;background:var(--card2);border:1px solid var(--border);margin-bottom:14px;display:none">
-      <span style="color:var(--g);letter-spacing:1px;margin-right:8px">PER 100g →</span>
-      Cal:<b id="il-m-p-cal" style="color:var(--o2)">0</b>
-      Pro:<b id="il-m-p-pro" style="color:var(--o)">0</b>g
-      Carb:<b id="il-m-p-carb" style="color:var(--c2)">0</b>g
-      Fat:<b id="il-m-p-fat" style="color:var(--g2)">0</b>g
-      Fiber:<b id="il-m-p-fiber" style="color:var(--p)">0</b>g
-    </div>
-    <input type="hidden" id="il-m-edit-id"/>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeIlModal()" style="border-color:var(--border);color:var(--t2)">CANCEL</button>
-      <button class="btn" onclick="saveIlIngredient()" style="border-color:var(--p);color:var(--p)">[ SAVE INGREDIENT ]</button>
-    </div>
   </div>
 </div>
 
@@ -1244,6 +1175,39 @@ html.alpha .ilib-macro{font-family:'DM Sans',sans-serif}
       <button class="btn danger" onclick="if(confirm('DELETE ALL DATA? This cannot be undone.'))clearAllData()">[ RESET ALL DATA ]</button>
     </div>
   </div>
+</div>
+
+
+<!-- ============ INGREDIENT LIBRARY ============ -->
+<div class="page" id="page-ingredientlibrary">
+  <div class="g4" style="margin-bottom:12px">
+    <div class="card"><div class="card-label">TOTAL ITEMS</div><div class="card-val" id="il-total">0</div></div>
+    <div class="card"><div class="card-label">AVG CALORIES</div><div class="card-val" style="color:var(--o2)" id="il-avgcal">0</div><div class="card-sub">per 100g base</div></div>
+    <div class="card"><div class="card-label">AVG PROTEIN</div><div class="card-val" style="color:var(--o)" id="il-avgpro">0g</div><div class="card-sub">per base</div></div>
+    <div class="card"><div class="card-label">LAST ADDED</div><div class="card-val" style="font-size:11px;color:var(--p)" id="il-last">—</div></div>
+  </div>
+
+  <div class="sec-head">ADD NEW INGREDIENT</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
+    <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
+      <div class="inp-group" style="flex:3;min-width:140px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="il-name" type="text" placeholder="e.g. Chicken Breast"/></div>
+      <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">BASE WEIGHT (g)</div><input class="inp" id="il-base" type="number" placeholder="100" min="1" value="100"/></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">
+      <div class="inp-group"><div class="inp-label">CALORIES</div><input class="inp" id="il-cal" type="number" placeholder="0" min="0"/></div>
+      <div class="inp-group"><div class="inp-label">PROTEIN (g)</div><input class="inp" id="il-pro" type="number" placeholder="0" min="0" step="0.1"/></div>
+      <div class="inp-group"><div class="inp-label">CARBS (g)</div><input class="inp" id="il-carb" type="number" placeholder="0" min="0" step="0.1"/></div>
+      <div class="inp-group"><div class="inp-label">FAT (g)</div><input class="inp" id="il-fat" type="number" placeholder="0" min="0" step="0.1"/></div>
+      <div class="inp-group"><div class="inp-label">FIBER (g)</div><input class="inp" id="il-fiber" type="number" placeholder="0" min="0" step="0.1"/></div>
+    </div>
+    <button class="btn full" onclick="addIngredientToLibrary()">[ + SAVE INGREDIENT ]</button>
+  </div>
+
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+    <div class="sec-head" style="margin:0;flex:1">INGREDIENT LIBRARY</div>
+    <input class="inp" id="il-search" type="text" placeholder="Search..." style="width:160px;font-size:10px" oninput="renderIngredientLibrary()"/>
+  </div>
+  <div id="ilList"><div style="font-size:10px;color:var(--t2);padding:10px">No ingredients saved yet. Add your first ingredient above.</div></div>
 </div>
 
 </div><!-- end content -->
@@ -1438,7 +1402,7 @@ function saveToFirebase(cb) {
 var pageTitles = {
   dashboard:'DASHBOARD', nutrition:'NUTRITION', workout:'WORKOUT', habits:'HABITS',
   water:'WATER', vitals:'VITALS', measurements:'MEASUREMENTS', goals:'GOALS & PROGRESS',
-  meallibrary:'MEAL LIBRARY', ingredientlib:'INGREDIENT LIBRARY', timer:'TIMER & STOPWATCH', profile:'PROFILE & SETTINGS'
+  meallibrary:'MEAL LIBRARY', ingredientlibrary:'INGREDIENT LIBRARY', timer:'TIMER & STOPWATCH', profile:'PROFILE & SETTINGS'
 };
 function nav(btn, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1459,7 +1423,7 @@ function nav(btn, id) {
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
   if (id === 'meallibrary') renderMealLibrary();
-  if (id === 'ingredientlib') renderIngredientLib();
+  if (id === 'ingredientlibrary') renderIngredientLibrary();
 }
 
 // ===================== TOAST =====================
@@ -1637,7 +1601,32 @@ function renderPendingIngredients() {
   if (!pendingIngredients.length) { list.innerHTML=''; summary.style.display='none'; document.getElementById('ingr-macro-preview').textContent='Add ingredients below'; return; }
   var totCal=0,totPro=0,totCarb=0,totFat=0,totFib=0,totWt=0;
   pendingIngredients.forEach(ig=>{totCal+=ig.cal;totPro+=ig.pro;totCarb+=ig.carb;totFat+=ig.fat;totFib+=ig.fiber;totWt+=ig.weight;});
-  list.innerHTML = pendingIngredients.map((ig,j)=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 6px;background:var(--card);border:1px solid var(--border);margin-bottom:3px;font-size:10px;font-family:var(--mono);border-left:2px solid var(--c2)"><span style="color:var(--t);flex:1">${ig.name}</span><span>${ig.weight}g</span><span style="color:var(--o2)">${ig.cal}cal</span><span>P:${ig.pro}g C:${ig.carb}g F:${ig.fat}g</span><button onclick="removePendingIngr(${j})" style="background:none;border:none;color:var(--border);cursor:pointer" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button></div>`).join('');
+  list.innerHTML = pendingIngredients.map((ig,j)=>
+    `<div style="background:var(--card);border:1px solid var(--border);margin-bottom:3px;border-left:2px solid var(--c2)">
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 6px;font-size:10px;font-family:var(--mono)">
+        <span style="color:var(--t);flex:1">${ig.name}</span>
+        <span>${ig.weight}g</span>
+        <span style="color:var(--o2)">${ig.cal}cal</span>
+        <span>P:${ig.pro}g C:${ig.carb}g F:${ig.fat}g</span>
+        <button class="edit-btn" onclick="togglePendingEdit('ntr',${j})" style="font-size:10px">✎</button>
+        <button onclick="removePendingIngr(${j})" style="background:none;border:none;color:var(--border);cursor:pointer;font-size:12px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button>
+      </div>
+      <div class="edit-form" id="ntr-pend-edit-${j}">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 6px 2px">
+          <div class="inp-group" style="flex:3;min-width:100px"><div class="inp-label">NAME</div><input class="inp" id="ntr-pe-name-${j}" type="text" value="${ig.name.replace(/"/g,'&quot;')}"/></div>
+          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">WT(g)</div><input class="inp" id="ntr-pe-wt-${j}" type="number" value="${ig.weight}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CAL</div><input class="inp" id="ntr-pe-cal-${j}" type="number" value="${ig.cal}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">PRO</div><input class="inp" id="ntr-pe-pro-${j}" type="number" value="${ig.pro}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CARB</div><input class="inp" id="ntr-pe-carb-${j}" type="number" value="${ig.carb}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FAT</div><input class="inp" id="ntr-pe-fat-${j}" type="number" value="${ig.fat}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FIBER</div><input class="inp" id="ntr-pe-fiber-${j}" type="number" value="${ig.fiber}"/></div>
+        </div>
+        <div class="edit-form-actions" style="padding:0 6px 8px">
+          <button class="btn sm" onclick="savePendingEdit('ntr',${j})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="togglePendingEdit('ntr',${j})">[ CANCEL ]</button>
+        </div>
+      </div>
+    </div>`).join('');
   document.getElementById('ingr-macro-preview').innerHTML = `<span style="color:var(--g)">↳ ${pendingIngredients.length} items · ${totCal}cal · P:${totPro}g C:${totCarb}g F:${totFat}g</span>`;
   summary.style.display = 'block';
   document.getElementById('ms-cal').textContent=totCal; document.getElementById('ms-pro').textContent=totPro;
@@ -1645,6 +1634,21 @@ function renderPendingIngredients() {
   document.getElementById('ms-fiber').textContent=totFib; document.getElementById('ms-wt').textContent=totWt;
 }
 function removePendingIngr(j) { pendingIngredients.splice(j,1); renderPendingIngredients(); }
+function togglePendingEdit(prefix, j) {
+  var f = document.getElementById(prefix+'-pend-edit-'+j); if(f) f.classList.toggle('open');
+}
+function savePendingEdit(prefix, j) {
+  var arr = prefix==='ntr' ? pendingIngredients : mlaPendingIngredients;
+  arr[j].name  = document.getElementById(prefix+'-pe-name-'+j).value.trim() || arr[j].name;
+  arr[j].weight= parseFloat(document.getElementById(prefix+'-pe-wt-'+j).value)   || 0;
+  arr[j].cal   = parseFloat(document.getElementById(prefix+'-pe-cal-'+j).value)  || 0;
+  arr[j].pro   = parseFloat(document.getElementById(prefix+'-pe-pro-'+j).value)  || 0;
+  arr[j].carb  = parseFloat(document.getElementById(prefix+'-pe-carb-'+j).value) || 0;
+  arr[j].fat   = parseFloat(document.getElementById(prefix+'-pe-fat-'+j).value)  || 0;
+  arr[j].fiber = parseFloat(document.getElementById(prefix+'-pe-fiber-'+j).value)|| 0;
+  if(prefix==='ntr') renderPendingIngredients(); else renderMlaIngredients();
+  toast('Ingredient updated!');
+}
 function calcMacrosFromIngredients(ingrs) {
   return {kcal:ingrs.reduce((a,ig)=>a+ig.cal,0), protein:ingrs.reduce((a,ig)=>a+ig.pro,0), carbs:ingrs.reduce((a,ig)=>a+ig.carb,0), fat:ingrs.reduce((a,ig)=>a+ig.fat,0), fiber:ingrs.reduce((a,ig)=>a+ig.fiber,0)};
 }
@@ -1698,8 +1702,33 @@ function renderMlaIngredients() {
   if(!mlaPendingIngredients.length){list.innerHTML='';prev.textContent='Add ingredients below';return;}
   var totCal=0,totPro=0,totCarb=0,totFat=0;
   mlaPendingIngredients.forEach(ig=>{totCal+=ig.cal;totPro+=ig.pro;totCarb+=ig.carb;totFat+=ig.fat;});
-  list.innerHTML=mlaPendingIngredients.map((ig,j)=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 6px;background:var(--card);border:1px solid var(--border);margin-bottom:3px;font-size:10px;border-left:2px solid var(--c2)"><span style="color:var(--t);flex:1">${ig.name}</span><span>${ig.weight}g</span><span style="color:var(--o2)">${ig.cal}cal</span><button onclick="mlaPendingIngredients.splice(${j},1);renderMlaIngredients()" style="background:none;border:none;color:var(--border);cursor:pointer" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button></div>`).join('');
-  prev.innerHTML=`<span style="color:var(--g)">↳ ${mlaPendingIngredients.length} items · ${totCal}cal</span>`;
+  list.innerHTML=mlaPendingIngredients.map((ig,j)=>
+    `<div style="background:var(--card);border:1px solid var(--border);margin-bottom:3px;border-left:2px solid var(--c2)">
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 6px;font-size:10px;font-family:var(--mono)">
+        <span style="color:var(--t);flex:1">${ig.name}</span>
+        <span>${ig.weight}g</span>
+        <span style="color:var(--o2)">${ig.cal}cal</span>
+        <span>P:${ig.pro}g C:${ig.carb}g F:${ig.fat}g</span>
+        <button class="edit-btn" onclick="togglePendingEdit('mla',${j})" style="font-size:10px">✎</button>
+        <button onclick="mlaPendingIngredients.splice(${j},1);renderMlaIngredients()" style="background:none;border:none;color:var(--border);cursor:pointer;font-size:12px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button>
+      </div>
+      <div class="edit-form" id="mla-pend-edit-${j}">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 6px 2px">
+          <div class="inp-group" style="flex:3;min-width:100px"><div class="inp-label">NAME</div><input class="inp" id="mla-pe-name-${j}" type="text" value="${ig.name.replace(/"/g,'&quot;')}"/></div>
+          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">WT(g)</div><input class="inp" id="mla-pe-wt-${j}" type="number" value="${ig.weight}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CAL</div><input class="inp" id="mla-pe-cal-${j}" type="number" value="${ig.cal}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">PRO</div><input class="inp" id="mla-pe-pro-${j}" type="number" value="${ig.pro}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CARB</div><input class="inp" id="mla-pe-carb-${j}" type="number" value="${ig.carb}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FAT</div><input class="inp" id="mla-pe-fat-${j}" type="number" value="${ig.fat}"/></div>
+          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FIBER</div><input class="inp" id="mla-pe-fiber-${j}" type="number" value="${ig.fiber}"/></div>
+        </div>
+        <div class="edit-form-actions" style="padding:0 6px 8px">
+          <button class="btn sm" onclick="savePendingEdit('mla',${j})">[ SAVE ]</button>
+          <button class="btn sm danger" onclick="togglePendingEdit('mla',${j})">[ CANCEL ]</button>
+        </div>
+      </div>
+    </div>`).join('');
+  prev.innerHTML=`<span style="color:var(--g)">↳ ${mlaPendingIngredients.length} items · ${totCal}cal · P:${totPro}g C:${totCarb}g F:${totFat}g</span>`;
 }
 function saveMealToLibrary(mealObj) {
   if (!mealObj) {
@@ -2095,7 +2124,6 @@ function updateSidebarBadges() {
   var d=getDay(S.today); var done=d.exercises.filter(e=>e.done).length;
   document.getElementById('wkBadge').textContent=done+'/'+d.exercises.length;
   document.getElementById('habitNotif').style.display=S.habits.filter(h=>!h.logs[S.today]).length>0?'block':'none';
-  var ilb=document.getElementById('ilBadge'); if(ilb) ilb.textContent=(S.ingredientLibrary||[]).length;
 }
 
 // ===================== STREAK =====================
@@ -2163,205 +2191,255 @@ function toggleTheme(){
 // ===================== INIT =====================
 
 // ===================== INGREDIENT LIBRARY =====================
-// Schema: { id, name, baseWeight, cal, pro, carb, fat, fiber, createdAt }
+function addIngredientToLibrary() {
+  var name = document.getElementById('il-name').value.trim();
+  if (!name) { toast('Enter ingredient name'); return; }
+  var base = parseFloat(document.getElementById('il-base').value) || 100;
+  var item = {
+    id: Date.now(),
+    name: name,
+    baseWeight: base,
+    cal:   parseFloat(document.getElementById('il-cal').value)   || 0,
+    pro:   parseFloat(document.getElementById('il-pro').value)   || 0,
+    carb:  parseFloat(document.getElementById('il-carb').value)  || 0,
+    fat:   parseFloat(document.getElementById('il-fat').value)   || 0,
+    fiber: parseFloat(document.getElementById('il-fiber').value) || 0,
+    savedAt: new Date().toLocaleDateString()
+  };
+  if (!S.ingredientLibrary) S.ingredientLibrary = [];
+  var exists = S.ingredientLibrary.some(function(i){ return i.name.toLowerCase() === name.toLowerCase(); });
+  if (exists) { toast('Ingredient already exists!'); return; }
+  S.ingredientLibrary.push(item);
+  ['il-name','il-cal','il-pro','il-carb','il-fat','il-fiber'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('il-base').value = '100';
+  save(); renderIngredientLibrary(); toast('✅ "'+name+'" saved to library!');
+}
 
-function ilGetAll() { return S.ingredientLibrary || []; }
+function deleteIngredientFromLibrary(id) {
+  if (!S.ingredientLibrary) return;
+  var item = S.ingredientLibrary.find(function(i){ return i.id === id; });
+  if (!item || !confirm('Remove "'+item.name+'" from ingredient library?')) return;
+  S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return i.id !== id; });
+  save(); renderIngredientLibrary(); toast('Ingredient removed');
+}
 
-function renderIngredientLib() {
-  var lib = ilGetAll();
-  var q = (document.getElementById('il-search')||{value:''}).value.trim().toLowerCase();
-  var sortField = (document.getElementById('il-sort-field')||{value:'name'}).value;
-  var sortDir = (document.getElementById('il-sort-dir')||{value:'asc'}).value;
+function openIngredientEdit(id) {
+  var editEl = document.getElementById('il-edit-' + id);
+  if (editEl) editEl.classList.toggle('open');
+}
 
-  // Filter
-  var items = q ? lib.filter(i => i.name.toLowerCase().includes(q)) : lib.slice();
+function saveIngredientEdit(id) {
+  if (!S.ingredientLibrary) return;
+  var item = S.ingredientLibrary.find(function(i){ return i.id === id; });
+  if (!item) return;
+  item.name      = document.getElementById('ile-name-'+id).value.trim() || item.name;
+  item.baseWeight= parseFloat(document.getElementById('ile-base-'+id).value) || item.baseWeight;
+  item.cal       = parseFloat(document.getElementById('ile-cal-'+id).value)  || 0;
+  item.pro       = parseFloat(document.getElementById('ile-pro-'+id).value)  || 0;
+  item.carb      = parseFloat(document.getElementById('ile-carb-'+id).value) || 0;
+  item.fat       = parseFloat(document.getElementById('ile-fat-'+id).value)  || 0;
+  item.fiber     = parseFloat(document.getElementById('ile-fiber-'+id).value)|| 0;
+  save(); renderIngredientLibrary(); toast('Ingredient updated!');
+}
 
-  // Sort
-  items.sort((a,b) => {
-    var av = sortField==='name' ? a.name.toLowerCase() : (parseFloat(a[sortField])||0);
-    var bv = sortField==='name' ? b.name.toLowerCase() : (parseFloat(b[sortField])||0);
-    if (av < bv) return sortDir==='asc' ? -1 : 1;
-    if (av > bv) return sortDir==='asc' ? 1 : -1;
-    return 0;
-  });
-
-  // Stats
-  var statTot = document.getElementById('il-stat-total');
-  var statCal = document.getElementById('il-stat-cal');
-  var statPro = document.getElementById('il-stat-pro');
-  var statTop = document.getElementById('il-stat-top');
-  if (statTot) statTot.textContent = lib.length;
-  if (lib.length) {
-    var avgCal = (lib.reduce((s,i)=>{var bw=i.baseWeight||100;return s+(i.cal/bw*100);},0)/lib.length).toFixed(0);
-    var avgPro = (lib.reduce((s,i)=>{var bw=i.baseWeight||100;return s+(i.pro/bw*100);},0)/lib.length).toFixed(1);
-    var topPro = lib.slice().sort((a,b)=>{
-      var ap=a.pro/(a.baseWeight||100)*100, bp=b.pro/(b.baseWeight||100)*100;
-      return bp-ap;
-    })[0];
-    if (statCal) statCal.textContent = avgCal;
-    if (statPro) statPro.textContent = avgPro + 'g';
-    if (statTop) statTop.textContent = topPro ? topPro.name.toUpperCase().slice(0,12) : '—';
-  } else {
-    if (statCal) statCal.textContent = '—';
-    if (statPro) statPro.textContent = '—';
-    if (statTop) statTop.textContent = '—';
-  }
-
-  // Badge
-  var ilb = document.getElementById('ilBadge');
-  if (ilb) ilb.textContent = lib.length;
-
-  // Table body
-  var tbody = document.getElementById('il-tbody');
-  if (!tbody) return;
-  if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="ilib-empty"><div class="ilib-empty-icon">📖</div><div>' +
-      (q ? 'No ingredients match "'+q+'".' : 'No ingredients yet. Add your first ingredient above.') +
-      '</div></td></tr>';
+function renderIngredientLibrary() {
+  if (!S.ingredientLibrary) S.ingredientLibrary = [];
+  var lib = S.ingredientLibrary;
+  var total = lib.length;
+  var avgCal = total ? Math.round(lib.reduce(function(a,i){ return a+i.cal; },0) / total) : 0;
+  var avgPro = total ? (lib.reduce(function(a,i){ return a+i.pro; },0) / total).toFixed(1) : 0;
+  var last = total ? lib[lib.length-1].name : '—';
+  if (document.getElementById('il-total'))  document.getElementById('il-total').textContent  = total;
+  if (document.getElementById('il-avgcal')) document.getElementById('il-avgcal').textContent = avgCal;
+  if (document.getElementById('il-avgpro')) document.getElementById('il-avgpro').textContent = avgPro+'g';
+  if (document.getElementById('il-last'))   document.getElementById('il-last').textContent   = last.length > 12 ? last.slice(0,12)+'…' : last;
+  if (document.getElementById('ilBadge'))   document.getElementById('ilBadge').textContent   = total;
+  var list = document.getElementById('ilList'); if (!list) return;
+  var q = (document.getElementById('il-search')||{value:''}).value.toLowerCase();
+  var filtered = q ? lib.filter(function(i){ return i.name.toLowerCase().includes(q); }) : lib;
+  if (!filtered.length) {
+    list.innerHTML = '<div style="font-size:10px;color:var(--t2);padding:10px">'+(total?'No match found.':'No ingredients saved yet.')+'</div>';
     return;
   }
-
-  tbody.innerHTML = items.map(function(item) {
+  list.innerHTML = filtered.map(function(item) {
     var bw = item.baseWeight || 100;
-    var per100Cal = (item.cal / bw * 100).toFixed(0);
-    var per100Pro = (item.pro / bw * 100).toFixed(1);
-    
-    return `<tr id="il-row-${item.id}">
-      <td class="ilib-name-cell">${escHtml(item.name)}</td>
-      <td class="ilib-macro center">${bw}g</td>
-      <td class="ilib-macro right" style="color:var(--o2)">${item.cal}</td>
-      <td class="ilib-macro right" style="color:var(--o)">${item.pro}</td>
-      <td class="ilib-macro right" style="color:var(--c2)">${item.carb}</td>
-      <td class="ilib-macro right" style="color:var(--g2)">${item.fat}</td>
-      <td class="ilib-macro right" style="color:var(--p)">${item.fiber||0}</td>
-      <td class="ilib-macro right" style="color:var(--t2)">${per100Cal}</td>
-      <td>
-        <div class="ilib-actions">
-          <button class="edit-btn" onclick="openIlModal('${item.id}')" title="Edit">[ EDIT ]</button>
-          <button class="del-btn" onclick="deleteIlIngredient('${item.id}')" title="Delete">✕</button>
-        </div>
-      </td>
-    </tr>`;
+    return '<div class="meal-item" style="border-left:3px solid var(--p);margin-bottom:8px;cursor:default">'
+      + '<div class="meal-top">'
+      + '<div style="flex:1">'
+      + '<div class="meal-name" style="color:var(--t)">'+item.name+'</div>'
+      + '<div class="meal-detail" style="margin-top:4px">'
+      + '<span style="background:var(--t3);padding:1px 6px;font-size:9px;margin-right:6px">per '+bw+'g</span>'
+      + '<span style="color:var(--o2);font-weight:600">'+item.cal+' cal</span> · '
+      + 'P:<b style="color:var(--o)">'+item.pro+'</b>g '
+      + 'C:<b style="color:var(--c2)">'+item.carb+'</b>g '
+      + 'F:<b style="color:var(--g2)">'+item.fat+'</b>g '
+      + 'Fib:<b style="color:var(--p)">'+item.fiber+'</b>g'
+      + '</div>'
+      + '</div>'
+      + '<div style="display:flex;gap:6px;align-items:center">'
+      + '<button class="edit-btn" onclick="openIngredientEdit('+item.id+')">✎ EDIT</button>'
+      + '<button class="del-btn" onclick="deleteIngredientFromLibrary('+item.id+')">✕</button>'
+      + '</div>'
+      + '</div>'
+      + '<div class="edit-form" id="il-edit-'+item.id+'">'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'
+      + '<div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">NAME</div><input class="inp" id="ile-name-'+item.id+'" type="text" value="'+item.name.replace(/"/g,'&quot;')+'"/></div>'
+      + '<div class="inp-group" style="flex:1;min-width:70px"><div class="inp-label">BASE (g)</div><input class="inp" id="ile-base-'+item.id+'" type="number" value="'+bw+'"/></div>'
+      + '</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">'
+      + '<div class="inp-group"><div class="inp-label">CAL</div><input class="inp" id="ile-cal-'+item.id+'" type="number" value="'+item.cal+'"/></div>'
+      + '<div class="inp-group"><div class="inp-label">PRO(g)</div><input class="inp" id="ile-pro-'+item.id+'" type="number" value="'+item.pro+'"/></div>'
+      + '<div class="inp-group"><div class="inp-label">CARB(g)</div><input class="inp" id="ile-carb-'+item.id+'" type="number" value="'+item.carb+'"/></div>'
+      + '<div class="inp-group"><div class="inp-label">FAT(g)</div><input class="inp" id="ile-fat-'+item.id+'" type="number" value="'+item.fat+'"/></div>'
+      + '<div class="inp-group"><div class="inp-label">FIBER(g)</div><input class="inp" id="ile-fiber-'+item.id+'" type="number" value="'+item.fiber+'"/></div>'
+      + '</div>'
+      + '<div class="edit-form-actions">'
+      + '<button class="btn sm" onclick="saveIngredientEdit('+item.id+')">[ SAVE ]</button>'
+      + '<button class="btn sm danger" onclick="openIngredientEdit('+item.id+')">[ CANCEL ]</button>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
   }).join('');
 }
 
-function escHtml(s) {
+// ===================== INGREDIENT LIBRARY SEARCH WIDGET (ILSW) =====================
+// prefix = 'ntr'  → Nutrition  Add Meal
+// prefix = 'mla'  → Meal Library  Add New Meal
+// Each widget is self-contained; both call the same helper functions.
+
+var _ilswSel = { ntr: null, mla: null }; // currently selected library item per widget
+
+function _ilswQ(p)    { return document.getElementById(p+'-il-q'); }
+function _ilswDD(p)   { return document.getElementById(p+'-il-dd'); }
+function _ilswClr(p)  { return document.getElementById(p+'-il-clr'); }
+function _ilswSel_(p) { return document.getElementById(p+'-il-sel'); }
+function _ilswOut(p)  { return document.getElementById(p+'-il-out'); }
+function _ilswWt(p)   { return document.getElementById(p+'-il-wt'); }
+function _ilswSelName(p){ return document.getElementById(p+'-il-sel-name'); }
+function _ilswSelBase(p){ return document.getElementById(p+'-il-sel-base'); }
+
+function ilswSearch(p) {
+  var q = (_ilswQ(p).value || '').trim().toLowerCase();
+  var clrBtn = _ilswClr(p);
+  if (clrBtn) clrBtn.style.display = q ? '' : 'none';
+  var dd = _ilswDD(p);
+  var lib = S.ingredientLibrary || [];
+  if (!q) { dd.style.display = 'none'; return; }
+  var hits = lib.filter(function(i){ return i.name.toLowerCase().includes(q); });
+  if (!hits.length) {
+    dd.innerHTML = '<div class="ilsw-dd-empty">No match in library. Add via Ingredient Library page.</div>';
+    dd.style.display = 'block'; return;
+  }
+  dd.innerHTML = hits.map(function(item){
+    var bw = item.baseWeight || 100;
+    var per = (item.cal/bw*100).toFixed(0);
+    return '<div class="ilsw-dd-item" onclick="ilswSelect(\''+p+'\',\''+item.id+'\')">'
+      + '<span class="ilsw-dd-name">'+_ilswEsc(item.name)+'</span>'
+      + '<span class="ilsw-dd-meta">'+bw+'g → '+item.cal+'cal P:'+item.pro+'g C:'+item.carb+'g F:'+item.fat+'g</span>'
+      + '</div>';
+  }).join('');
+  dd.style.display = 'block';
+}
+
+function ilswSelect(p, id) {
+  var lib = S.ingredientLibrary || [];
+  var item = lib.find(function(i){ return i.id === id; });
+  if (!item) return;
+  _ilswSel[p] = item;
+  _ilswDD(p).style.display = 'none';
+  _ilswQ(p).value = '';
+  var clr = _ilswClr(p); if(clr) clr.style.display = 'none';
+  _ilswSelName(p).textContent = item.name.toUpperCase();
+  var bw = item.baseWeight || 100;
+  _ilswSelBase(p).innerHTML =
+    'Per <b style="color:var(--t)">'+bw+'</b>g → '
+    + 'Cal:<b style="color:var(--o2)">'+item.cal+'</b> '
+    + 'Pro:<b style="color:var(--o)">'+item.pro+'</b>g '
+    + 'Carb:<b style="color:var(--c2)">'+item.carb+'</b>g '
+    + 'Fat:<b style="color:var(--g2)">'+item.fat+'</b>g '
+    + 'Fiber:<b style="color:var(--p)">'+(item.fiber||0)+'</b>g';
+  _ilswSel_(p).style.display = 'block';
+  _ilswWt(p).value = '';
+  _ilswOut(p).innerHTML = '';
+  _ilswWt(p).focus();
+}
+
+function ilswCalc(p) {
+  var item = _ilswSel[p]; if (!item) return;
+  var w = parseFloat(_ilswWt(p).value) || 0;
+  if (!w) { _ilswOut(p).innerHTML = ''; return; }
+  var bw = item.baseWeight || 100;
+  var r = w / bw;
+  var cal  = (item.cal  * r).toFixed(1);
+  var pro  = (item.pro  * r).toFixed(1);
+  var carb = (item.carb * r).toFixed(1);
+  var fat  = (item.fat  * r).toFixed(1);
+  var fib  = ((item.fiber||0) * r).toFixed(1);
+  _ilswOut(p).innerHTML =
+    'Cal:<b style="color:var(--o2)">'+cal+'</b> '
+    + 'Pro:<b style="color:var(--o)">'+pro+'</b>g '
+    + 'Carb:<b style="color:var(--c2)">'+carb+'</b>g '
+    + 'Fat:<b style="color:var(--g2)">'+fat+'</b>g '
+    + 'Fib:<b style="color:var(--p)">'+fib+'</b>g';
+}
+
+function ilswAddToIngredients(p) {
+  var item = _ilswSel[p];
+  if (!item) { toast('Select an ingredient first'); return; }
+  var w = parseFloat(_ilswWt(p).value);
+  if (!w || w <= 0) { toast('Enter consumed weight (g)'); return; }
+  var bw = item.baseWeight || 100;
+  var r = w / bw;
+  var ig = {
+    name:   item.name,
+    weight: w,
+    cal:    parseFloat((item.cal  * r).toFixed(1)),
+    pro:    parseFloat((item.pro  * r).toFixed(1)),
+    carb:   parseFloat((item.carb * r).toFixed(1)),
+    fat:    parseFloat((item.fat  * r).toFixed(1)),
+    fiber:  parseFloat(((item.fiber||0) * r).toFixed(1))
+  };
+  if (p === 'ntr') {
+    pendingIngredients.push(ig);
+    renderPendingIngredients();
+  } else {
+    mlaPendingIngredients.push(ig);
+    renderMlaIngredients();
+  }
+  ilswDeselect(p);
+  toast('"'+item.name+'" added ('+w+'g)');
+}
+
+function ilswDeselect(p) {
+  _ilswSel[p] = null;
+  _ilswSel_(p).style.display = 'none';
+  _ilswWt(p).value = '';
+  _ilswOut(p).innerHTML = '';
+  _ilswQ(p).value = '';
+  var clr = _ilswClr(p); if(clr) clr.style.display = 'none';
+  _ilswDD(p).style.display = 'none';
+}
+
+function ilswClearSearch(p) {
+  _ilswQ(p).value = '';
+  var clr = _ilswClr(p); if(clr) clr.style.display = 'none';
+  _ilswDD(p).style.display = 'none';
+}
+
+function _ilswEsc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Modal ──────────────────────────────────────────────────────────────────
-function openIlModal(editId) {
-  var modal = document.getElementById('il-modal');
-  var titleEl = document.getElementById('il-modal-title');
-  var editIdEl = document.getElementById('il-m-edit-id');
-
-  // Reset
-  ['il-m-name','il-m-bwt','il-m-cal','il-m-pro','il-m-carb','il-m-fat','il-m-fiber'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.value = id==='il-m-bwt' ? '100' : '';
-  });
-  document.getElementById('il-m-preview').style.display = 'none';
-  editIdEl.value = editId || '';
-
-  if (editId) {
-    var item = ilGetAll().find(function(i){ return i.id === editId; });
-    if (!item) return;
-    titleEl.textContent = 'EDIT INGREDIENT';
-    document.getElementById('il-m-name').value  = item.name;
-    document.getElementById('il-m-bwt').value   = item.baseWeight || 100;
-    document.getElementById('il-m-cal').value   = item.cal  || 0;
-    document.getElementById('il-m-pro').value   = item.pro  || 0;
-    document.getElementById('il-m-carb').value  = item.carb || 0;
-    document.getElementById('il-m-fat').value   = item.fat  || 0;
-    document.getElementById('il-m-fiber').value = item.fiber|| 0;
-    ilUpdatePreview();
-  } else {
-    titleEl.textContent = 'ADD INGREDIENT';
-  }
-
-  modal.classList.add('open');
-  setTimeout(function(){ var n=document.getElementById('il-m-name'); if(n)n.focus(); }, 80);
-}
-
-function closeIlModal() {
-  document.getElementById('il-modal').classList.remove('open');
-}
-
-function ilUpdatePreview() {
-  var bw = parseFloat(document.getElementById('il-m-bwt').value) || 100;
-  var fields = {cal:'il-m-cal',pro:'il-m-pro',carb:'il-m-carb',fat:'il-m-fat',fiber:'il-m-fiber'};
-  var anyVal = false;
-  var prev = document.getElementById('il-m-preview');
-  Object.keys(fields).forEach(function(k){
-    var v = parseFloat(document.getElementById(fields[k]).value)||0;
-    var per100 = (v/bw*100).toFixed(1);
-    var el = document.getElementById('il-m-p-'+k);
-    if (el) el.textContent = per100;
-    if (v > 0) anyVal = true;
-  });
-  if (prev) prev.style.display = anyVal ? '' : 'none';
-}
-
-// Attach live preview to modal inputs
-(function attachIlPreview(){
-  var ids = ['il-m-bwt','il-m-cal','il-m-pro','il-m-carb','il-m-fat','il-m-fiber'];
-  ids.forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.addEventListener('input', ilUpdatePreview);
-  });
-})();
-
-function saveIlIngredient() {
-  var name  = (document.getElementById('il-m-name').value||'').trim();
-  var bwt   = parseFloat(document.getElementById('il-m-bwt').value)||100;
-  var cal   = parseFloat(document.getElementById('il-m-cal').value)||0;
-  var pro   = parseFloat(document.getElementById('il-m-pro').value)||0;
-  var carb  = parseFloat(document.getElementById('il-m-carb').value)||0;
-  var fat   = parseFloat(document.getElementById('il-m-fat').value)||0;
-  var fiber = parseFloat(document.getElementById('il-m-fiber').value)||0;
-  var editId = document.getElementById('il-m-edit-id').value;
-
-  if (!name) { toast('Enter ingredient name'); return; }
-  if (bwt <= 0) { toast('Base weight must be > 0'); return; }
-
-  if (!S.ingredientLibrary) S.ingredientLibrary = [];
-
-  if (editId) {
-    // Update existing
-    var idx = S.ingredientLibrary.findIndex(function(i){ return i.id === editId; });
-    if (idx !== -1) {
-      S.ingredientLibrary[idx] = Object.assign(S.ingredientLibrary[idx], {
-        name:name, baseWeight:bwt, cal:cal, pro:pro, carb:carb, fat:fat, fiber:fiber,
-        updatedAt: new Date().toISOString()
-      });
-      toast('✓ Ingredient updated!');
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e){
+  ['ntr','mla'].forEach(function(p){
+    var dd = document.getElementById(p+'-il-dd');
+    var inp = document.getElementById(p+'-il-q');
+    if (dd && inp && !dd.contains(e.target) && e.target !== inp) {
+      dd.style.display = 'none';
     }
-  } else {
-    // Check duplicate name
-    var dup = S.ingredientLibrary.find(function(i){ return i.name.toLowerCase()===name.toLowerCase(); });
-    if (dup) { toast('"'+name+'" already in library'); return; }
-    S.ingredientLibrary.push({
-      id: 'il_'+Date.now()+'_'+Math.floor(Math.random()*9999),
-      name:name, baseWeight:bwt, cal:cal, pro:pro, carb:carb, fat:fat, fiber:fiber,
-      createdAt: new Date().toISOString()
-    });
-    toast('✓ "'+name+'" added to library!');
-  }
-
-  save();
-  closeIlModal();
-  renderIngredientLib();
-}
-
-function deleteIlIngredient(id) {
-  var item = (S.ingredientLibrary||[]).find(function(i){ return i.id===id; });
-  if (!item) return;
-  if (!confirm('Delete "'+item.name+'" from Ingredient Library?')) return;
-  S.ingredientLibrary = (S.ingredientLibrary||[]).filter(function(i){ return i.id!==id; });
-  save();
-  renderIngredientLib();
-  toast('Removed "'+item.name+'"');
-}
+  });
+});
 
 function init() {
   // Load saved theme

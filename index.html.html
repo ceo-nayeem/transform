@@ -2507,6 +2507,98 @@ function init() {
   window.addEventListener('resize',()=>{if(document.getElementById('page-dashboard').classList.contains('active'))renderWeightChart();});
 }
 init();
+
+
+
+
+  
+const GEMINI_API_KEY = "AIzaSyC48c_wJugQ8tNXZE4SXjnY3oFD51ul5P8";
+
+// AI Tools Definition (AI-ke tomar function-er power deya)
+const tools = [
+    {
+        name: "addMeal",
+        description: "Logs a meal with macros for today. Provide name, calories, protein, carbs, fat, fiber, and weight.",
+        parameters: { type: "object", properties: { 
+            name: {type: "string"}, cal: {type: "number"}, pro: {type: "number"}, 
+            carb: {type: "number"}, fat: {type: "number"}, fib: {type: "number"}, weight: {type: "number"} 
+        }}
+    },
+    {
+        name: "saveMealToLibrary",
+        description: "Saves a meal/ingredient mix to the permanent library for future use.",
+        parameters: { type: "object", properties: { 
+            name: {type: "string"}, cal: {type: "number"}, pro: {type: "number"}, 
+            carb: {type: "number"}, fat: {type: "number"}, fib: {type: "number"} 
+        }}
+    },
+    {
+        name: "logWater",
+        description: "Logs water intake in ml.",
+        parameters: { type: "object", properties: { amount: {type: "number"} }}
+    }
+];
+
+async function askGemini() {
+    const input = document.getElementById('ai-input');
+    const logs = document.getElementById('ai-chat-logs');
+    const prompt = input.value.trim();
+    if (!prompt) return;
+
+    logs.innerHTML += `<div style="margin-bottom:10px; color:#00f2ff;"><b>You:</b> ${prompt}</div>`;
+    input.value = '';
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ functionDeclarations: tools }]
+            })
+        });
+
+        const data = await response.json();
+        const call = data.candidates[0].content.parts.find(p => p.functionCall);
+
+        if (call) {
+            const { name, args } = call.functionCall;
+            logs.innerHTML += `<div style="color:#aaa; font-style:italic;">Executing ${name}...</div>`;
+            
+            // Execute the local software functions
+            if (name === "addMeal") window.addMeal(args);
+            if (name === "saveMealToLibrary") window.saveMealToLibrary(args);
+            if (name === "logWater") window.addGlass(args.amount / 250); // Assuming 1 glass = 250ml
+
+            logs.innerHTML += `<div style="color:#4caf50;">✅ Action completed: ${name}</div>`;
+            if (typeof window.sync === "function") window.sync(); // Refresh UI
+        } else {
+            const reply = data.candidates[0].content.parts[0].text;
+            logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${reply}</div>`;
+        }
+    } catch (err) {
+        logs.innerHTML += `<div style="color:red;">Error: AI connection failed.</div>`;
+    }
+    logs.scrollTop = logs.scrollHeight;
+}
+  
 </script>
+
+<div id="ai-chat-container" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; font-family: 'Rajdhani', sans-serif; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none;">
+    <div style="padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #222; border-radius: 12px 12px 0 0;">
+        <span style="color: #00f2ff; font-weight: 700; letter-spacing: 1px;">⚡ FIT//OS AI AGENT</span>
+        <button onclick="document.getElementById('ai-chat-container').style.display='none'" style="background: none; border: none; color: #666; cursor: pointer; font-size: 20px;">&times;</button>
+    </div>
+    <div id="ai-chat-logs" style="height: 300px; overflow-y: auto; padding: 15px; color: #ddd; font-size: 14px; background: #111;">
+        <div style="margin-bottom: 10px; color: #888;">AI Agent ready. How can I help you today?</div>
+    </div>
+    <div style="padding: 10px; border-top: 1px solid #333; display: flex; gap: 8px;">
+        <input type="text" id="ai-input" placeholder="Type command (e.g. 'Add 2L water')" style="flex: 1; background: #000; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; outline: none;">
+        <button onclick="askGemini()" style="background: #00f2ff; border: none; color: #000; padding: 8px 15px; border-radius: 4px; font-weight: 700; cursor: pointer;">SEND</button>
+    </div>
+</div>
+
+<button onclick="document.getElementById('ai-chat-container').style.display='block'" style="position: fixed; bottom: 20px; right: 20px; background: #00f2ff; color: #000; border: none; width: 50px; height: 50px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 9999; box-shadow: 0 5px 15px rgba(0,242,255,0.3);">AI</button>
+  
 </body>
 </html>

@@ -291,6 +291,7 @@ html.alpha .saved-timer-card{background:#fff;border-radius:8px;box-shadow:0 1px 
 html.alpha .lap-item{background:#fff;border-radius:0}
 html.alpha .saved-timer-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800}
 html.alpha .modal{border-radius:16px;border-top:3px solid var(--g)}
+html.alpha #mealTypeModal > div{border-radius:16px;border-top:3px solid var(--g)}
 html.alpha .edit-btn{color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:600;font-size:11px}
 html.alpha .edit-btn:hover{color:var(--c)}
 html.alpha .del-btn:hover{color:var(--red)}
@@ -1066,8 +1067,7 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
   <div class="sec-head" style="margin-top:16px">ADD NEW MEAL TO LIBRARY</div>
   <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
     <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME</div><input class="inp" id="mla-name" type="text" placeholder="e.g. Chicken + Rice Bowl"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">MEAL TYPE</div><select class="inp" id="mla-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Pre-workout</option><option>Post-workout</option></select></div>
+      <div class="inp-group" style="flex:1"><div class="inp-label">MEAL NAME</div><input class="inp" id="mla-name" type="text" placeholder="e.g. Chicken + Rice Bowl"/></div>
     </div>
     <div style="border:1px solid var(--border);border-left:3px solid var(--c2);padding:12px;margin-bottom:10px;background:var(--card2)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1788,7 +1788,7 @@ function saveMealToLibrary(mealObj) {
     var name=document.getElementById('mla-name').value.trim(); if(!name){toast('Enter meal name');return;}
     var ingrs=mlaPendingIngredients.slice();
     var macros=ingrs.length?calcMacrosFromIngredients(ingrs):{kcal:0,protein:0,carbs:0,fat:0,fiber:0};
-    mealObj={name,type:document.getElementById('mla-type').value,kcal:macros.kcal,protein:macros.protein,carbs:macros.carbs,fat:macros.fat,fiber:macros.fiber,notes:document.getElementById('mla-notes').value.trim(),ingredients:ingrs};
+    mealObj={name,type:'Meal',kcal:macros.kcal,protein:macros.protein,carbs:macros.carbs,fat:macros.fat,fiber:macros.fiber,notes:document.getElementById('mla-notes').value.trim(),ingredients:ingrs};
     document.getElementById('mla-name').value=''; document.getElementById('mla-notes').value='';
     mlaPendingIngredients=[]; renderMlaIngredients();
   }
@@ -1828,9 +1828,30 @@ function renderMealLibrary() {
 }
 function logLibraryMealById(id) {
   var m=S.mealLibrary.find(x=>x.id===id); if(!m) return;
-  var now=new Date(); var hh=String(now.getHours()).padStart(2,'0'); var mm2=String(now.getMinutes()).padStart(2,'0');
-  getDay(ntrDate||S.today).meals.push({name:m.name,type:m.type,time:hh+':'+mm2,kcal:m.kcal,protein:m.protein,carbs:m.carbs,fat:m.fat,fiber:m.fiber,notes:m.notes,ingredients:m.ingredients||[]});
-  save(); toast('✅ '+m.name+' logged!');
+  showMealTypeModal(m, function(chosenType) {
+    var now=new Date(); var hh=String(now.getHours()).padStart(2,'0'); var mm2=String(now.getMinutes()).padStart(2,'0');
+    getDay(ntrDate||S.today).meals.push({name:m.name,type:chosenType,time:hh+':'+mm2,kcal:m.kcal,protein:m.protein,carbs:m.carbs,fat:m.fat,fiber:m.fiber,notes:m.notes,ingredients:m.ingredients||[]});
+    save(); if(typeof renderNutrition==='function')try{renderNutrition();}catch(e){} toast('✅ '+m.name+' logged as '+chosenType+'!');
+  });
+}
+function showMealTypeModal(meal, callback) {
+  // Remove any existing modal
+  var old=document.getElementById('mealTypeModal'); if(old) old.remove();
+  var types=['Breakfast','Lunch','Dinner','Snack','Pre-workout','Post-workout'];
+  var modal=document.createElement('div');
+  modal.id='mealTypeModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-top:2px solid var(--g);padding:24px;min-width:300px;max-width:420px;width:90%;">
+    <div style="font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--g);margin-bottom:6px">LOG MEAL</div>
+    <div style="font-size:11px;color:var(--t2);margin-bottom:16px;font-family:var(--mono)">Logging: <span style="color:var(--t)">${meal.name}</span> · <span style="color:var(--o2)">${meal.kcal} kcal</span></div>
+    <div style="font-size:9px;color:var(--t2);letter-spacing:1.5px;margin-bottom:10px;font-family:var(--mono);text-transform:uppercase">Log as what meal type?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${types.map(t=>`<button onclick="document.getElementById('mealTypeModal')._cb('${t}')" style="background:var(--card2);border:1px solid var(--border);color:var(--t);font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:10px 8px;cursor:pointer;text-transform:uppercase;transition:all .15s;" onmouseover="this.style.borderColor='var(--g)';this.style.color='var(--g)';this.style.background='var(--gd)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--t)';this.style.background='var(--card2)'">${t}</button>`).join('')}
+    </div>
+    <button onclick="document.getElementById('mealTypeModal').remove()" style="width:100%;background:transparent;border:1px dashed var(--border);color:var(--t2);font-family:var(--mono);font-size:10px;padding:8px;cursor:pointer;letter-spacing:1px;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--t2)'">[ CANCEL ]</button>
+  </div>`;
+  modal._cb=function(type){ modal.remove(); callback(type); };
+  document.body.appendChild(modal);
 }
 function deleteLibraryMeal(idx) {
   if(!confirm('Remove "'+S.mealLibrary[idx].name+'" from library?')) return;
@@ -1848,7 +1869,9 @@ function previewLibraryMeal() {
 }
 function logMealFromLibrary() {
   var id=parseInt(document.getElementById('n-from-lib').value); if(!id){toast('Select a meal first');return;}
-  logLibraryMealById(id); document.getElementById('n-from-lib').value=''; document.getElementById('n-lib-preview').style.display='none'; renderNutrition();
+  logLibraryMealById(id);
+  document.getElementById('n-from-lib').value='';
+  document.getElementById('n-lib-preview').style.display='none';
 }
 
 // ===================== WORKOUT =====================

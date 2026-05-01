@@ -2512,6 +2512,9 @@ init();
 
 
   
+// --- COMPLETE AI AGENT MODULE START ---
+const GEMINI_API_KEY = "AIzaSyC48c_wJugQ8tNXZE4SXjnY3oFD51ul5P8";
+
 async function askGemini() {
     const input = document.getElementById('ai-input');
     const logs = document.getElementById('ai-chat-logs');
@@ -2524,16 +2527,13 @@ async function askGemini() {
     try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         
-        // Gemini API expects the tools field directly inside the body
         const requestBody = {
-            contents: [{
-                parts: [{ text: prompt }]
-            }],
+            contents: [{ parts: [{ text: prompt }] }],
             tools: [{
                 function_declarations: [
                     {
                         name: "addMeal",
-                        description: "Add a meal with nutritional values for today.",
+                        description: "Logs a meal for today with full nutrition data.",
                         parameters: {
                             type: "OBJECT",
                             properties: {
@@ -2550,7 +2550,7 @@ async function askGemini() {
                     },
                     {
                         name: "saveMealToLibrary",
-                        description: "Saves a new food or mix to the library for future use.",
+                        description: "Saves a food/mix to the permanent library.",
                         parameters: {
                             type: "OBJECT",
                             properties: {
@@ -2566,7 +2566,7 @@ async function askGemini() {
                     },
                     {
                         name: "logWater",
-                        description: "Logs daily water intake.",
+                        description: "Updates water intake in milliliters.",
                         parameters: {
                             type: "OBJECT",
                             properties: { amount: { type: "NUMBER" } },
@@ -2584,10 +2584,7 @@ async function askGemini() {
         });
 
         const data = await response.json();
-        
-        if (data.error) {
-            throw new Error(data.error.message);
-        }
+        if (data.error) throw new Error(data.error.message);
 
         const candidate = data.candidates[0];
         if (candidate.content && candidate.content.parts) {
@@ -2595,27 +2592,30 @@ async function askGemini() {
 
             if (part) {
                 const { name, args } = part.functionCall;
-                logs.innerHTML += `<div style="color:#aaa; font-style:italic;">AI is executing ${name}...</div>`;
+                logs.innerHTML += `<div style="color:#aaa; font-style:italic;">AI Agent: Performing ${name}...</div>`;
                 
-                // Final Function Trigger
-                if (name === "addMeal") addMeal(args);
-                if (name === "saveMealToLibrary") saveMealToLibrary(args);
+                // Direct call to your fitness app's global functions
+                if (name === "addMeal") window.addMeal(args);
+                if (name === "saveMealToLibrary") window.saveMealToLibrary(args);
                 if (name === "logWater") {
-                    if (typeof addGlass === "function") addGlass(args.amount / 250);
+                    if (typeof window.addGlass === "function") {
+                        window.addGlass(args.amount / 250); 
+                    }
                 }
 
-                logs.innerHTML += `<div style="color:#4caf50;">✅ Successfully updated FIT//OS</div>`;
-                if (typeof sync === "function") sync(); 
+                logs.innerHTML += `<div style="color:#4caf50;">✅ Action completed successfully!</div>`;
+                if (typeof window.sync === "function") window.sync(); 
             } else if (candidate.content.parts[0].text) {
                 logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${candidate.content.parts[0].text}</div>`;
             }
         }
     } catch (err) {
-        console.error("Gemini Error:", err);
+        console.error("Agent Error:", err);
         logs.innerHTML += `<div style="color:#ff4444;">System Error: ${err.message}</div>`;
     }
     logs.scrollTop = logs.scrollHeight;
 }
+// --- COMPLETE AI AGENT MODULE END ---
   
 </script>
 

@@ -2512,58 +2512,6 @@ init();
 
 
   
-const GEMINI_API_KEY = "AIzaSyC48c_wJugQ8tNXZE4SXjnY3oFD51ul5P8";
-
-// Precise Tools Definition for Gemini
-const aiTools = [
-    {
-        function_declarations: [
-            {
-                name: "addMeal",
-                description: "Logs a meal with macros for today. Requires name, cal, pro, carb, fat, fib, and weight.",
-                parameters: {
-                    type: "object",
-                    properties: {
-                        name: { type: "string" },
-                        cal: { type: "number" },
-                        pro: { type: "number" },
-                        carb: { type: "number" },
-                        fat: { type: "number" },
-                        fib: { type: "number" },
-                        weight: { type: "number" }
-                    },
-                    required: ["name", "cal", "pro", "carb", "fat", "fib", "weight"]
-                }
-            },
-            {
-                name: "saveMealToLibrary",
-                description: "Saves a food/mix to the library for future use.",
-                parameters: {
-                    type: "object",
-                    properties: {
-                        name: { type: "string" },
-                        cal: { type: "number" },
-                        pro: { type: "number" },
-                        carb: { type: "number" },
-                        fat: { type: "number" },
-                        fib: { type: "number" }
-                    },
-                    required: ["name", "cal", "pro", "carb", "fat", "fib"]
-                }
-            },
-            {
-                name: "logWater",
-                description: "Logs water intake in milliliters (ml).",
-                parameters: {
-                    type: "object",
-                    properties: { amount: { type: "number" } },
-                    required: ["amount"]
-                }
-            }
-        ]
-    }
-];
-
 async function askGemini() {
     const input = document.getElementById('ai-input');
     const logs = document.getElementById('ai-chat-logs');
@@ -2574,16 +2522,65 @@ async function askGemini() {
     input.value = '';
 
     try {
-        // v1beta endpoint is mandatory for Function Calling features currently
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         
+        // Gemini API expects the tools field directly inside the body
+        const requestBody = {
+            contents: [{
+                parts: [{ text: prompt }]
+            }],
+            tools: [{
+                function_declarations: [
+                    {
+                        name: "addMeal",
+                        description: "Add a meal with nutritional values for today.",
+                        parameters: {
+                            type: "OBJECT",
+                            properties: {
+                                name: { type: "STRING" },
+                                cal: { type: "NUMBER" },
+                                pro: { type: "NUMBER" },
+                                carb: { type: "NUMBER" },
+                                fat: { type: "NUMBER" },
+                                fib: { type: "NUMBER" },
+                                weight: { type: "NUMBER" }
+                            },
+                            required: ["name", "cal", "pro", "carb", "fat", "fib", "weight"]
+                        }
+                    },
+                    {
+                        name: "saveMealToLibrary",
+                        description: "Saves a new food or mix to the library for future use.",
+                        parameters: {
+                            type: "OBJECT",
+                            properties: {
+                                name: { type: "STRING" },
+                                cal: { type: "NUMBER" },
+                                pro: { type: "NUMBER" },
+                                carb: { type: "NUMBER" },
+                                fat: { type: "NUMBER" },
+                                fib: { type: "NUMBER" }
+                            },
+                            required: ["name", "cal", "pro", "carb", "fat", "fib"]
+                        }
+                    },
+                    {
+                        name: "logWater",
+                        description: "Logs daily water intake.",
+                        parameters: {
+                            type: "OBJECT",
+                            properties: { amount: { type: "NUMBER" } },
+                            required: ["amount"]
+                        }
+                    }
+                ]
+            }]
+        };
+
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                tools: aiTools // Corrected tools structure
-            })
+            body: JSON.stringify(requestBody)
         });
 
         const data = await response.json();
@@ -2592,24 +2589,26 @@ async function askGemini() {
             throw new Error(data.error.message);
         }
 
-        const part = data.candidates[0].content.parts[0];
+        const candidate = data.candidates[0];
+        if (candidate.content && candidate.content.parts) {
+            const part = candidate.content.parts.find(p => p.functionCall);
 
-        // Check if AI wants to call a function
-        if (part.functionCall) {
-            const { name, args } = part.functionCall;
-            logs.innerHTML += `<div style="color:#aaa; font-style:italic;">AI is processing ${name}...</div>`;
-            
-            // Execute your app's functions
-            if (name === "addMeal") addMeal(args);
-            if (name === "saveMealToLibrary") saveMealToLibrary(args);
-            if (name === "logWater") {
-                if (typeof addGlass === "function") addGlass(args.amount / 250);
+            if (part) {
+                const { name, args } = part.functionCall;
+                logs.innerHTML += `<div style="color:#aaa; font-style:italic;">AI is executing ${name}...</div>`;
+                
+                // Final Function Trigger
+                if (name === "addMeal") addMeal(args);
+                if (name === "saveMealToLibrary") saveMealToLibrary(args);
+                if (name === "logWater") {
+                    if (typeof addGlass === "function") addGlass(args.amount / 250);
+                }
+
+                logs.innerHTML += `<div style="color:#4caf50;">✅ Successfully updated FIT//OS</div>`;
+                if (typeof sync === "function") sync(); 
+            } else if (candidate.content.parts[0].text) {
+                logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${candidate.content.parts[0].text}</div>`;
             }
-
-            logs.innerHTML += `<div style="color:#4caf50;">✅ Successfully updated FIT//OS</div>`;
-            if (typeof sync === "function") sync(); 
-        } else if (part.text) {
-            logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${part.text}</div>`;
         }
     } catch (err) {
         console.error("Gemini Error:", err);

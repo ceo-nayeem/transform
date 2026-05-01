@@ -2512,33 +2512,6 @@ init();
 
 
   
-const GEMINI_API_KEY = "AIzaSyC48c_wJugQ8tNXZE4SXjnY3oFD51ul5P8";
-
-// AI Tools Definition (AI-ke tomar function-er power deya)
-const tools = [
-    {
-        name: "addMeal",
-        description: "Logs a meal with macros for today. Provide name, calories, protein, carbs, fat, fiber, and weight.",
-        parameters: { type: "object", properties: { 
-            name: {type: "string"}, cal: {type: "number"}, pro: {type: "number"}, 
-            carb: {type: "number"}, fat: {type: "number"}, fib: {type: "number"}, weight: {type: "number"} 
-        }}
-    },
-    {
-        name: "saveMealToLibrary",
-        description: "Saves a meal/ingredient mix to the permanent library for future use.",
-        parameters: { type: "object", properties: { 
-            name: {type: "string"}, cal: {type: "number"}, pro: {type: "number"}, 
-            carb: {type: "number"}, fat: {type: "number"}, fib: {type: "number"} 
-        }}
-    },
-    {
-        name: "logWater",
-        description: "Logs water intake in ml.",
-        parameters: { type: "object", properties: { amount: {type: "number"} }}
-    }
-];
-
 async function askGemini() {
     const input = document.getElementById('ai-input');
     const logs = document.getElementById('ai-chat-logs');
@@ -2549,35 +2522,49 @@ async function askGemini() {
     input.value = '';
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        // v1beta theke v1 use korar chesta koro jodi beta te problem hoy
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 tools: [{ functionDeclarations: tools }]
             })
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Gemini Error Detail:", errorData); // Ekhane error-er আসল কারণ দেখা যাবে
+            throw new Error(errorData.error.message || "API Error");
+        }
+
         const data = await response.json();
-        const call = data.candidates[0].content.parts.find(p => p.functionCall);
+        const candidate = data.candidates[0];
+        
+        if (candidate.content && candidate.content.parts) {
+            const call = candidate.content.parts.find(p => p.functionCall);
 
-        if (call) {
-            const { name, args } = call.functionCall;
-            logs.innerHTML += `<div style="color:#aaa; font-style:italic;">Executing ${name}...</div>`;
-            
-            // Execute the local software functions
-            if (name === "addMeal") window.addMeal(args);
-            if (name === "saveMealToLibrary") window.saveMealToLibrary(args);
-            if (name === "logWater") window.addGlass(args.amount / 250); // Assuming 1 glass = 250ml
+            if (call) {
+                const { name, args } = call.functionCall;
+                logs.innerHTML += `<div style="color:#aaa; font-style:italic;">Executing ${name}...</div>`;
+                
+                // Function Execution Logic
+                if (name === "addMeal") addMeal(args);
+                if (name === "saveMealToLibrary") saveMealToLibrary(args);
+                if (name === "logWater") addGlass(args.amount / 250);
 
-            logs.innerHTML += `<div style="color:#4caf50;">✅ Action completed: ${name}</div>`;
-            if (typeof window.sync === "function") window.sync(); // Refresh UI
-        } else {
-            const reply = data.candidates[0].content.parts[0].text;
-            logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${reply}</div>`;
+                logs.innerHTML += `<div style="color:#4caf50;">✅ Action completed: ${name}</div>`;
+                if (typeof sync === "function") sync(); 
+            } else {
+                const reply = candidate.content.parts[0].text;
+                logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${reply}</div>`;
+            }
         }
     } catch (err) {
-        logs.innerHTML += `<div style="color:red;">Error: AI connection failed.</div>`;
+        console.error("Connection Error:", err);
+        logs.innerHTML += `<div style="color:#ff4444;">Error: ${err.message}</div>`;
     }
     logs.scrollTop = logs.scrollHeight;
 }

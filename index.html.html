@@ -2514,28 +2514,53 @@ init();
   
 const GEMINI_API_KEY = "AIzaSyC48c_wJugQ8tNXZE4SXjnY3oFD51ul5P8";
 
-// AI Tools Definition
-const tools = [
+// Precise Tools Definition for Gemini
+const aiTools = [
     {
-        name: "addMeal",
-        description: "Logs a meal with macros for today. Provide name, calories, protein, carbs, fat, fiber, and weight.",
-        parameters: { type: "object", properties: { 
-            name: {type: "string"}, cal: {type: "number"}, pro: {type: "number"}, 
-            carb: {type: "number"}, fat: {type: "number"}, fib: {type: "number"}, weight: {type: "number"} 
-        }}
-    },
-    {
-        name: "saveMealToLibrary",
-        description: "Saves a meal/ingredient mix to the permanent library for future use.",
-        parameters: { type: "object", properties: { 
-            name: {type: "string"}, cal: {type: "number"}, pro: {type: "number"}, 
-            carb: {type: "number"}, fat: {type: "number"}, fib: {type: "number"} 
-        }}
-    },
-    {
-        name: "logWater",
-        description: "Logs water intake in ml.",
-        parameters: { type: "object", properties: { amount: {type: "number"} }}
+        function_declarations: [
+            {
+                name: "addMeal",
+                description: "Logs a meal with macros for today. Requires name, cal, pro, carb, fat, fib, and weight.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        name: { type: "string" },
+                        cal: { type: "number" },
+                        pro: { type: "number" },
+                        carb: { type: "number" },
+                        fat: { type: "number" },
+                        fib: { type: "number" },
+                        weight: { type: "number" }
+                    },
+                    required: ["name", "cal", "pro", "carb", "fat", "fib", "weight"]
+                }
+            },
+            {
+                name: "saveMealToLibrary",
+                description: "Saves a food/mix to the library for future use.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        name: { type: "string" },
+                        cal: { type: "number" },
+                        pro: { type: "number" },
+                        carb: { type: "number" },
+                        fat: { type: "number" },
+                        fib: { type: "number" }
+                    },
+                    required: ["name", "cal", "pro", "carb", "fat", "fib"]
+                }
+            },
+            {
+                name: "logWater",
+                description: "Logs water intake in milliliters (ml).",
+                parameters: {
+                    type: "object",
+                    properties: { amount: { type: "number" } },
+                    required: ["amount"]
+                }
+            }
+        ]
     }
 ];
 
@@ -2549,56 +2574,46 @@ async function askGemini() {
     input.value = '';
 
     try {
-        // CHANGED: Version 'v1beta' theke 'v1' e shift korlam ebong model name check
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        // v1beta endpoint is mandatory for Function Calling features currently
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
-                tools: [{ functionDeclarations: tools }]
+                tools: aiTools // Corrected tools structure
             })
         });
 
         const data = await response.json();
-
-        // Error Handling for Model Not Found
+        
         if (data.error) {
-            console.error("API Error:", data.error);
-            // Jodi 1.5-flash na pay, auto fallback to gemini-pro (stable)
-            if (data.error.message.includes("not found")) {
-                logs.innerHTML += `<div style="color:#ffcc00;">Flash model not found. Retrying with Pro...</div>`;
-                const fallbackUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
-                // Retry logic can be added here, but let's fix the URL first.
-            }
             throw new Error(data.error.message);
         }
 
-        const candidate = data.candidates[0];
-        if (candidate && candidate.content && candidate.content.parts) {
-            const call = candidate.content.parts.find(p => p.functionCall);
+        const part = data.candidates[0].content.parts[0];
 
-            if (call) {
-                const { name, args } = call.functionCall;
-                logs.innerHTML += `<div style="color:#aaa; font-style:italic;">Executing ${name}...</div>`;
-                
-                if (name === "addMeal") addMeal(args);
-                if (name === "saveMealToLibrary") saveMealToLibrary(args);
-                if (name === "logWater") {
-                    if (typeof addGlass === "function") addGlass(args.amount / 250);
-                }
-
-                logs.innerHTML += `<div style="color:#4caf50;">✅ Action completed: ${name}</div>`;
-                if (typeof sync === "function") sync(); 
-            } else {
-                const reply = candidate.content.parts[0].text;
-                logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${reply}</div>`;
+        // Check if AI wants to call a function
+        if (part.functionCall) {
+            const { name, args } = part.functionCall;
+            logs.innerHTML += `<div style="color:#aaa; font-style:italic;">AI is processing ${name}...</div>`;
+            
+            // Execute your app's functions
+            if (name === "addMeal") addMeal(args);
+            if (name === "saveMealToLibrary") saveMealToLibrary(args);
+            if (name === "logWater") {
+                if (typeof addGlass === "function") addGlass(args.amount / 250);
             }
+
+            logs.innerHTML += `<div style="color:#4caf50;">✅ Successfully updated FIT//OS</div>`;
+            if (typeof sync === "function") sync(); 
+        } else if (part.text) {
+            logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${part.text}</div>`;
         }
     } catch (err) {
-        console.error("Connection Error:", err);
-        logs.innerHTML += `<div style="color:#ff4444;">Error: ${err.message}</div>`;
+        console.error("Gemini Error:", err);
+        logs.innerHTML += `<div style="color:#ff4444;">System Error: ${err.message}</div>`;
     }
     logs.scrollTop = logs.scrollHeight;
 }

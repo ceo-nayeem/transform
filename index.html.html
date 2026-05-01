@@ -2508,132 +2508,622 @@ function init() {
 }
 init();
 
+// =====================================================================
+//  GEMINI AI AGENT INTEGRATION
+// =====================================================================
 
-
-
-  
-// --- COMPLETE AI AGENT MODULE START ---
-const GEMINI_API_KEY = "AIzaSyC48c_wJugQ8tNXZE4SXjnY3oFD51ul5P8";
-
-async function askGemini() {
-    const input = document.getElementById('ai-input');
-    const logs = document.getElementById('ai-chat-logs');
-    const prompt = input.value.trim();
-    if (!prompt) return;
-
-    logs.innerHTML += `<div style="margin-bottom:10px; color:#00f2ff;"><b>You:</b> ${prompt}</div>`;
-    input.value = '';
-
-    try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-        
-        const requestBody = {
-            contents: [{ parts: [{ text: prompt }] }],
-            tools: [{
-                function_declarations: [
-                    {
-                        name: "addMeal",
-                        description: "Logs a meal for today with full nutrition data.",
-                        parameters: {
-                            type: "OBJECT",
-                            properties: {
-                                name: { type: "STRING" },
-                                cal: { type: "NUMBER" },
-                                pro: { type: "NUMBER" },
-                                carb: { type: "NUMBER" },
-                                fat: { type: "NUMBER" },
-                                fib: { type: "NUMBER" },
-                                weight: { type: "NUMBER" }
-                            },
-                            required: ["name", "cal", "pro", "carb", "fat", "fib", "weight"]
-                        }
-                    },
-                    {
-                        name: "saveMealToLibrary",
-                        description: "Saves a food/mix to the permanent library.",
-                        parameters: {
-                            type: "OBJECT",
-                            properties: {
-                                name: { type: "STRING" },
-                                cal: { type: "NUMBER" },
-                                pro: { type: "NUMBER" },
-                                carb: { type: "NUMBER" },
-                                fat: { type: "NUMBER" },
-                                fib: { type: "NUMBER" }
-                            },
-                            required: ["name", "cal", "pro", "carb", "fat", "fib"]
-                        }
-                    },
-                    {
-                        name: "logWater",
-                        description: "Updates water intake in milliliters.",
-                        parameters: {
-                            type: "OBJECT",
-                            properties: { amount: { type: "NUMBER" } },
-                            required: ["amount"]
-                        }
-                    }
-                ]
-            }]
-        };
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        const data = await response.json();
-        if (data.error) throw new Error(data.error.message);
-
-        const candidate = data.candidates[0];
-        if (candidate.content && candidate.content.parts) {
-            const part = candidate.content.parts.find(p => p.functionCall);
-
-            if (part) {
-                const { name, args } = part.functionCall;
-                logs.innerHTML += `<div style="color:#aaa; font-style:italic;">AI Agent: Performing ${name}...</div>`;
-                
-                // Direct call to your fitness app's global functions
-                if (name === "addMeal") window.addMeal(args);
-                if (name === "saveMealToLibrary") window.saveMealToLibrary(args);
-                if (name === "logWater") {
-                    if (typeof window.addGlass === "function") {
-                        window.addGlass(args.amount / 250); 
-                    }
-                }
-
-                logs.innerHTML += `<div style="color:#4caf50;">✅ Action completed successfully!</div>`;
-                if (typeof window.sync === "function") window.sync(); 
-            } else if (candidate.content.parts[0].text) {
-                logs.innerHTML += `<div style="margin-bottom:10px;"><b>AI:</b> ${candidate.content.parts[0].text}</div>`;
-            }
-        }
-    } catch (err) {
-        console.error("Agent Error:", err);
-        logs.innerHTML += `<div style="color:#ff4444;">System Error: ${err.message}</div>`;
-    }
-    logs.scrollTop = logs.scrollHeight;
+// ── Styles ──────────────────────────────────────────────────────────
+(function injectAgentCSS(){
+  var s = document.createElement('style');
+  s.textContent = `
+/* FAB */
+#ai-fab{
+  position:fixed;bottom:24px;right:24px;z-index:8000;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,#00ff88,#00cc66);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,255,136,.45);
+  transition:transform .2s,box-shadow .2s;
+  font-size:22px;
 }
-// --- COMPLETE AI AGENT MODULE END ---
-  
-</script>
+#ai-fab:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(0,255,136,.6);}
+html.alpha #ai-fab{background:linear-gradient(135deg,#00a651,#007a3d);box-shadow:0 4px 20px rgba(0,166,81,.4);}
 
-<div id="ai-chat-container" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; font-family: 'Rajdhani', sans-serif; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none;">
-    <div style="padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #222; border-radius: 12px 12px 0 0;">
-        <span style="color: #00f2ff; font-weight: 700; letter-spacing: 1px;">⚡ FIT//OS AI AGENT</span>
-        <button onclick="document.getElementById('ai-chat-container').style.display='none'" style="background: none; border: none; color: #666; cursor: pointer; font-size: 20px;">&times;</button>
+/* Pulse badge */
+#ai-fab .fab-badge{
+  position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--red);border:2px solid var(--bg);
+  font-size:8px;color:#fff;display:flex;align-items:center;justify-content:center;
+  display:none;
+}
+
+/* Panel */
+#ai-panel{
+  position:fixed;bottom:86px;right:24px;z-index:8000;
+  width:370px;max-width:calc(100vw - 32px);
+  background:var(--card);border:1px solid var(--border);
+  border-top:2px solid var(--g);
+  display:flex;flex-direction:column;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  transition:opacity .2s,transform .2s;
+  opacity:0;transform:translateY(12px) scale(.97);
+  pointer-events:none;
+  height:480px;max-height:calc(100vh - 120px);
+}
+#ai-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
+
+/* Panel header */
+#ai-panel-head{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--border);
+  background:var(--card2);flex-shrink:0;
+}
+.ai-head-icon{font-size:18px;}
+.ai-head-title{flex:1;font-family:var(--raj);font-size:14px;font-weight:700;color:var(--g);letter-spacing:2px;}
+.ai-head-sub{font-family:var(--mono);font-size:8px;color:var(--t2);letter-spacing:1px;}
+#ai-close-btn{background:none;border:none;color:var(--t2);font-size:16px;cursor:pointer;line-height:1;padding:0 2px;}
+#ai-close-btn:hover{color:var(--red);}
+
+/* Key row */
+#ai-key-row{
+  padding:8px 12px;background:var(--gd);border-bottom:1px solid var(--border);
+  display:flex;gap:6px;align-items:center;flex-shrink:0;
+}
+#ai-key-inp{
+  flex:1;background:var(--card);border:1px solid var(--border);color:var(--t);
+  font-family:var(--mono);font-size:10px;padding:6px 8px;outline:none;
+}
+#ai-key-inp:focus{border-color:var(--g);}
+#ai-key-save{
+  background:transparent;border:1px solid var(--g);color:var(--g);
+  font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:6px 10px;
+  cursor:pointer;white-space:nowrap;
+}
+#ai-key-save:hover{background:var(--gd);}
+.ai-key-lbl{font-family:var(--mono);font-size:9px;color:var(--t2);letter-spacing:1px;white-space:nowrap;}
+
+/* Messages */
+#ai-messages{
+  flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;
+}
+#ai-messages::-webkit-scrollbar{width:4px;}
+#ai-messages::-webkit-scrollbar-thumb{background:var(--border);}
+
+.ai-msg{max-width:88%;padding:8px 11px;font-size:11px;line-height:1.55;word-break:break-word;}
+.ai-msg.user{
+  align-self:flex-end;background:var(--g3);border:1px solid var(--g);color:var(--t);
+  font-family:var(--mono);font-size:10px;
+}
+.ai-msg.agent{
+  align-self:flex-start;background:var(--card2);border:1px solid var(--border);
+  border-left:2px solid var(--g);color:var(--t);font-family:var(--mono);font-size:10px;
+}
+.ai-msg.agent.error{border-left-color:var(--red);color:var(--red);}
+.ai-msg.agent.action{border-left-color:var(--c2);color:var(--c2);}
+.ai-msg.system{
+  align-self:center;background:var(--gd);border:1px solid var(--g3);
+  color:var(--t2);font-size:9px;font-family:var(--mono);letter-spacing:.5px;
+  padding:5px 10px;max-width:100%;text-align:center;
+}
+
+/* Thinking indicator */
+.ai-thinking{display:flex;gap:4px;align-items:center;padding:10px 14px;}
+.ai-thinking span{width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.3;animation:ai-bounce .8s infinite;}
+.ai-thinking span:nth-child(2){animation-delay:.15s;}
+.ai-thinking span:nth-child(3){animation-delay:.3s;}
+@keyframes ai-bounce{0%,80%,100%{opacity:.3;transform:scale(1);}40%{opacity:1;transform:scale(1.3);}}
+
+/* Input row */
+#ai-input-row{
+  display:flex;gap:0;border-top:1px solid var(--border);flex-shrink:0;
+}
+#ai-input{
+  flex:1;background:var(--card2);border:none;color:var(--t);
+  font-family:var(--mono);font-size:11px;padding:11px 12px;outline:none;
+  resize:none;height:44px;max-height:100px;
+}
+#ai-input::placeholder{color:var(--t2);}
+#ai-send-btn{
+  background:var(--g);border:none;color:#000;font-size:16px;
+  width:44px;cursor:pointer;transition:background .2s;flex-shrink:0;
+}
+#ai-send-btn:hover{background:var(--g2);}
+#ai-send-btn:disabled{background:var(--t3);cursor:not-allowed;}
+
+/* Alpha overrides */
+html.alpha #ai-panel{border-top-color:var(--g);box-shadow:0 8px 40px rgba(0,0,0,.15);}
+html.alpha .ai-msg.user{background:#d4f5e2;border-color:var(--g);color:var(--t);}
+html.alpha .ai-msg.agent{background:#f8f9fc;border-left-color:var(--g);}
+html.alpha #ai-input{background:#f0f2f5;color:var(--t);}
+html.alpha #ai-key-inp{background:#f8f9fc;color:var(--t);}
+`;
+  document.head.appendChild(s);
+})();
+
+// ── HTML ─────────────────────────────────────────────────────────────
+(function injectAgentHTML(){
+  document.body.insertAdjacentHTML('beforeend', `
+<!-- AI FAB -->
+<button id="ai-fab" onclick="toggleAIPanel()" title="Open AI Agent">🤖<span class="fab-badge" id="ai-fab-badge"></span></button>
+
+<!-- AI Panel -->
+<div id="ai-panel">
+  <div id="ai-panel-head">
+    <span class="ai-head-icon">✦</span>
+    <div>
+      <div class="ai-head-title">GEMINI AGENT</div>
+      <div class="ai-head-sub">POWERED BY GOOGLE GEMINI · TOOL-USE ENABLED</div>
     </div>
-    <div id="ai-chat-logs" style="height: 300px; overflow-y: auto; padding: 15px; color: #ddd; font-size: 14px; background: #111;">
-        <div style="margin-bottom: 10px; color: #888;">AI Agent ready. How can I help you today?</div>
+    <button id="ai-close-btn" onclick="toggleAIPanel()">✕</button>
+  </div>
+  <div id="ai-key-row">
+    <span class="ai-key-lbl">API KEY</span>
+    <input id="ai-key-inp" type="password" placeholder="AIza… (saved locally)" />
+    <button id="ai-key-save" onclick="aiSaveKey()">[ SAVE ]</button>
+  </div>
+  <div id="ai-messages">
+    <div class="ai-msg system">
+      👋 Hi! I'm your FIT//OS AI Agent. I can log meals, water, habits, measurements and more.<br>
+      Try: "I ate 100g chicken and 50g rice" or "Log 2 glasses of water"
     </div>
-    <div style="padding: 10px; border-top: 1px solid #333; display: flex; gap: 8px;">
-        <input type="text" id="ai-input" placeholder="Type command (e.g. 'Add 2L water')" style="flex: 1; background: #000; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; outline: none;">
-        <button onclick="askGemini()" style="background: #00f2ff; border: none; color: #000; padding: 8px 15px; border-radius: 4px; font-weight: 700; cursor: pointer;">SEND</button>
-    </div>
+  </div>
+  <div id="ai-input-row">
+    <textarea id="ai-input" placeholder="Ask me to log food, water, habits…" onkeydown="aiInputKeydown(event)" rows="1"></textarea>
+    <button id="ai-send-btn" onclick="aiSend()" title="Send">➤</button>
+  </div>
 </div>
+`);
 
-<button onclick="document.getElementById('ai-chat-container').style.display='block'" style="position: fixed; bottom: 20px; right: 20px; background: #00f2ff; color: #000; border: none; width: 50px; height: 50px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 9999; box-shadow: 0 5px 15px rgba(0,242,255,0.3);">AI</button>
-  
+  // Load saved key
+  try {
+    var k = localStorage.getItem('gemini_api_key');
+    if (k) document.getElementById('ai-key-inp').value = k;
+  } catch(e){}
+})();
+
+// ── Core Agent Logic ─────────────────────────────────────────────────
+var _aiOpen = false;
+function toggleAIPanel() {
+  _aiOpen = !_aiOpen;
+  document.getElementById('ai-panel').classList.toggle('open', _aiOpen);
+  if (_aiOpen) {
+    document.getElementById('ai-input').focus();
+    document.getElementById('ai-fab-badge').style.display = 'none';
+  }
+}
+
+function aiSaveKey() {
+  var k = document.getElementById('ai-key-inp').value.trim();
+  if (!k) { aiAppendMsg('system','⚠ Enter your Gemini API key first.'); return; }
+  try { localStorage.setItem('gemini_api_key', k); } catch(e){}
+  aiAppendMsg('system','✅ API key saved. You can now chat!');
+}
+
+function aiGetKey() {
+  var inp = (document.getElementById('ai-key-inp').value || '').trim();
+  if (inp) return inp;
+  try { return localStorage.getItem('gemini_api_key') || ''; } catch(e){ return ''; }
+}
+
+function aiInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiSend(); }
+}
+
+function aiAppendMsg(role, text) {
+  var box = document.getElementById('ai-messages');
+  var el = document.createElement('div');
+  el.className = 'ai-msg ' + role;
+  el.innerHTML = text.replace(/\n/g, '<br>');
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+  return el;
+}
+
+function aiShowThinking() {
+  var box = document.getElementById('ai-messages');
+  var el = document.createElement('div');
+  el.className = 'ai-thinking'; el.id = 'ai-thinking-el';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+}
+function aiHideThinking() {
+  var el = document.getElementById('ai-thinking-el');
+  if (el) el.remove();
+}
+
+// ── Tool Definitions (sent to Gemini) ────────────────────────────────
+var GEMINI_TOOLS = [{
+  functionDeclarations: [
+    {
+      name: 'addMeal',
+      description: 'Log a meal or food item for today. Calculates macros from ingredients if provided. Use this whenever the user says they ate something.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          name:        { type: 'STRING',  description: 'Meal or food name' },
+          type:        { type: 'STRING',  description: 'One of: Breakfast, Lunch, Dinner, Snack, Pre-workout, Post-workout' },
+          kcal:        { type: 'NUMBER',  description: 'Total calories (kcal)' },
+          protein:     { type: 'NUMBER',  description: 'Protein in grams' },
+          carbs:       { type: 'NUMBER',  description: 'Carbohydrates in grams' },
+          fat:         { type: 'NUMBER',  description: 'Fat in grams' },
+          fiber:       { type: 'NUMBER',  description: 'Fiber in grams (default 0)' },
+          notes:       { type: 'STRING',  description: 'Optional notes' },
+          ingredients: {
+            type: 'ARRAY',
+            description: 'Optional list of individual ingredients',
+            items: {
+              type: 'OBJECT',
+              properties: {
+                name:   { type: 'STRING' },
+                weight: { type: 'NUMBER', description: 'Weight in grams' },
+                cal:    { type: 'NUMBER' },
+                pro:    { type: 'NUMBER' },
+                carb:   { type: 'NUMBER' },
+                fat:    { type: 'NUMBER' },
+                fiber:  { type: 'NUMBER' }
+              },
+              required: ['name','weight','cal','pro','carb','fat']
+            }
+          }
+        },
+        required: ['name','kcal','protein','carbs','fat']
+      }
+    },
+    {
+      name: 'saveMealToLibrary',
+      description: 'Save a meal/mix to the Meal Library so it can be re-used later. Always save a new mix here before logging it.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          name:        { type: 'STRING',  description: 'Meal name' },
+          type:        { type: 'STRING',  description: 'Meal type (Breakfast / Lunch / Dinner / Snack / etc.)' },
+          kcal:        { type: 'NUMBER' },
+          protein:     { type: 'NUMBER' },
+          carbs:       { type: 'NUMBER' },
+          fat:         { type: 'NUMBER' },
+          fiber:       { type: 'NUMBER' },
+          notes:       { type: 'STRING' },
+          ingredients: {
+            type: 'ARRAY',
+            items: {
+              type: 'OBJECT',
+              properties: {
+                name:   { type: 'STRING' },
+                weight: { type: 'NUMBER' },
+                cal:    { type: 'NUMBER' },
+                pro:    { type: 'NUMBER' },
+                carb:   { type: 'NUMBER' },
+                fat:    { type: 'NUMBER' },
+                fiber:  { type: 'NUMBER' }
+              },
+              required: ['name','weight','cal','pro','carb','fat']
+            }
+          }
+        },
+        required: ['name','kcal','protein','carbs','fat']
+      }
+    },
+    {
+      name: 'logWater',
+      description: 'Log water intake. amount is in glasses (1 glass = 250 ml). Use this when user mentions drinking water.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          amount:   { type: 'NUMBER', description: 'Number of glasses (250 ml each) to add' },
+          customMl: { type: 'NUMBER', description: 'Alternative: exact ml to add (use instead of glasses for non-standard amounts)' }
+        }
+      }
+    },
+    {
+      name: 'updateHabit',
+      description: 'Check or uncheck a habit for today.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          habitId:   { type: 'NUMBER',  description: 'The numeric id of the habit from the habits list' },
+          habitName: { type: 'STRING',  description: 'Name of the habit (used for fuzzy matching if id unknown)' },
+          status:    { type: 'BOOLEAN', description: 'true = mark done, false = mark undone' }
+        },
+        required: ['status']
+      }
+    },
+    {
+      name: 'saveMeasurements',
+      description: 'Save body measurements. Provide any fields the user mentions.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          weight: { type: 'NUMBER', description: 'Body weight in kg' },
+          bf:     { type: 'NUMBER', description: 'Body fat percentage' },
+          height: { type: 'NUMBER', description: 'Height in cm' },
+          chest:  { type: 'NUMBER', description: 'Chest circumference in cm' },
+          waist:  { type: 'NUMBER', description: 'Waist circumference in cm' },
+          hips:   { type: 'NUMBER', description: 'Hips circumference in cm' },
+          arm:    { type: 'NUMBER', description: 'Arm circumference in cm' },
+          thigh:  { type: 'NUMBER', description: 'Thigh circumference in cm' },
+          calf:   { type: 'NUMBER', description: 'Calf circumference in cm' }
+        }
+      }
+    }
+  ]
+}];
+
+// ── Build system context from current state S ────────────────────────
+function aiBuildContext() {
+  var d = getDay(S.today);
+  var totCal = d.meals.reduce(function(a,m){ return a+m.kcal; },0);
+  var totPro  = d.meals.reduce(function(a,m){ return a+(m.protein||0); },0);
+  var totCarb = d.meals.reduce(function(a,m){ return a+(m.carbs||0); },0);
+  var totFat  = d.meals.reduce(function(a,m){ return a+(m.fat||0); },0);
+  var waterL  = ((d.glasses*250+(d.customMl||0))/1000).toFixed(2);
+  var habDone = S.habits.filter(function(h){ return h.logs[S.today]; }).length;
+
+  var mealsSummary = d.meals.length
+    ? d.meals.map(function(m){ return '  • '+m.name+' ('+m.kcal+' kcal, P:'+m.protein+'g C:'+m.carbs+'g F:'+m.fat+'g)'; }).join('\n')
+    : '  (none yet)';
+
+  var habitsList = S.habits.length
+    ? S.habits.map(function(h){ return '  • [id:'+h.id+'] '+h.name+' ('+h.cat+') — '+(h.logs[S.today]?'DONE':'pending'); }).join('\n')
+    : '  (no habits tracked)';
+
+  var libSummary = (S.ingredientLibrary||[]).slice(0,20).map(function(i){
+    return '  • '+i.name+' (per '+i.baseWeight+'g: '+i.cal+'cal P:'+i.pro+'g C:'+i.carb+'g F:'+i.fat+'g)';
+  }).join('\n') || '  (empty)';
+
+  var lastMeas = S.measurements.length ? S.measurements[S.measurements.length-1] : null;
+
+  return `You are FIT//OS AI Agent, an intelligent fitness assistant embedded in a personal fitness tracker app.
+Today's date: ${S.today}
+
+=== USER GOALS ===
+Calories:  ${totCal} / ${S.cfg.calGoal} kcal consumed today  (${Math.max(0,S.cfg.calGoal-totCal)} remaining)
+Protein:   ${totPro}g / ${S.cfg.protGoal}g
+Carbs:     ${totCarb}g / ${S.cfg.carbGoal}g
+Fat:       ${totFat}g / ${S.cfg.fatGoal}g
+Water:     ${waterL} L / ${(S.cfg.waterGoal*0.25).toFixed(1)} L  (${d.glasses} glasses)
+Habits:    ${habDone}/${S.habits.length} done today
+
+=== TODAY'S MEALS ===
+${mealsSummary}
+
+=== HABITS (with ids) ===
+${habitsList}
+
+=== INGREDIENT LIBRARY (top 20) ===
+${libSummary}
+
+=== LATEST MEASUREMENTS ===
+${lastMeas ? 'Weight: '+(lastMeas.weight||'--')+'kg | Body Fat: '+(lastMeas.bf||'--')+'% | Waist: '+(lastMeas.waist||'--')+'cm' : 'No measurements yet'}
+
+=== INSTRUCTIONS ===
+1. MACRO CALCULATION: When a user describes a mix (e.g. "50g of a mix of 100g almond + 100g cashew"), calculate macros for the full 200g mix using standard nutrition data, then scale to the consumed weight. Save the mix to the library first with saveMealToLibrary, then log the consumed portion with addMeal.
+2. TOOL CHAINING: You may call multiple tools in sequence — e.g., save to library then log the meal.
+3. ESTIMATION: Use standard nutritional databases to estimate macros for common foods if the user does not specify.
+4. UNITS: Always use grams for macros, kcal for calories, kg for body weight, cm for measurements.
+5. TONE: Be concise, friendly, and use fitness terminology. Confirm what you logged.
+6. NEVER ask for info you can infer. If the meal type isn't specified, guess based on time of day or context.`;
+}
+
+// ── Execute a tool call returned by Gemini ───────────────────────────
+function aiExecuteTool(name, args) {
+  try {
+    if (name === 'addMeal') {
+      var now = new Date();
+      var hh = String(now.getHours()).padStart(2,'0');
+      var mm2 = String(now.getMinutes()).padStart(2,'0');
+      var mealEntry = {
+        name:        args.name || 'Unnamed Meal',
+        type:        args.type || 'Meal',
+        time:        hh+':'+mm2,
+        kcal:        Math.round(args.kcal   || 0),
+        protein:     Math.round((args.protein || 0) * 10) / 10,
+        carbs:       Math.round((args.carbs   || 0) * 10) / 10,
+        fat:         Math.round((args.fat     || 0) * 10) / 10,
+        fiber:       Math.round((args.fiber   || 0) * 10) / 10,
+        notes:       args.notes || '',
+        ingredients: args.ingredients || []
+      };
+      getDay(S.today).meals.push(mealEntry);
+      save();
+      if (typeof renderNutrition === 'function') try{ renderNutrition(); }catch(e){}
+      if (typeof renderDashboard === 'function') try{ renderDashboard(); }catch(e){}
+      return '✅ Logged: '+mealEntry.name+' — '+mealEntry.kcal+' kcal | P:'+mealEntry.protein+'g C:'+mealEntry.carbs+'g F:'+mealEntry.fat+'g';
+    }
+
+    if (name === 'saveMealToLibrary') {
+      var exists = S.mealLibrary.some(function(m){ return m.name.toLowerCase() === (args.name||'').toLowerCase(); });
+      if (exists) return '📚 "'+args.name+'" already exists in library — skipping duplicate.';
+      S.mealLibrary.push({
+        id: Date.now(),
+        name:     args.name || 'Unnamed Mix',
+        type:     args.type || 'Meal',
+        kcal:     Math.round(args.kcal    || 0),
+        protein:  Math.round((args.protein || 0) * 10) / 10,
+        carbs:    Math.round((args.carbs   || 0) * 10) / 10,
+        fat:      Math.round((args.fat     || 0) * 10) / 10,
+        fiber:    Math.round((args.fiber   || 0) * 10) / 10,
+        notes:    args.notes || 'Saved by AI Agent',
+        ingredients: args.ingredients || [],
+        savedAt:  new Date().toLocaleDateString()
+      });
+      save();
+      if (typeof renderMealLibrary === 'function') try{ renderMealLibrary(); }catch(e){}
+      if (typeof updateLibraryDropdown === 'function') try{ updateLibraryDropdown(); }catch(e){}
+      return '📚 Saved to Meal Library: '+args.name+' ('+Math.round(args.kcal||0)+' kcal per base weight)';
+    }
+
+    if (name === 'logWater') {
+      var d = getDay(S.today);
+      if (args.customMl && args.customMl > 0) {
+        d.customMl = (d.customMl||0) + Math.round(args.customMl);
+        save(); if (typeof renderWater === 'function') try{ renderWater(); }catch(e){}
+        if (typeof renderDashboard === 'function') try{ renderDashboard(); }catch(e){}
+        return '💧 Logged '+args.customMl+'ml of water';
+      }
+      var glasses = Math.round(args.amount || 1);
+      d.glasses = Math.min(S.cfg.waterGoal, d.glasses + glasses);
+      save(); if (typeof renderWater === 'function') try{ renderWater(); }catch(e){}
+      if (typeof renderDashboard === 'function') try{ renderDashboard(); }catch(e){}
+      return '💧 Logged '+glasses+' glass'+(glasses>1?'es':'')+' of water ('+(glasses*250)+'ml)';
+    }
+
+    if (name === 'updateHabit') {
+      var habit = null;
+      // Try id match first
+      if (args.habitId) habit = S.habits.find(function(h){ return h.id === args.habitId; });
+      // Fuzzy name match
+      if (!habit && args.habitName) {
+        var nl = args.habitName.toLowerCase();
+        habit = S.habits.find(function(h){ return h.name.toLowerCase().includes(nl); });
+      }
+      if (!habit) return '⚠ Could not find habit "'+( args.habitName||args.habitId)+'". Check the habits list.';
+      habit.logs[S.today] = args.status;
+      save(); if (typeof renderHabits === 'function') try{ renderHabits(); }catch(e){}
+      return (args.status ? '✅' : '☐')+' Habit "'+habit.name+'" marked '+(args.status?'done':'undone')+' for today';
+    }
+
+    if (name === 'saveMeasurements') {
+      var entry = { date: S.today };
+      ['weight','bf','height','chest','waist','hips','arm','thigh','calf'].forEach(function(f){
+        if (args[f] !== undefined && args[f] !== null) entry[f] = args[f];
+      });
+      if (!entry.weight && Object.keys(entry).length <= 1) return '⚠ No measurement data provided.';
+      S.measurements.push(entry);
+      save(); if (typeof renderMeasurements === 'function') try{ renderMeasurements(); }catch(e){}
+      if (typeof renderDashboard === 'function') try{ renderDashboard(); }catch(e){}
+      var parts = [];
+      if(entry.weight) parts.push('Weight: '+entry.weight+'kg');
+      if(entry.bf)     parts.push('BF: '+entry.bf+'%');
+      if(entry.waist)  parts.push('Waist: '+entry.waist+'cm');
+      if(entry.chest)  parts.push('Chest: '+entry.chest+'cm');
+      return '📏 Measurements saved — '+parts.join(' | ');
+    }
+
+    return '⚠ Unknown tool: '+name;
+  } catch(err) {
+    return '❌ Tool error ('+name+'): '+err.message;
+  }
+}
+
+// ── Main API call ─────────────────────────────────────────────────────
+var _aiHistory = [];
+
+async function callGemini(userPrompt) {
+  var apiKey = aiGetKey();
+  if (!apiKey) throw new Error('No Gemini API key. Please enter your key above.');
+
+  // Add user turn
+  _aiHistory.push({ role:'user', parts:[{ text: userPrompt }] });
+
+  var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+
+  var body = {
+    system_instruction: { parts:[{ text: aiBuildContext() }] },
+    contents: _aiHistory,
+    tools: GEMINI_TOOLS,
+    tool_config: { function_calling_config: { mode: 'AUTO' } },
+    generation_config: { temperature: 0.3, max_output_tokens: 1024 }
+  };
+
+  var resp = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    var errText = await resp.text();
+    var errJson;
+    try { errJson = JSON.parse(errText); } catch(e){}
+    throw new Error(errJson && errJson.error ? errJson.error.message : 'HTTP '+resp.status);
+  }
+
+  var data = await resp.json();
+  var candidate = data.candidates && data.candidates[0];
+  if (!candidate || !candidate.content) throw new Error('Empty response from Gemini');
+
+  var modelContent = candidate.content;
+  _aiHistory.push(modelContent); // add model turn to history
+
+  // Collect text and function calls
+  var textParts = [];
+  var funcCalls = [];
+  (modelContent.parts || []).forEach(function(part){
+    if (part.text) textParts.push(part.text);
+    if (part.functionCall) funcCalls.push(part.functionCall);
+  });
+
+  // Execute function calls
+  var toolResults = [];
+  if (funcCalls.length) {
+    for (var i = 0; i < funcCalls.length; i++) {
+      var fc = funcCalls[i];
+      var actionMsg = aiAppendMsg('agent action', '⚙ Calling: '+fc.name+'…');
+      var result = aiExecuteTool(fc.name, fc.args || {});
+      actionMsg.innerHTML = result;
+      toolResults.push({ functionResponse: { name: fc.name, response: { result: result } } });
+    }
+
+    // Send tool results back for a final natural-language reply
+    _aiHistory.push({ role:'user', parts: toolResults.map(function(tr){ return tr; }) });
+
+    var resp2 = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system_instruction: body.system_instruction, contents: _aiHistory, generation_config: body.generation_config })
+    });
+
+    if (resp2.ok) {
+      var data2 = await resp2.json();
+      var cand2 = data2.candidates && data2.candidates[0];
+      if (cand2 && cand2.content) {
+        _aiHistory.push(cand2.content);
+        (cand2.content.parts || []).forEach(function(p){ if(p.text) textParts.push(p.text); });
+      }
+    }
+  }
+
+  return textParts.join('\n').trim();
+}
+
+// ── Send handler ──────────────────────────────────────────────────────
+async function aiSend() {
+  var inp  = document.getElementById('ai-input');
+  var btn  = document.getElementById('ai-send-btn');
+  var text = inp.value.trim();
+  if (!text) return;
+
+  inp.value = '';
+  inp.style.height = '';
+  aiAppendMsg('user', text);
+  btn.disabled = true;
+  aiShowThinking();
+
+  try {
+    var reply = await callGemini(text);
+    aiHideThinking();
+    if (reply) aiAppendMsg('agent', reply);
+  } catch(err) {
+    aiHideThinking();
+    aiAppendMsg('agent error', '❌ ' + err.message);
+  } finally {
+    btn.disabled = false;
+    inp.focus();
+  }
+}
+
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', function(){
+  var inp = document.getElementById('ai-input');
+  if (inp) {
+    inp.addEventListener('input', function(){
+      this.style.height = '';
+      this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+    });
+  }
+});
+</script>
 </body>
 </html>

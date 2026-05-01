@@ -1221,7 +1221,8 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
   <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
     <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
       <div class="inp-group" style="flex:3;min-width:140px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="il-name" type="text" placeholder="e.g. Chicken Breast"/></div>
-      <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">BASE WEIGHT (g)</div><input class="inp" id="il-base" type="number" placeholder="100" min="1" value="100"/></div>
+      <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">BASE AMOUNT</div><input class="inp" id="il-base" type="number" placeholder="100" min="1" value="100"/></div>
+      <div class="inp-group" style="min-width:70px"><div class="inp-label">UNIT</div><select class="inp" id="il-unit"><option value="g" selected>g</option><option value="pcs">pcs</option><option value="ml">ml</option><option value="kg">kg</option><option value="oz">oz</option><option value="tbsp">tbsp</option><option value="tsp">tsp</option></select></div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px">
       <div class="inp-group"><div class="inp-label">CALORIES</div><input class="inp" id="il-cal" type="number" placeholder="0" min="0"/></div>
@@ -2308,6 +2309,7 @@ function addIngredientToLibrary() {
     id: Date.now(),
     name: name,
     baseWeight: base,
+    unit: document.getElementById('il-unit').value || 'g',
     cal:   parseFloat(document.getElementById('il-cal').value)   || 0,
     pro:   parseFloat(document.getElementById('il-pro').value)   || 0,
     carb:  parseFloat(document.getElementById('il-carb').value)  || 0,
@@ -2321,6 +2323,7 @@ function addIngredientToLibrary() {
   S.ingredientLibrary.push(item);
   ['il-name','il-cal','il-pro','il-carb','il-fat','il-fiber'].forEach(function(id){ document.getElementById(id).value = ''; });
   document.getElementById('il-base').value = '100';
+  document.getElementById('il-unit').value = 'g';
   save(); renderIngredientLibrary(); toast('✅ "'+name+'" saved to library!');
 }
 
@@ -2343,6 +2346,7 @@ function saveIngredientEdit(id) {
   if (!item) return;
   item.name      = document.getElementById('ile-name-'+id).value.trim() || item.name;
   item.baseWeight= parseFloat(document.getElementById('ile-base-'+id).value) || item.baseWeight;
+  item.unit      = document.getElementById('ile-unit-'+id).value || item.unit || 'g';
   item.cal       = parseFloat(document.getElementById('ile-cal-'+id).value)  || 0;
   item.pro       = parseFloat(document.getElementById('ile-pro-'+id).value)  || 0;
   item.carb      = parseFloat(document.getElementById('ile-carb-'+id).value) || 0;
@@ -2431,7 +2435,7 @@ function renderIngredientLibrary() {
       + '<div style="flex:1">'
       + '<div class="meal-name" style="color:var(--t)">'+item.name+'</div>'
       + '<div class="meal-detail" style="margin-top:4px">'
-      + '<span style="background:var(--t3);padding:1px 6px;font-size:9px;margin-right:6px">per '+bw+'g</span>'
+      + '<span style="background:var(--t3);padding:1px 6px;font-size:9px;margin-right:6px">per '+bw+(item.unit||'g')+'</span>'
       + '<span style="color:var(--o2);font-weight:600">'+item.cal+' cal</span> · '
       + 'P:<b style="color:var(--o)">'+item.pro+'</b>g '
       + 'C:<b style="color:var(--c2)">'+item.carb+'</b>g '
@@ -2447,7 +2451,10 @@ function renderIngredientLibrary() {
       + '<div class="edit-form" id="il-edit-'+item.id+'">'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'
       + '<div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">NAME</div><input class="inp" id="ile-name-'+item.id+'" type="text" value="'+item.name.replace(/"/g,'&quot;')+'"/></div>'
-      + '<div class="inp-group" style="flex:1;min-width:70px"><div class="inp-label">BASE (g)</div><input class="inp" id="ile-base-'+item.id+'" type="number" value="'+bw+'"/></div>'
+      + '<div class="inp-group" style="flex:1;min-width:70px"><div class="inp-label">BASE</div><input class="inp" id="ile-base-'+item.id+'" type="number" value="'+bw+'"/></div>'
+      + '<div class="inp-group" style="min-width:65px"><div class="inp-label">UNIT</div><select class="inp" id="ile-unit-'+item.id+'">'
+      + ['g','pcs','ml','kg','oz','tbsp','tsp'].map(function(u){ return '<option value="'+u+'"'+(((item.unit||'g')===u)?' selected':'')+'>'+u+'</option>'; }).join('')
+      + '</select></div>'
       + '</div>'
       + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">'
       + '<div class="inp-group"><div class="inp-label">CAL</div><input class="inp" id="ile-cal-'+item.id+'" type="number" value="'+item.cal+'"/></div>'

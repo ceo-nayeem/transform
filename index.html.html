@@ -489,6 +489,27 @@ html.alpha .sync-indicator{border-radius:20px;font-family:'DM Sans',sans-serif;f
 .ilsw-add-btn{white-space:nowrap;flex-shrink:0}
 html.alpha .ilsw{border-radius:8px}
 html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
+
+/* ===== LIBRARY MULTISELECT / DRAG TOOLBAR ===== */
+.lib-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;background:var(--card);border:1px solid var(--border);padding:8px 10px;}
+.lib-toolbar-left{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap}
+.lib-toolbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.lib-sort-sel{background:var(--t3);border:1px solid var(--border);color:var(--t);font-family:var(--mono);font-size:10px;padding:5px 8px;cursor:pointer;outline:none;}
+.lib-sort-sel:focus{border-color:var(--g)}
+.lib-chk-all{width:15px;height:15px;accent-color:var(--g);cursor:pointer;flex-shrink:0}
+.lib-sel-count{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:.5px;white-space:nowrap}
+.lib-bulk-btn{background:transparent;border:1px solid var(--border);color:var(--t2);font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .15s;text-transform:uppercase;white-space:nowrap}
+.lib-bulk-btn:hover{border-color:var(--g);color:var(--g)}
+.lib-bulk-btn.danger:hover{border-color:var(--red);color:var(--red)}
+.lib-item-wrap{position:relative;display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;cursor:grab;}
+.lib-item-wrap:active{cursor:grabbing}
+.lib-item-wrap.dragging{opacity:.4}
+.lib-item-wrap.drag-over{border-top:2px solid var(--g)}
+.lib-item-cb{width:15px;height:15px;accent-color:var(--g);cursor:pointer;flex-shrink:0;margin-top:14px}
+.lib-item-selected .meal-item,.lib-item-selected .meal-item{background:rgba(0,255,136,.04)!important;border-color:var(--g2)!important}
+html.alpha .lib-bulk-btn{border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600}
+html.alpha .lib-toolbar{border-radius:8px}
+html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important;border-color:var(--g)!important}
 </style>
 </head>
 <body>
@@ -1304,6 +1325,9 @@ function doLogin() {
             if (!S.ingredientLibrary) S.ingredientLibrary = [];
             if (!S.mealLibrary) S.mealLibrary = [];
             if (!S.dailyData) S.dailyData = {};
+            // Remove deprecated default ingredients
+            var _toRemove = ['almond', 'riceo 100gm', 'rice 100gm'];
+            S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return !_toRemove.includes(i.name.toLowerCase()); });
           } catch(e) {}
         }
         loginSuccess(id, docId);
@@ -1792,9 +1816,15 @@ function saveMealToLibrary(mealObj) {
     document.getElementById('mla-name').value=''; document.getElementById('mla-notes').value='';
     mlaPendingIngredients=[]; renderMlaIngredients();
   }
-  var exists=S.mealLibrary.some(m=>m.name.toLowerCase()===mealObj.name.toLowerCase());
-  if(exists){toast('Meal already in library!');return;}
-  S.mealLibrary.push({id:Date.now(),name:mealObj.name,type:mealObj.type||'Meal',kcal:mealObj.kcal||0,protein:mealObj.protein||0,carbs:mealObj.carbs||0,fat:mealObj.fat||0,fiber:mealObj.fiber||0,notes:mealObj.notes||'',ingredients:mealObj.ingredients||[],savedAt:new Date().toLocaleDateString()});
+  // Auto-rename duplicates: "Oats" → "Oats (2)" → "Oats (3)" etc.
+  var baseName = mealObj.name;
+  var finalName = baseName;
+  var counter = 2;
+  while (S.mealLibrary.some(m => m.name.toLowerCase() === finalName.toLowerCase())) {
+    finalName = baseName + ' (' + counter + ')';
+    counter++;
+  }
+  S.mealLibrary.push({id:Date.now(),name:finalName,type:mealObj.type||'Meal',kcal:mealObj.kcal||0,protein:mealObj.protein||0,carbs:mealObj.carbs||0,fat:mealObj.fat||0,fiber:mealObj.fiber||0,notes:mealObj.notes||'',ingredients:mealObj.ingredients||[],savedAt:new Date().toLocaleDateString()});
   save(); renderMealLibrary(); updateLibraryDropdown(); toast('✅ Saved to Meal Library!');
 }
 function renderMealLibrary() {
@@ -2321,6 +2351,10 @@ function saveIngredientEdit(id) {
   save(); renderIngredientLibrary(); toast('Ingredient updated!');
 }
 
+// ── Ingredient Library: selection state ──
+var _ilSelected = new Set(); // set of ingredient IDs
+var _ilDragIdx = null;
+
 function renderIngredientLibrary() {
   if (!S.ingredientLibrary) S.ingredientLibrary = [];
   var lib = S.ingredientLibrary;
@@ -2334,15 +2368,65 @@ function renderIngredientLibrary() {
   if (document.getElementById('il-last'))   document.getElementById('il-last').textContent   = last.length > 12 ? last.slice(0,12)+'…' : last;
   if (document.getElementById('ilBadge'))   document.getElementById('ilBadge').textContent   = total;
   var list = document.getElementById('ilList'); if (!list) return;
+
+  // Filter
   var q = (document.getElementById('il-search')||{value:''}).value.toLowerCase();
-  var filtered = q ? lib.filter(function(i){ return i.name.toLowerCase().includes(q); }) : lib;
+  var sortVal = (document.getElementById('il-sort')||{value:'default'}).value;
+  var filtered = q ? lib.filter(function(i){ return i.name.toLowerCase().includes(q); }) : lib.slice();
+
+  // Sort
+  if (sortVal === 'name-az') filtered.sort(function(a,b){return a.name.localeCompare(b.name);});
+  else if (sortVal === 'name-za') filtered.sort(function(a,b){return b.name.localeCompare(a.name);});
+  else if (sortVal === 'cal-hi') filtered.sort(function(a,b){return b.cal-a.cal;});
+  else if (sortVal === 'cal-lo') filtered.sort(function(a,b){return a.cal-b.cal;});
+  else if (sortVal === 'pro-hi') filtered.sort(function(a,b){return b.pro-a.pro;});
+
+  // Clean up selected ids that no longer exist
+  _ilSelected.forEach(function(id){ if(!lib.find(function(i){return i.id===id;})) _ilSelected.delete(id); });
+
+  var selCount = _ilSelected.size;
+  var allFilteredSelected = filtered.length > 0 && filtered.every(function(i){ return _ilSelected.has(i.id); });
+
   if (!filtered.length) {
     list.innerHTML = '<div style="font-size:10px;color:var(--t2);padding:10px">'+(total?'No match found.':'No ingredients saved yet.')+'</div>';
     return;
   }
-  list.innerHTML = filtered.map(function(item) {
+
+  // Toolbar
+  var toolbarHTML = '<div class="lib-toolbar">'
+    + '<div class="lib-toolbar-left">'
+    + '<input type="checkbox" class="lib-chk-all" title="Select all" '+(allFilteredSelected?'checked':'')+' onchange="ilSelectAll(this.checked)">'
+    + '<span class="lib-sel-count">'+(selCount>0?selCount+' selected':'Select items')+'</span>'
+    + (selCount>0 ? '<button class="lib-bulk-btn" onclick="ilBulkEdit()">✎ EDIT</button>'
+                  + '<button class="lib-bulk-btn" onclick="ilBulkLog()">▶ LOG</button>'
+                  + '<button class="lib-bulk-btn danger" onclick="ilBulkDelete()">✕ DELETE</button>' : '')
+    + '</div>'
+    + '<div class="lib-toolbar-right">'
+    + '<select class="lib-sort-sel" id="il-sort" onchange="renderIngredientLibrary()">'
+    + '<option value="default">Sort: Default</option>'
+    + '<option value="name-az">Name A→Z</option>'
+    + '<option value="name-za">Name Z→A</option>'
+    + '<option value="cal-hi">Cal: High→Low</option>'
+    + '<option value="cal-lo">Cal: Low→High</option>'
+    + '<option value="pro-hi">Protein: High→Low</option>'
+    + '</select>'
+    + '</div>'
+    + '</div>';
+
+  // Restore sort select value after re-render
+  var itemsHTML = filtered.map(function(item, fi) {
     var bw = item.baseWeight || 100;
-    return '<div class="meal-item" style="border-left:3px solid var(--p);margin-bottom:8px;cursor:default">'
+    var isSelected = _ilSelected.has(item.id);
+    // find real index in lib for drag-drop
+    var realIdx = lib.indexOf(item);
+    return '<div class="lib-item-wrap '+(isSelected?'lib-item-selected':'')+'" data-id="'+item.id+'" data-idx="'+realIdx+'"'
+      + ' draggable="true"'
+      + ' ondragstart="ilDragStart(event,'+realIdx+')"'
+      + ' ondragover="ilDragOver(event,'+realIdx+')"'
+      + ' ondrop="ilDrop(event,'+realIdx+')"'
+      + ' ondragend="ilDragEnd()">'
+      + '<input type="checkbox" class="lib-item-cb" '+(isSelected?'checked':'')+' onchange="ilToggleSel('+item.id+',this.checked)">'
+      + '<div class="meal-item" style="flex:1;border-left:3px solid var(--p);cursor:default">'
       + '<div class="meal-top">'
       + '<div style="flex:1">'
       + '<div class="meal-name" style="color:var(--t)">'+item.name+'</div>'
@@ -2377,9 +2461,55 @@ function renderIngredientLibrary() {
       + '<button class="btn sm danger" onclick="openIngredientEdit('+item.id+')">[ CANCEL ]</button>'
       + '</div>'
       + '</div>'
+      + '</div>'
       + '</div>';
   }).join('');
+
+  list.innerHTML = toolbarHTML + itemsHTML;
+  // Restore sort value
+  var sortEl = document.getElementById('il-sort');
+  if (sortEl) sortEl.value = sortVal;
 }
+
+// Ingredient Library helpers
+function ilToggleSel(id, checked) { if(checked) _ilSelected.add(id); else _ilSelected.delete(id); renderIngredientLibrary(); }
+function ilSelectAll(checked) {
+  if (!S.ingredientLibrary) return;
+  var q = (document.getElementById('il-search')||{value:''}).value.toLowerCase();
+  var filtered = q ? S.ingredientLibrary.filter(function(i){ return i.name.toLowerCase().includes(q); }) : S.ingredientLibrary;
+  filtered.forEach(function(i){ if(checked) _ilSelected.add(i.id); else _ilSelected.delete(i.id); });
+  renderIngredientLibrary();
+}
+function ilBulkDelete() {
+  if (!_ilSelected.size) return;
+  if (!confirm('Delete ' + _ilSelected.size + ' ingredient(s)?')) return;
+  S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return !_ilSelected.has(i.id); });
+  _ilSelected.clear(); save(); renderIngredientLibrary(); toast(_ilSelected.size + ' ingredients deleted');
+}
+function ilBulkEdit() {
+  if (!_ilSelected.size) { toast('Select items first'); return; }
+  // Open edit forms for all selected visible items
+  _ilSelected.forEach(function(id){ var el = document.getElementById('il-edit-'+id); if(el) el.classList.add('open'); });
+  toast('Edit forms opened for selected items');
+}
+function ilBulkLog() {
+  if (!_ilSelected.size) { toast('Select items first'); return; }
+  // Log each selected ingredient as a simple meal entry
+  var logged = 0;
+  S.ingredientLibrary.forEach(function(item){
+    if (!_ilSelected.has(item.id)) return;
+    getDay(ntrDate||S.today).meals.push({name:item.name, type:'Snack', time:'', kcal:item.cal, protein:item.pro, carbs:item.carb, fat:item.fat, fiber:item.fiber, notes:'from library', ingredients:[]});
+    logged++;
+  });
+  save(); if(typeof renderNutrition==='function') try{renderNutrition();}catch(e){}
+  toast('✅ Logged ' + logged + ' ingredient(s) as meals');
+  _ilSelected.clear(); renderIngredientLibrary();
+}
+// Drag-and-drop for ingredient library
+function ilDragStart(e, idx) { _ilDragIdx = idx; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }
+function ilDragOver(e, idx) { e.preventDefault(); e.dataTransfer.dropEffect='move'; document.querySelectorAll('#ilList .lib-item-wrap').forEach(function(el){ el.classList.remove('drag-over'); }); if(_ilDragIdx !== idx) e.currentTarget.classList.add('drag-over'); }
+function ilDrop(e, idx) { e.preventDefault(); if(_ilDragIdx===null||_ilDragIdx===idx) return; var arr=S.ingredientLibrary; var moved=arr.splice(_ilDragIdx,1)[0]; arr.splice(idx,0,moved); _ilDragIdx=null; save(); renderIngredientLibrary(); }
+function ilDragEnd() { _ilDragIdx=null; document.querySelectorAll('#ilList .lib-item-wrap').forEach(function(el){ el.classList.remove('dragging','drag-over'); }); }
 
 // ===================== INGREDIENT LIBRARY SEARCH WIDGET (ILSW) =====================
 // prefix = 'ntr'  → Nutrition  Add Meal

@@ -572,7 +572,6 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
     <div class="sb-item" onclick="nav(this,'nutrition')"><span class="sb-icon">◉</span><span class="sb-label">Nutrition</span></div>
     <div class="sb-item" onclick="nav(this,'workout')"><span class="sb-icon">⊞</span><span class="sb-label">Workout</span><span class="sb-badge" id="wkBadge">0/0</span></div>
     <div class="sb-item" onclick="nav(this,'habits')"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
-    <div class="sb-item" onclick="nav(this,'water')"><span class="sb-icon">◈</span><span class="sb-label">Water</span></div>
 
     <div class="sb-sec">HEALTH</div>
     <div class="sb-item" onclick="nav(this,'vitals')"><span class="sb-icon">♡</span><span class="sb-label">Vitals</span></div>
@@ -636,7 +635,7 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
       <div class="card-sub" id="dc-cal-sub">of 0 kcal goal</div>
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--o)" id="dc-cal-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('[onclick*=water]'),'water')">
+    <div class="card" onclick="nav(document.querySelector('[onclick*=nutrition]'),'nutrition');setTimeout(function(){switchNtrTab('water');},50)">
       <div class="card-accent" style="background:var(--c2)"></div>
       <div class="card-label">WATER TODAY</div>
       <div class="card-val" style="color:var(--c);font-size:22px" id="dc-water">0</div>
@@ -672,6 +671,13 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
 
 <!-- ============ NUTRITION ============ -->
 <div class="page" id="page-nutrition">
+  <!-- NUTRITION / WATER TAB STRIP -->
+  <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
+    <button class="timer-tab active" id="ntr-tab-food" onclick="switchNtrTab('food')">🍽 NUTRITION</button>
+    <button class="timer-tab" id="ntr-tab-water" onclick="switchNtrTab('water')">◈ WATER</button>
+  </div>
+  <!-- FOOD SECTION -->
+  <div id="ntr-food-section">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">
     <div class="day-strip" id="ntr-day-strip" style="flex:1;margin-bottom:0"></div>
     <input type="date" class="inp" id="ntr-date-pick" style="width:130px;font-size:10px" onchange="selectNtrDate(this.value)"/>
@@ -768,7 +774,41 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
   </div><!-- end ntr-add-section -->
   <div class="sec-head" id="ntr-meals-head">TODAY'S MEALS</div>
   <div id="mealList"><div style="font-size:10px;color:var(--t2);padding:10px">No meals logged yet.</div></div>
-</div>
+  </div><!-- end ntr-food-section -->
+
+  <!-- WATER SECTION (hidden by default) -->
+  <div id="ntr-water-section" style="display:none">
+  <div class="g4" style="margin-bottom:12px">
+    <div class="card"><div class="card-label">CONSUMED</div><div class="card-val" style="color:var(--c)" id="w-consumed">0.0</div><div class="card-sub">liters</div></div>
+    <div class="card"><div class="card-label">GOAL</div><div class="card-val" id="w-goal-disp">0.0</div><div class="card-sub">liters</div></div>
+    <div class="card"><div class="card-label">REMAINING</div><div class="card-val" id="w-remain">0.0</div><div class="card-sub">liters</div></div>
+    <div class="card"><div class="card-label">GLASSES</div><div class="card-val" style="color:var(--c2)" id="w-glasses">0/0</div><div class="card-sub">250ml each</div></div>
+  </div>
+  <div class="sec-head">GLASS TRACKER</div>
+  <div class="water-visual" id="waterVisual"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn sm" onclick="addGlass()">[ + GLASS (250ml) ]</button>
+    <button class="btn sm danger" onclick="removeGlass()">[ - GLASS ]</button>
+    <button class="btn sm" onclick="addGlass(4)">[ + 1 LITER ]</button>
+    <button class="btn sm danger" onclick="resetWater()">[ RESET ]</button>
+  </div>
+  <div class="sec-head">CUSTOM AMOUNT</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
+    <div class="inp-row">
+      <div class="inp-group" style="flex:2"><div class="inp-label">AMOUNT (ml)</div><input class="inp" id="w-custom" type="number" placeholder="e.g. 500"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addCustomWater()">[ + ADD ]</button></div>
+    </div>
+  </div>
+  <div class="sec-head">DAILY GOAL</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
+    <div class="inp-row">
+      <div class="inp-group" style="flex:2"><div class="inp-label">WATER GOAL (glasses)</div><input class="inp" id="w-goal-inp" type="number" placeholder="12" min="1" max="30"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="setWaterGoal()">[ SET GOAL ]</button></div>
+    </div>
+  </div>
+  </div><!-- end ntr-water-section -->
+
+</div><!-- end page-nutrition -->
 
 <!-- ============ WORKOUT ============ -->
 <div class="page" id="page-workout">
@@ -817,38 +857,6 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
       <div class="inp-group" style="flex:2"><div class="inp-label">CATEGORY</div><select class="inp" id="hab-cat"><option>Fitness</option><option>Nutrition</option><option>Sleep</option><option>Mindfulness</option><option>Productivity</option><option>Other</option></select></div>
     </div>
     <button class="btn full" onclick="addHabit()">[ + ADD HABIT ]</button>
-  </div>
-</div>
-
-<!-- ============ WATER ============ -->
-<div class="page" id="page-water">
-  <div class="g4" style="margin-bottom:12px">
-    <div class="card"><div class="card-label">CONSUMED</div><div class="card-val" style="color:var(--c)" id="w-consumed">0.0</div><div class="card-sub">liters</div></div>
-    <div class="card"><div class="card-label">GOAL</div><div class="card-val" id="w-goal-disp">0.0</div><div class="card-sub">liters</div></div>
-    <div class="card"><div class="card-label">REMAINING</div><div class="card-val" id="w-remain">0.0</div><div class="card-sub">liters</div></div>
-    <div class="card"><div class="card-label">GLASSES</div><div class="card-val" style="color:var(--c2)" id="w-glasses">0/0</div><div class="card-sub">250ml each</div></div>
-  </div>
-  <div class="sec-head">GLASS TRACKER</div>
-  <div class="water-visual" id="waterVisual"></div>
-  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-    <button class="btn sm" onclick="addGlass()">[ + GLASS (250ml) ]</button>
-    <button class="btn sm danger" onclick="removeGlass()">[ - GLASS ]</button>
-    <button class="btn sm" onclick="addGlass(4)">[ + 1 LITER ]</button>
-    <button class="btn sm danger" onclick="resetWater()">[ RESET ]</button>
-  </div>
-  <div class="sec-head">CUSTOM AMOUNT</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row">
-      <div class="inp-group" style="flex:2"><div class="inp-label">AMOUNT (ml)</div><input class="inp" id="w-custom" type="number" placeholder="e.g. 500"/></div>
-      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addCustomWater()">[ + ADD ]</button></div>
-    </div>
-  </div>
-  <div class="sec-head">DAILY GOAL</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row">
-      <div class="inp-group" style="flex:2"><div class="inp-label">WATER GOAL (glasses)</div><input class="inp" id="w-goal-inp" type="number" placeholder="12" min="1" max="30"/></div>
-      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="setWaterGoal()">[ SET GOAL ]</button></div>
-    </div>
   </div>
 </div>
 
@@ -1454,12 +1462,12 @@ function nav(btn, id) {
   document.getElementById('pagePath').textContent = 'FIT//OS > ' + id;
   if (id === 'workout') renderWorkout();
   if (id === 'habits') renderHabits();
-  if (id === 'water') renderWater();
+  if (id === 'water') { switchNtrTab('water'); return; }  // water is now inside nutrition
   if (id === 'vitals') renderVitals();
   if (id === 'measurements') renderMeasurements();
   if (id === 'goals') renderGoals();
   if (id === 'profile') loadProfile();
-  if (id === 'nutrition') { if(!ntrDate) ntrDate = S.today; renderNutrition(); }
+  if (id === 'nutrition') { if(!ntrDate) ntrDate = S.today; ntrActiveTab='food'; setTimeout(function(){ var fs=document.getElementById('ntr-food-section'); var ws=document.getElementById('ntr-water-section'); if(fs)fs.style.display=''; if(ws)ws.style.display='none'; var tf=document.getElementById('ntr-tab-food'); var tw=document.getElementById('ntr-tab-water'); if(tf){tf.classList.add('active');}if(tw){tw.classList.remove('active');} renderNutrition(); },0); }
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
   if (id === 'meallibrary') renderMealLibrary();
@@ -1559,6 +1567,30 @@ function renderWeightChart() {
 
 // ===================== NUTRITION =====================
 var ntrDate = '';
+var ntrActiveTab = 'food'; // 'food' or 'water'
+
+function switchNtrTab(tab) {
+  ntrActiveTab = tab;
+  var foodSec = document.getElementById('ntr-food-section');
+  var waterSec = document.getElementById('ntr-water-section');
+  var tabFood = document.getElementById('ntr-tab-food');
+  var tabWater = document.getElementById('ntr-tab-water');
+  if (!foodSec || !waterSec) return;
+  if (tab === 'food') {
+    foodSec.style.display = '';
+    waterSec.style.display = 'none';
+    if (tabFood) { tabFood.classList.add('active'); }
+    if (tabWater) { tabWater.classList.remove('active'); }
+    renderNutrition();
+  } else {
+    foodSec.style.display = 'none';
+    waterSec.style.display = '';
+    if (tabWater) { tabWater.classList.add('active'); }
+    if (tabFood) { tabFood.classList.remove('active'); }
+    renderWater();
+  }
+}
+
 function selectNtrDate(d) {
   ntrDate = d;
   renderNutrition();
@@ -1576,7 +1608,7 @@ function renderNtrDayStrip() {
   strip.innerHTML = dates.map(function(d) {
     var hasMeals = S.dailyData[d] && S.dailyData[d].meals && S.dailyData[d].meals.length;
     var isActive = d === ntrDate;
-    return '<div class="day-pill '+(isActive?'active':'')+(hasMeals&&!isActive?' done':'')+'" onclick="selectNtrDate("'+d+'")">'
+    return '<div class="day-pill '+(isActive?'active':'')+(hasMeals&&!isActive?' done':'')+"\" onclick=\"selectNtrDate('" + d + "')\">"
       + '<div class="dp-name">'+dayNames[new Date(d+'T12:00').getDay()]+'</div>'
       + '<div class="dp-num">'+parseInt(d.split('-')[2])+'</div>'
       + '</div>';

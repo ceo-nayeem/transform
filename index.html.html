@@ -518,7 +518,7 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">FIT//OS</div>
-    <div class="login-sub">PERSONAL FITNESS SYSTEM</div>
+    <div class="login-sub">Helth is welth 💪</div>
 
     <div class="login-label">USER ID</div>
     <input class="login-inp" id="loginId" type="text" placeholder="Enter your user ID" autocomplete="username"/>
@@ -539,7 +539,7 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div><span class="app-brand" id="appBrand">FIT//OS <span>PERSONAL FITNESS SYSTEM</span></span></div>
+  <div><span class="app-brand" id="appBrand">FIT//OS <span>Helth is welth 💪</span></span></div>
   <div class="topbar-right">
     <div class="sync-indicator" id="syncIndicator" title="Firebase sync status">
       <span class="fb-status" id="syncDot"></span>
@@ -2293,7 +2293,7 @@ function toggleTheme(){
   var isAlpha=document.documentElement.classList.toggle('alpha');
   document.getElementById('themeLabel').textContent=isAlpha?'ALPHA':'TERMINAL';
   var brand=document.getElementById('appBrand');
-  if(isAlpha){brand.innerHTML='⚡ FIT·OS <span>ALPHA EDITION</span>';}else{brand.innerHTML='FIT//OS <span>PERSONAL FITNESS SYSTEM</span>';}
+  if(isAlpha){brand.innerHTML='⚡ FIT·OS <span>ALPHA EDITION</span>';}else{brand.innerHTML='FIT//OS <span>Helth is welth 💪</span>';}
   try{localStorage.setItem('fitos_theme',isAlpha?'alpha':'terminal');}catch(e){}
   if(document.getElementById('page-dashboard').classList.contains('active')){setTimeout(renderWeightChart,50);}
 }

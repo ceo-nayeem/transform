@@ -510,6 +510,240 @@ html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
 html.alpha .lib-bulk-btn{border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600}
 html.alpha .lib-toolbar{border-radius:8px}
 html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important;border-color:var(--g)!important}
+
+/* ===================================================
+   RESPONSIVE / MOBILE  — added for full device support
+   =================================================== */
+
+/* ---- Bottom Nav Bar (mobile only) ---- */
+.mob-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  height:64px;
+  background:var(--panel);
+  border-top:1px solid var(--border);
+  z-index:200;
+  padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  align-items:stretch;
+  justify-content:space-around;
+  gap:0;
+}
+.mob-nav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;flex:1;min-width:0;
+  background:none;border:none;cursor:pointer;
+  padding:6px 2px;position:relative;
+  transition:all .18s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mob-nav-item:active{transform:scale(.92);}
+.mob-nav-icon{
+  font-size:20px;line-height:1;transition:transform .2s;
+}
+.mob-nav-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:.5px;
+  color:var(--t2);white-space:nowrap;transition:color .2s;
+  text-transform:uppercase;
+}
+.mob-nav-item.active .mob-nav-label{color:var(--g);}
+.mob-nav-item.active .mob-nav-icon{transform:translateY(-2px) scale(1.1);}
+.mob-nav-dot{
+  position:absolute;top:6px;right:calc(50% - 16px);
+  width:6px;height:6px;background:var(--red);border-radius:50%;
+  display:none;
+}
+.mob-nav-dot.show{display:block;}
+
+/* Log+ FAB */
+.mob-fab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;flex:1;min-width:0;
+  background:none;border:none;cursor:pointer;padding:0 2px;
+  -webkit-tap-highlight-color:transparent;
+}
+.mob-fab-inner{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g),var(--g2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;line-height:1;
+  box-shadow:0 4px 16px rgba(0,255,136,.35);
+  transition:all .2s;
+  margin-top:-16px;
+  border:3px solid var(--bg);
+}
+.mob-fab:active .mob-fab-inner{transform:scale(.9);}
+.mob-fab-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:.5px;
+  color:var(--g);white-space:nowrap;text-transform:uppercase;
+}
+
+/* Alpha theme bottom nav */
+html.alpha .mob-nav{background:#fff;border-top:1px solid var(--border);box-shadow:0 -2px 12px rgba(0,0,0,.06);}
+html.alpha .mob-nav-label{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:600;letter-spacing:.3px;}
+html.alpha .mob-nav-item.active .mob-nav-label{color:var(--g);}
+html.alpha .mob-fab-inner{background:linear-gradient(135deg,var(--g),var(--c));border-color:#f0f2f5;box-shadow:0 4px 16px rgba(0,166,81,.35);}
+html.alpha .mob-fab-label{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:700;color:var(--g);}
+
+/* Log+ Quick Sheet */
+.mob-sheet-bg{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(2px);
+  align-items:flex-end;
+}
+.mob-sheet-bg.open{display:flex;}
+.mob-sheet{
+  width:100%;background:var(--panel);
+  border-top:2px solid var(--g);
+  border-radius:16px 16px 0 0;
+  padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));
+  animation:sheetUp .25s ease;
+}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mob-sheet-title{
+  font-family:var(--raj);font-size:13px;font-weight:700;
+  letter-spacing:2px;color:var(--g);margin-bottom:14px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.mob-sheet-close{
+  background:none;border:none;color:var(--t2);font-size:18px;cursor:pointer;padding:2px 6px;
+}
+.mob-sheet-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+}
+.mob-sheet-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--card);border:1px solid var(--border);
+  padding:14px 8px;border-radius:10px;cursor:pointer;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.mob-sheet-btn:active{transform:scale(.95);background:var(--gd);border-color:var(--g);}
+.mob-sheet-icon{font-size:22px;}
+.mob-sheet-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.5px;color:var(--t);text-transform:uppercase;text-align:center;}
+html.alpha .mob-sheet{background:#fff;border-top:3px solid var(--g);}
+html.alpha .mob-sheet-btn{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+html.alpha .mob-sheet-btn:active{background:#f0fff6;}
+html.alpha .mob-sheet-lbl{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:.3px;color:var(--t);}
+html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;}
+
+/* Hamburger (mobile topbar) */
+.mob-menu-btn{
+  display:none;background:none;border:none;color:var(--t);
+  font-size:20px;cursor:pointer;padding:4px 8px;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Sidebar overlay (mobile) */
+.sb-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:150;backdrop-filter:blur(1px);
+}
+.sb-overlay.open{display:block;}
+
+@media (max-width: 768px) {
+  /* Show mobile elements */
+  .mob-nav{display:flex;}
+  .mob-menu-btn{display:block;}
+
+  /* Body adjusts for bottom nav */
+  body{height:100dvh;}
+  .content{
+    padding:12px 12px calc(80px + env(safe-area-inset-bottom,0px)) !important;
+  }
+
+  /* Topbar: compact */
+  .topbar{padding:8px 12px;}
+  .app-brand{font-size:14px !important;letter-spacing:2px;}
+  .app-brand span{display:none;}
+  .streak-chip{padding:4px 8px;font-size:9px;}
+  .date-disp{display:none;}
+
+  /* Sidebar: hidden by default, slides in */
+  .sb{
+    position:fixed;top:0;left:0;bottom:0;
+    width:220px;z-index:160;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 24px rgba(0,0,0,.3);
+  }
+  .sb.open{transform:translateX(0);}
+
+  /* OS grid: single column, no sidebar space */
+  .os{grid-template-columns:1fr;}
+
+  /* Grids: collapse on mobile */
+  .g4{grid-template-columns:1fr 1fr !important;}
+  .g3{grid-template-columns:1fr 1fr !important;}
+
+  /* Cards: smaller padding */
+  .card{padding:10px;}
+  .card-val{font-size:20px !important;}
+
+  /* Page header: compact */
+  .page-header{padding:10px 12px;}
+  .page-title{font-size:13px !important;}
+  #pageActions{display:none;}
+
+  /* Day strip: scrollable */
+  .day-strip{
+    overflow-x:auto;flex-wrap:nowrap !important;
+    scrollbar-width:none;padding-bottom:2px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .day-strip::-webkit-scrollbar{display:none;}
+  .day-pill{flex-shrink:0;}
+
+  /* Inputs: larger tap targets */
+  .inp{font-size:13px !important;padding:10px 12px !important;}
+  select.inp{font-size:13px !important;}
+
+  /* Buttons: full width in forms */
+  .btn.full{padding:12px !important;font-size:11px !important;}
+
+  /* Exercise/habit cards */
+  .ex-card,.habit-item,.meal-item,.vital-card{padding:10px;}
+  .ex-meta{flex-wrap:wrap;gap:8px !important;}
+
+  /* Ingredients row: stack */
+  .inp-row{flex-wrap:wrap;}
+
+  /* Timer display */
+  .timer-display-wrap{width:220px !important;height:220px !important;}
+  .timer-ring-svg{width:220px !important;height:220px !important;}
+  .timer-big{font-size:38px !important;}
+
+  /* Overflow panel (overview ring) */
+  .ov-panel{grid-template-columns:80px 1fr !important;}
+  .ring-wrap{width:75px !important;height:75px !important;}
+  .ring-svg{width:75px !important;height:75px !important;}
+  .ring-pct{font-size:16px !important;}
+
+  /* Modal: full width */
+  .modal{width:95% !important;min-width:unset !important;}
+
+  /* Toast: above bottom nav */
+  .toast{bottom:76px !important;right:12px !important;}
+
+  /* Measurements grid */
+  #measGrid{grid-template-columns:1fr 1fr !important;}
+
+  /* Water glasses */
+  .water-visual{gap:4px !important;}
+  .glass{width:28px !important;height:36px !important;}
+
+  /* Goals grid */
+  .g2{grid-template-columns:1fr 1fr !important;}
+
+  /* Meal macro summary */
+  #meal-macro-summary > div:last-child{flex-direction:column !important;gap:4px !important;}
+}
+
+@media (max-width: 400px) {
+  .g4{grid-template-columns:1fr 1fr !important;}
+  .topbar-right{gap:8px;}
+  .streak-chip{display:none;}
+  .mob-sheet-grid{grid-template-columns:1fr 1fr !important;}
+}
 </style>
 </head>
 <body>
@@ -539,6 +773,7 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
 
 <!-- TOPBAR -->
 <div class="topbar">
+  <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" aria-label="Menu">☰</button>
   <div><span class="app-brand" id="appBrand">FIT//OS <span>Helth is welth 💪</span></span></div>
   <div class="topbar-right">
     <div class="sync-indicator" id="syncIndicator" title="Firebase sync status">
@@ -1252,6 +1487,75 @@ html.alpha .lib-item-selected .meal-item{background:rgba(0,166,81,.05)!important
 </div><!-- end content -->
 </div><!-- end main -->
 </div><!-- end os -->
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeMobSidebar()"></div>
+
+<!-- BOTTOM NAV BAR (mobile) -->
+<nav class="mob-nav" id="mobNav">
+  <!-- Home -->
+  <button class="mob-nav-item active" id="mn-dashboard" onclick="mobNavTo('dashboard',this)">
+    <span class="mob-nav-icon">▦</span>
+    <span class="mob-nav-label">Home</span>
+  </button>
+  <!-- Nutrition -->
+  <button class="mob-nav-item" id="mn-nutrition" onclick="mobNavTo('nutrition',this)">
+    <span class="mob-nav-icon">◉</span>
+    <span class="mob-nav-label">Nutrition</span>
+  </button>
+  <!-- Log+ FAB -->
+  <button class="mob-fab" onclick="openMobSheet()">
+    <div class="mob-fab-inner">＋</div>
+    <span class="mob-fab-label">Log</span>
+  </button>
+  <!-- Workout -->
+  <button class="mob-nav-item" id="mn-workout" onclick="mobNavTo('workout',this)">
+    <span class="mob-nav-icon">⊞</span>
+    <span class="mob-nav-label">Workout</span>
+  </button>
+  <!-- More (opens sidebar) -->
+  <button class="mob-nav-item" id="mn-more" onclick="toggleMobSidebar()">
+    <span class="mob-nav-icon">≡</span>
+    <span class="mob-nav-label">More</span>
+    <span class="mob-nav-dot" id="mn-more-dot"></span>
+  </button>
+</nav>
+
+<!-- LOG+ QUICK SHEET -->
+<div class="mob-sheet-bg" id="mobSheet" onclick="closeMobSheet(event)">
+  <div class="mob-sheet" onclick="event.stopPropagation()">
+    <div class="mob-sheet-title">
+      <span>QUICK LOG</span>
+      <button class="mob-sheet-close" onclick="closeMobSheet()">✕</button>
+    </div>
+    <div class="mob-sheet-grid">
+      <div class="mob-sheet-btn" onclick="mobSheetNav('nutrition')">
+        <span class="mob-sheet-icon">🍽</span>
+        <span class="mob-sheet-lbl">Log Meal</span>
+      </div>
+      <div class="mob-sheet-btn" onclick="mobSheetNav('workout')">
+        <span class="mob-sheet-icon">💪</span>
+        <span class="mob-sheet-lbl">Log Exercise</span>
+      </div>
+      <div class="mob-sheet-btn" onclick="mobSheetWater()">
+        <span class="mob-sheet-icon">💧</span>
+        <span class="mob-sheet-lbl">Log Water</span>
+      </div>
+      <div class="mob-sheet-btn" onclick="mobSheetNav('habits')">
+        <span class="mob-sheet-icon">✅</span>
+        <span class="mob-sheet-lbl">Habits</span>
+      </div>
+      <div class="mob-sheet-btn" onclick="mobSheetNav('vitals')">
+        <span class="mob-sheet-icon">❤️</span>
+        <span class="mob-sheet-lbl">Vitals</span>
+      </div>
+      <div class="mob-sheet-btn" onclick="mobSheetNav('measurements')">
+        <span class="mob-sheet-icon">📏</span>
+        <span class="mob-sheet-lbl">Measure</span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -2688,6 +2992,92 @@ document.addEventListener('click', function(e){
     }
   });
 });
+
+// ===================================================
+// MOBILE NAV & RESPONSIVE JS
+// ===================================================
+function toggleMobSidebar() {
+  var sb = document.querySelector('.sb');
+  var ov = document.getElementById('sbOverlay');
+  var isOpen = sb.classList.contains('open');
+  if (isOpen) { sb.classList.remove('open'); ov.classList.remove('open'); }
+  else { sb.classList.add('open'); ov.classList.add('open'); }
+}
+function closeMobSidebar() {
+  document.querySelector('.sb').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
+
+// nav() already handles page switching — we just sync the bottom nav highlight
+var MOB_NAV_MAP = {
+  dashboard: 'mn-dashboard',
+  nutrition: 'mn-nutrition',
+  workout:   'mn-workout',
+  habits:    null,
+  water:     'mn-nutrition',
+  vitals:    null,
+  measurements: null,
+  goals:     null,
+  timer:     null,
+  meallibrary: null,
+  settings:  null,
+  profile:   null
+};
+function syncMobNav(pageId) {
+  document.querySelectorAll('.mob-nav-item').forEach(function(el){el.classList.remove('active');});
+  var target = MOB_NAV_MAP[pageId];
+  if (target) {
+    var el = document.getElementById(target);
+    if (el) el.classList.add('active');
+  }
+  // Show red dot on More if habits have pending
+  updateMobMoreDot();
+}
+function updateMobMoreDot() {
+  var dot = document.getElementById('mn-more-dot');
+  if (!dot) return;
+  var pending = S.habits && S.habits.filter(function(h){return !h.logs[S.today];}).length > 0;
+  dot.classList.toggle('show', pending);
+}
+function mobNavTo(pageId, btnEl) {
+  document.querySelectorAll('.mob-nav-item').forEach(function(el){el.classList.remove('active');});
+  if (btnEl) btnEl.classList.add('active');
+  // Find sidebar item to keep it in sync
+  var sbItem = document.querySelector('.sb-item[onclick*="' + pageId + '"]');
+  nav(sbItem, pageId);
+  closeMobSidebar();
+}
+
+// Log+ Sheet
+function openMobSheet() {
+  document.getElementById('mobSheet').classList.add('open');
+}
+function closeMobSheet(e) {
+  if (e && e.target !== document.getElementById('mobSheet')) return;
+  document.getElementById('mobSheet').classList.remove('open');
+}
+function mobSheetNav(pageId) {
+  document.getElementById('mobSheet').classList.remove('open');
+  mobNavTo(pageId, document.getElementById('mn-' + pageId) || null);
+}
+function mobSheetWater() {
+  document.getElementById('mobSheet').classList.remove('open');
+  var sbItem = document.querySelector('.sb-item[onclick*="nutrition"]');
+  nav(sbItem, 'nutrition');
+  setTimeout(function(){ switchNtrTab('water'); }, 60);
+  document.querySelectorAll('.mob-nav-item').forEach(function(el){el.classList.remove('active');});
+  var el = document.getElementById('mn-nutrition');
+  if (el) el.classList.add('active');
+}
+
+// Patch nav() to also call syncMobNav on every navigation
+var _origNav = nav;
+nav = function(btn, id) {
+  _origNav(btn, id);
+  syncMobNav(id);
+  closeMobSidebar();
+};
+
 
 function init() {
   // Load saved theme

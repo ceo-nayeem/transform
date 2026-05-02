@@ -1212,6 +1212,82 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
   </div>
 </div>
 
+<style>
+/* ===== GOAL GRAPH STYLES ===== */
+.goal-card { position: relative; }
+.goal-graph-wrap {
+  margin-top: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 10px 8px 4px;
+  border-radius: 2px;
+}
+.goal-toggle-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  width: fit-content;
+}
+.goal-toggle-btn {
+  background: var(--card2);
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--t2);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+}
+.goal-toggle-btn:last-child { border-right: none; }
+.goal-toggle-btn.active {
+  background: var(--gd);
+  color: var(--g);
+  border-bottom: 2px solid var(--g);
+}
+.goal-toggle-btn:hover:not(.active) { color: var(--t); background: var(--card); }
+html.alpha .goal-toggle-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  background: #f8f9fc;
+}
+html.alpha .goal-toggle-btn.active {
+  background: var(--gd);
+  color: var(--g);
+}
+html.alpha .goal-graph-wrap { background: #f8f9fc; border-radius: 8px; }
+.goal-svg-wrap { width: 100%; overflow: hidden; position: relative; }
+.goal-graph-empty {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--t2);
+  text-align: center;
+  padding: 20px 0;
+  letter-spacing: 1px;
+}
+.goal-graph-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--t2);
+  letter-spacing: .5px;
+}
+html.alpha .goal-graph-meta { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 10px; }
+.goal-graph-delta {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+</style>
+
 <!-- ============ TIMER & STOPWATCH ============ -->
 <div class="page" id="page-timer">
   <div style="display:flex;gap:0;margin-bottom:16px;border:1px solid var(--border);overflow:hidden">
@@ -2491,29 +2567,224 @@ function logMeasurements(){
 function delMeas(i){S.measurements.splice(i,1);save();renderMeasurements();toast('Entry removed');}
 
 // ===================== GOALS =====================
+// Per-goal toggle state
+var _goalToggle = {};
+
+function goalFilteredHistory(g, range) {
+  var hist = g.history || [];
+  if (!hist.length) return [];
+  var now = new Date(S.today + 'T12:00');
+  if (range === 'today') {
+    return hist.filter(function(h){ return h.date === S.today; });
+  } else if (range === 'week') {
+    var cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - 6);
+    var cutStr = cutoff.toISOString().split('T')[0];
+    return hist.filter(function(h){ return h.date >= cutStr; });
+  } else if (range === 'month') {
+    var cutoff2 = new Date(now); cutoff2.setDate(cutoff2.getDate() - 29);
+    var cutStr2 = cutoff2.toISOString().split('T')[0];
+    return hist.filter(function(h){ return h.date >= cutStr2; });
+  }
+  return hist; // all time
+}
+
+function drawGoalGraph(g, gIdx, range) {
+  // Always include the start point + filtered history
+  var hist = goalFilteredHistory(g, range);
+  // Build points: start + history entries
+  var allPts = [];
+  // For "today" range show start if no history yet
+  if (range === 'today' && !hist.length) {
+    allPts = [{date: g.startDate || S.today, val: g.start}];
+  } else {
+    // Include start as first point if it's within range or range is all
+    var startDate = g.startDate || '';
+    var cutDate = '';
+    var now2 = new Date(S.today + 'T12:00');
+    if (range === 'week') { var c1 = new Date(now2); c1.setDate(c1.getDate()-6); cutDate = c1.toISOString().split('T')[0]; }
+    else if (range === 'month') { var c2 = new Date(now2); c2.setDate(c2.getDate()-29); cutDate = c2.toISOString().split('T')[0]; }
+    if (!cutDate || startDate >= cutDate) {
+      allPts.push({date: startDate||S.today, val: g.start});
+    }
+    hist.forEach(function(h){ allPts.push({date: h.date, val: h.val}); });
+  }
+  // Deduplicate by date (keep last)
+  var seen = {}; var pts = [];
+  allPts.forEach(function(p){ seen[p.date] = p.val; });
+  var sorted = Object.keys(seen).sort();
+  sorted.forEach(function(d){ pts.push({date:d, val:seen[d]}); });
+
+  var wrap = document.getElementById('goal-graph-svg-' + gIdx);
+  if (!wrap) return;
+
+  if (pts.length < 1) {
+    wrap.innerHTML = '<div class="goal-graph-empty">NO DATA FOR THIS PERIOD</div>';
+    return;
+  }
+
+  var W = wrap.clientWidth || 280, H = 80;
+  var vals = pts.map(function(p){ return p.val; });
+  var target = parseFloat(g.target);
+  var allVals = vals.concat([target, parseFloat(g.start)]);
+  var minV = Math.min.apply(null, allVals);
+  var maxV = Math.max.apply(null, allVals);
+  var range2 = maxV - minV || 1;
+  var pad = { l:32, r:8, t:12, b:20 };
+  var gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+
+  function xOf(i) { return pad.l + (pts.length < 2 ? gW/2 : (i / (pts.length-1)) * gW); }
+  function yOf(v) { return pad.t + gH - ((v - minV) / range2) * gH; }
+
+  var isDown = parseFloat(g.target) < parseFloat(g.start); // lower is better
+  var lineColor = 'var(--g)';
+  var areaColor = 'rgba(0,255,136,0.10)';
+
+  // Delta
+  var deltaEl = document.getElementById('goal-graph-delta-' + gIdx);
+  if (deltaEl && pts.length >= 2) {
+    var delta = (pts[pts.length-1].val - pts[0].val).toFixed(1);
+    var good = isDown ? delta < 0 : delta > 0;
+    deltaEl.innerHTML = (delta > 0 ? '+' : '') + delta + ' ' + (g.unit||'') +
+      ' <span style="color:' + (delta==0?'var(--t2)':good?'var(--g)':'var(--red)') + '">' +
+      (delta==0 ? '→' : good ? '▲' : '▼') + '</span>';
+  } else if (deltaEl) {
+    deltaEl.innerHTML = pts.length ? pts[0].val + ' ' + (g.unit||'') : '—';
+  }
+
+  // Target Y line
+  var tY = yOf(target);
+  // Path
+  var pathD = pts.map(function(p,i){ return (i===0?'M':'L') + xOf(i).toFixed(1) + ',' + yOf(p.val).toFixed(1); }).join(' ');
+  // Area fill
+  var areaD = pathD + ' L' + xOf(pts.length-1).toFixed(1) + ',' + (pad.t+gH) + ' L' + xOf(0).toFixed(1) + ',' + (pad.t+gH) + ' Z';
+  // Dots for each point
+  var dotsHTML = pts.map(function(p,i){
+    var cx = xOf(i), cy = yOf(p.val);
+    var isLast = i === pts.length-1;
+    return '<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(isLast?4:2.5)+'" fill="'+(isLast?'var(--g)':'var(--card)')+'" stroke="var(--g)" stroke-width="'+(isLast?2:1.5)+'"/>';
+  }).join('');
+  // Y axis ticks
+  var tick1 = minV.toFixed(1), tick2 = ((minV+maxV)/2).toFixed(1), tick3 = maxV.toFixed(1);
+  // X labels: first and last date
+  var xLblFirst = pts[0].date.slice(5), xLblLast = pts[pts.length-1].date.slice(5);
+
+  wrap.innerHTML = '<svg width="100%" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="display:block;overflow:visible">' +
+    // Gridlines
+    '<line x1="'+pad.l+'" y1="'+(pad.t+gH/2)+'" x2="'+(W-pad.r)+'" y2="'+(pad.t+gH/2)+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>' +
+    // Target line
+    (tY > pad.t && tY < pad.t+gH ? '<line x1="'+pad.l+'" y1="'+tY.toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+tY.toFixed(1)+'" stroke="var(--o2)" stroke-width="1" stroke-dasharray="4,3" opacity=".7"/>'+
+    '<text x="'+(W-pad.r-2)+'" y="'+(tY-3).toFixed(1)+'" font-size="7" fill="var(--o2)" text-anchor="end" font-family="monospace">TGT</text>' : '') +
+    // Area
+    '<path d="'+areaD+'" fill="'+areaColor+'"/>' +
+    // Line
+    '<path d="'+pathD+'" fill="none" stroke="var(--g)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    // Dots
+    dotsHTML +
+    // Y axis labels
+    '<text x="'+(pad.l-3)+'" y="'+(pad.t+3)+'" font-size="7" fill="var(--t2)" text-anchor="end" font-family="monospace">'+tick3+'</text>' +
+    '<text x="'+(pad.l-3)+'" y="'+(pad.t+gH/2+3)+'" font-size="7" fill="var(--t2)" text-anchor="end" font-family="monospace">'+tick2+'</text>' +
+    '<text x="'+(pad.l-3)+'" y="'+(pad.t+gH)+'" font-size="7" fill="var(--t2)" text-anchor="end" font-family="monospace">'+tick1+'</text>' +
+    // X axis labels
+    '<text x="'+xOf(0).toFixed(1)+'" y="'+(H-4)+'" font-size="7" fill="var(--t2)" text-anchor="middle" font-family="monospace">'+xLblFirst+'</text>' +
+    (pts.length > 1 ? '<text x="'+xOf(pts.length-1).toFixed(1)+'" y="'+(H-4)+'" font-size="7" fill="var(--t2)" text-anchor="middle" font-family="monospace">'+xLblLast+'</text>' : '') +
+    '</svg>';
+}
+
+function setGoalToggle(gIdx, range) {
+  _goalToggle[gIdx] = range;
+  // Update toggle buttons
+  var btns = document.querySelectorAll('.goal-toggle-btn[data-gidx="'+gIdx+'"]');
+  btns.forEach(function(b){ b.classList.toggle('active', b.dataset.range === range); });
+  // Redraw
+  var g = S.goals[gIdx];
+  if (g) drawGoalGraph(g, gIdx, range);
+}
+
 function renderGoals(){
   var active=S.goals.filter(g=>!g.complete); var done=S.goals.filter(g=>g.complete);
   document.getElementById('g-active').textContent=active.length; document.getElementById('g-complete').textContent=done.length;
   var sel=document.getElementById('gl-sel'); sel.innerHTML=active.map((g,i)=>`<option value="${S.goals.indexOf(g)}">${g.name}</option>`).join('');
   var list=document.getElementById('goalList');
   if(!S.goals.length){list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No goals set yet.</div>';return;}
+
   list.innerHTML=S.goals.map((g,i)=>{
-    var range=Math.abs(parseFloat(g.target)-parseFloat(g.start));var done2=Math.abs(parseFloat(g.cur)-parseFloat(g.start));var pct=range>0?Math.min(100,Math.round(done2/range*100)):(g.cur===g.target?100:0);
-    return`<div class="goal-card"><div class="goal-top"><div><div class="goal-name">${g.name}</div><div style="font-size:9px;color:var(--t2);margin-top:2px">${g.cat} · Target: ${g.target} ${g.unit} by ${g.date||'—'}</div></div><div style="display:flex;gap:8px;align-items:center"><span class="goal-pct">${pct}%</span>${!g.complete?`<button class="btn sm" onclick="completeGoal(${i})">✓ DONE</button>`:'<span style="font-size:9px;color:var(--g2)">COMPLETED</span>'}<button class="del-btn" onclick="delGoal(${i})">✕</button></div></div><div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div><div class="goal-dates"><span>START: ${g.start} ${g.unit}</span><span>NOW: ${g.cur} ${g.unit}</span><span>TARGET: ${g.target} ${g.unit}</span></div></div>`;
+    var range2=Math.abs(parseFloat(g.target)-parseFloat(g.start));
+    var done2=Math.abs(parseFloat(g.cur)-parseFloat(g.start));
+    var pct=range2>0?Math.min(100,Math.round(done2/range2*100)):(g.cur===g.target?100:0);
+    var toggles = ['today','week','month','all'];
+    var toggleLabels = {'today':'Today','week':'Last 7d','month':'Last 30d','all':'All Time'};
+    var curRange = _goalToggle[i] || 'all';
+    var toggleHTML = '<div class="goal-toggle-row">' +
+      toggles.map(function(r){
+        return '<button class="goal-toggle-btn'+(r===curRange?' active':'')+'" data-gidx="'+i+'" data-range="'+r+'" onclick="setGoalToggle('+i+',\''+r+'\')">'+toggleLabels[r]+'</button>';
+      }).join('') + '</div>';
+
+    return `<div class="goal-card">
+      <div class="goal-top">
+        <div>
+          <div class="goal-name">${g.name}</div>
+          <div style="font-size:9px;color:var(--t2);margin-top:2px">${g.cat} · Target: ${g.target} ${g.unit} by ${g.date||'—'}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="goal-pct">${pct}%</span>
+          ${!g.complete?`<button class="btn sm" onclick="completeGoal(${i})">✓ DONE</button>`:'<span style="font-size:9px;color:var(--g2)">COMPLETED</span>'}
+          <button class="del-btn" onclick="delGoal(${i})">✕</button>
+        </div>
+      </div>
+      <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
+      <div class="goal-dates">
+        <span>START: ${g.start} ${g.unit}</span>
+        <span>NOW: ${g.cur} ${g.unit}</span>
+        <span>TARGET: ${g.target} ${g.unit}</span>
+      </div>
+      <div class="goal-graph-wrap">
+        ${toggleHTML}
+        <div class="goal-svg-wrap" id="goal-graph-svg-${i}" style="width:100%;min-height:80px"></div>
+        <div class="goal-graph-meta">
+          <span>PROGRESS</span>
+          <span class="goal-graph-delta" id="goal-graph-delta-${i}"></span>
+        </div>
+      </div>
+    </div>`;
   }).join('');
+
+  // Draw graphs after DOM update
+  S.goals.forEach(function(g, i){
+    var r = _goalToggle[i] || 'all';
+    setTimeout(function(){ drawGoalGraph(g, i, r); }, 0);
+  });
 }
+
 function addGoal(){
   var name=document.getElementById('gl-name').value.trim();var cur=document.getElementById('gl-cur').value;var tar=document.getElementById('gl-tar').value;
   if(!name||!cur||!tar){toast('Fill name, current and target');return;}
-  S.goals.push({id:Date.now(),name,cat:document.getElementById('gl-cat').value,start:parseFloat(cur),cur:parseFloat(cur),target:parseFloat(tar),unit:document.getElementById('gl-unit').value||'',date:document.getElementById('gl-date').value,complete:false});
+  var startVal = parseFloat(cur);
+  S.goals.push({
+    id:Date.now(), name, cat:document.getElementById('gl-cat').value,
+    start:startVal, cur:startVal, target:parseFloat(tar),
+    unit:document.getElementById('gl-unit').value||'',
+    date:document.getElementById('gl-date').value,
+    complete:false,
+    startDate: S.today,
+    history:[{date:S.today, val:startVal}]
+  });
   ['gl-name','gl-cur','gl-tar','gl-unit','gl-date'].forEach(id=>document.getElementById(id).value='');
   save();renderGoals();toast('Goal set!');
 }
+
 function updateGoalProgress(){
   var idx=parseInt(document.getElementById('gl-sel').value);var val=parseFloat(document.getElementById('gl-newval').value);
   if(isNaN(val)||isNaN(idx)){toast('Select goal and enter value');return;}
-  S.goals[idx].cur=val; document.getElementById('gl-newval').value=''; save();renderGoals();toast('Goal updated!');
+  var g = S.goals[idx];
+  g.cur = val;
+  if (!g.history) g.history = [];
+  // Add to history (replace if same date)
+  var existing = g.history.find(function(h){ return h.date === S.today; });
+  if (existing) { existing.val = val; } else { g.history.push({date:S.today, val:val}); }
+  document.getElementById('gl-newval').value='';
+  save(); renderGoals(); toast('Goal updated!');
 }
+
 function completeGoal(i){S.goals[i].complete=true;save();renderGoals();toast('Goal completed!');}
 function delGoal(i){S.goals.splice(i,1);save();renderGoals();toast('Goal removed');}
 

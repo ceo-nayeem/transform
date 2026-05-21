@@ -2049,7 +2049,7 @@ function renderNtrDayStrip() {
     lbl.style.color = isToday ? 'var(--g2)' : 'var(--c2)';
   }
   var addSec = document.getElementById('ntr-add-section');
-  if (addSec) addSec.style.display = (ntrDate === S.today) ? '' : 'none';
+  if (addSec) addSec.style.display = '';
   var mhd = document.getElementById('ntr-meals-head');
   if (mhd) mhd.textContent = (ntrDate === S.today) ? "TODAY'S MEALS" : "MEALS ON THIS DAY";
 }

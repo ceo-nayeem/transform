@@ -777,7 +777,7 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
 <!-- TOPBAR -->
 <div class="topbar">
   <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" aria-label="Menu">☰</button>
-  <div><span class="app-brand" id="appBrand" onclick="nav(document.querySelector('.sb-item'),'dashboard')" style="cursor:pointer">FIT//OS <span>Helth is welth 💪</span></span></div>
+  <div><span class="app-brand" id="appBrand">FIT//OS <span>Helth is welth 💪</span></span></div>
   <div class="topbar-right">
     <div class="sync-indicator" id="syncIndicator" title="Firebase sync status">
       <span class="fb-status" id="syncDot"></span>
@@ -4232,7 +4232,7 @@ async function callGemini(userPrompt) {
   // Add user turn
   _aiHistory.push({ role:'user', parts:[{ text: userPrompt }] });
 
-  var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey;
+  var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + apiKey;
 
   var body = {
     system_instruction: { parts:[{ text: aiBuildContext() }] },
@@ -4278,7 +4278,7 @@ async function callGemini(userPrompt) {
       var actionMsg = aiAppendMsg('agent action', '⚙ Calling: '+fc.name+'…');
       var result = aiExecuteTool(fc.name, fc.args || {});
       actionMsg.innerHTML = result;
-      toolResults.push({ functionResponse: { name: fc.name, response: { result: result } } });
+      toolResults.push({ functionResponse: { name: fc.name, id: fc.id, response: { result: result } } });
     }
 
     // Send tool results back for a final natural-language reply

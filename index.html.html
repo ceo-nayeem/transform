@@ -1189,6 +1189,12 @@ html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 .hcal-mini-fill{height:100%;border-radius:2px;background:var(--g);transition:width .4s}
 /* Category color chips */
 .hcat-chip{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;flex-shrink:0}
+/* Row edit/remove icons — hidden until the row is hovered */
+.hcal-row-actions{position:absolute;top:4px;right:4px;display:flex;gap:2px;opacity:0;visibility:hidden;transition:opacity .12s}
+.hcal-habit-col:hover .hcal-row-actions{opacity:1;visibility:visible}
+.hcal-icon-btn{background:var(--card2);border:1px solid var(--border);color:var(--t2);cursor:pointer;font-size:10px;line-height:1;padding:3px 5px;border-radius:3px;transition:color .12s,border-color .12s}
+.hcal-icon-btn:hover{color:var(--g);border-color:var(--g)}
+.hcal-icon-btn.hcal-del:hover{color:var(--red);border-color:var(--red)}
 /* Footer row */
 .hcal-footer{background:var(--g3);color:var(--g);font-weight:700}
 .hcal-footer td{border:1px solid var(--g3);padding:4px 2px;font-family:var(--raj);font-size:11px}
@@ -2610,18 +2616,9 @@ function renderHabitCalendar() {
     html+='<span class="hcat-chip" style="background:'+color+'"></span>';
     html+=(emoji?emoji+' ':'')+h.name;
     html+='<div style="font-size:8px;color:var(--t2);margin-top:1px">'+h.cat+(habitStreak(h)>0?' · 🔥'+habitStreak(h):'')+'</div>';
-    html+='<div style="display:flex;gap:4px;margin-top:3px">';
-    html+='<button onclick="event.stopPropagation();toggleHabitEdit('+hIdx+')" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:9px;font-family:var(--mono)" onmouseover="this.style.color=\'var(--g)\'" onmouseout="this.style.color=\'var(--t2)\'">✎EDIT</button>';
-    html+='<button onclick="event.stopPropagation();delHabit('+hIdx+')" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:9px;font-family:var(--mono)" onmouseover="this.style.color=\'var(--red)\'" onmouseout="this.style.color=\'var(--t2)\'">✕DEL</button>';
-    html+='</div>';
-    // Inline edit form
-    html+='<div id="hab-edit-'+hIdx+'" style="display:none;background:var(--card2);border:1px solid var(--g3);padding:8px;margin-top:4px;min-width:200px">';
-    html+='<div style="margin-bottom:4px"><div class="inp-label">NAME</div><input class="inp" id="he-name-'+hIdx+'" style="font-size:10px" value="'+h.name.replace(/"/g,'&quot;')+'"/></div>';
-    var habCats=['Fitness','Nutrition','Sleep','Mindfulness','Productivity','Other'];
-    html+='<div style="margin-bottom:4px"><div class="inp-label">CATEGORY</div><select class="inp" id="he-cat-'+hIdx+'" style="font-size:10px">'+habCats.map(c=>`<option${c===h.cat?' selected':''}>${c}</option>`).join('')+'</select></div>';
-    html+='<div style="margin-bottom:4px"><div class="inp-label">EMOJI</div><input class="inp" id="he-emoji-'+hIdx+'" style="font-size:12px;width:60px" value="'+(h.emoji||'').replace(/"/g,'&quot;')+'" maxlength="4"/></div>';
-    html+='<div style="margin-bottom:6px"><div class="inp-label">MONTHLY GOAL (0=daily)</div><input class="inp" id="he-goal-'+hIdx+'" type="number" style="font-size:10px" value="'+(h.goal||0)+'"/></div>';
-    html+='<div style="display:flex;gap:6px"><button class="btn sm" onclick="saveHabitEdit('+hIdx+')">[ SAVE ]</button><button class="btn sm danger" onclick="toggleHabitEdit('+hIdx+')">[ CANCEL ]</button></div>';
+    html+='<div class="hcal-row-actions">';
+    html+='<button class="hcal-icon-btn" onclick="event.stopPropagation();toggleHabitEdit('+hIdx+')" title="Edit">✎</button>';
+    html+='<button class="hcal-icon-btn hcal-del" onclick="event.stopPropagation();delHabit('+hIdx+')" title="Remove">✕</button>';
     html+='</div>';
     html+='</td>';
 
@@ -2687,14 +2684,21 @@ function renderHabitCalendar() {
 }
 
 function getWeeksInMonth(yr,mo,daysInMonth) {
-  var weeks=[],wk=[];
-  for(var d=1;d<=daysInMonth;d++){
-    var ds=yr+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    var dow=new Date(ds+'T12:00').getDay();
-    if(dow===1&&wk.length>0){weeks.push(wk);wk=[];}
-    wk.push(d);
+  // Always exactly 4 weeks of exactly 7 days, starting Saturday.
+  // Pulls in dates from the previous/next month as needed to fill a week —
+  // shown seamlessly, without labeling them as a different month.
+  var first=new Date(yr,mo-1,1,12,0,0);
+  var backToSat=(first.getDay()-6+7)%7;
+  var anchor=new Date(first); anchor.setDate(first.getDate()-backToSat);
+  var weeks=[];
+  for(var wi=0;wi<4;wi++){
+    var wk=[];
+    for(var di=0;di<7;di++){
+      var nd=new Date(anchor); nd.setDate(anchor.getDate()+wi*7+di);
+      wk.push(nd.toISOString().split('T')[0]);
+    }
+    weeks.push(wk);
   }
-  if(wk.length) weeks.push(wk);
   return weeks;
 }
 
@@ -2732,8 +2736,7 @@ function renderWeeklyDonuts(yr,mo,daysInMonth,today) {
   weeks.forEach(function(wk,wi){
     var possible=0,done=0;
     S.habits.forEach(function(h){
-      wk.forEach(function(d){
-        var ds=yr+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      wk.forEach(function(ds){
         if(ds>today) return;
         possible++;
         if(h.logs[ds]==='done') done++;
@@ -2742,8 +2745,10 @@ function renderWeeklyDonuts(yr,mo,daysInMonth,today) {
     var pct=possible>0?Math.round(done/possible*100):0;
     var color=getWeeklyProgressColor(pct);
     var r=36,circ=2*Math.PI*r,offset=circ-(pct/100*circ);
+    var lblStart=parseInt(wk[0].split('-')[2],10);
+    var lblEnd=parseInt(wk[wk.length-1].split('-')[2],10);
     html+='<div class="hwk-card">';
-    html+='<div class="hwk-label">WEEK '+(wi+1)+'<br>'+wk[0]+'–'+wk[wk.length-1]+'</div>';
+    html+='<div class="hwk-label">WEEK '+(wi+1)+'<br>'+lblStart+'–'+lblEnd+'</div>';
     html+='<svg width="86" height="86" viewBox="0 0 86 86" style="transform:rotate(-90deg)">';
     html+='<circle cx="43" cy="43" r="'+r+'" fill="none" stroke="var(--t3)" stroke-width="8"/>';
     html+='<circle cx="43" cy="43" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'"/>';
@@ -2815,17 +2820,6 @@ function renderHabitList() {
         <div class="week-dots" style="margin-top:6px">
           ${weekDates2.map(wd=>{var wst=h.logs[wd];var wDone=wst==='done',wSkip=wst==='x';return `<div class="wd ${wDone?'done':wSkip?'skip':''}" title="${wd}" style="${wDone?'background:'+color+';border-color:'+color:''}"></div>`;}).join('')}
           <span style="font-size:8px;color:var(--t2);margin-left:4px">THIS WEEK</span>
-        </div>
-        <div class="edit-form" id="hab-edit-${i}" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()" style="min-width:auto">
-          <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
-            <div class="inp-group" style="flex:2;min-width:140px"><div class="inp-label">HABIT NAME</div><input class="inp" id="he-name-${i}" type="text" value="${h.name.replace(/"/g,'&quot;')}"/></div>
-            <div class="inp-group" style="flex:1;min-width:100px"><div class="inp-label">CATEGORY</div><select class="inp" id="he-cat-${i}">${habCats.map(c=>`<option${c===h.cat?' selected':''}>${c}</option>`).join('')}</select></div>
-          </div>
-          <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
-            <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">EMOJI</div><input class="inp" id="he-emoji-${i}" value="${(h.emoji||'').replace(/"/g,'&quot;')}" maxlength="4"/></div>
-            <div class="inp-group" style="flex:1;min-width:100px"><div class="inp-label">MONTHLY GOAL</div><input class="inp" id="he-goal-${i}" type="number" value="${h.goal||0}" min="0" max="31"/></div>
-          </div>
-          <div class="edit-form-actions"><button class="btn sm" onclick="saveHabitEdit(${i})">[ SAVE ]</button><button class="btn sm danger" onclick="toggleHabitEdit(${i})">[ CANCEL ]</button></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
@@ -2901,9 +2895,27 @@ function renderHabitStats() {
 function toggleHabit(i){habitCheckClick(i, S.today);}
 function delHabit(i){if(!confirm('Remove "'+S.habits[i].name+'"?')) return;S.habits.splice(i,1);save();renderHabits();toast('Habit removed');}
 function toggleHabitEdit(i){
-  // In calendar view the edit is inline in the table cell (different el format)
-  var f=document.getElementById('hab-edit-'+i);
-  if(f){var wasHidden=f.style.display==='none'||!f.style.display||f.style.display==='';f.style.display=wasHidden?'block':'none';}
+  var old=document.getElementById('habitEditModal'); if(old) old.remove();
+  var h=S.habits[i]; if(!h) return;
+  var habCats=['Fitness','Nutrition','Sleep','Mindfulness','Productivity','Other'];
+  var modal=document.createElement('div');
+  modal.id='habitEditModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;';
+  modal.onclick=function(e){ if(e.target===modal) modal.remove(); };
+  modal.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-top:2px solid var(--g);padding:20px;max-width:300px;width:100%;max-height:85vh;overflow-y:auto;box-sizing:border-box" onclick="event.stopPropagation()">
+    <div style="font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--g);margin-bottom:16px">EDIT HABIT</div>
+    <div style="margin-bottom:10px"><div class="inp-label">HABIT NAME</div><input class="inp" id="he-name-${i}" type="text" style="width:100%;box-sizing:border-box" value="${h.name.replace(/"/g,'&quot;')}"/></div>
+    <div style="margin-bottom:10px"><div class="inp-label">CATEGORY</div><select class="inp" id="he-cat-${i}" style="width:100%;box-sizing:border-box">${habCats.map(c=>`<option${c===h.cat?' selected':''}>${c}</option>`).join('')}</select></div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <div style="flex:1;min-width:0"><div class="inp-label">EMOJI</div><input class="inp" id="he-emoji-${i}" style="width:100%;box-sizing:border-box" value="${(h.emoji||'').replace(/"/g,'&quot;')}" maxlength="4"/></div>
+      <div style="flex:1;min-width:0"><div class="inp-label">MONTHLY GOAL</div><input class="inp" id="he-goal-${i}" type="number" style="width:100%;box-sizing:border-box" value="${h.goal||0}" min="0" max="31"/></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn sm" onclick="saveHabitEdit(${i})">[ SAVE ]</button>
+      <button class="btn sm danger" onclick="document.getElementById('habitEditModal').remove()">[ CANCEL ]</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
 }
 function saveHabitEdit(i){
   var name=document.getElementById('he-name-'+i);
@@ -2915,6 +2927,7 @@ function saveHabitEdit(i){
   if(cat) S.habits[i].cat=cat.value;
   if(emoji) S.habits[i].emoji=emoji.value.trim();
   if(goal) S.habits[i].goal=parseInt(goal.value)||0;
+  var m=document.getElementById('habitEditModal'); if(m) m.remove();
   save();renderHabits();toast('Habit updated!');
 }
 function addHabit(){

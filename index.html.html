@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FIT//OS — Fitness Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"/>
 
 <!-- Firebase SDK (ESM via module script) -->
 <script type="module">
@@ -746,6 +746,220 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
   .topbar-right{gap:8px;}
   .streak-chip{display:none;}
   .mob-sheet-grid{grid-template-columns:1fr 1fr !important;}
+}
+
+/* ===================================================================
+   GLASS // OS — visual redesign pass
+   iOS / macOS inspired: frosted glass surfaces, soft depth, gradient
+   aurora backdrop, pill controls, ripple feedback, wider responsive
+   grids so pages breathe horizontally instead of stacking narrow.
+   =================================================================== */
+
+:root{
+  --font-ui:'Inter','DM Sans',sans-serif;
+  --font-display:'Rajdhani','Barlow Condensed',sans-serif;
+  --glass-bg:rgba(255,255,255,0.045);
+  --glass-bg2:rgba(255,255,255,0.075);
+  --glass-border:rgba(255,255,255,0.09);
+  --glass-border-hi:rgba(255,255,255,0.16);
+  --glass-blur:blur(22px) saturate(160%);
+  --radius-lg:20px;
+  --radius-md:14px;
+  --radius-sm:10px;
+  --shadow-soft:0 8px 30px rgba(0,0,0,.35);
+  --shadow-glow:0 0 0 1px var(--glass-border), 0 8px 24px rgba(0,0,0,.4);
+}
+html.alpha{
+  --glass-bg:rgba(255,255,255,0.55);
+  --glass-bg2:rgba(255,255,255,0.75);
+  --glass-border:rgba(20,30,25,0.07);
+  --glass-border-hi:rgba(20,30,25,0.14);
+  --glass-blur:blur(20px) saturate(180%);
+  --shadow-soft:0 8px 30px rgba(20,30,25,.10);
+  --shadow-glow:0 0 0 1px var(--glass-border), 0 8px 24px rgba(20,30,25,.08);
+}
+
+/* Type — swap the mono "terminal" voice for a clean modern UI face everywhere,
+   keep Rajdhani/Barlow Condensed only for big display numbers. */
+body, .inp, .btn, .btn-ghost, select.inp, input, textarea,
+.sb-label, .sb-sec, .card-label, .card-sub, .inp-label, .sec-head,
+.mob-nav-label, .mob-sheet-lbl, .timer-mode-lbl, .toast, .date-disp,
+.streak-chip, .sync-indicator, .lib-sort-sel, .lib-bulk-btn, .preset-btn{
+  font-family:var(--font-ui) !important;
+}
+.sec-head{letter-spacing:.3px;font-weight:700;font-size:11px;text-transform:none;color:var(--t);}
+.sec-head::after{background:linear-gradient(90deg,var(--border),transparent);}
+.card-label,.inp-label{letter-spacing:.6px;font-weight:600;text-transform:none;opacity:.72}
+.page-title::before{content:'';display:none}
+.app-brand{font-family:var(--font-display) !important;}
+
+/* Aurora backdrop */
+body{
+  background:
+    radial-gradient(1100px 600px at 12% -8%, rgba(0,255,136,.16), transparent 60%),
+    radial-gradient(900px 500px at 110% 8%, rgba(0,229,255,.13), transparent 55%),
+    radial-gradient(800px 700px at 50% 115%, rgba(170,119,255,.10), transparent 55%),
+    #050a09;
+  background-attachment:fixed;
+}
+html.alpha body{
+  background:
+    radial-gradient(1100px 600px at 12% -8%, rgba(0,166,81,.10), transparent 60%),
+    radial-gradient(900px 500px at 110% 8%, rgba(0,150,199,.09), transparent 55%),
+    radial-gradient(800px 700px at 50% 115%, rgba(114,9,183,.06), transparent 55%),
+    #eef1f0;
+  background-attachment:fixed;
+}
+
+/* Chrome surfaces — glass */
+.topbar,.page-header{
+  background:var(--glass-bg2);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border-bottom:1px solid var(--glass-border);
+}
+.sb{
+  background:var(--glass-bg);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border-right:1px solid var(--glass-border);
+}
+.os{background:transparent}
+.content{background:transparent;max-width:1520px;width:100%;margin:0 auto;}
+
+/* Sidebar nav — pill active state, glow */
+.sb-item{border-radius:var(--radius-sm);margin:1px 8px;width:calc(100% - 16px);border-left:none;position:relative;overflow:hidden}
+.sb-item:hover{background:var(--glass-bg2)}
+.sb-item.active{background:linear-gradient(135deg,rgba(0,255,136,.16),rgba(0,229,255,.08));box-shadow:inset 0 0 0 1px rgba(0,255,136,.25)}
+html.alpha .sb-item.active{background:linear-gradient(135deg,rgba(0,166,81,.14),rgba(0,150,199,.08));box-shadow:inset 0 0 0 1px rgba(0,166,81,.2)}
+.avatar{border-radius:12px;background:linear-gradient(135deg,var(--g),var(--c));border:none;color:#04140e;box-shadow:0 4px 14px rgba(0,255,136,.28)}
+
+/* Cards & panels — frosted glass, soft radius, gentle lift on hover */
+.card,.vital-card,.meas-card,.goal-card,.chart-wrap,.ov-panel,
+.profile-section,.danger-zone,.ilsw,.lib-toolbar,.water-visual,
+.saved-timer-card,.sync-indicator,.mob-sheet,.log-modal-field,
+.meal-item,.ex-card,.habit-item,.day-pill,.edit-form{
+  background:var(--glass-bg) !important;
+  border:1px solid var(--glass-border) !important;
+  border-radius:var(--radius-md) !important;
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-soft);
+}
+.card{border-radius:var(--radius-md) !important;transition:transform .18s ease, box-shadow .18s ease, background .18s ease;overflow:hidden;cursor:pointer}
+.card:hover{transform:translateY(-2px);background:var(--glass-bg2) !important;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.card-accent{width:3px;border-radius:0 0 0 var(--radius-md)}
+.ex-card,.habit-item,.meal-item{border-left:1px solid var(--glass-border) !important;transition:transform .15s ease, background .15s ease}
+.ex-card:hover,.habit-item:hover{transform:translateX(2px);background:var(--glass-bg2) !important}
+.ex-card.done{border-color:rgba(0,255,136,.35) !important;box-shadow:0 0 0 1px rgba(0,255,136,.18), var(--shadow-soft)}
+.habit-item.done{border-color:rgba(0,255,136,.35) !important}
+.day-pill{border-radius:var(--radius-sm) !important}
+.day-pill.active{background:linear-gradient(135deg,rgba(0,255,136,.22),rgba(0,229,255,.12)) !important;box-shadow:inset 0 0 0 1px rgba(0,255,136,.4)}
+.chart-wrap canvas,.svg-chart{border-radius:var(--radius-sm)}
+
+/* Buttons — soft gradient pill with ripple */
+.btn{
+  border-radius:999px !important;border:1px solid var(--glass-border-hi) !important;
+  background:linear-gradient(135deg,rgba(0,255,136,.16),rgba(0,229,255,.08)) !important;
+  color:var(--g) !important;font-weight:600;letter-spacing:.2px;text-transform:none !important;
+  padding:10px 20px !important;position:relative;overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,255,136,.08);
+  transition:transform .12s ease, box-shadow .18s ease, background .18s ease;
+}
+.btn:hover{transform:translateY(-1px);background:linear-gradient(135deg,rgba(0,255,136,.26),rgba(0,229,255,.14)) !important;box-shadow:0 6px 18px rgba(0,255,136,.16)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.danger{background:linear-gradient(135deg,rgba(255,51,85,.18),rgba(255,51,85,.06)) !important;border-color:rgba(255,51,85,.35) !important;color:var(--red) !important}
+.btn-ghost{border-radius:var(--radius-sm) !important;border:1.5px dashed var(--glass-border-hi) !important;position:relative;overflow:hidden}
+.btn-ghost:hover{background:var(--glass-bg2) !important}
+html.alpha .btn{color:#fff !important;background:linear-gradient(135deg,var(--g),var(--c)) !important;box-shadow:0 4px 14px rgba(0,166,81,.28)}
+html.alpha .btn:hover{background:linear-gradient(135deg,var(--g2),var(--c2)) !important;box-shadow:0 8px 22px rgba(0,166,81,.34)}
+html.alpha .btn.danger{background:linear-gradient(135deg,var(--red),#b01e1e) !important;color:#fff !important}
+
+/* Ripple */
+.ripple-el{position:relative;overflow:hidden}
+.ripple-wave{position:absolute;border-radius:50%;transform:scale(0);pointer-events:none;
+  background:radial-gradient(circle, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 70%);
+  animation:rippleAnim .6s ease-out;}
+@keyframes rippleAnim{to{transform:scale(2.6);opacity:0}}
+
+/* Inputs — glass pill fields */
+.inp{
+  background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;
+  border-radius:var(--radius-sm) !important;font-weight:500;
+  backdrop-filter:blur(6px);padding:10px 12px !important;
+}
+.inp:focus{border-color:rgba(0,255,136,.55) !important;box-shadow:0 0 0 3px rgba(0,255,136,.12)}
+html.alpha .inp:focus{box-shadow:0 0 0 3px rgba(0,166,81,.14)}
+select.inp option{background:#0c1a17;color:var(--t)}
+html.alpha select.inp option{background:#fff;color:var(--t)}
+
+/* Modal — glass sheet */
+.modal-bg{background:rgba(3,8,7,.55) !important;backdrop-filter:blur(6px)}
+.modal{
+  background:var(--glass-bg2) !important;border:1px solid var(--glass-border-hi) !important;
+  border-radius:var(--radius-lg) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:0 30px 60px rgba(0,0,0,.5);border-top:1px solid var(--glass-border-hi) !important;
+}
+.modal-title{letter-spacing:.3px}
+
+/* Toast */
+.toast{
+  background:var(--glass-bg2) !important;border:1px solid var(--glass-border-hi) !important;
+  border-radius:999px !important;backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft);
+  color:var(--g) !important;font-weight:600;
+}
+
+/* Status badges → soft glass pills */
+.status-badge{border-radius:999px !important;backdrop-filter:blur(6px);font-weight:600;letter-spacing:.3px}
+
+/* Bottom mobile chrome */
+.mob-nav{background:var(--glass-bg2) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border-top:1px solid var(--glass-border)}
+.mob-fab-inner{box-shadow:0 8px 24px rgba(0,255,136,.35)}
+.mob-sheet{border-radius:22px 22px 0 0 !important}
+.mob-sheet-btn{border-radius:16px !important}
+
+/* Water glass drops */
+.glass{border-radius:8px !important;border:1px solid var(--glass-border) !important}
+
+/* Progress bars */
+.bar-bg,.card-bar,.goal-bar{border-radius:999px !important;background:var(--glass-bg2) !important;overflow:hidden}
+.bar-fill,.card-bar-fill,.goal-fill{border-radius:999px !important}
+
+/* ---- Wider, smarter grids so content uses available width
+   (fewer forced single-column stacks / less vertical scroll) ---- */
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.g3{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));}
+.g4{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+#measGrid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr)) !important;}
+.mob-sheet-grid{grid-template-columns:repeat(auto-fit,minmax(90px,1fr));}
+
+/* ---- Log modal (Vitals / Measurements "Add Log" flow) ---- */
+.log-chip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.log-chip{
+  display:flex;align-items:center;gap:7px;padding:10px 12px;cursor:pointer;user-select:none;
+  background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:999px;
+  font-size:11px;font-weight:600;color:var(--t2);transition:all .15s;position:relative;overflow:hidden;
+}
+.log-chip:hover{border-color:var(--glass-border-hi)}
+.log-chip.on{background:linear-gradient(135deg,rgba(0,255,136,.2),rgba(0,229,255,.1));border-color:rgba(0,255,136,.45);color:var(--g)}
+html.alpha .log-chip.on{color:var(--g2)}
+.log-chip .lc-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0}
+.log-chip.on .lc-dot{background:var(--g)}
+.log-field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:6px}
+.log-custom-form{
+  display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end;
+  background:var(--glass-bg);border:1px dashed var(--glass-border-hi);border-radius:var(--radius-md);
+  padding:12px;margin-bottom:14px;
+}
+@media (max-width:640px){.log-custom-form{grid-template-columns:1fr 1fr}}
+.log-add-field-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 12px;border:1px dashed var(--glass-border-hi);border-radius:999px;
+  color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;background:transparent;margin-bottom:14px;
+  transition:all .15s;
+}
+.log-add-field-btn:hover{border-color:var(--g);color:var(--g);background:var(--glass-bg)}
+
+@media (max-width:768px){
+  .content{max-width:100%}
+  .log-chip-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
 }
 </style>
 </head>

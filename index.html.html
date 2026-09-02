@@ -684,7 +684,7 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
   /* Topbar: compact */
   .topbar{padding:8px 12px;}
   .app-brand{font-size:14px !important;letter-spacing:2px;}
-  .app-brand span{display:none;}
+  .app-brand span{font-size:8px !important;}
   .streak-chip{padding:4px 8px;font-size:9px;}
   .date-disp{display:none;}
 
@@ -1247,7 +1247,7 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
 <!-- TOPBAR -->
 <div class="topbar">
   <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" aria-label="Menu">☰</button>
-  <div><span class="app-brand" id="appBrand">FIT//OS <span>Helth is welth 💪</span></span></div>
+  <div><span class="app-brand" id="appBrand">FIT//OS <span id="topPagePath">/ DASHBOARD</span></span></div>
   <div class="topbar-right">
     <div class="sync-indicator" id="syncIndicator" title="Firebase sync status">
       <span class="fb-status" id="syncDot"></span>
@@ -1308,13 +1308,6 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
 
 <!-- MAIN -->
 <div class="main">
-<div class="page-header">
-  <div>
-    <div class="page-title" id="pageTitle">DASHBOARD</div>
-    <div class="page-path" id="pagePath">FIT//OS > overview</div>
-  </div>
-  <div id="pageActions"></div>
-</div>
 <div class="content">
 
 <!-- ============ DASHBOARD ============ -->
@@ -2371,8 +2364,8 @@ function nav(btn, id) {
   var pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
   if (btn && btn.classList) btn.classList.add('active');
-  document.getElementById('pageTitle').textContent = pageTitles[id] || id.toUpperCase();
-  document.getElementById('pagePath').textContent = 'FIT//OS > ' + id;
+  var topPath = document.getElementById('topPagePath');
+  if (topPath) topPath.textContent = '/ ' + (pageTitles[id] || id.toUpperCase());
   if (id === 'workout') renderWorkout();
   if (id === 'habits') renderHabits();
   if (id === 'water') { switchNtrTab('water'); return; }  // water is now inside nutrition

@@ -328,7 +328,7 @@ html.alpha .del-btn:hover{color:var(--red)}
 body{background:var(--bg);color:var(--t);font-family:var(--mono);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
 body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .os{display:grid;grid-template-columns:190px 1fr;flex:1;overflow:hidden}
-.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:500}
 .app-brand{font-family:var(--raj);font-size:18px;font-weight:700;color:var(--g);letter-spacing:3px}
 .app-brand span{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;margin-left:8px}
 .topbar-right{display:flex;align-items:center;gap:16px}
@@ -1282,13 +1282,6 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
 <div class="os">
 <!-- SIDEBAR -->
 <div class="sb">
-  <div class="sb-user">
-    <div class="avatar" id="avatarEl">BM</div>
-    <div>
-      <div class="user-name" id="userNameDisp">BEAST_MODE</div>
-      <div class="user-stat"><span class="dot-pulse"></span> TRACKING ACTIVE</div>
-    </div>
-  </div>
   <div class="sb-nav">
     <div class="sb-sec">OVERVIEW</div>
     <div class="sb-item active" onclick="nav(this,'dashboard')"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
@@ -2284,8 +2277,6 @@ function loginSuccess(id, docId) {
   wkDate = S.today;
   wtrDate = S.today;
   document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('userNameDisp').textContent = (S.cfg.name || id).toUpperCase();
-  document.getElementById('avatarEl').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
   document.getElementById('topUserNameDisp').textContent = (S.cfg.name || id).toUpperCase();
   document.getElementById('topAvatarEl').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
   document.getElementById('topAvatarEl2').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
@@ -3603,8 +3594,6 @@ function saveProfile() {
   S.cfg.name = document.getElementById('cfg-name').value.trim()||'ATHLETE';
   S.cfg.initials = (document.getElementById('cfg-init').value.trim()||'AT').toUpperCase().slice(0,2);
   S.cfg.gender = document.getElementById('cfg-gender').value;
-  document.getElementById('userNameDisp').textContent = S.cfg.name.toUpperCase();
-  document.getElementById('avatarEl').textContent = S.cfg.initials;
   document.getElementById('topUserNameDisp').textContent = S.cfg.name.toUpperCase();
   document.getElementById('topAvatarEl').textContent = S.cfg.initials;
   document.getElementById('topAvatarEl2').textContent = S.cfg.initials;

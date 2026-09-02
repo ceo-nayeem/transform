@@ -132,6 +132,33 @@ html.alpha{
   --border:#dde1e7;--mono:'DM Sans',sans-serif;--raj:'Barlow Condensed',sans-serif;
 }
 
+/* ===== PROFILE MENU (topbar) ===== */
+.profile-menu{position:relative}
+.profile-menu-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;padding:2px 4px 2px 2px;border-radius:12px;transition:background .15s}
+.profile-menu-btn:hover{background:var(--gd)}
+.avatar.avatar-sm{width:30px;height:30px;font-size:11px}
+.profile-menu-caret{font-size:9px;color:var(--t2);transition:transform .18s;line-height:1}
+.profile-menu.open .profile-menu-caret{transform:rotate(180deg)}
+.profile-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;min-width:220px;
+  background:var(--glass-bg2,var(--panel));backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
+  border:1px solid var(--glass-border-hi,var(--border));border-radius:var(--radius-md,10px);
+  box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
+  padding:8px;display:none;z-index:200;
+}
+.profile-menu.open .profile-dropdown{display:block;animation:profileDdIn .15s ease both}
+@keyframes profileDdIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.profile-dropdown-head{display:flex;align-items:center;gap:10px;padding:6px 8px 12px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.profile-dropdown-name{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--t);font-family:var(--raj)}
+.profile-dropdown-sub{font-size:9px;color:var(--t2);letter-spacing:1px;margin-top:2px}
+.profile-dropdown-item{display:flex;align-items:center;gap:9px;padding:9px 8px;font-size:12px;color:var(--t);cursor:pointer;border-radius:8px;transition:background .15s;letter-spacing:.3px}
+.profile-dropdown-item:hover{background:var(--gd)}
+.profile-dropdown-item.danger{color:var(--red)}
+.profile-dropdown-item.danger:hover{background:rgba(214,40,40,.1)}
+@media (max-width:400px){
+  .profile-dropdown{min-width:190px}
+}
+
 /* ===== THEME TOGGLE ===== */
 .theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--card);border:1px solid var(--border);padding:5px 10px 5px 6px;transition:all .2s;user-select:none;}
 .theme-toggle:hover{border-color:var(--g)}
@@ -1114,7 +1141,7 @@ html.alpha #loginScreen{
 }
 html.alpha .login-box{background:var(--glass-bg2) !important;border:1px solid var(--glass-border-hi) !important;box-shadow:0 30px 70px rgba(20,30,25,.14) !important;}
 html.alpha .login-logo{background:linear-gradient(135deg,#00c47d,#0098c7);-webkit-background-clip:text;background-clip:text;color:transparent !important;}
-.login-logo{background:linear-gradient(135deg,#00ff88,#00e5ff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 18px rgba(0,255,136,.35))}
+.login-logo{background:linear-gradient(135deg,#00ff88,#00e5ff);-webkit-background-clip:text;background-clip:text}
 .login-inp{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;backdrop-filter:blur(6px);border-radius:8px !important}
 html.alpha .login-inp{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important}
 .login-btn{background:linear-gradient(135deg,rgba(0,255,136,.14),rgba(0,229,255,.10)) !important;border:1px solid rgba(0,255,136,.5) !important;border-radius:999px !important;backdrop-filter:blur(6px);position:relative;overflow:hidden}
@@ -1148,9 +1175,9 @@ html.alpha .dot-pulse{animation:pulse 2s infinite,dotGlowAlpha 2s infinite}
 @keyframes dotGlowAlpha{0%,100%{box-shadow:0 0 0 0 rgba(0,197,150,.5)}50%{box-shadow:0 0 6px 2px rgba(0,197,150,.5)}}
 .streak-chip{animation:none;position:relative}
 
-/* Big numbers get a soft neon glow to feel more alive */
-.card-val,.vital-big,.meas-val,.goal-pct,.ring-pct{text-shadow:0 0 18px currentColor;filter:saturate(1.05)}
-html.alpha .card-val,html.alpha .vital-big,html.alpha .meas-val,html.alpha .goal-pct,html.alpha .ring-pct{text-shadow:0 0 10px currentColor}
+/* Big numbers: solid, no glow */
+.card-val,.vital-big,.meas-val,.goal-pct,.ring-pct{text-shadow:none;filter:saturate(1.05)}
+html.alpha .card-val,html.alpha .vital-big,html.alpha .meas-val,html.alpha .goal-pct,html.alpha .ring-pct{text-shadow:none}
 
 /* Progress bars — animated shimmer sweep on the filled portion */
 .bar-fill,.card-bar-fill,.goal-fill{position:relative;overflow:hidden}
@@ -1232,6 +1259,23 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
     </div>
     <div class="streak-chip"><div class="dot-pulse"></div><span id="streakDisp">12 DAY STREAK</span></div>
     <div class="date-disp" id="dateDisp"></div>
+    <div class="profile-menu" id="profileMenu">
+      <button class="profile-menu-btn" id="profileMenuBtn" onclick="toggleProfileMenu(event)" aria-label="Profile menu">
+        <span class="avatar avatar-sm" id="topAvatarEl">BM</span>
+        <span class="profile-menu-caret">▾</span>
+      </button>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-head">
+          <span class="avatar avatar-sm" id="topAvatarEl2">BM</span>
+          <div>
+            <div class="profile-dropdown-name" id="topUserNameDisp">BEAST_MODE</div>
+            <div class="profile-dropdown-sub">TRACKING ACTIVE</div>
+          </div>
+        </div>
+        <div class="profile-dropdown-item" onclick="closeProfileMenu();nav(null,'profile')"><span class="sb-icon">◧</span><span>Profile & Settings</span></div>
+        <div class="profile-dropdown-item danger" onclick="closeProfileMenu();doLogout()"><span class="sb-icon">⏻</span><span>Logout</span></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1266,9 +1310,6 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
     <div class="sb-item" onclick="nav(this,'ingredientlibrary')"><span class="sb-icon">◈</span><span class="sb-label">Ingredient Library</span><span class="sb-badge" id="ilBadge">0</span></div>
     <div class="sb-item" onclick="nav(this,'timer')"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
 
-    <div class="sb-sec">ACCOUNT</div>
-    <div class="sb-item" onclick="nav(this,'profile')"><span class="sb-icon">◧</span><span class="sb-label">Profile & Settings</span></div>
-    <div class="sb-item" onclick="doLogout()" style="color:var(--red)"><span class="sb-icon">⏻</span><span class="sb-label" style="color:var(--red)">Logout</span></div>
   </div>
 </div>
 
@@ -2245,6 +2286,9 @@ function loginSuccess(id, docId) {
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('userNameDisp').textContent = (S.cfg.name || id).toUpperCase();
   document.getElementById('avatarEl').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
+  document.getElementById('topUserNameDisp').textContent = (S.cfg.name || id).toUpperCase();
+  document.getElementById('topAvatarEl').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
+  document.getElementById('topAvatarEl2').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
   calcStreak();
   renderDashboard();
   setFbStatus(true, 'Firebase Connected');
@@ -3561,6 +3605,9 @@ function saveProfile() {
   S.cfg.gender = document.getElementById('cfg-gender').value;
   document.getElementById('userNameDisp').textContent = S.cfg.name.toUpperCase();
   document.getElementById('avatarEl').textContent = S.cfg.initials;
+  document.getElementById('topUserNameDisp').textContent = S.cfg.name.toUpperCase();
+  document.getElementById('topAvatarEl').textContent = S.cfg.initials;
+  document.getElementById('topAvatarEl2').textContent = S.cfg.initials;
   document.getElementById('profileAvatarBig').textContent = S.cfg.initials;
   document.getElementById('profileNameBig').textContent = S.cfg.name.toUpperCase();
   save(); toast('Profile saved!');
@@ -4079,6 +4126,23 @@ document.addEventListener('click', function(e){
       dd.style.display = 'none';
     }
   });
+});
+
+// ===================== PROFILE MENU (topbar) =====================
+function toggleProfileMenu(e) {
+  if (e) e.stopPropagation();
+  var m = document.getElementById('profileMenu');
+  if (m) m.classList.toggle('open');
+}
+function closeProfileMenu() {
+  var m = document.getElementById('profileMenu');
+  if (m) m.classList.remove('open');
+}
+document.addEventListener('click', function(e){
+  var m = document.getElementById('profileMenu');
+  if (m && m.classList.contains('open') && !m.contains(e.target)) {
+    m.classList.remove('open');
+  }
 });
 
 // ===================================================

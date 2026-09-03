@@ -1608,36 +1608,49 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
     <input type="date" class="inp" id="wtr-date-pick" style="width:130px;font-size:10px" onchange="selectWtrDate(this.value)"/>
   </div>
   <div style="font-size:9px;letter-spacing:1px;margin-bottom:10px" id="wtr-day-label"></div>
-  <div class="g4" style="margin-bottom:12px">
-    <div class="card"><div class="card-label">CONSUMED</div><div class="card-val" style="color:var(--c)" id="w-consumed">0.0</div><div class="card-sub">liters</div></div>
-    <div class="card"><div class="card-label">GOAL</div><div class="card-val" id="w-goal-disp">0.0</div><div class="card-sub">liters</div></div>
-    <div class="card"><div class="card-label">REMAINING</div><div class="card-val" id="w-remain">0.0</div><div class="card-sub">liters</div></div>
-    <div class="card"><div class="card-label">GLASSES</div><div class="card-val" style="color:var(--c2)" id="w-glasses">0/0</div><div class="card-sub">250ml each</div></div>
-  </div>
-  <div class="sec-head">GLASS TRACKER</div>
-  <div class="water-visual" id="waterVisual"></div>
-  <div id="wtr-btns" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-    <button class="btn sm" onclick="addGlass()">[ + GLASS (250ml) ]</button>
-    <button class="btn sm danger" onclick="removeGlass()">[ - GLASS ]</button>
-    <button class="btn sm" onclick="addGlass(4)">[ + 1 LITER ]</button>
-    <button class="btn sm danger" onclick="resetWater()">[ RESET ]</button>
-  </div>
-  <div id="wtr-custom-sec"><div class="sec-head">CUSTOM AMOUNT</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row">
-      <div class="inp-group" style="flex:2"><div class="inp-label">AMOUNT (ml)</div><input class="inp" id="w-custom" type="number" placeholder="e.g. 500"/></div>
-      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addCustomWater()">[ + ADD ]</button></div>
+
+  <div class="ntr-grid">
+    <!-- LEFT CARD: progress / stats -->
+    <div class="ntr-col-left">
+      <div style="background:var(--card);border:1px solid var(--border);padding:14px;height:100%">
+        <div class="sec-head" style="margin-top:0">PROGRESS</div>
+        <div class="g4" style="margin-bottom:14px">
+          <div class="card"><div class="card-label">CONSUMED</div><div class="card-val" style="color:var(--c)" id="w-consumed">0.0</div><div class="card-sub">liters</div></div>
+          <div class="card"><div class="card-label">GOAL</div><div class="card-val" id="w-goal-disp">0.0</div><div class="card-sub">liters</div></div>
+          <div class="card"><div class="card-label">REMAINING</div><div class="card-val" id="w-remain">0.0</div><div class="card-sub">liters</div></div>
+          <div class="card"><div class="card-label">GLASSES</div><div class="card-val" style="color:var(--c2)" id="w-glasses">0/0</div><div class="card-sub">250ml each</div></div>
+        </div>
+        <div class="sec-head">GLASS TRACKER</div>
+        <div class="water-visual" id="waterVisual"></div>
+      </div>
     </div>
-  </div>
-  </div><!-- end wtr-custom-sec -->
-  <div id="wtr-goal-sec"><div class="sec-head">DAILY GOAL</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row">
-      <div class="inp-group" style="flex:2"><div class="inp-label">WATER GOAL (glasses)</div><input class="inp" id="w-goal-inp" type="number" placeholder="12" min="1" max="30"/></div>
-      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="setWaterGoal()">[ SET GOAL ]</button></div>
+    <!-- RIGHT CARD: water log system -->
+    <div class="ntr-col-right">
+      <div style="background:var(--card);border:1px solid var(--border);padding:14px;height:100%">
+        <div class="sec-head" style="margin-top:0">WATER LOG</div>
+        <div id="wtr-btns" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="btn sm" onclick="addGlass()">[ + GLASS (250ml) ]</button>
+          <button class="btn sm danger" onclick="removeGlass()">[ - GLASS ]</button>
+          <button class="btn sm" onclick="addGlass(4)">[ + 1 LITER ]</button>
+          <button class="btn sm danger" onclick="resetWater()">[ RESET ]</button>
+        </div>
+        <div id="wtr-custom-sec" style="border:1px solid var(--border);border-left:3px solid var(--c2);padding:12px;margin-bottom:12px;background:var(--card2)">
+          <div class="inp-label" style="color:var(--c2);letter-spacing:1.5px;margin-bottom:8px">⊕ CUSTOM AMOUNT</div>
+          <div class="inp-row">
+            <div class="inp-group" style="flex:2"><div class="inp-label">AMOUNT (ml)</div><input class="inp" id="w-custom" type="number" placeholder="e.g. 500"/></div>
+            <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addCustomWater()">[ + ADD ]</button></div>
+          </div>
+        </div>
+        <div id="wtr-goal-sec" style="border:1px solid var(--border);border-left:3px solid var(--g);padding:12px;background:var(--card2)">
+          <div class="inp-label" style="color:var(--g);letter-spacing:1.5px;margin-bottom:8px">⊕ DAILY GOAL</div>
+          <div class="inp-row">
+            <div class="inp-group" style="flex:2"><div class="inp-label">WATER GOAL (glasses)</div><input class="inp" id="w-goal-inp" type="number" placeholder="12" min="1" max="30"/></div>
+            <div style="display:flex;align-items:flex-end"><button class="btn" onclick="setWaterGoal()">[ SET GOAL ]</button></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  </div><!-- end wtr-goal-sec -->
+  </div><!-- end ntr-grid -->
   </div><!-- end ntr-water-section -->
 
 </div><!-- end page-nutrition -->

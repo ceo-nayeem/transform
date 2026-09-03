@@ -363,12 +363,31 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .ntr-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:16px;align-items:stretch;margin-bottom:14px}
 .ntr-col-left,.ntr-col-right{min-width:0}
 .ntr-col-left{display:flex;flex-direction:column}
-.ntr-stat-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:8px;flex:1;height:100%}
+.ntr-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:10px;flex:1}
 .ntr-stat-grid .card{display:flex;flex-direction:column;justify-content:center;height:100%}
-.ntr-card-split{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin-top:2px}
-.ntr-card-split .ntr-val{font-size:20px}
-.ntr-val-r{text-align:right}
+@media (min-width:1180px){.ntr-stat-grid{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:860px){.ntr-grid{grid-template-columns:1fr}}
+
+/* ── Macro ring cards (circular progress) ── */
+.macro-card{align-items:center;text-align:center;gap:3px}
+.macro-ring-wrap{position:relative;width:68px;height:68px;margin:2px auto 3px}
+.macro-ring-svg{width:100%;height:100%;transform:rotate(-90deg);display:block;overflow:visible}
+.macro-ring-bg{fill:none;stroke:var(--t3);stroke-width:6}
+.macro-ring-fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.macro-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.macro-ring-val{font-family:var(--raj);font-size:16px;font-weight:700;line-height:1}
+.macro-ring-unit{font-size:7px;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.macro-goal{font-size:9px;color:var(--t2);letter-spacing:1px;text-transform:uppercase}
+.macro-goal b{color:var(--t);font-weight:700;letter-spacing:0;text-transform:none;margin-left:3px}
+.macro-rem{font-size:9px;margin-top:1px}
+.macro-rem b{font-family:var(--raj);font-size:14px;font-weight:700;color:var(--t);margin-right:3px}
+.macro-rem .lbl{font-size:8px;color:var(--t2);letter-spacing:.5px;text-transform:uppercase}
+.macro-rem.is-done .lbl{color:var(--g2);font-weight:700}
+.macro-rem.is-over b,.macro-rem.is-over .lbl{color:var(--red)}
+@media (max-width:768px){
+  .macro-ring-wrap{width:58px !important;height:58px !important}
+  .macro-ring-val{font-size:14px !important}
+}
 .card{background:var(--card);border:1px solid var(--border);padding:13px;position:relative}
 .card-label{font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
 .card-val{font-family:var(--raj);font-size:26px;font-weight:700;color:var(--g);letter-spacing:1px;line-height:1}
@@ -820,7 +839,8 @@ html.alpha{
 body, .inp, .btn, .btn-ghost, select.inp, input, textarea,
 .sb-label, .sb-sec, .card-label, .card-sub, .inp-label, .sec-head,
 .mob-nav-label, .mob-sheet-lbl, .timer-mode-lbl, .toast, .date-disp,
-.streak-chip, .sync-indicator, .lib-sort-sel, .lib-bulk-btn, .preset-btn{
+.streak-chip, .sync-indicator, .lib-sort-sel, .lib-bulk-btn, .preset-btn,
+.macro-goal, .macro-rem, .macro-ring-unit{
   font-family:var(--font-ui) !important;
 }
 .sec-head{letter-spacing:.3px;font-weight:700;font-size:11px;text-transform:none;color:var(--t);}
@@ -1403,41 +1423,95 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
   <div class="ntr-grid">
     <div class="ntr-col-left">
       <div class="ntr-stat-grid">
-        <div class="card"><div class="card-label">CALORIES</div>
-          <div class="ntr-card-split">
-            <div><div class="card-val ntr-val" style="color:var(--o2)" id="n-cal">0</div><div class="card-sub">eaten</div></div>
-            <div class="ntr-val-r"><div class="card-val ntr-val" style="color:var(--t2)" id="n-cal-rem">0</div><div class="card-sub">remaining</div></div>
+        <div class="card macro-card">
+          <div class="card-label">CALORIES</div>
+          <div class="macro-ring-wrap">
+            <svg class="macro-ring-svg" viewBox="0 0 72 72">
+              <circle class="macro-ring-bg" cx="36" cy="36" r="29"></circle>
+              <circle class="macro-ring-fg" id="n-cal-ring" cx="36" cy="36" r="29" stroke-dasharray="182" stroke-dashoffset="182" style="stroke:var(--o2)"></circle>
+            </svg>
+            <div class="macro-ring-inner">
+              <div class="macro-ring-val" id="n-cal" style="color:var(--o2)">0</div>
+              <div class="macro-ring-unit">kcal</div>
+            </div>
           </div>
+          <div class="macro-goal">GOAL <b id="n-cal-goal">0</b></div>
+          <div class="macro-rem" id="n-cal-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card"><div class="card-label">PROTEIN</div>
-          <div class="ntr-card-split">
-            <div><div class="card-val ntr-val" style="color:var(--o)" id="n-prot">0g</div><div class="card-sub">eaten</div></div>
-            <div class="ntr-val-r"><div class="card-val ntr-val" style="color:var(--t2)" id="n-prot-rem">0g</div><div class="card-sub">remaining</div></div>
+        <div class="card macro-card">
+          <div class="card-label">PROTEIN</div>
+          <div class="macro-ring-wrap">
+            <svg class="macro-ring-svg" viewBox="0 0 72 72">
+              <circle class="macro-ring-bg" cx="36" cy="36" r="29"></circle>
+              <circle class="macro-ring-fg" id="n-prot-ring" cx="36" cy="36" r="29" stroke-dasharray="182" stroke-dashoffset="182" style="stroke:var(--o)"></circle>
+            </svg>
+            <div class="macro-ring-inner">
+              <div class="macro-ring-val" id="n-prot" style="color:var(--o)">0</div>
+              <div class="macro-ring-unit">g</div>
+            </div>
           </div>
+          <div class="macro-goal">GOAL <b id="n-prot-goal">0</b></div>
+          <div class="macro-rem" id="n-prot-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card"><div class="card-label">CARBS</div>
-          <div class="ntr-card-split">
-            <div><div class="card-val ntr-val" style="color:var(--c2)" id="n-carb">0g</div><div class="card-sub">eaten</div></div>
-            <div class="ntr-val-r"><div class="card-val ntr-val" style="color:var(--t2)" id="n-carb-rem">0g</div><div class="card-sub">remaining</div></div>
+        <div class="card macro-card">
+          <div class="card-label">CARBS</div>
+          <div class="macro-ring-wrap">
+            <svg class="macro-ring-svg" viewBox="0 0 72 72">
+              <circle class="macro-ring-bg" cx="36" cy="36" r="29"></circle>
+              <circle class="macro-ring-fg" id="n-carb-ring" cx="36" cy="36" r="29" stroke-dasharray="182" stroke-dashoffset="182" style="stroke:var(--c2)"></circle>
+            </svg>
+            <div class="macro-ring-inner">
+              <div class="macro-ring-val" id="n-carb" style="color:var(--c2)">0</div>
+              <div class="macro-ring-unit">g</div>
+            </div>
           </div>
+          <div class="macro-goal">GOAL <b id="n-carb-goal">0</b></div>
+          <div class="macro-rem" id="n-carb-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card"><div class="card-label">FAT</div>
-          <div class="ntr-card-split">
-            <div><div class="card-val ntr-val" style="color:var(--g2)" id="n-fat">0g</div><div class="card-sub">eaten</div></div>
-            <div class="ntr-val-r"><div class="card-val ntr-val" style="color:var(--t2)" id="n-fat-rem">0g</div><div class="card-sub">remaining</div></div>
+        <div class="card macro-card">
+          <div class="card-label">FAT</div>
+          <div class="macro-ring-wrap">
+            <svg class="macro-ring-svg" viewBox="0 0 72 72">
+              <circle class="macro-ring-bg" cx="36" cy="36" r="29"></circle>
+              <circle class="macro-ring-fg" id="n-fat-ring" cx="36" cy="36" r="29" stroke-dasharray="182" stroke-dashoffset="182" style="stroke:var(--g2)"></circle>
+            </svg>
+            <div class="macro-ring-inner">
+              <div class="macro-ring-val" id="n-fat" style="color:var(--g2)">0</div>
+              <div class="macro-ring-unit">g</div>
+            </div>
           </div>
+          <div class="macro-goal">GOAL <b id="n-fat-goal">0</b></div>
+          <div class="macro-rem" id="n-fat-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card"><div class="card-label">FIBER</div>
-          <div class="ntr-card-split">
-            <div><div class="card-val ntr-val" style="color:var(--p)" id="n-fiber">0g</div><div class="card-sub">eaten</div></div>
-            <div class="ntr-val-r"><div class="card-val ntr-val" style="color:var(--t2)" id="n-fiber-rem">0g</div><div class="card-sub">remaining</div></div>
+        <div class="card macro-card">
+          <div class="card-label">FIBER</div>
+          <div class="macro-ring-wrap">
+            <svg class="macro-ring-svg" viewBox="0 0 72 72">
+              <circle class="macro-ring-bg" cx="36" cy="36" r="29"></circle>
+              <circle class="macro-ring-fg" id="n-fiber-ring" cx="36" cy="36" r="29" stroke-dasharray="182" stroke-dashoffset="182" style="stroke:var(--p)"></circle>
+            </svg>
+            <div class="macro-ring-inner">
+              <div class="macro-ring-val" id="n-fiber" style="color:var(--p)">0</div>
+              <div class="macro-ring-unit">g</div>
+            </div>
           </div>
+          <div class="macro-goal">GOAL <b id="n-fiber-goal">0</b></div>
+          <div class="macro-rem" id="n-fiber-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card"><div class="card-label">OMEGA-3</div>
-          <div class="ntr-card-split">
-            <div><div class="card-val ntr-val" style="color:var(--c)" id="n-omega3">0g</div><div class="card-sub">eaten</div></div>
-            <div class="ntr-val-r"><div class="card-val ntr-val" style="color:var(--t2)" id="n-omega3-rem">0g</div><div class="card-sub">remaining</div></div>
+        <div class="card macro-card">
+          <div class="card-label">OMEGA-3</div>
+          <div class="macro-ring-wrap">
+            <svg class="macro-ring-svg" viewBox="0 0 72 72">
+              <circle class="macro-ring-bg" cx="36" cy="36" r="29"></circle>
+              <circle class="macro-ring-fg" id="n-omega3-ring" cx="36" cy="36" r="29" stroke-dasharray="182" stroke-dashoffset="182" style="stroke:var(--c)"></circle>
+            </svg>
+            <div class="macro-ring-inner">
+              <div class="macro-ring-val" id="n-omega3" style="color:var(--c)">0</div>
+              <div class="macro-ring-unit">g</div>
+            </div>
           </div>
+          <div class="macro-goal">GOAL <b id="n-omega3-goal">0</b></div>
+          <div class="macro-rem" id="n-omega3-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
       </div>
     </div>
@@ -2577,6 +2651,32 @@ function renderNtrDayStrip() {
   var mhd = document.getElementById('ntr-meals-head');
   if (mhd) mhd.textContent = (ntrDate === S.today) ? "TODAY'S MEALS" : "MEALS ON THIS DAY";
 }
+function updateMacroRing(prefix, val, goal, unit) {
+  val = val || 0; goal = goal || 0;
+  var R = 29, C = 2 * Math.PI * R;
+  var pct = goal > 0 ? Math.min(100, (val / goal) * 100) : 0;
+  var ring = document.getElementById(prefix + '-ring');
+  if (ring) { ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C - (C * pct / 100); }
+  var valEl = document.getElementById(prefix);
+  if (valEl) valEl.textContent = (Math.round(val * 100) / 100);
+  var suf = unit === 'kcal' ? ' kcal' : 'g';
+  var goalEl = document.getElementById(prefix + '-goal');
+  if (goalEl) goalEl.textContent = goal > 0 ? (goal + suf) : '—';
+  var wrap = document.getElementById(prefix + '-rem-wrap');
+  if (!wrap) return;
+  wrap.classList.remove('is-done', 'is-over');
+  if (goal <= 0) {
+    wrap.innerHTML = '<span class="lbl">NO GOAL SET</span>';
+  } else {
+    var diff = Math.round((goal - val) * 100) / 100;
+    if (diff <= 0) {
+      if (diff === 0) { wrap.innerHTML = '<span class="lbl">✓ GOAL REACHED</span>'; wrap.classList.add('is-done'); }
+      else { wrap.innerHTML = '<b>' + Math.abs(diff) + suf + '</b><span class="lbl">OVER</span>'; wrap.classList.add('is-over'); }
+    } else {
+      wrap.innerHTML = '<b>' + diff + suf + '</b><span class="lbl">LEFT</span>';
+    }
+  }
+}
 function renderNutrition() {
   if (!ntrDate) ntrDate = S.today;
   renderNtrDayStrip();
@@ -2584,19 +2684,12 @@ function renderNutrition() {
   var d = getDay(ntrDate);
   var totCal=0,totProt=0,totCarb=0,totFat=0,totFib=0,totOm=0;
   d.meals.forEach(m => { totCal+=m.kcal; totProt+=m.protein; totCarb+=m.carbs; totFat+=m.fat; totFib+=m.fiber||0; totOm+=m.omega3||0; });
-  var rem = Math.max(0, S.cfg.calGoal - totCal);
-  document.getElementById('n-cal').textContent = totCal;
-  document.getElementById('n-cal-rem').textContent = rem;
-  document.getElementById('n-prot').textContent = totProt + 'g';
-  document.getElementById('n-prot-rem').textContent = Math.max(0, S.cfg.protGoal - totProt) + 'g';
-  document.getElementById('n-carb').textContent = totCarb + 'g';
-  document.getElementById('n-carb-rem').textContent = Math.max(0, S.cfg.carbGoal - totCarb) + 'g';
-  document.getElementById('n-fat').textContent = totFat + 'g';
-  document.getElementById('n-fat-rem').textContent = Math.max(0, (S.cfg.fatGoal||0) - totFat) + 'g';
-  document.getElementById('n-fiber').textContent = totFib + 'g';
-  document.getElementById('n-fiber-rem').textContent = Math.max(0, (S.cfg.fiberGoal||0) - totFib) + 'g';
-  document.getElementById('n-omega3').textContent = totOm + 'g';
-  document.getElementById('n-omega3-rem').textContent = Math.max(0, (S.cfg.omega3Goal||0) - totOm) + 'g';
+  updateMacroRing('n-cal', totCal, S.cfg.calGoal||0, 'kcal');
+  updateMacroRing('n-prot', totProt, S.cfg.protGoal||0, 'g');
+  updateMacroRing('n-carb', totCarb, S.cfg.carbGoal||0, 'g');
+  updateMacroRing('n-fat', totFat, S.cfg.fatGoal||0, 'g');
+  updateMacroRing('n-fiber', totFib, S.cfg.fiberGoal||0, 'g');
+  updateMacroRing('n-omega3', totOm, S.cfg.omega3Goal||0, 'g');
   var list = document.getElementById('mealList');
   if (!d.meals.length) { list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No meals logged yet.</div>'; return; }
   var colors = {Breakfast:'var(--o)',Lunch:'var(--c2)',Dinner:'var(--p)',Snack:'var(--t2)','Pre-workout':'var(--g2)','Post-workout':'var(--g)'};

@@ -1285,6 +1285,64 @@ html.alpha .sec-head{border-bottom:1px solid var(--glass-border) !important}
 @media (max-width:768px){
   body::before{inset:-20%}
 }
+
+/* ===================================================================
+   MACOS / iOS — deeper vibrancy pass
+   Pushes the frosted-glass material closer to the real thing: stronger
+   blur + saturation, a specular top highlight baked into every glass
+   shadow (the catch-light a real glass panel shows along its top
+   edge), the system font stack so Apple devices render true SF Pro,
+   airier spacing across grids and cards so pages breathe the way
+   macOS System Settings / iOS widgets do, and a quiet native-style
+   scrollbar instead of a neon accent bar.
+   =================================================================== */
+
+:root{
+  --font-ui:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter','DM Sans',sans-serif;
+  --glass-blur:blur(32px) saturate(190%);
+  --shadow-soft:0 12px 40px rgba(0,0,0,.32), 0 1px 0 rgba(255,255,255,.06) inset;
+  --shadow-glow:0 0 0 1px var(--glass-border), 0 10px 28px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.07) inset;
+  --radius-lg:22px;--radius-md:16px;--radius-sm:11px;
+}
+html.alpha{
+  --glass-blur:blur(28px) saturate(210%);
+  --shadow-soft:0 12px 36px rgba(20,30,25,.10), 0 1px 0 rgba(255,255,255,.7) inset;
+  --shadow-glow:0 0 0 1px var(--glass-border), 0 10px 28px rgba(20,30,25,.09), 0 1px 0 rgba(255,255,255,.75) inset;
+}
+.modal,.mob-sheet{border-radius:26px !important;}
+
+/* Roomier layout — more gap and padding so panels breathe. */
+.content{padding:24px 28px 40px !important;}
+.card{padding:18px !important;}
+.g2,.g3,.g4{gap:14px !important;}
+#habitList,#exList,#goalList,#mealList,#vitalHistory,#measHistory,#savedTimers{gap:14px !important;}
+.ntr-grid,.ntr-stat-grid{gap:16px !important;}
+.log-chip-grid,.log-field-grid{gap:10px !important;}
+.sec-head{margin:22px 0 12px !important;}
+@media (max-width:768px){
+  .content{padding:16px 16px 28px !important;}
+  .card{padding:14px !important;}
+}
+
+/* Quiet native-style scrollbar — thin translucent overlay, not a
+   colored accent bar. */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18) !important;border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.3) !important}
+html.alpha ::-webkit-scrollbar-thumb{background:rgba(20,30,25,.16) !important;border:2px solid transparent;background-clip:padding-box}
+html.alpha ::-webkit-scrollbar-thumb:hover{background:rgba(20,30,25,.28) !important}
+
+/* Bring the Appearance controls (theme toggle, mode buttons, accent
+   swatches) into the same glass material as everything else. */
+.theme-toggle,.pd-mode-btn{
+  background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border-radius:999px !important;
+}
+.theme-toggle:hover{background:var(--glass-bg2) !important}
+.pd-mode-btn.active{background:var(--gd) !important;border-color:color-mix(in srgb, var(--g) 40%, transparent) !important}
+.accent-swatch{box-shadow:0 2px 6px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.35) inset}
+
 </style>
 </head>
 <body>

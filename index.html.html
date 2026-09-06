@@ -1343,6 +1343,48 @@ html.alpha ::-webkit-scrollbar-thumb:hover{background:rgba(20,30,25,.28) !import
 .pd-mode-btn.active{background:var(--gd) !important;border-color:color-mix(in srgb, var(--g) 40%, transparent) !important}
 .accent-swatch{box-shadow:0 2px 6px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.35) inset}
 
+/* ===================================================================
+   GLASS // OS — retrofit pass
+   The rules above already re-skin every element that goes through a
+   known class (.card, .btn, .inp, .modal, .meal-item, ...), but a lot
+   of panels in this app are still hand-styled inline with the raw
+   --card / --card2 / --panel / --border tokens (form containers, the
+   ingredient rows, the meal-type picker popup, library preview boxes,
+   library-list rows, etc.) and never picked up the frosted, rounded,
+   translucent treatment. Catch those here via substring attribute
+   selectors so literally every surface in the app — not just the ones
+   wrapped in a known class — renders as the same iOS/macOS glass
+   material, with no square, flat, opaque corners left anywhere. */
+[style*="background:var(--card)"],
+[style*="background:var(--card2)"],
+[style*="background:var(--panel)"]{
+  background:var(--glass-bg) !important;
+  border-radius:var(--radius-md) !important;
+  backdrop-filter:var(--glass-blur) !important;-webkit-backdrop-filter:var(--glass-blur) !important;
+}
+button[style*="background:var(--card2)"],
+button[style*="background:var(--card)"]{
+  border-radius:999px !important;
+}
+[style*="border:1px solid var(--border)"]{
+  border-color:var(--glass-border) !important;
+}
+[style*="border-left:3px solid"]{
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0 !important;
+  overflow:hidden;
+}
+[style*="border-top:1px solid var(--border)"],
+[style*="border-bottom:1px solid var(--border)"]{
+  border-color:var(--glass-border) !important;
+}
+/* Hand-built popup overlays (meal-type picker, etc.) that set their own
+   position:fixed scrim — give the scrim itself a blur too, and round +
+   glass the panel it wraps (already covered by the background:var(--card)
+   rule above since these panels use that same token). */
+div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+
 </style>
 </head>
 <body>
@@ -1925,6 +1967,21 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
 .hstat-sub{font-size:8px;color:var(--t2);letter-spacing:1px;margin-top:1px}
 /* Streak fire */
 .streak-fire{color:var(--o2)}
+
+/* ===== iOS/macOS glass retrofit — this tab predates the glass system,
+   so its tables/cards were still flat, opaque and square-cornered.
+   Bring them into the same frosted, rounded, translucent material as
+   the rest of the app. ===== */
+.htab{background:var(--glass-bg) !important;border-right:1px solid var(--glass-border) !important;border-radius:var(--radius-sm) var(--radius-sm) 0 0 !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+.htab.active{background:var(--gd) !important}
+.hcal-table{border-radius:var(--radius-md);overflow:hidden}
+.hcal-table th,.hcal-goal-col,.hcal-done-col,.hcal-pct-col{background:var(--glass-bg2) !important;border-color:var(--glass-border) !important;backdrop-filter:blur(6px)}
+.hcal-table .hcal-habit-col{background:var(--glass-bg) !important;border-color:var(--glass-border) !important;backdrop-filter:blur(6px)}
+.hcal-table td{border-color:var(--glass-border) !important}
+.hcal-cell{border-radius:6px !important;border-color:var(--glass-border) !important}
+.hcal-icon-btn{background:var(--glass-bg) !important;border-color:var(--glass-border) !important;border-radius:8px !important}
+.hwk-card,.hstat-card{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft)}
+html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}
 </style>
 
 <!-- ============ VITALS ============ -->

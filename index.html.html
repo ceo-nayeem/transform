@@ -182,6 +182,20 @@ html.alpha[data-accent="rose"]{--g:#e11d48;--g2:#9f1239;--g3:#fde2e9;--gd:color-
 /* ===== THEME TOGGLE ===== */
 .theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--card);border:1px solid var(--border);padding:5px 10px 5px 6px;transition:all .2s;user-select:none;}
 .theme-toggle:hover{border-color:var(--g)}
+/* Circular icon-only light/dark switch (topbar) — no track, no text label,
+   just a single tappable glass circle showing the current mode's icon. */
+.theme-toggle-circle{
+  width:34px;height:34px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-soft);cursor:pointer;font-size:15px;line-height:1;
+  transition:transform .15s ease,background .18s ease,box-shadow .18s ease;
+}
+.theme-toggle-circle:hover{background:var(--glass-bg2);transform:translateY(-1px)}
+.theme-toggle-circle:active{transform:translateY(0) scale(.94)}
+.theme-toggle-circle span{transition:transform .3s ease;display:inline-block}
+.theme-toggle-circle:active span{transform:rotate(20deg)}
 .toggle-track{width:36px;height:18px;background:var(--t3);border:1px solid var(--border);border-radius:9px;position:relative;transition:all .3s;flex-shrink:0;}
 html.alpha .toggle-track{background:var(--g3);border-color:var(--g2)}
 .toggle-knob{width:12px;height:12px;background:var(--t2);border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;}
@@ -1096,25 +1110,26 @@ html.alpha body{background:#f2f6f4 !important;}
 body::before{
   content:'';position:fixed;inset:-12%;z-index:-2;pointer-events:none;
   background:
-    radial-gradient(1100px 620px at 12% -10%, color-mix(in srgb, var(--g) 22%, transparent), transparent 60%),
-    radial-gradient(950px 520px at 112% 6%, color-mix(in srgb, var(--c) 17%, transparent), transparent 55%),
-    radial-gradient(850px 720px at 48% 120%, rgba(170,119,255,.16), transparent 55%),
-    radial-gradient(650px 480px at 88% 92%, rgba(255,107,0,.09), transparent 55%);
-  animation:auroraDrift 24s ease-in-out infinite alternate;
-  will-change:transform;
+    radial-gradient(1100px 620px at 12% -10%, color-mix(in srgb, var(--g) 42%, transparent), transparent 62%),
+    radial-gradient(950px 520px at 112% 6%, color-mix(in srgb, var(--c) 30%, transparent), transparent 58%),
+    radial-gradient(850px 720px at 48% 120%, rgba(170,119,255,.30), transparent 58%),
+    radial-gradient(700px 560px at 90% 94%, rgba(255,107,0,.28), transparent 58%);
+  animation:auroraDrift 20s ease-in-out infinite alternate;
+  will-change:transform,opacity;
 }
 html.alpha body::before{
   mix-blend-mode:multiply;
   background:
-    radial-gradient(1100px 620px at 12% -10%, color-mix(in srgb, var(--g) 55%, transparent), transparent 60%),
-    radial-gradient(950px 520px at 112% 6%, color-mix(in srgb, var(--c) 45%, transparent), transparent 55%),
-    radial-gradient(850px 720px at 48% 120%, rgba(170,119,255,.40), transparent 55%),
-    radial-gradient(650px 480px at 88% 92%, rgba(255,170,68,.30), transparent 55%);
+    radial-gradient(1100px 620px at 12% -10%, color-mix(in srgb, var(--g) 62%, transparent), transparent 62%),
+    radial-gradient(950px 520px at 112% 6%, color-mix(in srgb, var(--c) 52%, transparent), transparent 58%),
+    radial-gradient(850px 720px at 48% 120%, rgba(170,119,255,.48), transparent 58%),
+    radial-gradient(700px 560px at 90% 94%, rgba(255,170,68,.46), transparent 58%);
 }
 @keyframes auroraDrift{
-  0%{transform:translate3d(0,0,0) scale(1);}
-  50%{transform:translate3d(-2.5%,1.8%,0) scale(1.06);}
-  100%{transform:translate3d(2%,-1.4%,0) scale(1.03);}
+  0%{transform:translate3d(0,0,0) scale(1);opacity:.92;}
+  35%{transform:translate3d(-4%,2.6%,0) scale(1.12);opacity:1;}
+  70%{transform:translate3d(3.2%,-2.2%,0) scale(1.06);opacity:.95;}
+  100%{transform:translate3d(-1.8%,1.2%,0) scale(1.09);opacity:1;}
 }
 @media (prefers-reduced-motion:reduce){ body::before{animation:none;} }
 
@@ -1421,10 +1436,9 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <span class="fb-status" id="syncDot"></span>
       <span id="syncTxt">SYNCED</span>
     </div>
-    <div class="theme-toggle" onclick="toggleTheme()" title="Switch Theme">
-      <div class="toggle-track"><div class="toggle-knob"></div></div>
-      <span class="toggle-label" id="themeLabel">DARK</span>
-    </div>
+    <button class="theme-toggle-circle" onclick="toggleTheme()" title="Switch theme" aria-label="Switch light/dark theme">
+      <span id="themeIcon">🌙</span>
+    </button>
     <div class="streak-chip"><div class="dot-pulse"></div><span id="streakDisp">12 DAY STREAK</span></div>
     <div class="date-disp" id="dateDisp"></div>
     <div class="profile-menu" id="profileMenu">
@@ -4181,7 +4195,8 @@ function ivUpdateDisplay(){var iv=TM.iv;var phaseSec=iv.phase==='work'?iv.work:i
 var ACCENT_NAMES = ['emerald','azure','violet','amber','rose'];
 
 function _applyModeUI(isLight){
-  document.getElementById('themeLabel').textContent = isLight ? 'LIGHT' : 'DARK';
+  var icon = document.getElementById('themeIcon');
+  if (icon) icon.textContent = isLight ? '☀️' : '🌙';
   var d = document.getElementById('pdModeDark'), l = document.getElementById('pdModeLight');
   if (d) d.classList.toggle('active', !isLight);
   if (l) l.classList.toggle('active', isLight);

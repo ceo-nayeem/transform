@@ -2853,20 +2853,33 @@ function renderNutrition() {
         </div>
         <div class="inp-group" style="margin-bottom:8px"><div class="inp-label">NOTES</div><input class="inp" id="me-notes-${i}" type="text" value="${(m.notes||'').replace(/"/g,'&quot;')}"/></div>
 
-        <div style="font-size:9px;color:var(--c2);letter-spacing:1px;margin:10px 0 6px;border-top:1px dashed var(--border);padding-top:10px">EDIT INGREDIENTS</div>
+        <div style="font-size:9px;color:var(--c2);letter-spacing:1px;margin:10px 0 6px;border-top:1px dashed var(--border);padding-top:10px">INGREDIENTS — CHANGE AMOUNT (g)</div>
         <div id="me-ingr-list-${i}">${renderMealEditIngredients(i, ingrs)}</div>
 
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;background:var(--card);border:1px dashed var(--border);padding:8px;">
-          <div class="inp-group" style="flex:3;min-width:100px"><div class="inp-label">NAME</div><input class="inp" id="me-new-name-${i}" type="text" placeholder="e.g. Rice"/></div>
-          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">WT(g)</div><input class="inp" id="me-new-wt-${i}" type="number"/></div>
-          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CAL</div><input class="inp" id="me-new-cal-${i}" type="number"/></div>
-          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">PRO</div><input class="inp" id="me-new-pro-${i}" type="number"/></div>
-          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CARB</div><input class="inp" id="me-new-carb-${i}" type="number"/></div>
-          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FAT</div><input class="inp" id="me-new-fat-${i}" type="number"/></div>
-          <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FIBER</div><input class="inp" id="me-new-fiber-${i}" type="number"/></div>
-          <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">OMEGA3</div><input class="inp" id="me-new-omega3-${i}" type="number"/></div>
-          <div style="display:flex;align-items:flex-end">
-            <button class="btn sm" onclick="addIngredientToMeal(${i})">[ + ADD INGREDIENT ]</button>
+        <!-- ── Add from Ingredient Library (same widget used when logging a meal) ── -->
+        <div class="ilsw" id="me${i}-ilsw" style="margin-top:8px">
+          <div class="ilsw-head">
+            <span class="ilsw-label">📖 ADD FROM LIBRARY</span>
+            <div class="ilsw-inp">
+              <input class="inp" id="me${i}-il-q" type="text" placeholder="Search ingredient library..." autocomplete="off"
+                oninput="ilswSearch('me${i}')" onfocus="ilswSearch('me${i}')"/>
+              <button class="ilsw-clear" id="me${i}-il-clr" onclick="ilswClearSearch('me${i}')" style="display:none">✕</button>
+            </div>
+          </div>
+          <div class="ilsw-dropdown" id="me${i}-il-dd"></div>
+          <div class="ilsw-selected" id="me${i}-il-sel">
+            <div class="ilsw-sel-name">
+              <span id="me${i}-il-sel-name">—</span>
+              <button onclick="ilswDeselect('me${i}')" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:10px;font-family:var(--mono)" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--t2)'">✕ CLEAR</button>
+            </div>
+            <div class="ilsw-sel-base" id="me${i}-il-sel-base"></div>
+            <div class="ilsw-wt-row">
+              <div class="inp-group"><div class="inp-label">CONSUMED (g)</div>
+                <input class="inp" id="me${i}-il-wt" type="number" placeholder="e.g. 150" min="0" oninput="ilswCalc('me${i}')"/>
+              </div>
+              <div class="ilsw-calc-out" id="me${i}-il-out"></div>
+              <button class="btn sm ilsw-add-btn" onclick="ilswAddToLoggedMeal(${i})">↳ ADD</button>
+            </div>
           </div>
         </div>
 
@@ -2880,26 +2893,53 @@ function renderNutrition() {
 }
 
 // Renders the editable ingredient rows shown inside a logged meal's edit form.
-// Each row has its own inline inputs (name/weight/macros) plus a remove button,
-// so every ingredient within an already-logged meal can be tweaked individually.
+// Kept deliberately simple: since ingredients come from the Ingredient Library
+// (nutrition per gram is defined there, not typed in by hand), the only thing
+// editable per row is how much was consumed (grams) — nutrition recalculates
+// automatically from the library. A remove button drops the ingredient entirely.
 function renderMealEditIngredients(mealIdx, ingrs) {
-  if (!ingrs || !ingrs.length) return '<div style="font-size:10px;color:var(--t2);padding:6px 0">No ingredients — add one below.</div>';
-  return ingrs.map((ig,j) => `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;background:var(--card);border:1px solid var(--border);padding:6px;margin-bottom:4px">
-    <div class="inp-group" style="flex:3;min-width:100px"><div class="inp-label">NAME</div><input class="inp" id="me-ig-name-${mealIdx}-${j}" type="text" value="${(ig.name||'').replace(/"/g,'&quot;')}"/></div>
-    <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">WT(g)</div><input class="inp" id="me-ig-wt-${mealIdx}-${j}" type="number" value="${ig.weight||0}"/></div>
-    <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CAL</div><input class="inp" id="me-ig-cal-${mealIdx}-${j}" type="number" value="${ig.cal||0}"/></div>
-    <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">PRO</div><input class="inp" id="me-ig-pro-${mealIdx}-${j}" type="number" value="${ig.pro||0}"/></div>
-    <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">CARB</div><input class="inp" id="me-ig-carb-${mealIdx}-${j}" type="number" value="${ig.carb||0}"/></div>
-    <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FAT</div><input class="inp" id="me-ig-fat-${mealIdx}-${j}" type="number" value="${ig.fat||0}"/></div>
-    <div class="inp-group" style="flex:1;min-width:50px"><div class="inp-label">FIBER</div><input class="inp" id="me-ig-fiber-${mealIdx}-${j}" type="number" value="${ig.fiber||0}"/></div>
-    <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">OMEGA3</div><input class="inp" id="me-ig-omega3-${mealIdx}-${j}" type="number" value="${ig.omega3||0}"/></div>
+  if (!ingrs || !ingrs.length) return '<div style="font-size:10px;color:var(--t2);padding:6px 0">No ingredients — add one from the library below.</div>';
+  return ingrs.map((ig,j) => `<div style="display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);padding:6px 8px;margin-bottom:4px;font-family:var(--mono)">
+    <span style="flex:1;font-size:11px;color:var(--t)">${(ig.name||'').replace(/</g,'&lt;')}</span>
+    <div class="inp-group" style="width:80px"><div class="inp-label">WT(g)</div><input class="inp" id="me-ig-wt-${mealIdx}-${j}" type="number" value="${ig.weight||0}" oninput="recalcMealEditIngredient(${mealIdx},${j})"/></div>
+    <span id="me-ig-macro-${mealIdx}-${j}" style="font-size:9px;color:var(--t2);min-width:150px">${ig.cal||0}cal · P:${ig.pro||0}g C:${ig.carb||0}g F:${ig.fat||0}g</span>
     <button class="del-btn" onclick="delIngredientFromMealEdit(${mealIdx},${j})" title="Remove ingredient">✕</button>
   </div>`).join('');
 }
 
-// Removes a single ingredient row from within the open edit form (before Save is
-// pressed). Re-renders just that meal's edit form so other edits in progress
-// (name/time/type/notes/other ingredient rows) aren't lost.
+// Recomputes one ingredient row's nutrition (in-memory only, not yet saved)
+// when its weight is changed, by looking up the ratio from the Ingredient
+// Library entry with the same name — same per-gram scaling used everywhere
+// else ingredients are added. Falls back to simple linear scaling off the
+// ingredient's own previous weight/values if it's no longer in the library.
+function recalcMealEditIngredient(mealIdx, ingrIdx) {
+  var m = getDay(ntrDate).meals[mealIdx]; if (!m || !m.ingredients) return;
+  var ig = m.ingredients[ingrIdx]; if (!ig) return;
+  var newWt = parseFloat(document.getElementById('me-ig-wt-'+mealIdx+'-'+ingrIdx).value) || 0;
+
+  var libItem = (S.ingredientLibrary||[]).find(function(x){ return x.name.toLowerCase() === (ig.name||'').toLowerCase(); });
+  var cal, pro, carb, fat, fiber, omega3;
+  if (libItem) {
+    var bw = libItem.baseWeight || 100;
+    var r = newWt / bw;
+    cal=libItem.cal*r; pro=libItem.pro*r; carb=libItem.carb*r; fat=libItem.fat*r; fiber=(libItem.fiber||0)*r; omega3=(libItem.omega3||0)*r;
+  } else {
+    // No matching library entry (e.g. renamed/removed since logging) — scale
+    // off this ingredient's own prior weight so amounts still track sensibly.
+    var oldWt = ig.weight || newWt || 1;
+    var r2 = oldWt ? (newWt / oldWt) : 0;
+    cal=(ig.cal||0)*r2; pro=(ig.pro||0)*r2; carb=(ig.carb||0)*r2; fat=(ig.fat||0)*r2; fiber=(ig.fiber||0)*r2; omega3=(ig.omega3||0)*r2;
+  }
+  ig.weight=newWt; ig.cal=+cal.toFixed(1); ig.pro=+pro.toFixed(1); ig.carb=+carb.toFixed(1); ig.fat=+fat.toFixed(1); ig.fiber=+fiber.toFixed(1); ig.omega3=+omega3.toFixed(1);
+
+  var macroEl = document.getElementById('me-ig-macro-'+mealIdx+'-'+ingrIdx);
+  if (macroEl) macroEl.textContent = ig.cal+'cal · P:'+ig.pro+'g C:'+ig.carb+'g F:'+ig.fat+'g';
+  // Not saved to storage yet — persisted together with the rest of the edit on [ SAVE ].
+}
+
+// Removes a single ingredient row from within the open edit form. Re-renders
+// just that meal's edit form so other edits in progress (name/time/type/notes/
+// other ingredient rows) aren't lost.
 function delIngredientFromMealEdit(mealIdx, ingrIdx) {
   var m = getDay(ntrDate).meals[mealIdx]; if (!m || !m.ingredients) return;
   m.ingredients.splice(ingrIdx, 1);
@@ -2909,35 +2949,6 @@ function delIngredientFromMealEdit(mealIdx, ingrIdx) {
   var list = document.getElementById('me-ingr-list-'+mealIdx);
   if (list) list.innerHTML = renderMealEditIngredients(mealIdx, m.ingredients);
   toast('Ingredient removed');
-}
-
-// Adds a brand-new ingredient to an already-logged meal, directly from its
-// edit form's "add ingredient" row.
-function addIngredientToMeal(mealIdx) {
-  var name = document.getElementById('me-new-name-'+mealIdx).value.trim();
-  if (!name) { toast('Enter ingredient name'); return; }
-  var m = getDay(ntrDate).meals[mealIdx]; if (!m) return;
-  if (!m.ingredients) m.ingredients = [];
-  var ig = {
-    name,
-    weight: parseFloat(document.getElementById('me-new-wt-'+mealIdx).value)||0,
-    cal:    parseInt(document.getElementById('me-new-cal-'+mealIdx).value)||0,
-    pro:    parseFloat(document.getElementById('me-new-pro-'+mealIdx).value)||0,
-    carb:   parseFloat(document.getElementById('me-new-carb-'+mealIdx).value)||0,
-    fat:    parseFloat(document.getElementById('me-new-fat-'+mealIdx).value)||0,
-    fiber:  parseFloat(document.getElementById('me-new-fiber-'+mealIdx).value)||0,
-    omega3: parseFloat(document.getElementById('me-new-omega3-'+mealIdx).value)||0
-  };
-  m.ingredients.push(ig);
-  var mac = calcMacrosFromIngredients(m.ingredients);
-  m.kcal=mac.kcal; m.protein=mac.protein; m.carbs=mac.carbs; m.fat=mac.fat; m.fiber=mac.fiber; m.omega3=mac.omega3;
-  save();
-  ['me-new-name','me-new-wt','me-new-cal','me-new-pro','me-new-carb','me-new-fat','me-new-fiber','me-new-omega3'].forEach(id=>{
-    var el=document.getElementById(id+'-'+mealIdx); if (el) el.value='';
-  });
-  var list = document.getElementById('me-ingr-list-'+mealIdx);
-  if (list) list.innerHTML = renderMealEditIngredients(mealIdx, m.ingredients);
-  toast('Ingredient added!');
 }
 
 var pendingIngredients = [];
@@ -3027,21 +3038,11 @@ function saveMealEdit(i) {
   m.type=document.getElementById('me-type-'+i).value;
   m.notes=document.getElementById('me-notes-'+i).value.trim();
 
-  // Pull in any edits made to the individual ingredient rows (name/weight/macros)
-  // before Save was pressed, then recompute the meal's totals from them.
+  // Ingredient weights (and their auto-recalculated nutrition) are already
+  // applied live to m.ingredients by recalcMealEditIngredient() as the user
+  // types, and additions/removals are applied immediately too — so just
+  // recompute the meal's totals from the current ingredient list here.
   if (m.ingredients && m.ingredients.length) {
-    m.ingredients.forEach(function(ig, j){
-      var nameEl = document.getElementById('me-ig-name-'+i+'-'+j);
-      if (!nameEl) return; // row no longer present (e.g. removed already)
-      ig.name   = nameEl.value.trim() || ig.name;
-      ig.weight = parseFloat(document.getElementById('me-ig-wt-'+i+'-'+j).value)   || 0;
-      ig.cal    = parseFloat(document.getElementById('me-ig-cal-'+i+'-'+j).value)  || 0;
-      ig.pro    = parseFloat(document.getElementById('me-ig-pro-'+i+'-'+j).value)  || 0;
-      ig.carb   = parseFloat(document.getElementById('me-ig-carb-'+i+'-'+j).value) || 0;
-      ig.fat    = parseFloat(document.getElementById('me-ig-fat-'+i+'-'+j).value)  || 0;
-      ig.fiber  = parseFloat(document.getElementById('me-ig-fiber-'+i+'-'+j).value)|| 0;
-      ig.omega3 = parseFloat(document.getElementById('me-ig-omega3-'+i+'-'+j).value)|| 0;
-    });
     var mac = calcMacrosFromIngredients(m.ingredients);
     m.kcal=mac.kcal; m.protein=mac.protein; m.carbs=mac.carbs; m.fat=mac.fat; m.fiber=mac.fiber; m.omega3=mac.omega3;
   }
@@ -4371,7 +4372,7 @@ function ilDragEnd() { _ilDragIdx=null; document.querySelectorAll('#ilList .lib-
 // prefix = 'mla'  → Meal Library  Add New Meal
 // Each widget is self-contained; both call the same helper functions.
 
-var _ilswSel = { ntr: null, mla: null }; // currently selected library item per widget
+var _ilswSel = { ntr: null, mla: null }; // currently selected library item per widget; 'me<i>' keys are added lazily for meal-edit widgets
 
 function _ilswQ(p)    { return document.getElementById(p+'-il-q'); }
 function _ilswDD(p)   { return document.getElementById(p+'-il-dd'); }
@@ -4474,6 +4475,40 @@ function ilswAddToIngredients(p) {
   toast('"'+item.name+'" added ('+w+'g)');
 }
 
+// Adds a library ingredient straight into an already-logged meal (used by the
+// "ADD FROM LIBRARY" widget inside a meal's edit form). Same search/select/
+// weight-scaling flow as logging a new meal — just writes into that meal's
+// ingredient list instead of the pending list, and recomputes its totals.
+function ilswAddToLoggedMeal(mealIdx) {
+  var p = 'me'+mealIdx;
+  var item = _ilswSel[p];
+  if (!item) { toast('Select an ingredient first'); return; }
+  var w = parseFloat(_ilswWt(p).value);
+  if (!w || w <= 0) { toast('Enter consumed weight (g)'); return; }
+  var bw = item.baseWeight || 100;
+  var r = w / bw;
+  var ig = {
+    name:   item.name,
+    weight: w,
+    cal:    parseFloat((item.cal  * r).toFixed(1)),
+    pro:    parseFloat((item.pro  * r).toFixed(1)),
+    carb:   parseFloat((item.carb * r).toFixed(1)),
+    fat:    parseFloat((item.fat  * r).toFixed(1)),
+    fiber:  parseFloat(((item.fiber||0) * r).toFixed(1)),
+    omega3: parseFloat(((item.omega3||0) * r).toFixed(1))
+  };
+  var m = getDay(ntrDate).meals[mealIdx]; if (!m) return;
+  if (!m.ingredients) m.ingredients = [];
+  m.ingredients.push(ig);
+  var mac = calcMacrosFromIngredients(m.ingredients);
+  m.kcal=mac.kcal; m.protein=mac.protein; m.carbs=mac.carbs; m.fat=mac.fat; m.fiber=mac.fiber; m.omega3=mac.omega3;
+  save();
+  ilswDeselect(p);
+  var list = document.getElementById('me-ingr-list-'+mealIdx);
+  if (list) list.innerHTML = renderMealEditIngredients(mealIdx, m.ingredients);
+  toast('"'+item.name+'" added ('+w+'g)');
+}
+
 function ilswDeselect(p) {
   _ilswSel[p] = null;
   _ilswSel_(p).style.display = 'none';
@@ -4496,7 +4531,14 @@ function _ilswEsc(s) {
 
 // Close dropdowns when clicking outside
 document.addEventListener('click', function(e){
-  ['ntr','mla'].forEach(function(p){
+  // Fixed widgets (ntr/mla) plus any dynamically-created per-meal-edit widgets
+  // (id pattern me<i>-il-dd) — found live since meal edit forms are re-rendered often.
+  var prefixes = ['ntr','mla'];
+  document.querySelectorAll('[id^="me"][id$="-il-dd"]').forEach(function(el){
+    var m = el.id.match(/^(me\d+)-il-dd$/);
+    if (m) prefixes.push(m[1]);
+  });
+  prefixes.forEach(function(p){
     var dd = document.getElementById(p+'-il-dd');
     var inp = document.getElementById(p+'-il-q');
     if (dd && inp && !dd.contains(e.target) && e.target !== inp) {

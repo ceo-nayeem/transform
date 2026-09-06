@@ -1635,7 +1635,7 @@ html.alpha ::-webkit-scrollbar-thumb:hover{background:rgba(20,30,25,.28) !import
     </div>
     <div id="n-lib-preview" style="display:none;font-size:10px;font-family:var(--mono);color:var(--t2);padding:6px 10px;margin-bottom:8px;background:var(--card2);border:1px solid var(--border)"></div>
     <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME</div><input class="inp" id="n-name" type="text" placeholder="e.g. Chicken + Rice Bowl"/></div>
+      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME (OPTIONAL)</div><input class="inp" id="n-name" type="text" placeholder="Leave blank to use meal type"/></div>
       <div class="inp-group" style="flex:1"><div class="inp-label">TIME</div><input class="inp" id="n-time" type="time"/></div>
       <div class="inp-group" style="flex:1"><div class="inp-label">MEAL TYPE</div><select class="inp" id="n-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Pre-workout</option><option>Post-workout</option></select></div>
     </div>
@@ -2714,6 +2714,19 @@ function renderWeightChart() {
 var ntrDate = '';
 var ntrActiveTab = 'food'; // 'food' or 'water'
 
+// Canonical meal-type order used both for display defaults and for keeping
+// a day's logged meals sorted by type (Breakfast → Lunch → Dinner → Snack → ...)
+// regardless of the order they were actually logged in.
+var MEAL_TYPE_ORDER = ['Breakfast','Lunch','Dinner','Snack','Pre-workout','Post-workout'];
+function sortMealsByType(meals) {
+  if (!meals || meals.length < 2) return;
+  meals.sort(function(a,b){
+    var ia = MEAL_TYPE_ORDER.indexOf(a.type); if (ia === -1) ia = MEAL_TYPE_ORDER.length;
+    var ib = MEAL_TYPE_ORDER.indexOf(b.type); if (ib === -1) ib = MEAL_TYPE_ORDER.length;
+    return ia - ib;
+  }); // Array#sort is stable, so meals of the same type keep their logged order.
+}
+
 function switchNtrTab(tab) {
   ntrActiveTab = tab;
   var foodSec = document.getElementById('ntr-food-section');
@@ -2805,6 +2818,7 @@ function renderNutrition() {
   renderNtrDayStrip();
   updateLibraryDropdown();
   var d = getDay(ntrDate);
+  sortMealsByType(d.meals);
   var totCal=0,totProt=0,totCarb=0,totFat=0,totFib=0,totOm=0;
   d.meals.forEach(m => { totCal+=m.kcal; totProt+=m.protein; totCarb+=m.carbs; totFat+=m.fat; totFib+=m.fiber||0; totOm+=m.omega3||0; });
   updateMacroRing('n-cal', totCal, S.cfg.calGoal||0, 'kcal');
@@ -3020,11 +3034,13 @@ function calcMacrosFromIngredients(ingrs) {
   return {kcal:ingrs.reduce((a,ig)=>a+ig.cal,0), protein:ingrs.reduce((a,ig)=>a+ig.pro,0), carbs:ingrs.reduce((a,ig)=>a+ig.carb,0), fat:ingrs.reduce((a,ig)=>a+ig.fat,0), fiber:ingrs.reduce((a,ig)=>a+ig.fiber,0), omega3:ingrs.reduce((a,ig)=>a+(ig.omega3||0),0)};
 }
 function addMeal() {
-  var name = document.getElementById('n-name').value.trim();
-  if (!name) { toast('Enter meal name'); return; }
+  var type = document.getElementById('n-type').value;
+  var name = document.getElementById('n-name').value.trim() || type;
   var ingrs = pendingIngredients.slice();
   var macros = ingrs.length ? calcMacrosFromIngredients(ingrs) : {kcal:0,protein:0,carbs:0,fat:0,fiber:0,omega3:0};
-  getDay(ntrDate).meals.push({name, type:document.getElementById('n-type').value, time:document.getElementById('n-time').value, kcal:macros.kcal, protein:macros.protein, carbs:macros.carbs, fat:macros.fat, fiber:macros.fiber, omega3:macros.omega3, notes:document.getElementById('n-notes').value.trim(), ingredients:ingrs});
+  var day = getDay(ntrDate);
+  day.meals.push({name, type, time:document.getElementById('n-time').value, kcal:macros.kcal, protein:macros.protein, carbs:macros.carbs, fat:macros.fat, fiber:macros.fiber, omega3:macros.omega3, notes:document.getElementById('n-notes').value.trim(), ingredients:ingrs});
+  sortMealsByType(day.meals);
   ['n-name','n-notes'].forEach(id=>document.getElementById(id).value='');
   pendingIngredients=[]; renderPendingIngredients();
   save(); renderNutrition(); toast('Meal logged!');
@@ -3056,11 +3072,14 @@ function delIngredientFromMeal(mealIdx, ingrIdx) {
   save(); renderNutrition(); toast('Ingredient removed');
 }
 function addMealAndSaveToLibrary() {
-  var name=document.getElementById('n-name').value.trim(); if(!name){toast('Enter meal name');return;}
+  var type=document.getElementById('n-type').value;
+  var name=document.getElementById('n-name').value.trim() || type;
   var ingrs=pendingIngredients.slice();
   var macros=ingrs.length?calcMacrosFromIngredients(ingrs):{kcal:0,protein:0,carbs:0,fat:0,fiber:0,omega3:0};
-  var mealObj={name,type:document.getElementById('n-type').value,kcal:macros.kcal,protein:macros.protein,carbs:macros.carbs,fat:macros.fat,fiber:macros.fiber,omega3:macros.omega3,notes:document.getElementById('n-notes').value.trim(),ingredients:ingrs};
-  getDay(ntrDate).meals.push({...mealObj,time:document.getElementById('n-time').value});
+  var mealObj={name,type,kcal:macros.kcal,protein:macros.protein,carbs:macros.carbs,fat:macros.fat,fiber:macros.fiber,omega3:macros.omega3,notes:document.getElementById('n-notes').value.trim(),ingredients:ingrs};
+  var day = getDay(ntrDate);
+  day.meals.push({...mealObj,time:document.getElementById('n-time').value});
+  sortMealsByType(day.meals);
   ['n-name','n-notes'].forEach(id=>document.getElementById(id).value='');
   pendingIngredients=[]; renderPendingIngredients();
   save(); renderNutrition(); saveMealToLibrary(mealObj);
@@ -3160,7 +3179,9 @@ function logLibraryMealById(id) {
   var m=S.mealLibrary.find(x=>x.id===id); if(!m) return;
   showMealTypeModal(m, function(chosenType) {
     var now=new Date(); var hh=String(now.getHours()).padStart(2,'0'); var mm2=String(now.getMinutes()).padStart(2,'0');
-    getDay(ntrDate||S.today).meals.push({name:m.name,type:chosenType,time:hh+':'+mm2,kcal:m.kcal,protein:m.protein,carbs:m.carbs,fat:m.fat,fiber:m.fiber,notes:m.notes,ingredients:m.ingredients||[]});
+    var day = getDay(ntrDate||S.today);
+    day.meals.push({name:m.name,type:chosenType,time:hh+':'+mm2,kcal:m.kcal,protein:m.protein,carbs:m.carbs,fat:m.fat,fiber:m.fiber,notes:m.notes,ingredients:m.ingredients||[]});
+    sortMealsByType(day.meals);
     save(); if(typeof renderNutrition==='function')try{renderNutrition();}catch(e){} toast('✅ '+m.name+' logged as '+chosenType+'!');
   });
 }
@@ -4352,11 +4373,13 @@ function ilBulkLog() {
   if (!_ilSelected.size) { toast('Select items first'); return; }
   // Log each selected ingredient as a simple meal entry
   var logged = 0;
+  var _bulkDay = getDay(ntrDate||S.today);
   S.ingredientLibrary.forEach(function(item){
     if (!_ilSelected.has(item.id)) return;
-    getDay(ntrDate||S.today).meals.push({name:item.name, type:'Snack', time:'', kcal:item.cal, protein:item.pro, carbs:item.carb, fat:item.fat, fiber:item.fiber, notes:'from library', ingredients:[]});
+    _bulkDay.meals.push({name:item.name, type:'Snack', time:'', kcal:item.cal, protein:item.pro, carbs:item.carb, fat:item.fat, fiber:item.fiber, notes:'from library', ingredients:[]});
     logged++;
   });
+  sortMealsByType(_bulkDay.meals);
   save(); if(typeof renderNutrition==='function') try{renderNutrition();}catch(e){}
   toast('✅ Logged ' + logged + ' ingredient(s) as meals');
   _ilSelected.clear(); renderIngredientLibrary();
@@ -5104,9 +5127,10 @@ function aiExecuteTool(name, args) {
       var now = new Date();
       var hh = String(now.getHours()).padStart(2,'0');
       var mm2 = String(now.getMinutes()).padStart(2,'0');
+      var mealType = args.type || 'Meal';
       var mealEntry = {
-        name:        args.name || 'Unnamed Meal',
-        type:        args.type || 'Meal',
+        name:        args.name || mealType,
+        type:        mealType,
         time:        hh+':'+mm2,
         kcal:        Math.round(args.kcal   || 0),
         protein:     Math.round((args.protein || 0) * 10) / 10,
@@ -5116,7 +5140,9 @@ function aiExecuteTool(name, args) {
         notes:       args.notes || '',
         ingredients: args.ingredients || []
       };
-      getDay(targetDate).meals.push(mealEntry);
+      var _aiDay = getDay(targetDate);
+      _aiDay.meals.push(mealEntry);
+      sortMealsByType(_aiDay.meals);
       save();
       if (typeof renderNutrition === 'function') try{ renderNutrition(); }catch(e){}
       if (typeof renderDashboard === 'function') try{ renderDashboard(); }catch(e){}

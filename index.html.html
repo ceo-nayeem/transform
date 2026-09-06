@@ -196,6 +196,78 @@ html.alpha[data-accent="rose"]{--g:#e11d48;--g2:#9f1239;--g3:#fde2e9;--gd:color-
 .theme-toggle-circle:active{transform:translateY(0) scale(.94)}
 .theme-toggle-circle span{transition:transform .3s ease;display:inline-block}
 .theme-toggle-circle:active span{transform:rotate(20deg)}
+
+/* ===== Streak chip — animated flame badge, minimal text ===== */
+.streak-fire-badge{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;
+  background:radial-gradient(circle at 50% 38%, rgba(255,205,90,.95), rgba(255,90,0,.35) 68%, transparent 100%);
+  animation:fireFlicker 1.1s ease-in-out infinite;
+  transform-origin:50% 85%;
+}
+@keyframes fireFlicker{
+  0%,100%{transform:scale(1) rotate(-3deg);filter:drop-shadow(0 0 3px rgba(255,140,0,.5));}
+  25%{transform:scale(1.1) rotate(2deg);filter:drop-shadow(0 0 6px rgba(255,170,0,.75));}
+  50%{transform:scale(.92) rotate(-2deg);filter:drop-shadow(0 0 4px rgba(255,110,0,.55));}
+  75%{transform:scale(1.06) rotate(3deg);filter:drop-shadow(0 0 7px rgba(255,190,60,.8));}
+}
+
+/* ===== Date navigation — prev/next arrows + custom calendar popover ===== */
+.date-nav{position:relative;display:flex;align-items:center;gap:4px}
+.date-nav-arrow{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--glass-bg,var(--card));border:1px solid var(--glass-border,var(--border));color:var(--t2);
+  font-size:14px;line-height:1;cursor:pointer;transition:all .15s;
+  backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
+}
+.date-nav-arrow:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent);background:var(--glass-bg2,var(--card2))}
+.date-nav-arrow:active{transform:scale(.92)}
+button.date-disp{
+  background:var(--glass-bg,var(--card));border:1px solid var(--glass-border,var(--border));
+  border-radius:999px;padding:6px 14px;cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:all .15s;
+  backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
+}
+button.date-disp:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent);background:var(--glass-bg2,var(--card2))}
+
+.date-picker-pop{
+  display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  width:270px;z-index:250;padding:12px;
+  background:var(--glass-bg2,var(--panel));border:1px solid var(--glass-border-hi,var(--border));
+  border-radius:var(--radius-md,14px);backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
+  box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
+}
+.date-picker-pop.open{display:block;animation:profileDdIn .15s ease both}
+.dp-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.dp-cal-nav{
+  width:24px;height:24px;border-radius:50%;border:1px solid var(--glass-border,var(--border));
+  background:transparent;color:var(--t2);cursor:pointer;font-size:13px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.dp-cal-nav:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent)}
+.dp-cal-title{font-size:12px;font-weight:700;letter-spacing:.3px;color:var(--t)}
+.dp-cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:2px}
+.dp-cal-weekdays span{font-size:9px;text-align:center;color:var(--t2);letter-spacing:.5px;opacity:.75}
+.dp-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dp-cal-day{
+  aspect-ratio:1;border:none;background:transparent;color:var(--t);font-size:11px;
+  border-radius:50%;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;
+}
+.dp-cal-day:hover:not(:disabled){background:var(--glass-bg2,var(--card2))}
+.dp-cal-day.other{color:var(--t2);opacity:.3;cursor:default}
+.dp-cal-day.today{box-shadow:inset 0 0 0 1px var(--g);color:var(--g);font-weight:700}
+.dp-cal-day.selected{background:linear-gradient(135deg,var(--g),var(--c)) !important;color:#04140e !important;font-weight:700}
+.dp-cal-today-btn{
+  width:100%;margin-top:10px;padding:8px;border-radius:999px;cursor:pointer;
+  background:var(--glass-bg,var(--card));border:1px solid var(--glass-border,var(--border));
+  color:var(--t2);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;
+  transition:all .15s;
+}
+.dp-cal-today-btn:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent)}
+@media (max-width:768px){
+  .date-picker-pop{left:auto;right:0;transform:none}
+}
 .toggle-track{width:36px;height:18px;background:var(--t3);border:1px solid var(--border);border-radius:9px;position:relative;transition:all .3s;flex-shrink:0;}
 html.alpha .toggle-track{background:var(--g3);border-color:var(--g2)}
 .toggle-knob{width:12px;height:12px;background:var(--t2);border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;}
@@ -767,7 +839,7 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
   .app-brand{font-size:14px !important;letter-spacing:2px;}
   .app-brand span{font-size:8px !important;}
   .streak-chip{padding:4px 8px;font-size:9px;}
-  .date-disp{display:none;}
+  .date-nav{display:none;}
 
   /* Sidebar: hidden by default, slides in */
   .sb{
@@ -1439,8 +1511,13 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     <button class="theme-toggle-circle" onclick="toggleTheme()" title="Switch theme" aria-label="Switch light/dark theme">
       <span id="themeIcon">🌙</span>
     </button>
-    <div class="streak-chip"><div class="dot-pulse"></div><span id="streakDisp">12 DAY STREAK</span></div>
-    <div class="date-disp" id="dateDisp"></div>
+    <div class="streak-chip" title="Current streak"><span class="streak-fire-badge" aria-hidden="true">🔥</span><span id="streakDisp">0 Days</span></div>
+    <div class="date-nav" id="dateNav">
+      <button class="date-nav-arrow" onclick="dashDateShift(-1)" title="Previous day" aria-label="Previous day">‹</button>
+      <button class="date-disp" id="dateDisp" onclick="toggleDatePicker(event)" title="Pick a date"></button>
+      <button class="date-nav-arrow" onclick="dashDateShift(1)" title="Next day" aria-label="Next day">›</button>
+      <div class="date-picker-pop" id="datePickerPop" onclick="event.stopPropagation()"></div>
+    </div>
     <div class="profile-menu" id="profileMenu">
       <button class="profile-menu-btn" id="profileMenuBtn" onclick="toggleProfileMenu(event)" aria-label="Profile menu">
         <span class="avatar avatar-sm" id="topAvatarEl">BM</span>
@@ -2578,6 +2655,7 @@ function loginSuccess(id, docId) {
   ntrDate = S.today;
   wkDate = S.today;
   wtrDate = S.today;
+  dashDate = S.today;
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('topUserNameDisp').textContent = (S.cfg.name || id).toUpperCase();
   document.getElementById('topAvatarEl').textContent = S.cfg.initials || id.slice(0,2).toUpperCase();
@@ -2696,14 +2774,107 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ===================== DASHBOARD DATE NAV + CUSTOM CALENDAR =====================
+// dashDate is the date the Dashboard page is currently viewing/filtering.
+// It starts equal to S.today but can be moved with the prev/next arrows or
+// the custom calendar popover — it never changes S.today itself, so every
+// other "today"-based read/write in the app (habit logging, streaks, quick
+// actions, etc.) is completely unaffected by browsing past days here.
+var dashDate = '';
+var dpViewYear = null, dpViewMonth = null; // month currently shown inside the open popover
+var DASH_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DASH_WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var DASH_WEEKDAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function fmtYMD(d) {
+  var y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function dashDateLabel(dstr) {
+  var d = new Date(dstr+'T12:00');
+  return d.getDate()+' '+DASH_MONTH_NAMES[d.getMonth()]+' '+DASH_WEEKDAY_FULL[d.getDay()];
+}
+function renderDateNav() {
+  var el = document.getElementById('dateDisp');
+  if (el) el.textContent = dashDateLabel(dashDate || today());
+}
+function dashDateGoto(dstr) {
+  dashDate = dstr;
+  renderDateNav();
+  renderDashboard();
+}
+function dashDateShift(delta) {
+  var d = new Date((dashDate||S.today)+'T12:00');
+  d.setDate(d.getDate()+delta);
+  dashDateGoto(fmtYMD(d));
+  closeDatePicker();
+}
+function toggleDatePicker(e) {
+  if (e) e.stopPropagation();
+  var pop = document.getElementById('datePickerPop');
+  if (!pop) return;
+  if (pop.classList.contains('open')) { closeDatePicker(); return; }
+  var d = new Date((dashDate||S.today)+'T12:00');
+  dpViewYear = d.getFullYear(); dpViewMonth = d.getMonth();
+  renderDatePickerCalendar();
+  pop.classList.add('open');
+  setTimeout(function(){ document.addEventListener('click', _dpOutsideClick); }, 0);
+}
+function closeDatePicker() {
+  var pop = document.getElementById('datePickerPop');
+  if (pop) pop.classList.remove('open');
+  document.removeEventListener('click', _dpOutsideClick);
+}
+function _dpOutsideClick(e) {
+  var nav = document.getElementById('dateNav');
+  if (nav && !nav.contains(e.target)) closeDatePicker();
+}
+function dpShiftMonth(delta) {
+  dpViewMonth += delta;
+  if (dpViewMonth < 0) { dpViewMonth = 11; dpViewYear--; }
+  if (dpViewMonth > 11) { dpViewMonth = 0; dpViewYear++; }
+  renderDatePickerCalendar();
+}
+function renderDatePickerCalendar() {
+  var pop = document.getElementById('datePickerPop');
+  if (!pop) return;
+  var first = new Date(dpViewYear, dpViewMonth, 1);
+  var startOffset = first.getDay();
+  var daysInMonth = new Date(dpViewYear, dpViewMonth+1, 0).getDate();
+  var daysInPrevMonth = new Date(dpViewYear, dpViewMonth, 0).getDate();
+  var cells = [];
+  for (var i=0;i<startOffset;i++) cells.push({day: daysInPrevMonth-startOffset+1+i, other:true, ymd:null});
+  for (var day=1; day<=daysInMonth; day++) cells.push({day:day, other:false, ymd: dpViewYear+'-'+String(dpViewMonth+1).padStart(2,'0')+'-'+String(day).padStart(2,'0')});
+  var tail = 1;
+  while (cells.length % 7 !== 0) cells.push({day: tail++, other:true, ymd:null});
+  var curDash = dashDate || S.today;
+  var html = '<div class="dp-cal-head">'
+    +'<button type="button" class="dp-cal-nav" onclick="dpShiftMonth(-1)">‹</button>'
+    +'<span class="dp-cal-title">'+DASH_MONTH_NAMES[dpViewMonth]+' '+dpViewYear+'</span>'
+    +'<button type="button" class="dp-cal-nav" onclick="dpShiftMonth(1)">›</button>'
+    +'</div>'
+    +'<div class="dp-cal-weekdays">'+DASH_WEEKDAY_SHORT.map(function(w){return '<span>'+w+'</span>';}).join('')+'</div>'
+    +'<div class="dp-cal-grid">'+cells.map(function(c){
+      if (c.other) return '<button type="button" class="dp-cal-day other" disabled>'+c.day+'</button>';
+      var cls = 'dp-cal-day';
+      if (c.ymd === S.today) cls += ' today';
+      if (c.ymd === curDash) cls += ' selected';
+      return '<button type="button" class="'+cls+'" onclick="dashDateGoto(\''+c.ymd+'\');closeDatePicker();">'+c.day+'</button>';
+    }).join('')+'</div>'
+    +'<button type="button" class="dp-cal-today-btn" onclick="dashDateGoto(\''+S.today+'\');closeDatePicker();">Today</button>';
+  pop.innerHTML = html;
+}
+
 // ===================== DASHBOARD =====================
 function renderDashboard() {
-  var d = getDay(S.today);
+  if (!dashDate) dashDate = S.today;
+  renderDateNav();
+  var d = getDay(dashDate);
   var totCal = d.meals.reduce((a,m) => a+m.kcal, 0);
   var totProt = d.meals.reduce((a,m) => a+m.protein, 0);
   var waterL = ((d.glasses * 250 + (d.customMl||0)) / 1000).toFixed(1);
   var goalL = ((S.cfg.waterGoal * 250) / 1000).toFixed(1);
-  var habDone = S.habits.filter(h => h.logs[S.today]==='done').length;
+  var habDone = S.habits.filter(h => h.logs[dashDate]==='done').length;
   var exDone = d.exercises.filter(e => e.done).length;
   var calPct = S.cfg.calGoal ? Math.min(100, Math.round(totCal/S.cfg.calGoal*100)) : 0;
   var waterPct = S.cfg.waterGoal ? Math.min(100, Math.round(d.glasses/S.cfg.waterGoal*100)) : 0;
@@ -2713,6 +2884,8 @@ function renderDashboard() {
   var circ = 226;
   document.getElementById('mainRing').style.strokeDashoffset = circ - (circ * overall/100);
   document.getElementById('ringPct').textContent = overall + '%';
+  var ringLbl = document.querySelector('#page-dashboard .ring-lbl');
+  if (ringLbl) ringLbl.textContent = (dashDate === S.today) ? 'TODAY' : 'SELECTED DAY';
   document.getElementById('ov-cal').textContent = totCal + ' / ' + S.cfg.calGoal + ' kcal';
   document.getElementById('ov-prot').textContent = totProt + 'g / ' + S.cfg.protGoal + 'g';
   document.getElementById('ov-water').textContent = waterL + ' / ' + goalL + ' L';
@@ -4143,7 +4316,7 @@ function updateSidebarBadges() {
 function calcStreak() {
   var streak=0,d=new Date();
   while(streak<365){var k=d.toISOString().split('T')[0];var dd=S.dailyData[k];var logged=(dd&&(dd.meals.length>0||dd.exercises.length>0||dd.glasses>0));var habLogged=S.habits.some(h=>h.logs[k]);if(logged||habLogged){streak++;d.setDate(d.getDate()-1);}else break;}
-  S.streak=streak; document.getElementById('streakDisp').textContent=streak+' DAY STREAK';
+  S.streak=streak; document.getElementById('streakDisp').textContent=streak+(streak===1?' Day':' Days');
 }
 
 // ===================== TIMER & STOPWATCH =====================
@@ -4760,8 +4933,9 @@ function init() {
       el.classList.toggle('active', el.getAttribute('data-swatch') === savedAccent);
     });
   }catch(e){}
-  document.getElementById('dateDisp').textContent=todayLabel();
+  document.getElementById('dateDisp').textContent = (typeof dashDateLabel==='function') ? dashDateLabel(today()) : todayLabel();
   S.today=today();
+  if (typeof dashDate !== 'undefined' && !dashDate) dashDate = S.today;
   // Update Firebase status when ready
   waitForFirebase(()=>{setFbStatus(true,'Firebase Connected');});
   window.addEventListener('resize',()=>{if(document.getElementById('page-dashboard').classList.contains('active'))renderWeightChart();});

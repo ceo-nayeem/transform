@@ -232,8 +232,9 @@ button.date-disp{
 button.date-disp:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent);background:var(--glass-bg2,var(--card2))}
 
 .date-picker-pop{
-  display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
-  width:270px;z-index:250;padding:12px;
+  display:none;position:absolute;top:calc(100% + 10px);right:0;left:auto;
+  width:min(270px, calc(100vw - 32px));max-width:270px;box-sizing:border-box;
+  z-index:250;padding:12px;
   background:var(--glass-bg2,var(--panel));border:1px solid var(--glass-border-hi,var(--border));
   border-radius:var(--radius-md,14px);backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
   box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
@@ -265,9 +266,6 @@ button.date-disp:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 4
   transition:all .15s;
 }
 .dp-cal-today-btn:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent)}
-@media (max-width:768px){
-  .date-picker-pop{left:auto;right:0;transform:none}
-}
 .toggle-track{width:36px;height:18px;background:var(--t3);border:1px solid var(--border);border-radius:9px;position:relative;transition:all .3s;flex-shrink:0;}
 html.alpha .toggle-track{background:var(--g3);border-color:var(--g2)}
 .toggle-knob{width:12px;height:12px;background:var(--t2);border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;}
@@ -457,7 +455,7 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .app-brand{font-family:var(--raj);font-size:18px;font-weight:700;color:var(--g);letter-spacing:3px}
 .app-brand span{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;margin-left:8px}
 .topbar-right{display:flex;align-items:center;gap:16px}
-.streak-chip{background:var(--card);border:1px solid var(--border);padding:5px 12px;font-size:10px;color:var(--o2);letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.streak-chip{background:var(--glass-bg,var(--card));border:1px solid var(--glass-border,var(--border));border-radius:999px;backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);padding:5px 12px;font-size:10px;color:var(--o2);letter-spacing:1px;display:flex;align-items:center;gap:6px}
 .dot-pulse{width:6px;height:6px;background:var(--g);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .date-disp{font-size:10px;color:var(--t2);letter-spacing:.5px}
@@ -1025,6 +1023,10 @@ html.alpha .sb-item.active{background:linear-gradient(135deg,color-mix(in srgb, 
   box-shadow:var(--shadow-soft);
 }
 .card{border-radius:var(--radius-md) !important;transition:transform .18s ease, box-shadow .18s ease, background .18s ease;overflow:hidden;cursor:pointer}
+/* Topbar sync chip rides the shared glass-card look above, but needs a full
+   pill radius (not the card's rounded-square) to match the other round
+   topbar controls (theme toggle, date arrows, date pill). */
+.sync-indicator{border-radius:999px !important}
 .card:hover{transform:translateY(-2px);background:var(--glass-bg2) !important;box-shadow:0 14px 34px rgba(0,0,0,.4)}
 .card-accent{width:3px;border-radius:0 0 0 var(--radius-md)}
 .ex-card,.habit-item,.meal-item{border-left:1px solid var(--glass-border) !important;transition:transform .15s ease, background .15s ease}
@@ -2783,6 +2785,7 @@ function toast(msg) {
 var dashDate = '';
 var dpViewYear = null, dpViewMonth = null; // month currently shown inside the open popover
 var DASH_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DASH_MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var DASH_WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var DASH_WEEKDAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -2792,7 +2795,7 @@ function fmtYMD(d) {
 }
 function dashDateLabel(dstr) {
   var d = new Date(dstr+'T12:00');
-  return d.getDate()+' '+DASH_MONTH_NAMES[d.getMonth()]+' '+DASH_WEEKDAY_FULL[d.getDay()];
+  return d.getDate()+' '+DASH_MONTH_SHORT[d.getMonth()]+' '+DASH_WEEKDAY_SHORT[d.getDay()];
 }
 function renderDateNav() {
   var el = document.getElementById('dateDisp');
@@ -2850,7 +2853,7 @@ function renderDatePickerCalendar() {
   var curDash = dashDate || S.today;
   var html = '<div class="dp-cal-head">'
     +'<button type="button" class="dp-cal-nav" onclick="dpShiftMonth(-1)">‹</button>'
-    +'<span class="dp-cal-title">'+DASH_MONTH_NAMES[dpViewMonth]+' '+dpViewYear+'</span>'
+    +'<span class="dp-cal-title">'+DASH_MONTH_SHORT[dpViewMonth]+' '+dpViewYear+'</span>'
     +'<button type="button" class="dp-cal-nav" onclick="dpShiftMonth(1)">›</button>'
     +'</div>'
     +'<div class="dp-cal-weekdays">'+DASH_WEEKDAY_SHORT.map(function(w){return '<span>'+w+'</span>';}).join('')+'</div>'

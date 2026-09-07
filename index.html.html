@@ -2832,11 +2832,6 @@ function switchFitnessTab(tab) {
     if (tabDiet) tabDiet.classList.add('active');
     if (tabWorkout) tabWorkout.classList.remove('active');
     if(!ntrDate) ntrDate = S.today;
-    ntrActiveTab = 'food';
-    var fs = document.getElementById('ntr-food-section'), ws = document.getElementById('ntr-water-section');
-    if (fs) fs.style.display = ''; if (ws) ws.style.display = 'none';
-    var tf = document.getElementById('ntr-tab-food'), tw = document.getElementById('ntr-tab-water');
-    if (tf) tf.classList.add('active'); if (tw) tw.classList.remove('active');
     renderNutrition();
   }
 }
@@ -3104,26 +3099,15 @@ function sortMealsByType(meals) {
 }
 
 function switchNtrTab(tab) {
-  ntrActiveTab = tab;
-  var foodSec = document.getElementById('ntr-food-section');
-  var waterSec = document.getElementById('ntr-water-section');
-  var tabFood = document.getElementById('ntr-tab-food');
-  var tabWater = document.getElementById('ntr-tab-water');
-  if (!foodSec || !waterSec) return;
-  if (tab === 'food') {
-    foodSec.style.display = '';
-    waterSec.style.display = 'none';
-    if (tabFood) { tabFood.classList.add('active'); }
-    if (tabWater) { tabWater.classList.remove('active'); }
-    renderNutrition();
-  } else {
-    foodSec.style.display = 'none';
-    waterSec.style.display = '';
-    if (tabWater) { tabWater.classList.add('active'); }
-    if (tabFood) { tabFood.classList.remove('active'); }
-    if (!wtrDate) wtrDate = S.today;
-    renderWater();
-  }
+  // Food and Water are merged into a single combined view now — this function
+  // is kept only as a no-op compatibility shim for older callers (e.g. deep
+  // links from the dashboard water card or quick-add) that still ask to
+  // "switch to the water tab". There's nothing to switch to anymore; just
+  // make sure the diet view is rendered with the latest data.
+  ntrActiveTab = 'food';
+  if (!ntrDate) ntrDate = S.today;
+  if (!wtrDate) wtrDate = S.today;
+  renderNutrition();
 }
 
 function selectNtrDate(d) {
@@ -3171,7 +3155,7 @@ function updateMacroRing(prefix, val, goal, unit) {
   if (ring) { ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C - (C * pct / 100); }
   var valEl = document.getElementById(prefix);
   if (valEl) valEl.textContent = (Math.round(val * 100) / 100);
-  var suf = unit === 'kcal' ? ' kcal' : 'g';
+  var suf = unit === 'kcal' ? ' kcal' : (unit === 'L' ? 'L' : 'g');
   var goalEl = document.getElementById(prefix + '-goal');
   if (goalEl) goalEl.textContent = goal > 0 ? (goal + suf) : '—';
   var wrap = document.getElementById(prefix + '-rem-wrap');
@@ -3202,7 +3186,7 @@ function renderNutrition() {
   updateMacroRing('n-carb', totCarb, S.cfg.carbGoal||0, 'g');
   updateMacroRing('n-fat', totFat, S.cfg.fatGoal||0, 'g');
   updateMacroRing('n-fiber', totFib, S.cfg.fiberGoal||0, 'g');
-  updateMacroRing('n-omega3', totOm, S.cfg.omega3Goal||0, 'g');
+  renderWaterWidget();
   var list = document.getElementById('mealList');
   if (!d.meals.length) { list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No meals logged yet.</div>'; return; }
   var colors = {Breakfast:'var(--o)',Lunch:'var(--c2)',Dinner:'var(--p)',Snack:'var(--t2)','Pre-workout':'var(--g2)','Post-workout':'var(--g)'};

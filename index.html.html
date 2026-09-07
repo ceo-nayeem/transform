@@ -1301,6 +1301,34 @@ html.alpha body::before{
 }
 @media (prefers-reduced-motion:reduce){ body::before{animation:none;} }
 
+/* ---- 1b. Deep background particles: soft floating water-droplet dots,
+   drifting slowly behind all content, underneath the aurora glow. Pure
+   CSS, one shared radial-gradient sprite repeated at different sizes/
+   positions/speeds so it reads as scattered droplets rather than a
+   uniform grid. ---- */
+#bgParticles{
+  position:fixed;inset:0;z-index:-3;pointer-events:none;overflow:hidden;
+}
+#bgParticles span{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, rgba(255,255,255,.9), color-mix(in srgb, var(--g) 55%, transparent) 45%, transparent 72%);
+  opacity:.16;filter:blur(.3px);
+  animation-name:bgDriftUp;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  will-change:transform,opacity;
+}
+html.alpha #bgParticles span{opacity:.22;mix-blend-mode:multiply}
+@keyframes bgDriftUp{
+  0%{   transform:translate3d(0,0,0) scale(1);      opacity:0; }
+  10%{  opacity:var(--p-op,.16); }
+  50%{  transform:translate3d(var(--p-dx,18px),calc(var(--p-dy,-90px)*0.55),0) scale(1.15); }
+  90%{  opacity:var(--p-op,.16); }
+  100%{ transform:translate3d(calc(var(--p-dx,18px)*2),var(--p-dy,-90px),0) scale(.85); opacity:0; }
+}
+@media (prefers-reduced-motion:reduce){ #bgParticles{display:none;} }
+@media (max-width:768px){ #bgParticles span:nth-child(n+13){display:none;} } /* fewer on mobile: perf */
+
 /* ---- 2. Chrome surfaces: same frosted glass recipe in Alpha as Terminal ---- */
 html.alpha .topbar,html.alpha .page-header{
   background:transparent !important;border-bottom:none !important;
@@ -1691,6 +1719,8 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 </style>
 </head>
 <body>
+
+<div id="bgParticles"></div>
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="loginScreen">
@@ -5386,6 +5416,33 @@ nav = function(btn, id) {
 
 
 function init() {
+  // Deep background: scattered floating droplet particles, drifting
+  // slowly upward at random sizes/positions/speeds/delays.
+  try{
+    var pLayer = document.getElementById('bgParticles');
+    if (pLayer && !pLayer.childElementCount) {
+      var N = 22;
+      for (var i=0;i<N;i++){
+        var s = document.createElement('span');
+        var size = 4 + Math.random()*10;           // 4–14px dots
+        var left = Math.random()*100;               // vw
+        var top  = 20 + Math.random()*80;            // start lower half+, drifts up
+        var dur  = 16 + Math.random()*22;            // 16–38s
+        var delay = -Math.random()*dur;              // negative = already mid-flight on load
+        var dx = (Math.random()*40-20).toFixed(0)+'px';
+        var dy = -(90+Math.random()*160).toFixed(0)+'px';
+        var op = (0.10 + Math.random()*0.16).toFixed(2);
+        s.style.width = size+'px'; s.style.height = size+'px';
+        s.style.left = left+'vw'; s.style.top = top+'vh';
+        s.style.animationDuration = dur+'s';
+        s.style.animationDelay = delay+'s';
+        s.style.setProperty('--p-dx', dx);
+        s.style.setProperty('--p-dy', dy);
+        s.style.setProperty('--p-op', op);
+        pLayer.appendChild(s);
+      }
+    }
+  }catch(e){}
   // Load saved theme
   try{
     var savedTheme = localStorage.getItem('fitos_theme');

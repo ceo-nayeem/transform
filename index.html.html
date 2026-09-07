@@ -1623,29 +1623,42 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   .sb-tip-bubble{
     position:fixed;top:0;left:0;pointer-events:none;
     transform:translateY(-50%);z-index:1997;
+    display:flex;align-items:center;
   }
-  .sb-tip-blob{position:absolute;inset:0;filter:url(#sbGoo)}
+  /* The blob wraps drop+pool and sits directly under the text, sized to
+     hug it exactly — no box around the text wider than the goo shape. */
+  .sb-tip-blob{
+    position:absolute;top:50%;left:0;height:34px;
+    transform:translateY(-50%);
+    filter:url(#sbGoo);
+  }
+  /* The drop is centered exactly ON the circle's right edge (left:0 of the
+     bubble == circle's edge) so it visually breaks off the button itself,
+     with zero gap — as it scales up it merges into the pool via the goo
+     filter, reading as one continuous liquid shape. */
   .sb-tip-drop{
-    position:absolute;left:-18px;top:50%;width:24px;height:24px;border-radius:50%;
-    transform:translateY(-50%) scale(0);transform-origin:center;
+    position:absolute;left:0;top:50%;width:22px;height:22px;border-radius:50%;
+    transform:translate(-50%,-50%) scale(0);transform-origin:center;
     background:var(--glass-bg2,var(--panel));
-    transition:transform .34s cubic-bezier(.34,1.5,.4,1);
+    transition:transform .4s cubic-bezier(.34,1.56,.44,1);
   }
   .sb-tip-pool{
-    position:absolute;inset:0;border-radius:10px;
+    position:absolute;left:0;top:0;height:34px;border-radius:17px;
     background:var(--glass-bg2,var(--panel));
-    transform:scaleX(0);transform-origin:left center;
-    transition:transform .3s cubic-bezier(.34,1.4,.4,1) .04s;
+    width:0;
+    transition:width .32s cubic-bezier(.32,1.4,.4,1) .05s;
   }
   .sb-tip-text{
-    position:relative;display:block;white-space:nowrap;padding:7px 13px;
+    position:relative;display:block;white-space:nowrap;padding:0 14px 0 12px;
+    height:34px;line-height:34px;
     color:var(--t);font-family:var(--raj);font-size:11px;font-weight:600;letter-spacing:.6px;
-    opacity:0;transition:opacity .16s ease .18s;
+    opacity:0;transform:translateX(-4px);
+    transition:opacity .18s ease .16s,transform .22s ease .16s;
   }
   .sb-tip-bubble.show{filter:drop-shadow(0 10px 26px rgba(0,0,0,.35))}
-  .sb-tip-bubble.show .sb-tip-drop{transform:translateY(-50%) scale(1)}
-  .sb-tip-bubble.show .sb-tip-pool{transform:scaleX(1)}
-  .sb-tip-bubble.show .sb-tip-text{opacity:1}
+  .sb-tip-bubble.show .sb-tip-drop{transform:translate(-50%,-50%) scale(1)}
+  .sb-tip-bubble.show .sb-tip-pool{width:var(--sb-tip-w,auto)}
+  .sb-tip-bubble.show .sb-tip-text{opacity:1;transform:translateX(0)}
   .sb-tip-bubble.sb-tip-live .sb-tip-drop,
   .sb-tip-bubble.sb-tip-live .sb-tip-pool{
     background:linear-gradient(135deg,color-mix(in srgb, var(--g) 55%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 35%, var(--glass-bg2,var(--panel))));
@@ -2655,7 +2668,23 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
 
 <!-- Sidebar overlay (mobile) -->
 <div class="sb-overlay" id="sbOverlay" onclick="closeMobSidebar()"></div>
-<div id="sbTip" class="sb-tip-bubble"></div>
+
+<!-- SVG goo filter: fuses the drop + pool into one connected water blob -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="sbGoo">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" mode="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="goo"/>
+      <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="sbTip" class="sb-tip-bubble">
+  <div class="sb-tip-blob"><span class="sb-tip-drop"></span><span class="sb-tip-pool"></span></div>
+  <span class="sb-tip-text"></span>
+</div>
 <div id="sbLabelLayer"></div>
 
 <!-- BOTTOM NAV BAR (mobile) -->
@@ -5178,13 +5207,30 @@ function renderSbLabels() {
     var r = item.getBoundingClientRect();
     var bubble = document.createElement('div');
     bubble.className = 'sb-tip-bubble' + (item.classList.contains('active') ? ' sb-tip-live' : '');
-    bubble.textContent = item.getAttribute('data-tip');
+    bubble.innerHTML =
+      '<div class="sb-tip-blob"><span class="sb-tip-drop"></span><span class="sb-tip-pool"></span></div>' +
+      '<span class="sb-tip-text"></span>';
+    bubble.querySelector('.sb-tip-text').textContent = item.getAttribute('data-tip');
+    // Anchor flush against the circle's right edge — zero gap between
+    // the button and the drop that grows out of it.
     bubble.style.top = (r.top + r.height/2) + 'px';
-    bubble.style.left = (r.right + 10) + 'px';
+    bubble.style.left = r.right + 'px';
     layer.appendChild(bubble);
+    sizeSbTipPool(bubble);
     // Mount hidden, then flip to .show next frame so it eases in.
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ bubble.classList.add('show'); }); });
   });
+}
+
+// Measures the label text so the goo "pool" grows to exactly the right
+// width (a fixed px target is required for the width transition + the
+// SVG goo filter to fuse cleanly with the drop).
+function sizeSbTipPool(bubble){
+  var textEl = bubble.querySelector('.sb-tip-text');
+  var poolEl = bubble.querySelector('.sb-tip-pool');
+  if (!textEl || !poolEl) return;
+  var w = textEl.offsetWidth || textEl.scrollWidth;
+  bubble.style.setProperty('--sb-tip-w', w + 'px');
 }
 
 // Fixed-position hover tooltip — a droplet "splash" that always replays on
@@ -5199,12 +5245,14 @@ function renderSbLabels() {
     if (!item) return;
     var label = item.getAttribute('data-tip');
     if (!label) return;
-    tip.textContent = label;
+    var textEl = tip.querySelector('.sb-tip-text');
+    if (textEl) textEl.textContent = label;
     tip.classList.toggle('sb-tip-live', item.classList.contains('active'));
     var r = item.getBoundingClientRect();
     tip.style.top = (r.top + r.height/2) + 'px';
-    tip.style.left = (r.right + 10) + 'px';
+    tip.style.left = r.right + 'px';
     tip.classList.remove('show');
+    sizeSbTipPool(tip);
     void tip.offsetWidth; // restart the splash animation on every hover
     tip.classList.add('show');
     item._sbTipOn = true;

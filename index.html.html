@@ -1540,7 +1540,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     max-height:30px;overflow:hidden;
   }
 
-  .sb.collapsed{width:82px;flex:0 0 82px;overflow:visible}
+  .sb.collapsed{width:82px;flex:0 0 82px;overflow:visible;position:relative;z-index:900}
   .sb.collapsed .sb-sec{max-height:0;opacity:0;margin:0;padding:0}
   .sb.collapsed .sb-nav{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0;overflow:visible}
   .os:has(.sb.collapsed){overflow:visible}
@@ -1551,7 +1551,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
     box-shadow:var(--shadow-soft);
   }
-  .sb.collapsed .sb-item:hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2)}
+  .sb.collapsed .sb-item:hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2);z-index:5}
   .sb.collapsed .sb-item.active{
     background:linear-gradient(135deg,color-mix(in srgb, var(--g) 32%, transparent),color-mix(in srgb, var(--c) 16%, transparent)) !important;
     box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--g) 55%, transparent), var(--shadow-soft);

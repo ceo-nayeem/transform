@@ -485,7 +485,7 @@ html.alpha .del-btn:hover{color:var(--red)}
 
 body{background:var(--bg);color:var(--t);font-family:var(--mono);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
 body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
-.os{display:grid;grid-template-columns:190px 1fr;flex:1;overflow:hidden}
+.os{display:flex;flex:1;overflow:hidden}
 .topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:500}
 .app-brand{font-family:var(--raj);font-size:18px;font-weight:700;color:var(--g);letter-spacing:3px}
 .app-brand span{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;margin-left:8px}
@@ -494,7 +494,7 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .dot-pulse{width:6px;height:6px;background:var(--g);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .date-disp{font-size:10px;color:var(--t2);letter-spacing:.5px}
-.sb{background:var(--sb);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sb{background:var(--sb);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;width:196px;flex-shrink:0;transition:width .32s cubic-bezier(.4,0,.2,1)}
 .sb-user{padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;background:var(--g3);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--g);font-family:var(--raj);font-weight:700;flex-shrink:0}
 .user-name{font-size:12px;color:var(--t);letter-spacing:.5px;font-family:var(--raj);font-weight:600}
@@ -508,7 +508,7 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .sb-label{font-size:11px;letter-spacing:.5px}
 .sb-badge{margin-left:auto;background:var(--g3);color:var(--g2);font-size:8px;padding:2px 5px;font-family:var(--raj);font-weight:700;border:1px solid var(--g3)}
 .notif-dot{width:6px;height:6px;background:var(--red);border-radius:50%;margin-left:auto}
-.main{display:flex;flex-direction:column;overflow:hidden}
+.main{display:flex;flex-direction:column;overflow:hidden;flex:1;min-width:0}
 .page-header{background:var(--panel);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .page-title{font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--t);display:flex;align-items:center;gap:8px}
 .page-title::before{content:'//';color:var(--g);font-family:var(--mono);font-size:11px}
@@ -1505,6 +1505,60 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
 }
 
+/* ===================================================================
+   SIDEBAR RAIL — collapsible circular icon dock
+   Desktop sidebar defaults to a slim vertical rail of glass circle
+   buttons (icon only). A small glass toggle at the top-left corner
+   expands it into the familiar labeled list, and remembers the choice.
+   Mobile keeps its existing slide-in drawer, untouched.
+   =================================================================== */
+.topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
+.sb-toggle-btn{
+  width:34px;height:34px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-soft);cursor:pointer;font-size:14px;color:var(--t);
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+.sb-toggle-btn:hover{background:var(--glass-bg2);transform:translateY(-1px)}
+.sb-toggle-btn:active{transform:scale(.92)}
+.sb-toggle-btn span{display:inline-block;transition:transform .32s cubic-bezier(.4,0,.2,1)}
+.sb-toggle-btn.is-collapsed span{transform:rotate(180deg)}
+@media (max-width:768px){.sb-toggle-btn{display:none}}
+
+@media (min-width:769px){
+  .sb-item .sb-label{
+    display:inline-block;opacity:1;max-width:150px;white-space:nowrap;overflow:hidden;
+    transition:opacity .2s ease .04s,max-width .28s ease;
+  }
+  .sb-badge{transition:opacity .18s ease,max-width .22s ease}
+  .sb-sec{
+    transition:max-height .22s ease,opacity .18s ease,margin .22s ease,padding .22s ease;
+    max-height:30px;overflow:hidden;
+  }
+
+  .sb.collapsed{width:82px;flex:0 0 82px}
+  .sb.collapsed .sb-sec{max-height:0;opacity:0;margin:0;padding:0}
+  .sb.collapsed .sb-nav{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0}
+  .sb.collapsed .sb-item{
+    width:46px;height:46px;padding:0;margin:0;gap:0;border-radius:50%;
+    justify-content:center;border-left:none;
+    background:var(--glass-bg);border:1px solid var(--glass-border);
+    backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+    box-shadow:var(--shadow-soft);
+  }
+  .sb.collapsed .sb-item:hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2)}
+  .sb.collapsed .sb-item.active{
+    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 32%, transparent),color-mix(in srgb, var(--c) 16%, transparent)) !important;
+    box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--g) 55%, transparent), var(--shadow-soft);
+  }
+  .sb.collapsed .sb-icon{font-size:18px;width:auto}
+  .sb.collapsed .sb-label{opacity:0;max-width:0;transition:opacity .12s ease,max-width .18s ease}
+  .sb.collapsed .sb-badge{opacity:0;max-width:0;overflow:hidden;padding:0;border:none;margin:0}
+  .sb.collapsed .notif-dot{position:absolute;top:5px;right:5px;margin:0}
+}
+
 </style>
 </head>
 <body>
@@ -1534,8 +1588,11 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" aria-label="Menu">☰</button>
-  <div><span class="app-brand" id="appBrand">FIT//OS <span id="topPagePath">/ DASHBOARD</span></span></div>
+  <div class="topbar-left">
+    <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" aria-label="Menu">☰</button>
+    <button class="sb-toggle-btn" id="sbToggleBtn" onclick="toggleSidebarCollapse()" title="Expand/collapse sidebar" aria-label="Expand or collapse sidebar"><span>☰</span></button>
+    <span class="app-brand" id="appBrand">FIT//OS <span id="topPagePath">/ DASHBOARD</span></span>
+  </div>
   <div class="topbar-right">
     <div class="sync-indicator" id="syncIndicator" title="Firebase sync status">
       <span class="fb-status" id="syncDot"></span>
@@ -1588,24 +1645,24 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 <div class="sb">
   <div class="sb-nav">
     <div class="sb-sec">OVERVIEW</div>
-    <div class="sb-item active" onclick="nav(this,'dashboard')"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
+    <div class="sb-item active" onclick="nav(this,'dashboard')" title="Dashboard"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
 
     <div class="sb-sec">DAILY TRACKING</div>
-    <div class="sb-item" onclick="nav(this,'nutrition')"><span class="sb-icon">◉</span><span class="sb-label">Nutrition</span></div>
-    <div class="sb-item" onclick="nav(this,'workout')"><span class="sb-icon">⊞</span><span class="sb-label">Workout</span><span class="sb-badge" id="wkBadge">0/0</span></div>
-    <div class="sb-item" onclick="nav(this,'habits')"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
+    <div class="sb-item" onclick="nav(this,'nutrition')" title="Nutrition"><span class="sb-icon">◉</span><span class="sb-label">Nutrition</span></div>
+    <div class="sb-item" onclick="nav(this,'workout')" title="Workout"><span class="sb-icon">⊞</span><span class="sb-label">Workout</span><span class="sb-badge" id="wkBadge">0/0</span></div>
+    <div class="sb-item" onclick="nav(this,'habits')" title="Habits"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
 
     <div class="sb-sec">HEALTH</div>
-    <div class="sb-item" onclick="nav(this,'vitals')"><span class="sb-icon">♡</span><span class="sb-label">Vitals</span></div>
-    <div class="sb-item" onclick="nav(this,'measurements')"><span class="sb-icon">◫</span><span class="sb-label">Measurements</span></div>
+    <div class="sb-item" onclick="nav(this,'vitals')" title="Vitals"><span class="sb-icon">♡</span><span class="sb-label">Vitals</span></div>
+    <div class="sb-item" onclick="nav(this,'measurements')" title="Measurements"><span class="sb-icon">◫</span><span class="sb-label">Measurements</span></div>
 
     <div class="sb-sec">PLANNING</div>
-    <div class="sb-item" onclick="nav(this,'goals')"><span class="sb-icon">◎</span><span class="sb-label">Goals & Progress</span></div>
+    <div class="sb-item" onclick="nav(this,'goals')" title="Goals & Progress"><span class="sb-icon">◎</span><span class="sb-label">Goals & Progress</span></div>
 
     <div class="sb-sec">TOOLS</div>
-    <div class="sb-item" onclick="nav(this,'meallibrary')"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
-    <div class="sb-item" onclick="nav(this,'ingredientlibrary')"><span class="sb-icon">◈</span><span class="sb-label">Ingredient Library</span><span class="sb-badge" id="ilBadge">0</span></div>
-    <div class="sb-item" onclick="nav(this,'timer')"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
+    <div class="sb-item" onclick="nav(this,'meallibrary')" title="Meal Library"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
+    <div class="sb-item" onclick="nav(this,'ingredientlibrary')" title="Ingredient Library"><span class="sb-icon">◈</span><span class="sb-label">Ingredient Library</span><span class="sb-badge" id="ilBadge">0</span></div>
+    <div class="sb-item" onclick="nav(this,'timer')" title="Timer & Stopwatch"><span class="sb-icon">◷</span><span class="sb-label">Timer & Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
 
   </div>
 </div>
@@ -4918,6 +4975,16 @@ function closeMobSidebar() {
   document.getElementById('sbOverlay').classList.remove('open');
 }
 
+// Desktop sidebar rail — collapse to circular icon dock / expand to labeled list
+function toggleSidebarCollapse() {
+  var sb = document.querySelector('.sb');
+  var btn = document.getElementById('sbToggleBtn');
+  if (!sb) return;
+  var collapsed = sb.classList.toggle('collapsed');
+  if (btn) btn.classList.toggle('is-collapsed', collapsed);
+  try { localStorage.setItem('fitos_sidebar', collapsed ? 'collapsed' : 'expanded'); } catch(e) {}
+}
+
 // nav() already handles page switching — we just sync the bottom nav highlight
 var MOB_NAV_MAP = {
   dashboard: 'mn-dashboard',
@@ -5004,6 +5071,15 @@ function init() {
       el.classList.toggle('active', el.getAttribute('data-swatch') === savedAccent);
     });
   }catch(e){}
+  // Sidebar rail: collapsed (icon dock) by default, remembers the user's choice
+  try {
+    var savedSb = localStorage.getItem('fitos_sidebar');
+    var sbCollapsed = savedSb ? savedSb === 'collapsed' : true;
+    var sbEl = document.querySelector('.sb');
+    var sbBtn = document.getElementById('sbToggleBtn');
+    if (sbEl) sbEl.classList.toggle('collapsed', sbCollapsed);
+    if (sbBtn) sbBtn.classList.toggle('is-collapsed', sbCollapsed);
+  } catch(e) {}
   document.getElementById('dateDisp').textContent = (typeof dashDateLabel==='function') ? dashDateLabel(today()) : todayLabel();
   S.today=today();
   if (typeof dashDate !== 'undefined' && !dashDate) dashDate = S.today;

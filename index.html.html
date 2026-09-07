@@ -1621,19 +1621,20 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     position:fixed;top:0;left:0;pointer-events:none;
     transform:translateY(-50%);z-index:1997;
     display:flex;align-items:center;
-    height:56px;border-radius:28px;
-    background:var(--glass-bg2,var(--panel));
+    height:40px;border-radius:20px; /* visibly shorter than the 56px circle */
+    background:linear-gradient(165deg, rgba(255,255,255,.10), rgba(255,255,255,.02) 40%, rgba(255,255,255,.04)),
+               var(--glass-bg2,var(--panel));
     backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    border:1px solid var(--glass-border-hi,rgba(255,255,255,.14));
+    border:1px solid var(--glass-border-hi,rgba(255,255,255,.16));
     box-sizing:border-box;
-    width:28px; /* resting width = radius, i.e. fully hidden behind the circle */
+    width:28px; /* resting width = circle radius, i.e. fully hidden behind the circle */
     overflow:hidden;
     transition:width .38s cubic-bezier(.32,1.28,.4,1),
                box-shadow .38s ease;
   }
   .sb-tip-text{
     position:relative;display:block;white-space:nowrap;
-    padding:0 12px 0 32px; /* left padding clears the hidden circle half */
+    padding:0 12px 0 30px; /* left padding clears the hidden circle half (circle radius 28px) */
     color:var(--t);font-family:var(--raj);font-size:12px;font-weight:600;letter-spacing:.6px;
     opacity:0;transform:translateX(-6px);
     transition:opacity .2s ease .12s,transform .26s ease .12s;
@@ -1641,12 +1642,15 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   }
   .sb-tip-bubble.show{
     width:var(--sb-tip-w,auto);
-    box-shadow:0 10px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+    box-shadow:0 10px 26px rgba(0,0,0,.4),
+               inset 0 1px 0 rgba(255,255,255,.16),
+               inset 0 -1px 0 rgba(0,0,0,.12);
   }
   .sb-tip-bubble.show .sb-tip-text{opacity:1;transform:translateX(0)}
   .sb-tip-bubble.sb-tip-live{
-    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 26%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 14%, var(--glass-bg2,var(--panel))));
-    border-color:color-mix(in srgb, var(--g) 40%, var(--glass-border-hi,rgba(255,255,255,.14)));
+    background:linear-gradient(165deg, rgba(255,255,255,.14), rgba(255,255,255,.02) 40%, rgba(255,255,255,.04)),
+               linear-gradient(135deg,color-mix(in srgb, var(--g) 26%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 14%, var(--glass-bg2,var(--panel))));
+    border-color:color-mix(in srgb, var(--g) 45%, var(--glass-border-hi,rgba(255,255,255,.16)));
   }
   .sb-tip-bubble.sb-tip-live .sb-tip-text{color:var(--g)}
 
@@ -5183,11 +5187,14 @@ function renderSbLabels() {
     bubble.querySelector('.sb-tip-text').textContent = item.getAttribute('data-tip');
     // Anchor at the circle's CENTER (not its edge) — the pill's left
     // half is tucked behind the circle (circle renders on top), so it
-    // reads as one continuous capsule with zero visible seam.
+    // reads as one continuous capsule with zero visible seam. The pill
+    // itself is shorter than the circle (not full height) so it reads
+    // as a smaller label chip peeking out from behind the button.
+    var pillH = Math.round(r.height * 0.72);
     bubble.style.top = (r.top + r.height/2) + 'px';
     bubble.style.left = (r.left + r.width/2) + 'px';
-    bubble.style.height = r.height + 'px';
-    bubble.style.borderRadius = (r.height/2) + 'px';
+    bubble.style.height = pillH + 'px';
+    bubble.style.borderRadius = (pillH/2) + 'px';
     layer.appendChild(bubble);
     sizeSbTipPool(bubble, r);
     // Mount hidden, then flip to .show next frame so it eases in.
@@ -5197,13 +5204,15 @@ function renderSbLabels() {
 
 // Measures the label text so the pill grows to exactly circle-radius +
 // text width — enough to clear the hidden circle half and fit the label,
-// with no extra slack.
+// with no extra slack. Uses the CIRCLE's half-width (not the shorter
+// pill's own half-height) since that's what it must clear to emerge
+// from behind the button with zero seam.
 function sizeSbTipPool(bubble, r){
   var textEl = bubble.querySelector('.sb-tip-text');
   if (!textEl) return;
   var textW = textEl.scrollWidth;
-  var radius = r.height / 2;
-  bubble.style.setProperty('--sb-tip-w', (radius + textW + 2) + 'px');
+  var circleRadius = r.width / 2;
+  bubble.style.setProperty('--sb-tip-w', (circleRadius + textW + 2) + 'px');
 }
 
 // Fixed-position hover tooltip — a droplet "splash" that always replays on
@@ -5222,10 +5231,11 @@ function sizeSbTipPool(bubble, r){
     if (textEl) textEl.textContent = label;
     tip.classList.toggle('sb-tip-live', item.classList.contains('active'));
     var r = item.getBoundingClientRect();
+    var pillH = Math.round(r.height * 0.72);
     tip.style.top = (r.top + r.height/2) + 'px';
     tip.style.left = (r.left + r.width/2) + 'px';
-    tip.style.height = r.height + 'px';
-    tip.style.borderRadius = (r.height/2) + 'px';
+    tip.style.height = pillH + 'px';
+    tip.style.borderRadius = (pillH/2) + 'px';
     tip.classList.remove('show');
     sizeSbTipPool(tip, r);
     void tip.offsetWidth; // restart the splash animation on every hover

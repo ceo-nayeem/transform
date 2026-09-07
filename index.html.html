@@ -3215,11 +3215,14 @@ function toast(msg) {
 }
 
 // ===================== DASHBOARD DATE NAV + CUSTOM CALENDAR =====================
-// dashDate is the date the Dashboard page is currently viewing/filtering.
-// It starts equal to S.today but can be moved with the prev/next arrows or
-// the custom calendar popover — it never changes S.today itself, so every
-// other "today"-based read/write in the app (habit logging, streaks, quick
-// actions, etc.) is completely unaffected by browsing past days here.
+// dashDate is now the single, app-wide "viewing date" — set from the date
+// widget in the topbar (prev/next arrows + custom calendar popover). Every
+// page (Dashboard, Nutrition/Water, Workout, Habits, etc.) reads/writes
+// against this one date, so moving it updates the data and reports shown
+// everywhere at once: previous day shows that day's data, next day shows
+// a blank/empty day, and picking a custom date shows that date's reports.
+// It never changes S.today itself, so streaks and other "real calendar
+// today" calculations are unaffected by browsing to a different day here.
 var dashDate = '';
 var dpViewYear = null, dpViewMonth = null; // month currently shown inside the open popover
 var DASH_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -3242,8 +3245,16 @@ function renderDateNav() {
 }
 function dashDateGoto(dstr) {
   dashDate = dstr;
+  // Keep every page's date variable in sync with the one global date so the
+  // whole app moves together, regardless of which widget triggered the change.
+  ntrDate = dstr;
+  wkDate = dstr;
+  wtrDate = dstr;
   renderDateNav();
   renderDashboard();
+  if (typeof renderNutrition === 'function') renderNutrition();
+  if (typeof renderWorkout === 'function') renderWorkout();
+  if (typeof renderHabits === 'function') renderHabits();
 }
 function dashDateShift(delta) {
   var d = new Date((dashDate||S.today)+'T12:00');
@@ -3546,8 +3557,9 @@ function switchNtrTab(tab) {
 }
 
 function selectNtrDate(d) {
-  ntrDate = d;
-  renderNutrition();
+  // Route through the global date setter so the whole app (dashboard,
+  // workout, habits, etc.) moves to this date too, not just Nutrition.
+  dashDateGoto(d);
 }
 function renderNtrDayStrip() {
   var strip = document.getElementById('ntr-day-strip');
@@ -4066,7 +4078,7 @@ function renderWorkout() {
     </div>
   </div>`).join('');
 }
-function selectWkDay(d,el){wkDate=d;renderWorkout();}
+function selectWkDay(d,el){dashDateGoto(d);}
 function toggleEx(i){var d=getDay(wkDate);d.exercises[i].done=!d.exercises[i].done;save();renderWorkout();}
 function delEx(i){getDay(wkDate).exercises.splice(i,1);save();renderWorkout();toast('Exercise removed');}
 function toggleExEdit(i){var f=document.getElementById('ex-edit-'+i);if(f)f.classList.toggle('open');}
@@ -4171,7 +4183,8 @@ function toggleHabitDate(hIdx, dateStr) {
 
 /* ── main renderHabits (summary cards + active view) ── */
 function renderHabits(){
-  var done=S.habits.filter(h=>h.logs[S.today]==='done').length; var total=S.habits.length;
+  var viewDate = dashDate || S.today;
+  var done=S.habits.filter(h=>h.logs[viewDate]==='done').length; var total=S.habits.length;
   document.getElementById('h-today').textContent=done+'/'+total;
   document.getElementById('h-total').textContent=total;
 
@@ -4444,15 +4457,16 @@ function renderHabitList() {
   var habCats=['Fitness','Nutrition','Sleep','Mindfulness','Productivity','Other'];
   var list=document.getElementById('habitList');
   if(!S.habits.length){list.innerHTML='<div style="font-size:10px;color:var(--t2);padding:10px">No habits added yet.</div>';return;}
-  var weekDates2=[]; var base2=new Date(S.today+'T12:00');
+  var viewDate = dashDate || S.today;
+  var weekDates2=[]; var base2=new Date(viewDate+'T12:00');
   var dow0=base2.getDay(), mon0=new Date(base2); mon0.setDate(base2.getDate()-(dow0===0?6:dow0-1));
   for(var i=0;i<7;i++){var nd=new Date(mon0);nd.setDate(mon0.getDate()+i);weekDates2.push(nd.toISOString().split('T')[0]);}
   list.innerHTML=S.habits.map((h,i)=>{
     var streak=habitStreak(h);
     var color=HAB_CAT_COLORS[h.cat]||'var(--g)';
-    var st=h.logs[S.today];
+    var st=h.logs[viewDate];
     var isDone=st==='done', isSkip=st==='x';
-    return `<div class="habit-item ${isDone?'done':''}${isSkip?' skip':''}" onclick="habitCheckClick(${i},'${S.today}')" ondblclick="habitCheckDblClick(${i},'${S.today}')" style="border-left-color:${isDone?color:isSkip?'var(--red)':'var(--border)'}">
+    return `<div class="habit-item ${isDone?'done':''}${isSkip?' skip':''}" onclick="habitCheckClick(${i},'${viewDate}')" ondblclick="habitCheckDblClick(${i},'${viewDate}')" style="border-left-color:${isDone?color:isSkip?'var(--red)':'var(--border)'}">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:14px">${h.emoji||'◈'}</span>
@@ -4489,9 +4503,6 @@ function renderHabitStats() {
     var done30=0;
     for(var j=0;j<30;j++){var d2=new Date(now);d2.setDate(now.getDate()-j);var ds=d2.toISOString().split('T')[0];if(h.logs[ds]==='done')done30++;}
     var pct30=Math.round(done30/30*100);
-    // Last 7 days
-    var done7=0;
-    for(var j=0;j<7;j++){var d3=new Date(now);d3.setDate(now.getDate()-j);var ds3=d3.toISOString().split('T')[0];if(h.logs[ds3]==='done')done7++;}
     // All time
     var allDays=Object.values(h.logs).filter(function(v){return v==='done';}).length;
     // Mini bar last 30 days (sparkline)
@@ -4523,7 +4534,6 @@ function renderHabitStats() {
     html+='</div>';
     // stats row
     html+='<div class="hstat-row">';
-    html+='<div><div class="hstat-val">'+done7+'<span style="font-size:11px;color:var(--t2)">/7</span></div><div class="hstat-sub">LAST 7 DAYS</div></div>';
     html+='<div><div class="hstat-val">'+done30+'<span style="font-size:11px;color:var(--t2)">/30</span></div><div class="hstat-sub">LAST 30 DAYS</div></div>';
     html+='<div><div class="hstat-val" style="color:var(--o2)">'+pct30+'%</div><div class="hstat-sub">30D RATE</div></div>';
     html+='<div><div class="hstat-val" style="color:var(--p)">'+allDays+'</div><div class="hstat-sub">ALL TIME</div></div>';

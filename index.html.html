@@ -682,6 +682,24 @@ select.inp option{background:var(--card)}
 .chart-wrap{background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:10px}
 .chart-label{font-size:8px;color:var(--t2);letter-spacing:2px;margin-bottom:10px}
 canvas{display:block;width:100%}
+
+/* ===== Weight trend: range toggle + current-weight badge + ruler chart ===== */
+.wt-range-toggle{display:flex;gap:4px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:3px}
+.wt-range-btn{background:none;border:none;color:var(--t2);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:6px 12px;border-radius:16px;cursor:pointer;transition:all .18s}
+html.alpha .wt-range-btn{font-family:'DM Sans',sans-serif;font-weight:600;text-transform:none;font-size:11px}
+.wt-range-btn:hover{color:var(--t)}
+.wt-range-btn.active{background:linear-gradient(135deg,var(--g),var(--c));color:#04140e;box-shadow:0 2px 8px color-mix(in srgb, var(--g) 35%, transparent)}
+html.alpha .wt-range-btn.active{color:#fff}
+.wt-chart-wrap{position:relative;overflow:hidden}
+.wt-current-badge{
+  position:absolute;top:14px;right:14px;z-index:2;text-align:right;
+  background:var(--glass-bg2,var(--card2));backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
+  border:1px solid var(--glass-border-hi,var(--border));border-radius:10px;padding:6px 12px;
+}
+.wt-current-label{display:block;font-size:8px;letter-spacing:2px;color:var(--t2);font-family:var(--mono)}
+html.alpha .wt-current-label{font-family:'DM Sans',sans-serif;font-weight:700}
+.wt-current-val{display:block;font-size:16px;font-weight:700;color:var(--g);font-family:var(--raj);letter-spacing:.5px}
+
 .meal-item{background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px;border-left:2px solid var(--border)}
 .meal-top{display:flex;justify-content:space-between;align-items:center}
 .meal-name{font-size:12px;letter-spacing:.5px}
@@ -1894,9 +1912,19 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--p)" id="dc-hab-bar"></div></div>
     </div>
   </div>
-  <div class="sec-head">WEEKLY WEIGHT TREND</div>
-  <div class="chart-wrap">
-    <canvas id="weightChart" height="100"></canvas>
+  <div class="sec-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <span>WEIGHT TREND</span>
+    <div class="wt-range-toggle" id="wtRangeToggle">
+      <button class="wt-range-btn active" data-range="week" onclick="setWeightChartRange('week')">Weekly</button>
+      <button class="wt-range-btn" data-range="month" onclick="setWeightChartRange('month')">Monthly</button>
+    </div>
+  </div>
+  <div class="chart-wrap wt-chart-wrap">
+    <div class="wt-current-badge" id="wtCurrentBadge" style="display:none">
+      <span class="wt-current-label">CURRENT</span>
+      <span class="wt-current-val" id="wtCurrentVal">--</span>
+    </div>
+    <canvas id="weightChart" height="150"></canvas>
   </div>
   <div class="quick-add-wrap" id="quickAddWrap">
     <button class="quick-add-fab" id="quickAddFab" onclick="toggleQuickAdd(event)" title="Quick add" aria-label="Quick add">
@@ -3304,51 +3332,171 @@ function renderDashboard() {
   updateSidebarBadges();
 }
 
+// Which range the dashboard weight chart currently shows: 'week' (last
+// 7 logged points) or 'month' (last 30 days' worth of logged points).
+var wtChartRange = 'week';
+function setWeightChartRange(range) {
+  wtChartRange = range === 'month' ? 'month' : 'week';
+  document.querySelectorAll('.wt-range-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-range') === wtChartRange);
+  });
+  renderWeightChart();
+}
+
 function renderWeightChart() {
   var canvas = document.getElementById('weightChart');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth || 560;
-  canvas.height = 100;
-  var W = canvas.width, H = canvas.height, pad = 30;
+  var dpr = window.devicePixelRatio || 1;
+  var cssW = canvas.offsetWidth || 560, cssH = 150;
+  canvas.width = cssW * dpr; canvas.height = cssH * dpr;
+  canvas.style.height = cssH + 'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  var W = cssW, H = cssH;
+  var padL = 46, padR = 16, padT = 18, padB = 26;
   ctx.clearRect(0,0,W,H);
   var isAlpha = document.documentElement.classList.contains('alpha');
   var cs = getComputedStyle(document.documentElement);
   var lineColor = (cs.getPropertyValue('--g')||'#00ff88').trim();
-  var dotColor  = lineColor;
+  var cyanColor = (cs.getPropertyValue('--c')||'#00e5ff').trim();
   var gridColor = (cs.getPropertyValue('--border')||'#0f2a1e').trim();
   var textColor = (cs.getPropertyValue('--t2')||'#5a9a70').trim();
-  var pts = S.measurements.slice(-10).map(m => ({d:m.date, v:parseFloat(m.weight)})).filter(p => p.v);
-  if (pts.length < 2) {
-    ctx.fillStyle = textColor; ctx.font = isAlpha ? '11px DM Sans' : '11px Share Tech Mono';
-    ctx.fillText('Not enough data. Log measurements to see weight trend.', 10, H/2); return;
+  var textColorStrong = (cs.getPropertyValue('--t')||'#f2f2f2').trim();
+  var cardColor = (cs.getPropertyValue('--card')||'#151515').trim();
+  var mono = isAlpha ? 'DM Sans' : 'Share Tech Mono';
+  var raj = isAlpha ? 'Barlow Condensed' : 'Rajdhani';
+
+  var allPts = S.measurements.map(function(m){ return {d:m.date, v:parseFloat(m.weight)}; }).filter(function(p){ return p.v; });
+  var sliceN = wtChartRange === 'month' ? 30 : 7;
+  var pts = allPts.slice(-sliceN);
+
+  var badge = document.getElementById('wtCurrentBadge');
+  var badgeVal = document.getElementById('wtCurrentVal');
+  if (allPts.length) {
+    var cur = allPts[allPts.length-1].v;
+    if (badge) badge.style.display = '';
+    if (badgeVal) badgeVal.textContent = cur.toFixed(1) + ' kg';
+  } else if (badge) {
+    badge.style.display = 'none';
   }
-  var vals = pts.map(p => p.v);
-  var mn = Math.min(...vals)-1, mx = Math.max(...vals)+1;
-  var xStep = (W - pad*2) / (pts.length - 1);
-  ctx.strokeStyle = gridColor; ctx.setLineDash([3,3]);
-  [0.25,0.5,0.75].forEach(f => {
-    var y = pad + (1-f)*(H-pad*2);
-    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+
+  if (pts.length < 2) {
+    ctx.fillStyle = textColor; ctx.font = '11px ' + mono;
+    ctx.fillText('Not enough data. Log measurements to see weight trend.', 10, H/2);
+    return;
+  }
+
+  var vals = pts.map(function(p){ return p.v; });
+  var rawMin = Math.min.apply(null, vals), rawMax = Math.max.apply(null, vals);
+  var curWeight = allPts[allPts.length-1].v;
+  // Ruler scale: round to clean whole-number ticks that comfortably
+  // bracket both the plotted range AND the current weight, so the
+  // current-weight tick is always one of the visible gridlines.
+  var span = Math.max(rawMax - rawMin, 4);
+  var niceStep = span <= 8 ? 1 : span <= 16 ? 2 : span <= 30 ? 5 : 10;
+  var mn = Math.floor((Math.min(rawMin, curWeight) - niceStep*0.8) / niceStep) * niceStep;
+  var mx = Math.ceil((Math.max(rawMax, curWeight) + niceStep*0.8) / niceStep) * niceStep;
+  if (mx === mn) mx = mn + niceStep;
+  var ticks = [];
+  for (var t = mn; t <= mx + 0.0001; t += niceStep) ticks.push(Math.round(t*10)/10);
+
+  var chartW = W - padL - padR, chartH = H - padT - padB;
+  function yFor(v){ return padT + (1-(v-mn)/(mx-mn)) * chartH; }
+  var xStep = pts.length > 1 ? chartW / (pts.length - 1) : 0;
+  function xFor(i){ return padL + i*xStep; }
+
+  // ---- Measurement-scale ruler: tick marks + labeled numbers on the left ----
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  ticks.forEach(function(tv){
+    var y = yFor(tv);
+    var isCurrent = Math.abs(tv - Math.round(curWeight/niceStep)*niceStep) < 0.001;
+    ctx.strokeStyle = gridColor; ctx.setLineDash(isCurrent ? [] : [3,3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    // Tick notch just left of the axis
+    ctx.setLineDash([]);
+    ctx.strokeStyle = isCurrent ? lineColor : textColor; ctx.lineWidth = isCurrent ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(padL-6, y); ctx.lineTo(padL, y); ctx.stroke();
+    ctx.fillStyle = isCurrent ? lineColor : textColor;
+    ctx.font = (isCurrent ? 'bold ' : '') + '9px ' + mono;
+    ctx.fillText(String(tv), padL-9, y);
   });
   ctx.setLineDash([]);
-  ctx.strokeStyle = lineColor; ctx.lineWidth = 2.5;
+
+  // ---- Current-weight marker line across the whole chart width, so the
+  // needle "sits" on the ruler at the live weight even between ticks ----
+  var curY = yFor(curWeight);
+  ctx.save();
+  ctx.strokeStyle = lineColor; ctx.globalAlpha = .55; ctx.lineWidth = 1.5; ctx.setLineDash([1,4]);
+  ctx.beginPath(); ctx.moveTo(padL, curY); ctx.lineTo(W-padR, curY); ctx.stroke();
+  ctx.restore();
+  // Needle notch on the axis, bright, always at the exact current weight
+  ctx.fillStyle = lineColor;
+  ctx.beginPath(); ctx.moveTo(padL-8,curY); ctx.lineTo(padL-1,curY-4); ctx.lineTo(padL-1,curY+4); ctx.closePath(); ctx.fill();
+
+  // ---- Gradient area fill under the trend line ----
+  var grad = ctx.createLinearGradient(0,padT,0,padT+chartH);
+  grad.addColorStop(0, color_mix_fallback(lineColor,.30));
+  grad.addColorStop(1, color_mix_fallback(lineColor,0));
   ctx.beginPath();
-  pts.forEach((p,i) => {
-    var x = pad + i*xStep;
-    var y = pad + (1-(p.v-mn)/(mx-mn))*(H-pad*2);
-    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  });
+  pts.forEach(function(p,i){ var x=xFor(i), y=yFor(p.v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.lineTo(xFor(pts.length-1), padT+chartH); ctx.lineTo(xFor(0), padT+chartH); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  // ---- Trend line (gradient stroke g→c for a bit of visual interest) ----
+  var lineGrad = ctx.createLinearGradient(padL,0,W-padR,0);
+  lineGrad.addColorStop(0, lineColor); lineGrad.addColorStop(1, cyanColor);
+  ctx.strokeStyle = lineGrad; ctx.lineWidth = 2.5; ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.beginPath();
+  pts.forEach(function(p,i){ var x=xFor(i), y=yFor(p.v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
   ctx.stroke();
-  pts.forEach((p,i) => {
-    var x = pad + i*xStep;
-    var y = pad + (1-(p.v-mn)/(mx-mn))*(H-pad*2);
-    ctx.fillStyle = dotColor; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
-    if (i===0 || i===pts.length-1) {
-      ctx.fillStyle = textColor; ctx.font = '9px Share Tech Mono';
-      ctx.fillText(p.v+'kg', x-(i===pts.length-1?24:0), y-10);
+
+  // ---- Data points; last point gets a bigger "current" ring ----
+  pts.forEach(function(p,i){
+    var x=xFor(i), y=yFor(p.v);
+    var isLast = i === pts.length-1;
+    if (isLast) {
+      ctx.fillStyle = cardColor; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = lineColor; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+    } else {
+      ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
     }
   });
+
+  // ---- X-axis date labels: sparse for month view, every point for week ----
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillStyle = textColor; ctx.font = '8px ' + mono;
+  var labelEvery = wtChartRange === 'month' ? Math.ceil(pts.length/6) : 1;
+  pts.forEach(function(p,i){
+    if (i % labelEvery !== 0 && i !== pts.length-1) return;
+    var dt = new Date(p.d + 'T00:00:00');
+    var lbl = isNaN(dt) ? p.d : (dt.getMonth()+1) + '/' + dt.getDate();
+    ctx.fillText(lbl, xFor(i), H - padB + 6);
+  });
+
+  // ---- First/last value callouts above the line ----
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.font = 'bold 10px ' + raj; ctx.fillStyle = textColorStrong;
+  [0, pts.length-1].forEach(function(i){
+    var x=xFor(i), y=yFor(pts[i].v);
+    ctx.fillText(pts[i].v.toFixed(1), x, Math.max(y-12, padT+2));
+  });
+}
+
+// Small helper: canvas gradients can't use color-mix(), so fade a CSS
+// color (hex or rgb) to a given alpha manually for the area-fill gradient.
+function color_mix_fallback(color, alpha){
+  var c = color.trim();
+  if (c[0] === '#') {
+    var hex = c.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(function(ch){return ch+ch;}).join('');
+    var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+alpha+')';
+  }
+  var m = c.match(/rgba?\(([^)]+)\)/);
+  if (m) {
+    var parts = m[1].split(',').map(function(s){return s.trim();});
+    return 'rgba('+parts[0]+','+parts[1]+','+parts[2]+','+alpha+')';
+  }
+  return c;
 }
 
 // ===================== NUTRITION =====================

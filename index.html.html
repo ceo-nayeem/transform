@@ -1651,14 +1651,10 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
     <div class="sb-sec">DAILY TRACKING</div>
     <div class="sb-item" onclick="nav(this,'fitness')" title="Fitness"><span class="sb-icon">⊞</span><span class="sb-label">Fitness</span><span class="sb-badge" id="wkBadge">0/0</span></div>
-    <div class="sb-item" onclick="nav(this,'habits')" title="Habits"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
+    <div class="sb-item" onclick="nav(this,'track')" title="Track (Habits + Goals)"><span class="sb-icon">◎</span><span class="sb-label">Track</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
 
     <div class="sb-sec">HEALTH</div>
-    <div class="sb-item" onclick="nav(this,'vitals')" title="Vitals"><span class="sb-icon">♡</span><span class="sb-label">Vitals</span></div>
-    <div class="sb-item" onclick="nav(this,'measurements')" title="Measurements"><span class="sb-icon">◫</span><span class="sb-label">Measurements</span></div>
-
-    <div class="sb-sec">PLANNING</div>
-    <div class="sb-item" onclick="nav(this,'goals')" title="Goals & Progress"><span class="sb-icon">◎</span><span class="sb-label">Goals & Progress</span></div>
+    <div class="sb-item" onclick="nav(this,'health')" title="Health (Vitals + Measurements)"><span class="sb-icon">✚</span><span class="sb-label">Health</span></div>
 
     <div class="sb-sec">TOOLS</div>
     <div class="sb-item" onclick="nav(this,'meallibrary')" title="Meal Library"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
@@ -1719,7 +1715,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <div class="card-sub" id="dc-ex-sub">exercises done</div>
       <div class="card-bar"><div class="card-bar-fill" id="dc-ex-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('[onclick*=habits]'),'habits')">
+    <div class="card" onclick="nav(document.querySelector('.sb-item[onclick*=track]'),'habits')">
       <div class="card-accent" style="background:var(--p)"></div>
       <div class="card-label">HABITS</div>
       <div class="card-val" style="color:var(--p);font-size:22px" id="dc-hab">0/0</div>
@@ -1993,8 +1989,15 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
 </div><!-- end page-fitness -->
 
-<!-- ============ HABITS ============ -->
-<div class="page" id="page-habits">
+<!-- ============ TRACK (HABITS + GOALS & PROGRESS) ============ -->
+<div class="page" id="page-track">
+  <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
+    <button class="timer-tab active" id="track-tab-habits" onclick="switchTrackTab('habits')">✅ HABITS</button>
+    <button class="timer-tab" id="track-tab-goals" onclick="switchTrackTab('goals')">◎ GOALS &amp; PROGRESS</button>
+  </div>
+
+  <!-- ── HABITS ── -->
+  <div id="page-habits">
 
   <!-- ── SUMMARY CARDS ── -->
   <div class="g4" style="margin-bottom:12px">
@@ -2057,8 +2060,41 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     </div>
     <button class="btn full" onclick="addHabit()">[ + ADD HABIT ]</button>
   </div>
+  </div>
 
-</div>
+  <!-- ── GOALS & PROGRESS ── -->
+  <div id="page-goals" style="display:none">
+  <div class="g2" style="margin-bottom:12px">
+    <div class="card"><div class="card-label">ACTIVE GOALS</div><div class="card-val" id="g-active">0</div></div>
+    <div class="card"><div class="card-label">COMPLETED</div><div class="card-val" style="color:var(--g2)" id="g-complete">0</div></div>
+  </div>
+  <div class="sec-head">ACTIVE GOALS</div>
+  <div id="goalList"><div style="font-size:10px;color:var(--t2);padding:10px">No goals set yet.</div></div>
+  <div class="sec-head">ADD NEW GOAL</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
+    <div class="inp-row" style="margin-bottom:8px">
+      <div class="inp-group" style="flex:3"><div class="inp-label">GOAL NAME</div><input class="inp" id="gl-name" type="text" placeholder="e.g. Target Weight: 74 kg"/></div>
+      <div class="inp-group" style="flex:2"><div class="inp-label">CATEGORY</div><select class="inp" id="gl-cat"><option>Weight Loss</option><option>Muscle Gain</option><option>Body Fat</option><option>Strength</option><option>Cardio</option><option>Habit</option><option>Other</option></select></div>
+    </div>
+    <div class="inp-row" style="margin-bottom:10px">
+      <div class="inp-group" style="flex:1"><div class="inp-label">CURRENT VALUE</div><input class="inp" id="gl-cur" type="number" step="0.1" placeholder="82.4"/></div>
+      <div class="inp-group" style="flex:1"><div class="inp-label">TARGET VALUE</div><input class="inp" id="gl-tar" type="number" step="0.1" placeholder="74"/></div>
+      <div class="inp-group" style="flex:1"><div class="inp-label">UNIT</div><input class="inp" id="gl-unit" type="text" placeholder="kg, %, reps..."/></div>
+      <div class="inp-group" style="flex:1"><div class="inp-label">TARGET DATE</div><input class="inp" id="gl-date" type="date"/></div>
+    </div>
+    <button class="btn full" onclick="addGoal()">[ + SET GOAL ]</button>
+  </div>
+  <div class="sec-head" style="margin-top:16px">UPDATE GOAL PROGRESS</div>
+  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
+    <div class="inp-row">
+      <div class="inp-group" style="flex:3"><div class="inp-label">SELECT GOAL</div><select class="inp" id="gl-sel"></select></div>
+      <div class="inp-group" style="flex:2"><div class="inp-label">NEW CURRENT VALUE</div><input class="inp" id="gl-newval" type="number" step="0.1" placeholder="new value"/></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="updateGoalProgress()">[ UPDATE ]</button></div>
+    </div>
+  </div>
+  </div>
+
+</div><!-- end page-track -->
 
 <style>
 /* ── HABIT TAB ── */
@@ -2141,8 +2177,15 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
 html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}
 </style>
 
-<!-- ============ VITALS ============ -->
-<div class="page" id="page-vitals">
+<!-- ============ HEALTH (VITALS + MEASUREMENTS) ============ -->
+<div class="page" id="page-health">
+  <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
+    <button class="timer-tab active" id="health-tab-vitals" onclick="switchHealthTab('vitals')">♡ VITALS</button>
+    <button class="timer-tab" id="health-tab-measurements" onclick="switchHealthTab('measurements')">◫ MEASUREMENTS</button>
+  </div>
+
+  <!-- ── VITALS ── -->
+  <div id="page-vitals">
   <div class="g2" style="margin-bottom:12px">
     <div class="vital-card">
       <div class="card-label">LATEST HEART RATE</div>
@@ -2184,10 +2227,10 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
   </div>
   <div class="sec-head">VITALS HISTORY</div>
   <div id="vitalHistory"><div style="font-size:10px;color:var(--t2);padding:10px">No vitals logged yet.</div></div>
-</div>
+  </div>
 
-<!-- ============ MEASUREMENTS ============ -->
-<div class="page" id="page-measurements">
+  <!-- ── MEASUREMENTS ── -->
+  <div id="page-measurements" style="display:none">
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px" id="measGrid">
     <div class="meas-card"><div class="meas-val" id="m-weight">--</div><div class="meas-label">WEIGHT (kg)</div><div class="meas-ch t-neu" id="m-weight-ch">—</div></div>
     <div class="meas-card"><div class="meas-val" id="m-bf">--%</div><div class="meas-label">BODY FAT</div><div class="meas-ch t-neu" id="m-bf-ch">—</div></div>
@@ -2216,39 +2259,10 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
   </div>
   <div class="sec-head">MEASUREMENT HISTORY</div>
   <div id="measHistory"><div style="font-size:10px;color:var(--t2);padding:10px">No measurements logged yet.</div></div>
-</div>
+  </div>
 
-<!-- ============ GOALS ============ -->
-<div class="page" id="page-goals">
-  <div class="g2" style="margin-bottom:12px">
-    <div class="card"><div class="card-label">ACTIVE GOALS</div><div class="card-val" id="g-active">0</div></div>
-    <div class="card"><div class="card-label">COMPLETED</div><div class="card-val" style="color:var(--g2)" id="g-complete">0</div></div>
-  </div>
-  <div class="sec-head">ACTIVE GOALS</div>
-  <div id="goalList"><div style="font-size:10px;color:var(--t2);padding:10px">No goals set yet.</div></div>
-  <div class="sec-head">ADD NEW GOAL</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row" style="margin-bottom:8px">
-      <div class="inp-group" style="flex:3"><div class="inp-label">GOAL NAME</div><input class="inp" id="gl-name" type="text" placeholder="e.g. Target Weight: 74 kg"/></div>
-      <div class="inp-group" style="flex:2"><div class="inp-label">CATEGORY</div><select class="inp" id="gl-cat"><option>Weight Loss</option><option>Muscle Gain</option><option>Body Fat</option><option>Strength</option><option>Cardio</option><option>Habit</option><option>Other</option></select></div>
-    </div>
-    <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:1"><div class="inp-label">CURRENT VALUE</div><input class="inp" id="gl-cur" type="number" step="0.1" placeholder="82.4"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">TARGET VALUE</div><input class="inp" id="gl-tar" type="number" step="0.1" placeholder="74"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">UNIT</div><input class="inp" id="gl-unit" type="text" placeholder="kg, %, reps..."/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">TARGET DATE</div><input class="inp" id="gl-date" type="date"/></div>
-    </div>
-    <button class="btn full" onclick="addGoal()">[ + SET GOAL ]</button>
-  </div>
-  <div class="sec-head" style="margin-top:16px">UPDATE GOAL PROGRESS</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row">
-      <div class="inp-group" style="flex:3"><div class="inp-label">SELECT GOAL</div><select class="inp" id="gl-sel"></select></div>
-      <div class="inp-group" style="flex:2"><div class="inp-label">NEW CURRENT VALUE</div><input class="inp" id="gl-newval" type="number" step="0.1" placeholder="new value"/></div>
-      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="updateGoalProgress()">[ UPDATE ]</button></div>
-    </div>
-  </div>
-</div>
+</div><!-- end page-health -->
+
 
 <!-- ============ TIMER & STOPWATCH ============ -->
 <div class="page" id="page-timer">
@@ -2809,8 +2823,57 @@ function saveToFirebase(cb) {
 var pageTitles = {
   dashboard:'DASHBOARD', fitness:'FITNESS', nutrition:'NUTRITION', workout:'WORKOUT', habits:'HABITS',
   water:'WATER', vitals:'VITALS', measurements:'MEASUREMENTS', goals:'GOALS & PROGRESS',
+  health:'HEALTH', track:'TRACK',
   meallibrary:'MEAL LIBRARY', ingredientlibrary:'INGREDIENT LIBRARY', timer:'TIMER & STOPWATCH', profile:'PROFILE & SETTINGS'
 };
+// Maps a legacy/sub page id to the combined sidebar section it now lives inside.
+// 'health' merges vitals + measurements; 'track' merges habits + goals & progress.
+var SUBPAGE_PARENT = { vitals:'health', measurements:'health', habits:'track', goals:'track' };
+// healthActiveTab / trackActiveTab track which sub-tab is showing inside the merged pages.
+var healthActiveTab = 'vitals';
+function switchHealthTab(tab) {
+  healthActiveTab = tab;
+  var vitalsSec = document.getElementById('page-vitals');
+  var measSec = document.getElementById('page-measurements');
+  var tabV = document.getElementById('health-tab-vitals');
+  var tabM = document.getElementById('health-tab-measurements');
+  if (!vitalsSec || !measSec) return;
+  if (tab === 'measurements') {
+    vitalsSec.style.display = 'none';
+    measSec.style.display = '';
+    if (tabM) tabM.classList.add('active');
+    if (tabV) tabV.classList.remove('active');
+    renderMeasurements();
+  } else {
+    vitalsSec.style.display = '';
+    measSec.style.display = 'none';
+    if (tabV) tabV.classList.add('active');
+    if (tabM) tabM.classList.remove('active');
+    renderVitals();
+  }
+}
+var trackActiveTab = 'habits';
+function switchTrackTab(tab) {
+  trackActiveTab = tab;
+  var habitsSec = document.getElementById('page-habits');
+  var goalsSec = document.getElementById('page-goals');
+  var tabH = document.getElementById('track-tab-habits');
+  var tabG = document.getElementById('track-tab-goals');
+  if (!habitsSec || !goalsSec) return;
+  if (tab === 'goals') {
+    habitsSec.style.display = 'none';
+    goalsSec.style.display = '';
+    if (tabG) tabG.classList.add('active');
+    if (tabH) tabH.classList.remove('active');
+    renderGoals();
+  } else {
+    habitsSec.style.display = '';
+    goalsSec.style.display = 'none';
+    if (tabH) tabH.classList.add('active');
+    if (tabG) tabG.classList.remove('active');
+    renderHabits();
+  }
+}
 // fitActiveTab tracks which sub-tab (diet/workout) is showing inside the Fitness page.
 var fitActiveTab = 'diet';
 function switchFitnessTab(tab) {
@@ -2838,18 +2901,20 @@ function switchFitnessTab(tab) {
 function nav(btn, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  var origId = id; // remember the specific sub-page requested, before it's folded into its combined parent
   // 'nutrition' and 'workout' are legacy ids kept for internal callers — both now route into 'fitness'.
   if (id === 'nutrition' || id === 'workout') id = 'fitness';
+  // 'vitals'/'measurements' now live inside 'health'; 'habits'/'goals' now live inside 'track'.
+  if (id === 'vitals' || id === 'measurements') id = 'health';
+  if (id === 'habits' || id === 'goals') id = 'track';
   var pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
   if (btn && btn.classList) btn.classList.add('active');
   var topPath = document.getElementById('topPagePath');
   if (topPath) topPath.textContent = '/ ' + (pageTitles[id] || id.toUpperCase());
-  if (id === 'habits') renderHabits();
   if (id === 'water') { switchFitnessTab('diet'); setTimeout(function(){ switchNtrTab('water'); }, 0); return; }
-  if (id === 'vitals') renderVitals();
-  if (id === 'measurements') renderMeasurements();
-  if (id === 'goals') renderGoals();
+  if (id === 'health') { setTimeout(function(){ switchHealthTab(origId === 'measurements' ? 'measurements' : 'vitals'); }, 0); }
+  if (id === 'track') { setTimeout(function(){ switchTrackTab(origId === 'goals' ? 'goals' : 'habits'); }, 0); }
   if (id === 'profile') loadProfile();
   if (id === 'fitness') { setTimeout(function(){ switchFitnessTab(fitActiveTab || 'diet'); }, 0); }
   if (id === 'dashboard') renderDashboard();

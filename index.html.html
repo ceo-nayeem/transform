@@ -1301,33 +1301,42 @@ html.alpha body::before{
 }
 @media (prefers-reduced-motion:reduce){ body::before{animation:none;} }
 
-/* ---- 1b. Deep background particles: soft floating water-droplet dots,
-   drifting slowly behind all content, underneath the aurora glow. Pure
-   CSS, one shared radial-gradient sprite repeated at different sizes/
-   positions/speeds so it reads as scattered droplets rather than a
-   uniform grid. ---- */
+/* ---- 1b. Deep background particles: soft floating glass bubbles,
+   drifting slowly behind all content, underneath the aurora glow.
+   Built as transparent glass rims (border + faint inner sheen) rather
+   than solid dots, so they read as bubbles rather than paint blobs —
+   and work the same way in both dark and light mode since they carry
+   almost no fill of their own, just a rim tinted with the accent color
+   plus a small specular highlight. Sizes vary widely (tiny flecks to
+   large soft orbs) and they're sparse/infrequent by design. ---- */
 #bgParticles{
   position:fixed;inset:0;z-index:-3;pointer-events:none;overflow:hidden;
 }
 #bgParticles span{
   position:absolute;border-radius:50%;
-  background:radial-gradient(circle at 32% 28%, rgba(255,255,255,.9), color-mix(in srgb, var(--g) 55%, transparent) 45%, transparent 72%);
-  opacity:.16;filter:blur(.3px);
-  animation-name:bgDriftUp;
+  border:1px solid color-mix(in srgb, var(--g) 38%, transparent);
+  background:
+    radial-gradient(circle at 30% 26%, color-mix(in srgb, var(--t) 55%, transparent), transparent 32%),
+    radial-gradient(circle at 65% 70%, color-mix(in srgb, var(--g) 22%, transparent), transparent 60%),
+    color-mix(in srgb, var(--g) 6%, transparent);
+  box-shadow:
+    inset 0 1px 1px color-mix(in srgb, var(--t) 30%, transparent),
+    inset 0 -3px 6px color-mix(in srgb, var(--g) 12%, transparent);
+  opacity:0;
+  animation-name:bgBubbleFloat;
   animation-timing-function:ease-in-out;
   animation-iteration-count:infinite;
   will-change:transform,opacity;
 }
-html.alpha #bgParticles span{opacity:.22;mix-blend-mode:multiply}
-@keyframes bgDriftUp{
-  0%{   transform:translate3d(0,0,0) scale(1);      opacity:0; }
-  10%{  opacity:var(--p-op,.16); }
-  50%{  transform:translate3d(var(--p-dx,18px),calc(var(--p-dy,-90px)*0.55),0) scale(1.15); }
-  90%{  opacity:var(--p-op,.16); }
-  100%{ transform:translate3d(calc(var(--p-dx,18px)*2),var(--p-dy,-90px),0) scale(.85); opacity:0; }
+@keyframes bgBubbleFloat{
+  0%{   transform:translate3d(0,0,0) scale(.9);  opacity:0; }
+  6%{   opacity:var(--p-op,.22); }
+  50%{  transform:translate3d(var(--p-dx,18px),calc(var(--p-dy,-120px)*0.55),0) scale(1.05); }
+  85%{  opacity:var(--p-op,.22); }
+  100%{ transform:translate3d(calc(var(--p-dx,18px)*2),var(--p-dy,-120px),0) scale(.95); opacity:0; }
 }
 @media (prefers-reduced-motion:reduce){ #bgParticles{display:none;} }
-@media (max-width:768px){ #bgParticles span:nth-child(n+13){display:none;} } /* fewer on mobile: perf */
+@media (max-width:768px){ #bgParticles span:nth-child(n+8){display:none;} } /* fewer on mobile: perf */
 
 /* ---- 2. Chrome surfaces: same frosted glass recipe in Alpha as Terminal ---- */
 html.alpha .topbar,html.alpha .page-header{
@@ -5416,22 +5425,31 @@ nav = function(btn, id) {
 
 
 function init() {
-  // Deep background: scattered floating droplet particles, drifting
-  // slowly upward at random sizes/positions/speeds/delays.
+  // Deep background: sparse floating glass bubbles, drifting slowly
+  // upward. Sizes range from tiny flecks to large soft orbs, each with
+  // its own long duration + a big randomized delay so they surface only
+  // occasionally rather than constantly filling the screen.
   try{
     var pLayer = document.getElementById('bgParticles');
     if (pLayer && !pLayer.childElementCount) {
-      var N = 22;
+      var N = 11; // sparse — infrequent, not a constant swarm
       for (var i=0;i<N;i++){
         var s = document.createElement('span');
-        var size = 4 + Math.random()*10;           // 4–14px dots
+        // Wide size spread: mostly small, occasionally quite large.
+        var sizeRoll = Math.random();
+        var size = sizeRoll < 0.5 ? (5 + Math.random()*10)   // small: 5–15px
+                  : sizeRoll < 0.85 ? (18 + Math.random()*22) // medium: 18–40px
+                  : (46 + Math.random()*54);                  // large: 46–100px
         var left = Math.random()*100;               // vw
-        var top  = 20 + Math.random()*80;            // start lower half+, drifts up
-        var dur  = 16 + Math.random()*22;            // 16–38s
-        var delay = -Math.random()*dur;              // negative = already mid-flight on load
-        var dx = (Math.random()*40-20).toFixed(0)+'px';
-        var dy = -(90+Math.random()*160).toFixed(0)+'px';
-        var op = (0.10 + Math.random()*0.16).toFixed(2);
+        var top  = 10 + Math.random()*90;            // anywhere top-to-bottom, drifts up
+        var dur  = 34 + Math.random()*46;            // 34–80s: slow
+        // Long, staggered, mostly-negative delays plus extra positive
+        // gaps so bubbles don't all cycle back-to-back — real gaps of
+        // near-invisibility between appearances.
+        var delay = -(Math.random()*dur) - Math.random()*40;
+        var dx = (Math.random()*50-25).toFixed(0)+'px';
+        var dy = -(100+Math.random()*220).toFixed(0)+'px';
+        var op = (0.06 + Math.random()*0.13).toFixed(2); // faint, glassy
         s.style.width = size+'px'; s.style.height = size+'px';
         s.style.left = left+'vw'; s.style.top = top+'vh';
         s.style.animationDuration = dur+'s';

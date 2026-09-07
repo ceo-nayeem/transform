@@ -1651,14 +1651,10 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
     <div class="sb-sec">DAILY TRACKING</div>
     <div class="sb-item" onclick="nav(this,'fitness')" title="Fitness"><span class="sb-icon">⊞</span><span class="sb-label">Fitness</span><span class="sb-badge" id="wkBadge">0/0</span></div>
-    <div class="sb-item" onclick="nav(this,'habits')" title="Habits"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
+    <div class="sb-item" onclick="nav(this,'track')" title="Track — Habits & Goals"><span class="sb-icon">◎</span><span class="sb-label">Track</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
 
     <div class="sb-sec">HEALTH</div>
-    <div class="sb-item" onclick="nav(this,'vitals')" title="Vitals"><span class="sb-icon">♡</span><span class="sb-label">Vitals</span></div>
-    <div class="sb-item" onclick="nav(this,'measurements')" title="Measurements"><span class="sb-icon">◫</span><span class="sb-label">Measurements</span></div>
-
-    <div class="sb-sec">PLANNING</div>
-    <div class="sb-item" onclick="nav(this,'goals')" title="Goals & Progress"><span class="sb-icon">◎</span><span class="sb-label">Goals & Progress</span></div>
+    <div class="sb-item" onclick="nav(this,'health')" title="Health — Vitals & Measurements"><span class="sb-icon">♡</span><span class="sb-label">Health</span></div>
 
     <div class="sb-sec">TOOLS</div>
     <div class="sb-item" onclick="nav(this,'meallibrary')" title="Meal Library"><span class="sb-icon">◉</span><span class="sb-label">Meal Library</span><span class="sb-badge" id="mlBadge">0</span></div>
@@ -1993,8 +1989,15 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
 </div><!-- end page-fitness -->
 
-<!-- ============ HABITS ============ -->
-<div class="page" id="page-habits">
+<!-- ============ TRACK (HABITS + GOALS & PROGRESS) ============ -->
+<div class="page" id="page-track">
+  <!-- HABITS / GOALS TAB STRIP -->
+  <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
+    <button class="timer-tab active" id="track-tab-habits" onclick="switchTrackTab('habits')">≡ HABITS</button>
+    <button class="timer-tab" id="track-tab-goals" onclick="switchTrackTab('goals')">◎ GOALS & PROGRESS</button>
+  </div>
+
+<div id="page-habits">
 
   <!-- ── SUMMARY CARDS ── -->
   <div class="g4" style="margin-bottom:12px">

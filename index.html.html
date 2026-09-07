@@ -1623,6 +1623,8 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     display:flex;align-items:center;
     height:56px;border-radius:28px;
     background:var(--glass-bg2,var(--panel));
+    backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+    border:1px solid var(--glass-border-hi,rgba(255,255,255,.14));
     box-sizing:border-box;
     width:28px; /* resting width = radius, i.e. fully hidden behind the circle */
     overflow:hidden;
@@ -1631,7 +1633,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   }
   .sb-tip-text{
     position:relative;display:block;white-space:nowrap;
-    padding:0 18px 0 30px; /* left padding clears the hidden circle half */
+    padding:0 12px 0 32px; /* left padding clears the hidden circle half */
     color:var(--t);font-family:var(--raj);font-size:12px;font-weight:600;letter-spacing:.6px;
     opacity:0;transform:translateX(-6px);
     transition:opacity .2s ease .12s,transform .26s ease .12s;
@@ -1639,11 +1641,12 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   }
   .sb-tip-bubble.show{
     width:var(--sb-tip-w,auto);
-    box-shadow:0 10px 26px rgba(0,0,0,.35);
+    box-shadow:0 10px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
   }
   .sb-tip-bubble.show .sb-tip-text{opacity:1;transform:translateX(0)}
   .sb-tip-bubble.sb-tip-live{
-    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 30%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 16%, var(--glass-bg2,var(--panel))));
+    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 26%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 14%, var(--glass-bg2,var(--panel))));
+    border-color:color-mix(in srgb, var(--g) 40%, var(--glass-border-hi,rgba(255,255,255,.14)));
   }
   .sb-tip-bubble.sb-tip-live .sb-tip-text{color:var(--g)}
 
@@ -5200,7 +5203,7 @@ function sizeSbTipPool(bubble, r){
   if (!textEl) return;
   var textW = textEl.scrollWidth;
   var radius = r.height / 2;
-  bubble.style.setProperty('--sb-tip-w', (radius + textW + 4) + 'px');
+  bubble.style.setProperty('--sb-tip-w', (radius + textW + 2) + 'px');
 }
 
 // Fixed-position hover tooltip — a droplet "splash" that always replays on

@@ -229,6 +229,30 @@ html.alpha[data-accent="rose"]{--g:#e11d48;--g2:#9f1239;--g3:#fde2e9;--gd:color-
 .theme-toggle-circle span{transition:transform .3s ease;display:inline-block}
 .theme-toggle-circle:active span{transform:rotate(20deg)}
 
+/* ===== Theme toggle hover popover — Dark/Light + accent swatches,
+   surfaced on hover over the topbar sun/moon button (moved here from
+   the profile dropdown so appearance controls live with the toggle). ===== */
+.theme-toggle-wrap{position:relative}
+.theme-popover{
+  position:absolute;top:calc(100% + 10px);right:0;min-width:190px;
+  background:var(--glass-bg2,var(--panel));backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border-hi,var(--border));border-radius:var(--radius-md,10px);
+  box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
+  padding:10px 8px 8px;
+  opacity:0;visibility:hidden;transform:translateY(-6px);pointer-events:none;
+  transition:opacity .16s ease,transform .16s ease,visibility .16s;
+  z-index:210;
+}
+.theme-toggle-wrap:hover .theme-popover,
+.theme-popover.pinned{
+  opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
+}
+/* small gap-bridge so the popover doesn't close while moving the mouse
+   from the button down into it */
+.theme-toggle-wrap::after{
+  content:'';position:absolute;top:100%;right:0;left:0;height:10px;
+}
+
 /* ===== Streak chip — animated flame badge, minimal text ===== */
 .streak-fire-badge{
   width:20px;height:20px;border-radius:50%;flex-shrink:0;
@@ -1703,9 +1727,24 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <span class="fb-status" id="syncDot"></span>
       <span id="syncTxt">SYNCED</span>
     </div>
-    <button class="theme-toggle-circle" onclick="toggleTheme()" title="Switch theme" aria-label="Switch light/dark theme">
-      <span id="themeIcon">🌙</span>
-    </button>
+    <div class="theme-toggle-wrap" id="themeToggleWrap">
+      <button class="theme-toggle-circle" onclick="toggleTheme()" title="Switch theme" aria-label="Switch light/dark theme">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <div class="theme-popover" id="themePopover" onclick="event.stopPropagation()">
+        <div class="pd-mode-row">
+          <button class="pd-mode-btn active" id="pdModeDark2" onclick="setMode('dark')"><span>🌙</span><span>Dark</span></button>
+          <button class="pd-mode-btn" id="pdModeLight2" onclick="setMode('light')"><span>☀️</span><span>Light</span></button>
+        </div>
+        <div class="pd-accent-row" id="accentSwatchRow2" style="border-bottom:none;margin-bottom:0">
+          <button class="accent-swatch active" data-swatch="emerald" onclick="setAccent('emerald')" title="Emerald"></button>
+          <button class="accent-swatch" data-swatch="azure" onclick="setAccent('azure')" title="Azure"></button>
+          <button class="accent-swatch" data-swatch="violet" onclick="setAccent('violet')" title="Violet"></button>
+          <button class="accent-swatch" data-swatch="amber" onclick="setAccent('amber')" title="Amber"></button>
+          <button class="accent-swatch" data-swatch="rose" onclick="setAccent('rose')" title="Rose"></button>
+        </div>
+      </div>
+    </div>
     <div class="streak-chip" title="Current streak"><span class="streak-fire-badge" aria-hidden="true">🔥</span><span id="streakDisp">0 Days</span></div>
     <div class="date-nav" id="dateNav">
       <button class="date-nav-arrow" onclick="dashDateShift(-1)" title="Previous day" aria-label="Previous day">‹</button>
@@ -1726,18 +1765,6 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
             <div class="profile-dropdown-sub">TRACKING ACTIVE</div>
           </div>
         </div>
-        <div class="pd-section-lbl">APPEARANCE</div>
-        <div class="pd-mode-row">
-          <button class="pd-mode-btn active" id="pdModeDark" onclick="setMode('dark')"><span>🌙</span><span>Dark</span></button>
-          <button class="pd-mode-btn" id="pdModeLight" onclick="setMode('light')"><span>☀️</span><span>Light</span></button>
-        </div>
-        <div class="pd-accent-row" id="accentSwatchRow">
-          <button class="accent-swatch active" data-swatch="emerald" onclick="setAccent('emerald')" title="Emerald"></button>
-          <button class="accent-swatch" data-swatch="azure" onclick="setAccent('azure')" title="Azure"></button>
-          <button class="accent-swatch" data-swatch="violet" onclick="setAccent('violet')" title="Violet"></button>
-          <button class="accent-swatch" data-swatch="amber" onclick="setAccent('amber')" title="Amber"></button>
-          <button class="accent-swatch" data-swatch="rose" onclick="setAccent('rose')" title="Rose"></button>
-        </div>
         <div class="profile-dropdown-item" onclick="closeProfileMenu();nav(null,'profile')"><span class="sb-icon">◧</span><span>Profile & Settings</span></div>
         <div class="profile-dropdown-item danger" onclick="closeProfileMenu();doLogout()"><span class="sb-icon">⏻</span><span>Logout</span></div>
       </div>
@@ -1754,14 +1781,14 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
     <div class="sb-sec">DAILY TRACKING</div>
     <div class="sb-item" onclick="nav(this,'fitness')" data-tip="Fitness"><span class="sb-icon">⊞</span><span class="sb-label">Fitness</span><span class="sb-badge" id="wkBadge">0/0</span></div>
-    <div class="sb-item" onclick="nav(this,'track')" data-tip="Track (Habits + Goals)"><span class="sb-icon">◎</span><span class="sb-label">Track</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
+    <div class="sb-item" onclick="nav(this,'track')" data-tip="Track"><span class="sb-icon">◎</span><span class="sb-label">Track</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
 
     <div class="sb-sec">HEALTH</div>
-    <div class="sb-item" onclick="nav(this,'health')" data-tip="Health (Vitals + Measurements)"><span class="sb-icon">✚</span><span class="sb-label">Health</span></div>
+    <div class="sb-item" onclick="nav(this,'health')" data-tip="Health"><span class="sb-icon">✚</span><span class="sb-label">Health</span></div>
 
     <div class="sb-sec">TOOLS</div>
     <div class="sb-item" onclick="nav(this,'library')" data-tip="Library"><span class="sb-icon">◉</span><span class="sb-label">Library</span><span class="sb-badge" id="mlBadge">0</span><span class="sb-badge" id="ilBadge">0</span></div>
-    <div class="sb-item" onclick="nav(this,'timer')" data-tip="Timer &amp; Stopwatch"><span class="sb-icon">◷</span><span class="sb-label">Timer &amp; Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
+    <div class="sb-item" onclick="nav(this,'timer')" data-tip="Tools"><span class="sb-icon">◷</span><span class="sb-label">Timer &amp; Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
 
   </div>
 </div>
@@ -4673,7 +4700,7 @@ var ACCENT_NAMES = ['emerald','azure','violet','amber','rose'];
 function _applyModeUI(isLight){
   var icon = document.getElementById('themeIcon');
   if (icon) icon.textContent = isLight ? '☀️' : '🌙';
-  var d = document.getElementById('pdModeDark'), l = document.getElementById('pdModeLight');
+  var d = document.getElementById('pdModeDark2'), l = document.getElementById('pdModeLight2');
   if (d) d.classList.toggle('active', !isLight);
   if (l) l.classList.toggle('active', isLight);
 }
@@ -5134,6 +5161,36 @@ document.addEventListener('click', function(e){
     m.classList.remove('open');
   }
 });
+
+// ===================== THEME TOGGLE POPOVER (touch fallback) =====================
+// Desktop: the popover appears on :hover via CSS alone. Touch devices have
+// no hover, so tapping the circle there opens the popover (pinned) instead
+// of firing toggleTheme() immediately; tapping again or outside closes it
+// and lets the next real tap on the circle switch the theme as normal.
+(function(){
+  var wrap = document.getElementById('themeToggleWrap');
+  var pop = document.getElementById('themePopover');
+  var btn = wrap ? wrap.querySelector('.theme-toggle-circle') : null;
+  if (!wrap || !pop || !btn) return;
+  var isTouch = matchMedia('(hover: none)').matches;
+  if (!isTouch) return;
+  btn.addEventListener('click', function(e){
+    if (!pop.classList.contains('pinned')) {
+      e.preventDefault(); e.stopPropagation();
+      pop.classList.add('pinned');
+    }
+    // else: already pinned, let the click go through to toggleTheme()
+    // and then close the popover afterward.
+    else {
+      setTimeout(function(){ pop.classList.remove('pinned'); }, 50);
+    }
+  });
+  document.addEventListener('click', function(e){
+    if (pop.classList.contains('pinned') && !wrap.contains(e.target)) {
+      pop.classList.remove('pinned');
+    }
+  });
+})();
 
 // ===================================================
 // MOBILE NAV & RESPONSIVE JS

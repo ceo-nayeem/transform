@@ -1609,70 +1609,52 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     100%{ opacity:0;   transform:scale(1.55); }
   }
 
-  /* ── Liquid-glass title bubble: shared markup for the transient hover
-     tip (#sbTip) and the persistent per-item labels in #sbLabelLayer.
-     Both are fixed-position + JS-positioned so they're never clipped by
-     the sidebar's own scroll container, and both sit flush against the
-     circle (zero gap) so the two backgrounds read as one piece.
-     Structure: .sb-tip-blob (goo-filtered: a small "drop" overlapping
-     the circle's edge + a "pool" the size of the text) actually fuses
-     into a single connected shape via the SVG goo filter as the two
-     grow in — a droplet breaking off the circle and forming the title's
-     background. The text itself sits on a separate, unfiltered layer on
-     top so it always stays crisp. ── */
+  /* ── Pill label: one solid glass pill per item, anchored so its left
+     edge sits UNDER the circle's center (not beside it) — the circle
+     itself is stacked on top (higher z-index), so the pill's rounded
+     left half is hidden behind the circle and only its right half
+     (holding the text) peeks out. Result: zero visible seam, exactly
+     like a single glass capsule with an icon puck on one end. Grows in
+     from width 0 at the circle's center, like a drop of water pulling
+     itself out sideways into a puddle. ── */
   .sb-tip-bubble{
     position:fixed;top:0;left:0;pointer-events:none;
     transform:translateY(-50%);z-index:1997;
     display:flex;align-items:center;
-  }
-  /* The blob wraps drop+pool and sits directly under the text, sized to
-     hug it exactly — no box around the text wider than the goo shape. */
-  .sb-tip-blob{
-    position:absolute;top:50%;left:0;height:34px;
-    transform:translateY(-50%);
-    filter:url(#sbGoo);
-  }
-  /* The drop is centered exactly ON the circle's right edge (left:0 of the
-     bubble == circle's edge) so it visually breaks off the button itself,
-     with zero gap — as it scales up it merges into the pool via the goo
-     filter, reading as one continuous liquid shape. */
-  .sb-tip-drop{
-    position:absolute;left:0;top:50%;width:22px;height:22px;border-radius:50%;
-    transform:translate(-50%,-50%) scale(0);transform-origin:center;
+    height:56px;border-radius:28px;
     background:var(--glass-bg2,var(--panel));
-    transition:transform .4s cubic-bezier(.34,1.56,.44,1);
-  }
-  .sb-tip-pool{
-    position:absolute;left:0;top:0;height:34px;border-radius:17px;
-    background:var(--glass-bg2,var(--panel));
-    width:0;
-    transition:width .32s cubic-bezier(.32,1.4,.4,1) .05s;
+    box-sizing:border-box;
+    width:28px; /* resting width = radius, i.e. fully hidden behind the circle */
+    overflow:hidden;
+    transition:width .38s cubic-bezier(.32,1.28,.4,1),
+               box-shadow .38s ease;
   }
   .sb-tip-text{
-    position:relative;display:block;white-space:nowrap;padding:0 14px 0 12px;
-    height:34px;line-height:34px;
-    color:var(--t);font-family:var(--raj);font-size:11px;font-weight:600;letter-spacing:.6px;
-    opacity:0;transform:translateX(-4px);
-    transition:opacity .18s ease .16s,transform .22s ease .16s;
+    position:relative;display:block;white-space:nowrap;
+    padding:0 18px 0 30px; /* left padding clears the hidden circle half */
+    color:var(--t);font-family:var(--raj);font-size:12px;font-weight:600;letter-spacing:.6px;
+    opacity:0;transform:translateX(-6px);
+    transition:opacity .2s ease .12s,transform .26s ease .12s;
+    flex-shrink:0;
   }
-  .sb-tip-bubble.show{filter:drop-shadow(0 10px 26px rgba(0,0,0,.35))}
-  .sb-tip-bubble.show .sb-tip-drop{transform:translate(-50%,-50%) scale(1)}
-  .sb-tip-bubble.show .sb-tip-pool{width:var(--sb-tip-w,auto)}
+  .sb-tip-bubble.show{
+    width:var(--sb-tip-w,auto);
+    box-shadow:0 10px 26px rgba(0,0,0,.35);
+  }
   .sb-tip-bubble.show .sb-tip-text{opacity:1;transform:translateX(0)}
-  .sb-tip-bubble.sb-tip-live .sb-tip-drop,
-  .sb-tip-bubble.sb-tip-live .sb-tip-pool{
-    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 55%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 35%, var(--glass-bg2,var(--panel))));
+  .sb-tip-bubble.sb-tip-live{
+    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 30%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 16%, var(--glass-bg2,var(--panel))));
   }
   .sb-tip-bubble.sb-tip-live .sb-tip-text{color:var(--g)}
 
-  #sbTip{z-index:1999}
+  #sbTip{z-index:895}
 
   /* Persistent labels layer: one static merged bubble per item that
      stays fused to its circle without hovering — just the active item
      while the rail is in its default (collapsed) state, or every item
      at once once expanded. */
-  #sbLabelLayer{position:fixed;inset:0;pointer-events:none;z-index:1996}
-  #sbLabelLayer .sb-tip-bubble{z-index:1996}
+  #sbLabelLayer{position:fixed;inset:0;pointer-events:none;z-index:895}
+  #sbLabelLayer .sb-tip-bubble{z-index:895}
 }
 
 </style>
@@ -2669,20 +2651,7 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
 <!-- Sidebar overlay (mobile) -->
 <div class="sb-overlay" id="sbOverlay" onclick="closeMobSidebar()"></div>
 
-<!-- SVG goo filter: fuses the drop + pool into one connected water blob -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <filter id="sbGoo">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
-      <feColorMatrix in="blur" mode="matrix"
-        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="goo"/>
-      <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
-    </filter>
-  </defs>
-</svg>
-
 <div id="sbTip" class="sb-tip-bubble">
-  <div class="sb-tip-blob"><span class="sb-tip-drop"></span><span class="sb-tip-pool"></span></div>
   <span class="sb-tip-text"></span>
 </div>
 <div id="sbLabelLayer"></div>
@@ -5207,30 +5176,31 @@ function renderSbLabels() {
     var r = item.getBoundingClientRect();
     var bubble = document.createElement('div');
     bubble.className = 'sb-tip-bubble' + (item.classList.contains('active') ? ' sb-tip-live' : '');
-    bubble.innerHTML =
-      '<div class="sb-tip-blob"><span class="sb-tip-drop"></span><span class="sb-tip-pool"></span></div>' +
-      '<span class="sb-tip-text"></span>';
+    bubble.innerHTML = '<span class="sb-tip-text"></span>';
     bubble.querySelector('.sb-tip-text').textContent = item.getAttribute('data-tip');
-    // Anchor flush against the circle's right edge — zero gap between
-    // the button and the drop that grows out of it.
+    // Anchor at the circle's CENTER (not its edge) — the pill's left
+    // half is tucked behind the circle (circle renders on top), so it
+    // reads as one continuous capsule with zero visible seam.
     bubble.style.top = (r.top + r.height/2) + 'px';
-    bubble.style.left = r.right + 'px';
+    bubble.style.left = (r.left + r.width/2) + 'px';
+    bubble.style.height = r.height + 'px';
+    bubble.style.borderRadius = (r.height/2) + 'px';
     layer.appendChild(bubble);
-    sizeSbTipPool(bubble);
+    sizeSbTipPool(bubble, r);
     // Mount hidden, then flip to .show next frame so it eases in.
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ bubble.classList.add('show'); }); });
   });
 }
 
-// Measures the label text so the goo "pool" grows to exactly the right
-// width (a fixed px target is required for the width transition + the
-// SVG goo filter to fuse cleanly with the drop).
-function sizeSbTipPool(bubble){
+// Measures the label text so the pill grows to exactly circle-radius +
+// text width — enough to clear the hidden circle half and fit the label,
+// with no extra slack.
+function sizeSbTipPool(bubble, r){
   var textEl = bubble.querySelector('.sb-tip-text');
-  var poolEl = bubble.querySelector('.sb-tip-pool');
-  if (!textEl || !poolEl) return;
-  var w = textEl.offsetWidth || textEl.scrollWidth;
-  bubble.style.setProperty('--sb-tip-w', w + 'px');
+  if (!textEl) return;
+  var textW = textEl.scrollWidth;
+  var radius = r.height / 2;
+  bubble.style.setProperty('--sb-tip-w', (radius + textW + 4) + 'px');
 }
 
 // Fixed-position hover tooltip — a droplet "splash" that always replays on
@@ -5250,9 +5220,11 @@ function sizeSbTipPool(bubble){
     tip.classList.toggle('sb-tip-live', item.classList.contains('active'));
     var r = item.getBoundingClientRect();
     tip.style.top = (r.top + r.height/2) + 'px';
-    tip.style.left = r.right + 'px';
+    tip.style.left = (r.left + r.width/2) + 'px';
+    tip.style.height = r.height + 'px';
+    tip.style.borderRadius = (r.height/2) + 'px';
     tip.classList.remove('show');
-    sizeSbTipPool(tip);
+    sizeSbTipPool(tip, r);
     void tip.offsetWidth; // restart the splash animation on every hover
     tip.classList.add('show');
     item._sbTipOn = true;

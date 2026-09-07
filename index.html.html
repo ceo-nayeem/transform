@@ -1596,56 +1596,70 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   .sb .sb-badge{display:none !important}
   .sb .notif-dot{position:absolute;top:5px;right:5px;margin:0}
 
-  /* ── Liquid-glass title bubble: shared look for the transient hover tip
-     (#sbTip) and the persistent per-item labels rendered into
-     #sbLabelLayer. Both are fixed-position + JS-positioned so they are
-     never clipped by the sidebar's own scroll container. A short blurred
-     "bridge" grows out of the circle toward the bubble — like a droplet
-     stretching off the circle and settling into a second little pool
-     that carries the title, so the two backgrounds visually touch and
-     read as one connected shape. ── */
+  /* Ripple: a ring that pulses outward from the circle on hover, like a
+     drop hitting water — plays alongside the title-bubble merge below. */
+  .sb .sb-item::after{
+    content:'';position:absolute;inset:0;border-radius:50%;
+    border:2px solid color-mix(in srgb, var(--g) 55%, transparent);
+    opacity:0;transform:scale(1);pointer-events:none;
+  }
+  .sb .sb-item:hover::after{animation:sbRipple .55s ease-out}
+  @keyframes sbRipple{
+    0%  { opacity:.55; transform:scale(1); }
+    100%{ opacity:0;   transform:scale(1.55); }
+  }
+
+  /* ── Liquid-glass title bubble: shared markup for the transient hover
+     tip (#sbTip) and the persistent per-item labels in #sbLabelLayer.
+     Both are fixed-position + JS-positioned so they're never clipped by
+     the sidebar's own scroll container, and both sit flush against the
+     circle (zero gap) so the two backgrounds read as one piece.
+     Structure: .sb-tip-blob (goo-filtered: a small "drop" overlapping
+     the circle's edge + a "pool" the size of the text) actually fuses
+     into a single connected shape via the SVG goo filter as the two
+     grow in — a droplet breaking off the circle and forming the title's
+     background. The text itself sits on a separate, unfiltered layer on
+     top so it always stays crisp. ── */
   .sb-tip-bubble{
-    position:fixed;top:0;left:0;
-    white-space:nowrap;padding:7px 13px;border-radius:10px;
+    position:fixed;top:0;left:0;pointer-events:none;
+    transform:translateY(-50%);z-index:1997;
+  }
+  .sb-tip-blob{position:absolute;inset:0;filter:url(#sbGoo)}
+  .sb-tip-drop{
+    position:absolute;left:-18px;top:50%;width:24px;height:24px;border-radius:50%;
+    transform:translateY(-50%) scale(0);transform-origin:center;
     background:var(--glass-bg2,var(--panel));
-    backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
-    border:1px solid var(--glass-border-hi,var(--border));
-    box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
+    transition:transform .34s cubic-bezier(.34,1.5,.4,1);
+  }
+  .sb-tip-pool{
+    position:absolute;inset:0;border-radius:10px;
+    background:var(--glass-bg2,var(--panel));
+    transform:scaleX(0);transform-origin:left center;
+    transition:transform .3s cubic-bezier(.34,1.4,.4,1) .04s;
+  }
+  .sb-tip-text{
+    position:relative;display:block;white-space:nowrap;padding:7px 13px;
     color:var(--t);font-family:var(--raj);font-size:11px;font-weight:600;letter-spacing:.6px;
-    pointer-events:none;transform:translateY(-50%);z-index:1997;
+    opacity:0;transition:opacity .16s ease .18s;
   }
-  .sb-tip-bubble::before{
-    content:'';position:absolute;top:50%;left:-13px;width:15px;height:22px;
-    transform:translateY(-50%);transform-origin:right center;
-    background:inherit;filter:blur(3px);border-radius:12px;
+  .sb-tip-bubble.show{filter:drop-shadow(0 10px 26px rgba(0,0,0,.35))}
+  .sb-tip-bubble.show .sb-tip-drop{transform:translateY(-50%) scale(1)}
+  .sb-tip-bubble.show .sb-tip-pool{transform:scaleX(1)}
+  .sb-tip-bubble.show .sb-tip-text{opacity:1}
+  .sb-tip-bubble.sb-tip-live .sb-tip-drop,
+  .sb-tip-bubble.sb-tip-live .sb-tip-pool{
+    background:linear-gradient(135deg,color-mix(in srgb, var(--g) 55%, var(--glass-bg2,var(--panel))),color-mix(in srgb, var(--c) 35%, var(--glass-bg2,var(--panel))));
   }
-  .sb-tip-bubble.sb-tip-live{
-    border-color:color-mix(in srgb, var(--g) 55%, var(--glass-border-hi,var(--border)));
-    color:var(--g);
-    box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35)),0 0 16px -4px color-mix(in srgb, var(--g) 60%, transparent);
-  }
+  .sb-tip-bubble.sb-tip-live .sb-tip-text{color:var(--g)}
 
-  /* Transient hover tooltip: pops in with the splash animation every
-     time the pointer enters a circle — even the currently-active one —
-     so the "water" effect always replays on hover, then hands back to
-     whatever the persistent layer is already showing underneath. */
-  #sbTip{opacity:0;transition:opacity .14s ease;z-index:1999}
-  #sbTip.show{opacity:1;animation:sbLabelSplash .3s cubic-bezier(.34,1.56,.64,1) both}
-  @keyframes sbLabelSplash{
-    0%   { opacity:0; transform:translateY(-50%) translateX(4px) scale(.7); }
-    100% { opacity:1; transform:translateY(-50%) translateX(0) scale(1); }
-  }
+  #sbTip{z-index:1999}
 
-  /* Persistent labels layer: one static bubble per item that stays lit
-     without hovering — just the active item while the rail is in its
-     default (collapsed) state, or every item at once once expanded. */
+  /* Persistent labels layer: one static merged bubble per item that
+     stays fused to its circle without hovering — just the active item
+     while the rail is in its default (collapsed) state, or every item
+     at once once expanded. */
   #sbLabelLayer{position:fixed;inset:0;pointer-events:none;z-index:1996}
-  #sbLabelLayer .sb-tip-bubble{
-    opacity:0;transform:translateY(-50%) translateX(4px) scale(.85);
-    transition:opacity .22s ease,transform .22s cubic-bezier(.34,1.56,.64,1);
-    z-index:1996;
-  }
-  #sbLabelLayer .sb-tip-bubble.show{opacity:1;transform:translateY(-50%) translateX(0) scale(1)}
+  #sbLabelLayer .sb-tip-bubble{z-index:1996}
 }
 
 </style>

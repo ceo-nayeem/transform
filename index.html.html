@@ -1648,8 +1648,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     <div class="sb-item active" onclick="nav(this,'dashboard')" title="Dashboard"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
 
     <div class="sb-sec">DAILY TRACKING</div>
-    <div class="sb-item" onclick="nav(this,'nutrition')" title="Nutrition"><span class="sb-icon">◉</span><span class="sb-label">Nutrition</span></div>
-    <div class="sb-item" onclick="nav(this,'workout')" title="Workout"><span class="sb-icon">⊞</span><span class="sb-label">Workout</span><span class="sb-badge" id="wkBadge">0/0</span></div>
+    <div class="sb-item" onclick="nav(this,'fitness')" title="Fitness"><span class="sb-icon">⊞</span><span class="sb-label">Fitness</span><span class="sb-badge" id="wkBadge">0/0</span></div>
     <div class="sb-item" onclick="nav(this,'habits')" title="Habits"><span class="sb-icon">≡</span><span class="sb-label">Habits</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
 
     <div class="sb-sec">HEALTH</div>
@@ -1697,21 +1696,21 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     </div>
   </div>
   <div class="g4" id="dash-cards">
-    <div class="card" onclick="nav(document.querySelector('[onclick*=nutrition]'),'nutrition')">
+    <div class="card" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness')">
       <div class="card-accent" style="background:var(--o)"></div>
       <div class="card-label">CALORIES TODAY</div>
       <div class="card-val" style="color:var(--o2);font-size:22px" id="dc-cal">0</div>
       <div class="card-sub" id="dc-cal-sub">of 0 kcal goal</div>
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--o)" id="dc-cal-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('[onclick*=nutrition]'),'nutrition');setTimeout(function(){switchNtrTab('water');},50)">
+    <div class="card" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness');setTimeout(function(){switchNtrTab('water');},50)">
       <div class="card-accent" style="background:var(--c2)"></div>
       <div class="card-label">WATER TODAY</div>
       <div class="card-val" style="color:var(--c);font-size:22px" id="dc-water">0</div>
       <div class="card-sub" id="dc-water-sub">of 0 L goal</div>
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--c2)" id="dc-water-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('[onclick*=workout]'),'workout')">
+    <div class="card" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness');setTimeout(function(){switchFitnessTab('workout');},50)">
       <div class="card-accent" style="background:var(--g)"></div>
       <div class="card-label">WORKOUT</div>
       <div class="card-val" style="font-size:22px" id="dc-ex">0/0</div>
@@ -1735,8 +1734,8 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <span class="quick-add-fab-icon">＋</span>
     </button>
     <div class="quick-add-pop" id="quickAddPop" onclick="event.stopPropagation()">
-      <div class="quick-add-item" onclick="quickAddGo('nutrition')"><span class="quick-add-icon">🍽</span><span>Log Meal</span></div>
-      <div class="quick-add-item" onclick="quickAddGo('workout')"><span class="quick-add-icon">💪</span><span>Log Exercise</span></div>
+      <div class="quick-add-item" onclick="quickAddGo('fitness')"><span class="quick-add-icon">🍽</span><span>Log Meal</span></div>
+      <div class="quick-add-item" onclick="quickAddGoWorkout()"><span class="quick-add-icon">💪</span><span>Log Exercise</span></div>
       <div class="quick-add-item" onclick="quickAddGo('habits')"><span class="quick-add-icon">✅</span><span>Mark Habit</span></div>
       <div class="quick-add-item" onclick="quickAddWater()"><span class="quick-add-icon">💧</span><span>Log Water</span></div>
       <div class="quick-add-item" onclick="quickAddGo('vitals')"><span class="quick-add-icon">❤️</span><span>Vitals</span></div>
@@ -1745,11 +1744,19 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   </div>
 </div>
 
-<!-- ============ NUTRITION ============ -->
-<div class="page" id="page-nutrition">
+<!-- ============ FITNESS (DIET + WORKOUT) ============ -->
+<div class="page" id="page-fitness">
+  <!-- DIET / WORKOUT TAB STRIP -->
+  <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
+    <button class="timer-tab active" id="fit-tab-diet" onclick="switchFitnessTab('diet')">🍽 DIET</button>
+    <button class="timer-tab" id="fit-tab-workout" onclick="switchFitnessTab('workout')">⊞ WORKOUT</button>
+  </div>
+
+  <!-- ============ DIET (formerly Nutrition) ============ -->
+  <div id="page-nutrition">
   <!-- NUTRITION / WATER TAB STRIP -->
   <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
-    <button class="timer-tab active" id="ntr-tab-food" onclick="switchNtrTab('food')">🍽 NUTRITION</button>
+    <button class="timer-tab active" id="ntr-tab-food" onclick="switchNtrTab('food')">🍽 FOOD</button>
     <button class="timer-tab" id="ntr-tab-water" onclick="switchNtrTab('water')">◈ WATER</button>
   </div>
   <!-- FOOD SECTION -->
@@ -1992,10 +1999,10 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   </div><!-- end ntr-grid -->
   </div><!-- end ntr-water-section -->
 
-</div><!-- end page-nutrition -->
+  </div><!-- end page-nutrition (diet sub-tab) -->
 
-<!-- ============ WORKOUT ============ -->
-<div class="page" id="page-workout">
+  <!-- ============ WORKOUT ============ -->
+  <div id="page-workout" style="display:none">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="day-strip" id="dayStrip" style="flex:1;margin-bottom:0"></div><input type="date" class="inp" id="wk-date-pick" style="width:130px;font-size:10px" onchange="selectWkDay(this.value,null)"/></div>
   <div style="font-size:9px;color:var(--t2);letter-spacing:1px;margin-bottom:12px" id="wkDayLabel"></div>
   <div class="g4" style="margin-bottom:12px">
@@ -2022,7 +2029,9 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     <button class="btn full" onclick="addExercise()">[ + ADD EXERCISE ]</button>
   </div>
   </div><!-- end wk-add-section -->
-</div>
+  </div><!-- end page-workout -->
+
+</div><!-- end page-fitness -->
 
 <!-- ============ HABITS ============ -->
 <div class="page" id="page-habits">
@@ -2575,20 +2584,20 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
     <span class="mob-nav-icon">▦</span>
     <span class="mob-nav-label">Home</span>
   </button>
-  <!-- Nutrition -->
-  <button class="mob-nav-item" id="mn-nutrition" onclick="mobNavTo('nutrition',this)">
-    <span class="mob-nav-icon">◉</span>
-    <span class="mob-nav-label">Nutrition</span>
+  <!-- Fitness (Diet + Workout) -->
+  <button class="mob-nav-item" id="mn-fitness" onclick="mobNavTo('fitness',this)">
+    <span class="mob-nav-icon">⊞</span>
+    <span class="mob-nav-label">Fitness</span>
   </button>
   <!-- Log+ FAB -->
   <button class="mob-fab" onclick="openMobSheet()">
     <div class="mob-fab-inner">＋</div>
     <span class="mob-fab-label">Log</span>
   </button>
-  <!-- Workout -->
-  <button class="mob-nav-item" id="mn-workout" onclick="mobNavTo('workout',this)">
-    <span class="mob-nav-icon">⊞</span>
-    <span class="mob-nav-label">Workout</span>
+  <!-- Habits -->
+  <button class="mob-nav-item" id="mn-habits" onclick="mobNavTo('habits',this)">
+    <span class="mob-nav-icon">≡</span>
+    <span class="mob-nav-label">Habits</span>
   </button>
   <!-- More (opens sidebar) -->
   <button class="mob-nav-item" id="mn-more" onclick="toggleMobSidebar()">
@@ -2838,26 +2847,56 @@ function saveToFirebase(cb) {
 
 // ===================== NAV =====================
 var pageTitles = {
-  dashboard:'DASHBOARD', nutrition:'NUTRITION', workout:'WORKOUT', habits:'HABITS',
+  dashboard:'DASHBOARD', fitness:'FITNESS', nutrition:'NUTRITION', workout:'WORKOUT', habits:'HABITS',
   water:'WATER', vitals:'VITALS', measurements:'MEASUREMENTS', goals:'GOALS & PROGRESS',
   meallibrary:'MEAL LIBRARY', ingredientlibrary:'INGREDIENT LIBRARY', timer:'TIMER & STOPWATCH', profile:'PROFILE & SETTINGS'
 };
+// fitActiveTab tracks which sub-tab (diet/workout) is showing inside the Fitness page.
+var fitActiveTab = 'diet';
+function switchFitnessTab(tab) {
+  fitActiveTab = tab;
+  var dietSec = document.getElementById('page-nutrition');
+  var workoutSec = document.getElementById('page-workout');
+  var tabDiet = document.getElementById('fit-tab-diet');
+  var tabWorkout = document.getElementById('fit-tab-workout');
+  if (!dietSec || !workoutSec) return;
+  if (tab === 'workout') {
+    dietSec.style.display = 'none';
+    workoutSec.style.display = '';
+    if (tabWorkout) tabWorkout.classList.add('active');
+    if (tabDiet) tabDiet.classList.remove('active');
+    renderWorkout();
+  } else {
+    dietSec.style.display = '';
+    workoutSec.style.display = 'none';
+    if (tabDiet) tabDiet.classList.add('active');
+    if (tabWorkout) tabWorkout.classList.remove('active');
+    if(!ntrDate) ntrDate = S.today;
+    ntrActiveTab = 'food';
+    var fs = document.getElementById('ntr-food-section'), ws = document.getElementById('ntr-water-section');
+    if (fs) fs.style.display = ''; if (ws) ws.style.display = 'none';
+    var tf = document.getElementById('ntr-tab-food'), tw = document.getElementById('ntr-tab-water');
+    if (tf) tf.classList.add('active'); if (tw) tw.classList.remove('active');
+    renderNutrition();
+  }
+}
 function nav(btn, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  // 'nutrition' and 'workout' are legacy ids kept for internal callers — both now route into 'fitness'.
+  if (id === 'nutrition' || id === 'workout') id = 'fitness';
   var pg = document.getElementById('page-' + id);
   if (pg) pg.classList.add('active');
   if (btn && btn.classList) btn.classList.add('active');
   var topPath = document.getElementById('topPagePath');
   if (topPath) topPath.textContent = '/ ' + (pageTitles[id] || id.toUpperCase());
-  if (id === 'workout') renderWorkout();
   if (id === 'habits') renderHabits();
-  if (id === 'water') { switchNtrTab('water'); return; }  // water is now inside nutrition
+  if (id === 'water') { switchFitnessTab('diet'); setTimeout(function(){ switchNtrTab('water'); }, 0); return; }
   if (id === 'vitals') renderVitals();
   if (id === 'measurements') renderMeasurements();
   if (id === 'goals') renderGoals();
   if (id === 'profile') loadProfile();
-  if (id === 'nutrition') { if(!ntrDate) ntrDate = S.today; ntrActiveTab='food'; setTimeout(function(){ var fs=document.getElementById('ntr-food-section'); var ws=document.getElementById('ntr-water-section'); if(fs)fs.style.display=''; if(ws)ws.style.display='none'; var tf=document.getElementById('ntr-tab-food'); var tw=document.getElementById('ntr-tab-water'); if(tf){tf.classList.add('active');}if(tw){tw.classList.remove('active');} renderNutrition(); },0); }
+  if (id === 'fitness') { setTimeout(function(){ switchFitnessTab(fitActiveTab || 'diet'); }, 0); }
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
   if (id === 'meallibrary') renderMealLibrary();
@@ -2887,10 +2926,15 @@ function quickAddGo(pageId) {
   closeQuickAdd();
   nav(document.querySelector('.sb-item[onclick*="' + pageId + '"]'), pageId);
 }
+function quickAddGoWorkout() {
+  closeQuickAdd();
+  nav(document.querySelector('.sb-item[onclick*="fitness"]'), 'fitness');
+  setTimeout(function(){ switchFitnessTab('workout'); }, 50);
+}
 function quickAddWater() {
   closeQuickAdd();
-  nav(document.querySelector('.sb-item[onclick*="nutrition"]'), 'nutrition');
-  setTimeout(function(){ switchNtrTab('water'); }, 50);
+  nav(document.querySelector('.sb-item[onclick*="fitness"]'), 'fitness');
+  setTimeout(function(){ switchFitnessTab('diet'); switchNtrTab('water'); }, 50);
 }
 
 // ===================== TOAST =====================
@@ -4988,10 +5032,11 @@ function toggleSidebarCollapse() {
 // nav() already handles page switching — we just sync the bottom nav highlight
 var MOB_NAV_MAP = {
   dashboard: 'mn-dashboard',
-  nutrition: 'mn-nutrition',
-  workout:   'mn-workout',
-  habits:    null,
-  water:     'mn-nutrition',
+  fitness:   'mn-fitness',
+  nutrition: 'mn-fitness',
+  workout:   'mn-fitness',
+  habits:    'mn-habits',
+  water:     'mn-fitness',
   vitals:    null,
   measurements: null,
   goals:     null,

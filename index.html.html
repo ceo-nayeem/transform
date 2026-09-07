@@ -367,7 +367,7 @@ html.alpha .app-brand span{font-family:'DM Sans',sans-serif;font-size:10px;font-
 html.alpha .streak-chip{background:linear-gradient(135deg,var(--o),var(--o2));border:none;color:#fff;border-radius:20px;font-weight:600;font-family:'DM Sans',sans-serif}
 html.alpha .dot-pulse{background:#fff}
 html.alpha .date-disp{color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:500;font-size:11px}
-html.alpha .sb{background:#fff;border-right:1px solid var(--border);box-shadow:2px 0 8px rgba(0,0,0,.04)}
+html.alpha .sb{background:transparent;border-right:none;box-shadow:none;}
 html.alpha .sb-user{border-bottom:2px solid var(--border);background:linear-gradient(135deg,#f8fff4,#f0f8ff)}
 html.alpha .avatar{width:40px;height:40px;background:linear-gradient(135deg,var(--g),var(--c));border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;letter-spacing:1px;box-shadow:0 4px 12px color-mix(in srgb, var(--g) 30%, transparent);}
 html.alpha .user-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.5px;color:var(--t)}
@@ -518,7 +518,8 @@ html.alpha .del-btn:hover{color:var(--red)}
 body{background:var(--bg);color:var(--t);font-family:var(--mono);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
 body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .os{display:flex;flex:1;overflow:hidden}
-.topbar{background:transparent;border-bottom:none;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:500}
+.topbar{background:transparent;border-bottom:none;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:fixed;top:0;left:0;right:0;z-index:950;height:54px;box-sizing:border-box;pointer-events:none}
+.topbar-left,.topbar-right{pointer-events:auto}
 .app-brand{font-family:var(--raj);font-size:18px;font-weight:700;color:var(--g);letter-spacing:3px}
 .app-brand span{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;margin-left:8px}
 .topbar-right{display:flex;align-items:center;gap:16px}
@@ -526,7 +527,7 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .dot-pulse{width:6px;height:6px;background:var(--g);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .date-disp{font-size:10px;color:var(--t2);letter-spacing:.5px}
-.sb{background:var(--sb);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;width:196px;flex-shrink:0;transition:width .32s cubic-bezier(.4,0,.2,1)}
+.sb{background:transparent;border-right:none;display:flex;flex-direction:column;overflow:hidden;width:196px;flex-shrink:0;transition:width .32s cubic-bezier(.4,0,.2,1)}
 .sb-user{padding:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;background:var(--g3);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--g);font-family:var(--raj);font-weight:700;flex-shrink:0}
 .user-name{font-size:12px;color:var(--t);letter-spacing:.5px;font-family:var(--raj);font-weight:600}
@@ -545,7 +546,7 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .page-title{font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--t);display:flex;align-items:center;gap:8px}
 .page-title::before{content:'//';color:var(--g);font-family:var(--mono);font-size:11px}
 .page-path{font-size:9px;color:var(--t2);letter-spacing:1px;margin-top:2px}
-.content{flex:1;overflow-y:auto;padding:16px 20px 30px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.content{flex:1;overflow-y:auto;padding:70px 20px 30px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .page{display:none}.page.active{display:block}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
@@ -898,7 +899,7 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
   /* Body adjusts for bottom nav */
   body{height:100dvh;}
   .content{
-    padding:12px 12px calc(80px + env(safe-area-inset-bottom,0px)) !important;
+    padding:64px 12px calc(80px + env(safe-area-inset-bottom,0px)) !important;
   }
 
   /* Topbar: compact */
@@ -914,7 +915,13 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
     width:220px;z-index:160;
     transform:translateX(-100%);
     transition:transform .28s cubic-bezier(.4,0,.2,1);
+    background:var(--glass-bg2,var(--panel));
+    backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
     box-shadow:4px 0 24px rgba(0,0,0,.3);
+  }
+  html.alpha .sb{
+    background:var(--glass-bg2,var(--panel)) !important;
+    backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
   }
   .sb.open{transform:translateX(0);}
 
@@ -1065,9 +1072,8 @@ html.alpha body{
   border-bottom:none;
 }
 .sb{
-  background:var(--glass-bg);
-  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  border-right:1px solid var(--glass-border);
+  background:transparent;
+  border-right:none;
 }
 .os{background:transparent}
 .content{background:transparent;max-width:1520px;width:100%;margin:0 auto;}
@@ -1278,8 +1284,8 @@ html.alpha .topbar,html.alpha .page-header{
   box-shadow:none !important;
 }
 html.alpha .sb{
-  background:var(--glass-bg) !important;border-right:1px solid var(--glass-border) !important;
-  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:none !important;
+  background:transparent !important;border-right:none !important;
+  backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none !important;
 }
 html.alpha .sb-user{background:linear-gradient(135deg,color-mix(in srgb, var(--g) 10%, transparent),color-mix(in srgb, var(--c) 6%, transparent)) !important;border-bottom:1px solid var(--glass-border) !important;}
 html.alpha .content{background:transparent !important}
@@ -1465,7 +1471,7 @@ html.alpha{
 .modal,.mob-sheet{border-radius:26px !important;}
 
 /* Roomier layout — more gap and padding so panels breathe. */
-.content{padding:24px 28px 40px !important;}
+.content{padding:70px 28px 40px !important;}
 .card{padding:18px !important;}
 .g2,.g3,.g4{gap:14px !important;}
 #habitList,#exList,#goalList,#mealList,#vitalHistory,#measHistory,#savedTimers{gap:14px !important;}
@@ -1473,7 +1479,7 @@ html.alpha{
 .log-chip-grid,.log-field-grid{gap:10px !important;}
 .sec-head{margin:22px 0 12px !important;}
 @media (max-width:768px){
-  .content{padding:16px 16px 28px !important;}
+  .content{padding:64px 16px 28px !important;}
   .card{padding:14px !important;}
 }
 

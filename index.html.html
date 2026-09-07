@@ -114,12 +114,12 @@ html.alpha .danger-zone{border-radius:12px;border-color:#f5c6c6;}
 
 /* ===== DARK MODE (default) ===== */
 :root{
-  --bg:#030c0a;--sb:#060f0d;--panel:#060f0d;--card:#0c1a17;--card2:#101f1c;
+  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;--card:#151515;--card2:#1a1a1a;
   --g:#00ff88;--g2:#00cc66;--g3:#003322;--gd:color-mix(in srgb, var(--g) 7%, transparent);
   --o:#ff6b00;--o2:#ffaa44;--c:#00e5ff;--c2:#00b8d4;
   --p:#aa77ff;--red:#ff3355;--y:#ffdd00;
-  --t:#b8ffd0;--t2:#5a9a70;--t3:#1a4a2a;
-  --border:#0f2a1e;--mono:'Share Tech Mono',monospace;--raj:'Rajdhani',sans-serif;
+  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
+  --border:#232323;--mono:'Share Tech Mono',monospace;--raj:'Rajdhani',sans-serif;
 }
 
 /* ===== LIGHT MODE ===== */
@@ -135,47 +135,52 @@ html.alpha{
 /* ===== ACCENT COLOR THEMES =====
    Pick one of 5 accent palettes; each has a dark-mode and light-mode variant.
    Applied via [data-accent] on <html>, combined with the .alpha (light) class.
-   Dark-mode blocks also retint backgrounds/cards/text/borders toward the
-   accent hue (via color-mix against neutral bases) so the whole app follows
-   the chosen color instead of staying green everywhere except the buttons. */
+   Only the accent (--g/--g2/--c/--c2) and its tinted surfaces (--g3/--gd)
+   change per theme — buttons, active states, highlights, brand mark, and
+   progress/water visuals follow the chosen color. Text (--t/--t2/--t3),
+   backgrounds, cards and borders stay neutral black/white/grey in every
+   theme so titles and descriptions never pick up the accent hue. Red stays
+   reserved for negative values, green for positive, blue/sky-blue for
+   water — those are set once in dark/light mode above and are not
+   re-themed here. */
 
 /* -- Azure (blue) -- */
 html[data-accent="azure"]{
   --g:#22b8ff;--g2:#0d8fd6;--g3:#00233a;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#7dd3fc;--c2:#38bdf8;
-  --bg:color-mix(in srgb, var(--g) 5%, #020202 95%);--sb:color-mix(in srgb, var(--g) 6%, #050505 94%);--panel:color-mix(in srgb, var(--g) 6%, #050505 94%);
-  --card:color-mix(in srgb, var(--g) 10%, #0a0a0a 90%);--card2:color-mix(in srgb, var(--g) 12%, #0d0d0d 88%);
-  --t:color-mix(in srgb, var(--g) 28%, white 72%);--t2:color-mix(in srgb, var(--g) 35%, #6b7280 65%);--t3:color-mix(in srgb, var(--g) 16%, #17181a 84%);
-  --border:color-mix(in srgb, var(--g) 10%, #101214 90%);
+  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
+  --card:#151515;--card2:#1a1a1a;
+  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
+  --border:#232323;
 }
 html.alpha[data-accent="azure"]{--g:#0284c7;--g2:#075985;--g3:#dbeefc;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#0ea5e9;--c2:#0891b2;}
 
 /* -- Violet (purple) -- */
 html[data-accent="violet"]{
   --g:#b088ff;--g2:#8b5cf6;--g3:#241033;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#e879f9;--c2:#c026d3;
-  --bg:color-mix(in srgb, var(--g) 5%, #020202 95%);--sb:color-mix(in srgb, var(--g) 6%, #050505 94%);--panel:color-mix(in srgb, var(--g) 6%, #050505 94%);
-  --card:color-mix(in srgb, var(--g) 10%, #0a0a0a 90%);--card2:color-mix(in srgb, var(--g) 12%, #0d0d0d 88%);
-  --t:color-mix(in srgb, var(--g) 28%, white 72%);--t2:color-mix(in srgb, var(--g) 35%, #6b7280 65%);--t3:color-mix(in srgb, var(--g) 16%, #17181a 84%);
-  --border:color-mix(in srgb, var(--g) 10%, #101214 90%);
+  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
+  --card:#151515;--card2:#1a1a1a;
+  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
+  --border:#232323;
 }
 html.alpha[data-accent="violet"]{--g:#7c3aed;--g2:#5b21b6;--g3:#ede4fb;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#a855f7;--c2:#9333ea;}
 
 /* -- Amber (orange) -- */
 html[data-accent="amber"]{
   --g:#ffb020;--g2:#e08e00;--g3:#3a2600;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ff8a5c;--c2:#f4703f;
-  --bg:color-mix(in srgb, var(--g) 5%, #020202 95%);--sb:color-mix(in srgb, var(--g) 6%, #050505 94%);--panel:color-mix(in srgb, var(--g) 6%, #050505 94%);
-  --card:color-mix(in srgb, var(--g) 10%, #0a0a0a 90%);--card2:color-mix(in srgb, var(--g) 12%, #0d0d0d 88%);
-  --t:color-mix(in srgb, var(--g) 28%, white 72%);--t2:color-mix(in srgb, var(--g) 35%, #6b7280 65%);--t3:color-mix(in srgb, var(--g) 16%, #17181a 84%);
-  --border:color-mix(in srgb, var(--g) 10%, #101214 90%);
+  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
+  --card:#151515;--card2:#1a1a1a;
+  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
+  --border:#232323;
 }
 html.alpha[data-accent="amber"]{--g:#d97706;--g2:#b45309;--g3:#fdecd3;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ea580c;--c2:#c2410c;}
 
 /* -- Rose (pink) -- */
 html[data-accent="rose"]{
   --g:#ff5c8a;--g2:#e0356b;--g3:#3a0f1e;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ff8fab;--c2:#f43f5e;
-  --bg:color-mix(in srgb, var(--g) 5%, #020202 95%);--sb:color-mix(in srgb, var(--g) 6%, #050505 94%);--panel:color-mix(in srgb, var(--g) 6%, #050505 94%);
-  --card:color-mix(in srgb, var(--g) 10%, #0a0a0a 90%);--card2:color-mix(in srgb, var(--g) 12%, #0d0d0d 88%);
-  --t:color-mix(in srgb, var(--g) 28%, white 72%);--t2:color-mix(in srgb, var(--g) 35%, #6b7280 65%);--t3:color-mix(in srgb, var(--g) 16%, #17181a 84%);
-  --border:color-mix(in srgb, var(--g) 10%, #101214 90%);
+  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
+  --card:#151515;--card2:#1a1a1a;
+  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
+  --border:#232323;
 }
 html.alpha[data-accent="rose"]{--g:#e11d48;--g2:#9f1239;--g3:#fde2e9;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ec4899;--c2:#db2777;}
 

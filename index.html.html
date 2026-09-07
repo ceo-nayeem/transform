@@ -1470,16 +1470,21 @@ html.alpha{
 }
 .modal,.mob-sheet{border-radius:26px !important;}
 
-/* Roomier layout — more gap and padding so panels breathe. */
-.content{padding:70px 28px 40px !important;}
+/* Roomier layout — wider left/right breathing room around everything in
+   the content area (excluding the sidebar rail and topbar themselves),
+   and a tighter max-width so it reads more centered on wide screens. */
+.content{padding:70px 64px 40px !important;max-width:1360px !important;}
 .card{padding:18px !important;}
 .g2,.g3,.g4{gap:14px !important;}
 #habitList,#exList,#goalList,#mealList,#vitalHistory,#measHistory,#savedTimers{gap:14px !important;}
 .ntr-grid,.ntr-stat-grid{gap:16px !important;}
 .log-chip-grid,.log-field-grid{gap:10px !important;}
 .sec-head{margin:22px 0 12px !important;}
+@media (max-width:1100px){
+  .content{padding:70px 36px 40px !important;}
+}
 @media (max-width:768px){
-  .content{padding:64px 16px 28px !important;}
+  .content{padding:64px 20px 28px !important;max-width:100% !important;}
   .card{padding:14px !important;}
 }
 
@@ -1567,62 +1572,80 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 @media (max-width:768px){.sb-toggle-btn{display:none}}
 
 @media (min-width:769px){
-  .sb-item .sb-label{
-    display:inline-block;opacity:1;max-width:150px;white-space:nowrap;overflow:hidden;
-    transition:opacity .2s ease .04s,max-width .28s ease;
-  }
-  .sb-badge{transition:opacity .18s ease,max-width .22s ease}
-  .sb-sec{
-    transition:max-height .22s ease,opacity .18s ease,margin .22s ease,padding .22s ease;
-    max-height:30px;overflow:hidden;
-  }
-
-  .sb.collapsed{width:82px;flex:0 0 82px;overflow:hidden;position:relative;z-index:900}
-  .sb.collapsed .sb-sec{max-height:0;opacity:0;margin:0;padding:0}
-  .sb.collapsed .sb-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px 0;box-sizing:border-box;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
-  .sb.collapsed .sb-item{
-    width:56px;height:56px;padding:0;margin:0;gap:0;border-radius:50%;
-    justify-content:center;border-left:none;flex-shrink:0;
+  /* The desktop rail is ALWAYS the circular icon dock now — "expanding"
+     it no longer widens it into a labeled list. Expanding only reveals
+     every item's title bubble at once (see #sbLabelLayer logic in JS);
+     the rail's own shape/width never changes. */
+  .sb{width:82px !important;flex:0 0 82px !important;overflow:visible !important;position:relative;z-index:900}
+  .sb .sb-sec{display:none !important}
+  .sb .sb-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px 0;box-sizing:border-box;min-height:0;overflow-y:auto;overflow-x:visible;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+  .sb .sb-item{
+    width:56px !important;height:56px !important;padding:0 !important;margin:0 !important;gap:0 !important;border-radius:50% !important;
+    display:flex;justify-content:center;align-items:center;border-left:none !important;flex-shrink:0;
     background:var(--glass-bg);border:1px solid var(--glass-border);
     backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-    box-shadow:var(--shadow-soft);
+    box-shadow:var(--shadow-soft);position:relative;
   }
-  .sb.collapsed .sb-item:hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2);z-index:5}
-  .sb.collapsed .sb-item.active{
+  .sb .sb-item:hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2) !important;z-index:5}
+  .sb .sb-item.active.active{
     background:linear-gradient(135deg,color-mix(in srgb, var(--g) 32%, transparent),color-mix(in srgb, var(--c) 16%, transparent)) !important;
-    box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--g) 55%, transparent), var(--shadow-soft);
+    box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--g) 55%, transparent), var(--shadow-soft) !important;
   }
-  .sb.collapsed .sb-icon{font-size:22px;width:auto}
-  .sb.collapsed .sb-label{opacity:0;max-width:0;transition:opacity .12s ease,max-width .18s ease}
-  .sb.collapsed .sb-badge{opacity:0;max-width:0;overflow:hidden;padding:0;border:none;margin:0}
-  .sb.collapsed .notif-dot{position:absolute;top:5px;right:5px;margin:0}
+  .sb .sb-icon{font-size:22px;width:auto}
+  .sb .sb-item .sb-label{display:none !important} /* replaced by the floating title bubbles below */
+  .sb .sb-badge{display:none !important}
+  .sb .notif-dot{position:absolute;top:5px;right:5px;margin:0}
 
-  /* ── Liquid-glass hover tooltip: a droplet detaches from the circle
-     and "splashes" into the label bubble that carries the title text,
-     read from each item's data-tip attribute. Rendered as a fixed-position
-     JS-driven element (see #sbTip in JS) so it is never clipped by the
-     sidebar's own scroll container. ── */
-  #sbTip{
+  /* ── Liquid-glass title bubble: shared look for the transient hover tip
+     (#sbTip) and the persistent per-item labels rendered into
+     #sbLabelLayer. Both are fixed-position + JS-positioned so they are
+     never clipped by the sidebar's own scroll container. A short blurred
+     "bridge" grows out of the circle toward the bubble — like a droplet
+     stretching off the circle and settling into a second little pool
+     that carries the title, so the two backgrounds visually touch and
+     read as one connected shape. ── */
+  .sb-tip-bubble{
     position:fixed;top:0;left:0;
-    opacity:0;pointer-events:none;
-    transition:opacity .16s ease;
-    white-space:nowrap;padding:7px 13px;
-    border-radius:10px;
+    white-space:nowrap;padding:7px 13px;border-radius:10px;
     background:var(--glass-bg2,var(--panel));
     backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
     border:1px solid var(--glass-border-hi,var(--border));
     box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
     color:var(--t);font-family:var(--raj);font-size:11px;font-weight:600;letter-spacing:.6px;
-    z-index:2000;
+    pointer-events:none;transform:translateY(-50%);z-index:1997;
   }
-  #sbTip.show{
-    opacity:1;
-    animation:sbLabelSplash .3s cubic-bezier(.34,1.56,.64,1) both;
+  .sb-tip-bubble::before{
+    content:'';position:absolute;top:50%;left:-13px;width:15px;height:22px;
+    transform:translateY(-50%);transform-origin:right center;
+    background:inherit;filter:blur(3px);border-radius:12px;
   }
+  .sb-tip-bubble.sb-tip-live{
+    border-color:color-mix(in srgb, var(--g) 55%, var(--glass-border-hi,var(--border)));
+    color:var(--g);
+    box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35)),0 0 16px -4px color-mix(in srgb, var(--g) 60%, transparent);
+  }
+
+  /* Transient hover tooltip: pops in with the splash animation every
+     time the pointer enters a circle — even the currently-active one —
+     so the "water" effect always replays on hover, then hands back to
+     whatever the persistent layer is already showing underneath. */
+  #sbTip{opacity:0;transition:opacity .14s ease;z-index:1999}
+  #sbTip.show{opacity:1;animation:sbLabelSplash .3s cubic-bezier(.34,1.56,.64,1) both}
   @keyframes sbLabelSplash{
     0%   { opacity:0; transform:translateY(-50%) translateX(4px) scale(.7); }
     100% { opacity:1; transform:translateY(-50%) translateX(0) scale(1); }
   }
+
+  /* Persistent labels layer: one static bubble per item that stays lit
+     without hovering — just the active item while the rail is in its
+     default (collapsed) state, or every item at once once expanded. */
+  #sbLabelLayer{position:fixed;inset:0;pointer-events:none;z-index:1996}
+  #sbLabelLayer .sb-tip-bubble{
+    opacity:0;transform:translateY(-50%) translateX(4px) scale(.85);
+    transition:opacity .22s ease,transform .22s cubic-bezier(.34,1.56,.64,1);
+    z-index:1996;
+  }
+  #sbLabelLayer .sb-tip-bubble.show{opacity:1;transform:translateY(-50%) translateX(0) scale(1)}
 }
 
 </style>
@@ -2618,7 +2641,8 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
 
 <!-- Sidebar overlay (mobile) -->
 <div class="sb-overlay" id="sbOverlay" onclick="closeMobSidebar()"></div>
-<div id="sbTip"></div>
+<div id="sbTip" class="sb-tip-bubble"></div>
+<div id="sbLabelLayer"></div>
 
 <!-- BOTTOM NAV BAR (mobile) -->
 <nav class="mob-nav" id="mobNav">
@@ -3013,6 +3037,7 @@ function nav(btn, id) {
   if (id === 'fitness') { setTimeout(function(){ switchFitnessTab(fitActiveTab || 'diet'); }, 0); }
   if (id === 'dashboard') renderDashboard();
   if (id === 'timer') renderTimerPage();
+  if (typeof renderSbLabels === 'function') renderSbLabels();
 }
 
 // ===================== QUICK ADD (dashboard glassy + fab) =====================
@@ -5106,7 +5131,10 @@ function closeMobSidebar() {
   document.getElementById('sbOverlay').classList.remove('open');
 }
 
-// Desktop sidebar rail — collapse to circular icon dock / expand to labeled list
+// Desktop sidebar rail — the circle dock itself never changes shape.
+// "Collapsed" (default) shows only the active item's title, lit statically,
+// with every other title appearing only on hover. "Expanded" keeps the same
+// circles but lights every title bubble at once.
 function toggleSidebarCollapse() {
   var sb = document.querySelector('.sb');
   var btn = document.getElementById('sbToggleBtn');
@@ -5114,34 +5142,70 @@ function toggleSidebarCollapse() {
   var collapsed = sb.classList.toggle('collapsed');
   if (btn) btn.classList.toggle('is-collapsed', collapsed);
   try { localStorage.setItem('fitos_sidebar', collapsed ? 'collapsed' : 'expanded'); } catch(e) {}
+  renderSbLabels();
 }
 
-// Fixed-position hover tooltip for the collapsed sidebar rail — driven by JS
-// (rather than a CSS pseudo-element) so it always renders above the sidebar's
-// own scroll container and is never clipped when the rail is scrolled.
+// Persistent title-bubble layer: one static "liquid glass" bubble per item
+// that should stay lit without hovering — just the active item while the
+// rail is collapsed, or every item once it's expanded. Positioned in a
+// fixed-position layer (not CSS) so bubbles are never clipped by the
+// sidebar's own scroll container.
+function renderSbLabels() {
+  var layer = document.getElementById('sbLabelLayer');
+  var sb = document.querySelector('.sb');
+  if (!layer || !sb) return;
+  if (window.innerWidth < 769) { layer.innerHTML = ''; return; }
+  var expanded = !sb.classList.contains('collapsed');
+  var items = Array.prototype.slice.call(sb.querySelectorAll('.sb-item[data-tip]'));
+  var wanted = expanded ? items : items.filter(function(it){ return it.classList.contains('active'); });
+
+  layer.innerHTML = '';
+  wanted.forEach(function(item){
+    var r = item.getBoundingClientRect();
+    var bubble = document.createElement('div');
+    bubble.className = 'sb-tip-bubble' + (item.classList.contains('active') ? ' sb-tip-live' : '');
+    bubble.textContent = item.getAttribute('data-tip');
+    bubble.style.top = (r.top + r.height/2) + 'px';
+    bubble.style.left = (r.right + 10) + 'px';
+    layer.appendChild(bubble);
+    // Mount hidden, then flip to .show next frame so it eases in.
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ bubble.classList.add('show'); }); });
+  });
+}
+
+// Fixed-position hover tooltip — a droplet "splash" that always replays on
+// hover, even over the currently-active/static item, then hands back to
+// whatever the persistent layer (renderSbLabels) is already showing.
 (function(){
   var tip = document.getElementById('sbTip');
   if (!tip) return;
   document.addEventListener('mouseover', function(e){
-    var item = e.target.closest('.sb.collapsed .sb-item');
+    if (window.innerWidth < 769) return;
+    var item = e.target.closest('.sb .sb-item[data-tip]');
     if (!item) return;
     var label = item.getAttribute('data-tip');
     if (!label) return;
     tip.textContent = label;
+    tip.classList.toggle('sb-tip-live', item.classList.contains('active'));
     var r = item.getBoundingClientRect();
     tip.style.top = (r.top + r.height/2) + 'px';
     tip.style.left = (r.right + 10) + 'px';
+    tip.classList.remove('show');
+    void tip.offsetWidth; // restart the splash animation on every hover
     tip.classList.add('show');
     item._sbTipOn = true;
   });
   document.addEventListener('mouseout', function(e){
-    var item = e.target.closest('.sb.collapsed .sb-item');
+    var item = e.target.closest('.sb .sb-item[data-tip]');
     if (!item || !item._sbTipOn) return;
     if (item.contains(e.relatedTarget)) return;
     item._sbTipOn = false;
     tip.classList.remove('show');
   });
   document.addEventListener('scroll', function(){ tip.classList.remove('show'); }, true);
+  window.addEventListener('resize', renderSbLabels);
+  var sbNav = document.querySelector('.sb-nav');
+  if (sbNav) sbNav.addEventListener('scroll', renderSbLabels);
 })();
 
 // nav() already handles page switching — we just sync the bottom nav highlight
@@ -5239,6 +5303,7 @@ function init() {
     var sbBtn = document.getElementById('sbToggleBtn');
     if (sbEl) sbEl.classList.toggle('collapsed', sbCollapsed);
     if (sbBtn) sbBtn.classList.toggle('is-collapsed', sbCollapsed);
+    if (typeof renderSbLabels === 'function') renderSbLabels();
   } catch(e) {}
   document.getElementById('dateDisp').textContent = (typeof dashDateLabel==='function') ? dashDateLabel(today()) : todayLabel();
   S.today=today();

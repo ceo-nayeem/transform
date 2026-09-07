@@ -1534,15 +1534,18 @@ html.alpha{
 /* Roomier layout — wider left/right breathing room around everything in
    the content area (excluding the sidebar rail and topbar themselves),
    and a tighter max-width so it reads more centered on wide screens. */
-.content{padding:70px 64px 40px !important;max-width:1360px !important;}
+.content{padding:70px 120px 40px !important;max-width:1180px !important;}
 .card{padding:18px !important;}
 .g2,.g3,.g4{gap:14px !important;}
 #habitList,#exList,#goalList,#mealList,#vitalHistory,#measHistory,#savedTimers{gap:14px !important;}
 .ntr-grid,.ntr-stat-grid{gap:16px !important;}
 .log-chip-grid,.log-field-grid{gap:10px !important;}
 .sec-head{margin:22px 0 12px !important;}
+@media (max-width:1400px){
+  .content{padding:70px 80px 40px !important;}
+}
 @media (max-width:1100px){
-  .content{padding:70px 36px 40px !important;}
+  .content{padding:70px 48px 40px !important;}
 }
 @media (max-width:768px){
   .content{padding:64px 20px 28px !important;max-width:100% !important;}

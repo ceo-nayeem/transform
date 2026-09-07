@@ -361,7 +361,7 @@ html.alpha .pd-mode-btn{font-family:'DM Sans',sans-serif;font-weight:600;text-tr
 
 /* Alpha overrides */
 html.alpha body{background:var(--bg);font-family:'DM Sans',sans-serif}
-html.alpha .topbar{background:#ffffff;border-bottom:3px solid var(--g);box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+html.alpha .topbar{background:transparent;border-bottom:none;box-shadow:none;}
 html.alpha .app-brand{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;color:var(--t);}
 html.alpha .app-brand span{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--t2);letter-spacing:.5px}
 html.alpha .streak-chip{background:linear-gradient(135deg,var(--o),var(--o2));border:none;color:#fff;border-radius:20px;font-weight:600;font-family:'DM Sans',sans-serif}
@@ -518,7 +518,7 @@ html.alpha .del-btn:hover{color:var(--red)}
 body{background:var(--bg);color:var(--t);font-family:var(--mono);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
 body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .os{display:flex;flex:1;overflow:hidden}
-.topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:500}
+.topbar{background:transparent;border-bottom:none;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:500}
 .app-brand{font-family:var(--raj);font-size:18px;font-weight:700;color:var(--g);letter-spacing:3px}
 .app-brand span{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;margin-left:8px}
 .topbar-right{display:flex;align-items:center;gap:16px}
@@ -1061,9 +1061,8 @@ html.alpha body{
 
 /* Chrome surfaces — glass */
 .topbar,.page-header{
-  background:var(--glass-bg2);
-  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  border-bottom:1px solid var(--glass-border);
+  background:transparent;
+  border-bottom:none;
 }
 .sb{
   background:var(--glass-bg);
@@ -1274,9 +1273,9 @@ html.alpha body::before{
 
 /* ---- 2. Chrome surfaces: same frosted glass recipe in Alpha as Terminal ---- */
 html.alpha .topbar,html.alpha .page-header{
-  background:var(--glass-bg2) !important;border-bottom:1px solid var(--glass-border) !important;
-  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 8px 24px rgba(20,30,25,.05);
+  background:transparent !important;border-bottom:none !important;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  box-shadow:none !important;
 }
 html.alpha .sb{
   background:var(--glass-bg) !important;border-right:1px solid var(--glass-border) !important;
@@ -1572,12 +1571,12 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     max-height:30px;overflow:hidden;
   }
 
-  .sb.collapsed{width:82px;flex:0 0 82px;overflow:visible;position:relative;z-index:900}
+  .sb.collapsed{width:82px;flex:0 0 82px;overflow-y:auto;overflow-x:visible;position:relative;z-index:900}
   .sb.collapsed .sb-sec{max-height:0;opacity:0;margin:0;padding:0}
-  .sb.collapsed .sb-nav{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0;overflow:visible}
+  .sb.collapsed .sb-nav{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px 0;overflow:visible;min-height:100%}
   .os:has(.sb.collapsed){overflow:visible}
   .sb.collapsed .sb-item{
-    width:46px;height:46px;padding:0;margin:0;gap:0;border-radius:50%;
+    width:56px;height:56px;padding:0;margin:0;gap:0;border-radius:50%;
     justify-content:center;border-left:none;
     background:var(--glass-bg);border:1px solid var(--glass-border);
     backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
@@ -1588,7 +1587,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     background:linear-gradient(135deg,color-mix(in srgb, var(--g) 32%, transparent),color-mix(in srgb, var(--c) 16%, transparent)) !important;
     box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--g) 55%, transparent), var(--shadow-soft);
   }
-  .sb.collapsed .sb-icon{font-size:18px;width:auto}
+  .sb.collapsed .sb-icon{font-size:22px;width:auto}
   .sb.collapsed .sb-label{opacity:0;max-width:0;transition:opacity .12s ease,max-width .18s ease}
   .sb.collapsed .sb-badge{opacity:0;max-width:0;overflow:hidden;padding:0;border:none;margin:0}
   .sb.collapsed .notif-dot{position:absolute;top:5px;right:5px;margin:0}

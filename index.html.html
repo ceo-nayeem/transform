@@ -575,13 +575,24 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.ntr-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:16px;align-items:stretch;margin-bottom:14px}
-.ntr-col-left,.ntr-col-right{min-width:0}
-.ntr-col-left{display:flex;flex-direction:column}
-.ntr-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:10px;flex:1}
-.ntr-stat-grid .card{display:flex;flex-direction:column;justify-content:center;height:100%}
-@media (min-width:1180px){.ntr-stat-grid{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:860px){.ntr-grid{grid-template-columns:1fr}}
+/* Nutrition page is now a single column: compact macro-ring row up top,
+   then Log Water + Add Meal stacked full-width beneath it. */
+.ntr-grid{display:flex;flex-direction:column;gap:16px;margin-bottom:14px}
+.ntr-col-left,.ntr-col-right{min-width:0;width:100%}
+
+/* ── Compact macro ring row: no individual card boxes — the six rings
+   sit directly on one shared soft panel so they still read as a single
+   grouped "today's totals" strip, laid out in one line (6-up) on
+   desktop and wrapping down to fewer per row as the viewport narrows. ── */
+.ntr-stat-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px 10px 12px;
+}
+.ntr-stat-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 4px}
+.ntr-stat-grid .macro-card{
+  flex:1 1 0;min-width:74px;max-width:120px;
+  background:none;border:none;padding:0;box-shadow:none;
+}
 
 /* ── Macro ring cards (circular progress) ── */
 .macro-card{align-items:center;text-align:center;gap:3px}
@@ -599,7 +610,11 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .macro-rem .lbl{font-size:8px;color:var(--t2);letter-spacing:.5px;text-transform:uppercase}
 .macro-rem.is-done .lbl{color:var(--g2);font-weight:700}
 .macro-rem.is-over b,.macro-rem.is-over .lbl{color:var(--red)}
-@media (max-width:768px){
+@media (max-width:900px){
+  .ntr-stat-grid .macro-card{min-width:30%;flex:1 1 30%}
+}
+@media (max-width:560px){
+  .ntr-stat-grid .macro-card{min-width:45%;flex:1 1 45%}
   .macro-ring-wrap{width:58px !important;height:58px !important}
   .macro-ring-val{font-size:14px !important}
 }
@@ -1960,8 +1975,9 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   <div style="font-size:9px;color:var(--t2);letter-spacing:1px;margin-bottom:10px" id="ntr-day-label"></div>
   <div class="ntr-grid">
     <div class="ntr-col-left">
+      <div class="ntr-stat-panel">
       <div class="ntr-stat-grid">
-        <div class="card macro-card">
+        <div class="macro-card">
           <div class="card-label">CALORIES</div>
           <div class="macro-ring-wrap">
             <svg class="macro-ring-svg" viewBox="0 0 72 72">
@@ -1976,7 +1992,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           <div class="macro-goal">GOAL <b id="n-cal-goal">0</b></div>
           <div class="macro-rem" id="n-cal-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card macro-card">
+        <div class="macro-card">
           <div class="card-label">PROTEIN</div>
           <div class="macro-ring-wrap">
             <svg class="macro-ring-svg" viewBox="0 0 72 72">
@@ -1991,7 +2007,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           <div class="macro-goal">GOAL <b id="n-prot-goal">0</b></div>
           <div class="macro-rem" id="n-prot-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card macro-card">
+        <div class="macro-card">
           <div class="card-label">CARBS</div>
           <div class="macro-ring-wrap">
             <svg class="macro-ring-svg" viewBox="0 0 72 72">
@@ -2006,7 +2022,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           <div class="macro-goal">GOAL <b id="n-carb-goal">0</b></div>
           <div class="macro-rem" id="n-carb-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card macro-card">
+        <div class="macro-card">
           <div class="card-label">FAT</div>
           <div class="macro-ring-wrap">
             <svg class="macro-ring-svg" viewBox="0 0 72 72">
@@ -2021,7 +2037,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           <div class="macro-goal">GOAL <b id="n-fat-goal">0</b></div>
           <div class="macro-rem" id="n-fat-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card macro-card">
+        <div class="macro-card">
           <div class="card-label">FIBER</div>
           <div class="macro-ring-wrap">
             <svg class="macro-ring-svg" viewBox="0 0 72 72">
@@ -2036,7 +2052,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           <div class="macro-goal">GOAL <b id="n-fiber-goal">0</b></div>
           <div class="macro-rem" id="n-fiber-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
-        <div class="card macro-card">
+        <div class="macro-card">
           <div class="card-label">WATER</div>
           <div class="macro-ring-wrap">
             <svg class="macro-ring-svg" viewBox="0 0 72 72">
@@ -2052,6 +2068,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           <div class="macro-rem" id="n-water-rem-wrap"><b>0</b><span class="lbl">LEFT</span></div>
         </div>
       </div>
+      </div><!-- end ntr-stat-panel -->
     </div>
     <div class="ntr-col-right">
     <!-- ── COMPACT LOG WATER WIDGET ── -->

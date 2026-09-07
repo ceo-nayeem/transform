@@ -232,9 +232,8 @@ button.date-disp{
 button.date-disp:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent);background:var(--glass-bg2,var(--card2))}
 
 .date-picker-pop{
-  display:none;position:absolute;top:calc(100% + 10px);right:0;left:auto;
-  width:min(270px, calc(100vw - 32px));max-width:270px;box-sizing:border-box;
-  z-index:250;padding:12px;
+  display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  width:270px;z-index:250;padding:12px;
   background:var(--glass-bg2,var(--panel));border:1px solid var(--glass-border-hi,var(--border));
   border-radius:var(--radius-md,14px);backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
   box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
@@ -266,6 +265,42 @@ button.date-disp:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 4
   transition:all .15s;
 }
 .dp-cal-today-btn:hover{color:var(--g);border-color:color-mix(in srgb, var(--g) 40%, transparent)}
+@media (max-width:768px){
+  .date-picker-pop{left:auto;right:0;transform:none}
+}
+
+/* ===== Quick Add — small glassy circular + button with popover menu ===== */
+.quick-add-wrap{position:fixed;right:28px;bottom:28px;z-index:180;}
+.quick-add-fab{
+  width:50px;height:50px;border-radius:50%;flex-shrink:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--glass-bg);border:1px solid var(--glass-border-hi);color:var(--g);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-soft);transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+.quick-add-fab-icon{font-size:24px;line-height:1;font-weight:500;transition:transform .25s ease;display:inline-block}
+.quick-add-fab:hover{background:var(--glass-bg2);transform:translateY(-2px)}
+.quick-add-fab:active{transform:translateY(0) scale(.94)}
+.quick-add-wrap.open .quick-add-fab{color:var(--t2)}
+.quick-add-wrap.open .quick-add-fab-icon{transform:rotate(45deg)}
+.quick-add-pop{
+  display:none;position:absolute;right:0;bottom:calc(100% + 12px);
+  min-width:190px;padding:8px;z-index:181;
+  background:var(--glass-bg2,var(--panel));border:1px solid var(--glass-border-hi,var(--border));
+  border-radius:var(--radius-md,14px);backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);
+  box-shadow:var(--shadow-glow,0 12px 32px rgba(0,0,0,.35));
+}
+.quick-add-wrap.open .quick-add-pop{display:block;animation:profileDdIn .15s ease both}
+.quick-add-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;font-size:12px;color:var(--t);
+  cursor:pointer;border-radius:8px;transition:background .15s;letter-spacing:.3px;
+}
+.quick-add-item:hover{background:var(--glass-bg,var(--gd))}
+.quick-add-icon{font-size:15px;line-height:1;width:18px;text-align:center;flex-shrink:0}
+html.alpha .quick-add-item{font-family:'DM Sans',sans-serif}
+@media (max-width:900px){
+  .quick-add-wrap{display:none;} /* mobile already has the bottom-nav Log+ FAB */
+}
 .toggle-track{width:36px;height:18px;background:var(--t3);border:1px solid var(--border);border-radius:9px;position:relative;transition:all .3s;flex-shrink:0;}
 html.alpha .toggle-track{background:var(--g3);border-color:var(--g2)}
 .toggle-knob{width:12px;height:12px;background:var(--t2);border-radius:50%;position:absolute;top:2px;left:2px;transition:all .3s;}
@@ -455,7 +490,7 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .app-brand{font-family:var(--raj);font-size:18px;font-weight:700;color:var(--g);letter-spacing:3px}
 .app-brand span{font-size:10px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;margin-left:8px}
 .topbar-right{display:flex;align-items:center;gap:16px}
-.streak-chip{background:var(--glass-bg,var(--card));border:1px solid var(--glass-border,var(--border));border-radius:999px;backdrop-filter:var(--glass-blur,none);-webkit-backdrop-filter:var(--glass-blur,none);padding:5px 12px;font-size:10px;color:var(--o2);letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.streak-chip{background:var(--card);border:1px solid var(--border);padding:5px 12px;font-size:10px;color:var(--o2);letter-spacing:1px;display:flex;align-items:center;gap:6px}
 .dot-pulse{width:6px;height:6px;background:var(--g);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .date-disp{font-size:10px;color:var(--t2);letter-spacing:.5px}
@@ -1023,10 +1058,6 @@ html.alpha .sb-item.active{background:linear-gradient(135deg,color-mix(in srgb, 
   box-shadow:var(--shadow-soft);
 }
 .card{border-radius:var(--radius-md) !important;transition:transform .18s ease, box-shadow .18s ease, background .18s ease;overflow:hidden;cursor:pointer}
-/* Topbar sync chip rides the shared glass-card look above, but needs a full
-   pill radius (not the card's rounded-square) to match the other round
-   topbar controls (theme toggle, date arrows, date pill). */
-.sync-indicator{border-radius:999px !important}
 .card:hover{transform:translateY(-2px);background:var(--glass-bg2) !important;box-shadow:0 14px 34px rgba(0,0,0,.4)}
 .card-accent{width:3px;border-radius:0 0 0 var(--radius-md)}
 .ex-card,.habit-item,.meal-item{border-left:1px solid var(--glass-border) !important;transition:transform .15s ease, background .15s ease}
@@ -1642,11 +1673,18 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   <div class="chart-wrap">
     <canvas id="weightChart" height="100"></canvas>
   </div>
-  <div class="sec-head">QUICK LOG</div>
-  <div class="g3">
-    <button class="btn" onclick="nav(document.querySelector('[onclick*=nutrition]'),'nutrition')">+ LOG MEAL</button>
-    <button class="btn" onclick="nav(document.querySelector('[onclick*=workout]'),'workout')">+ LOG EXERCISE</button>
-    <button class="btn" onclick="nav(document.querySelector('[onclick*=habits]'),'habits')">+ MARK HABIT</button>
+  <div class="quick-add-wrap" id="quickAddWrap">
+    <button class="quick-add-fab" id="quickAddFab" onclick="toggleQuickAdd(event)" title="Quick add" aria-label="Quick add">
+      <span class="quick-add-fab-icon">＋</span>
+    </button>
+    <div class="quick-add-pop" id="quickAddPop" onclick="event.stopPropagation()">
+      <div class="quick-add-item" onclick="quickAddGo('nutrition')"><span class="quick-add-icon">🍽</span><span>Log Meal</span></div>
+      <div class="quick-add-item" onclick="quickAddGo('workout')"><span class="quick-add-icon">💪</span><span>Log Exercise</span></div>
+      <div class="quick-add-item" onclick="quickAddGo('habits')"><span class="quick-add-icon">✅</span><span>Mark Habit</span></div>
+      <div class="quick-add-item" onclick="quickAddWater()"><span class="quick-add-icon">💧</span><span>Log Water</span></div>
+      <div class="quick-add-item" onclick="quickAddGo('vitals')"><span class="quick-add-icon">❤️</span><span>Vitals</span></div>
+      <div class="quick-add-item" onclick="quickAddGo('measurements')"><span class="quick-add-icon">📏</span><span>Measure</span></div>
+    </div>
   </div>
 </div>
 
@@ -2769,6 +2807,35 @@ function nav(btn, id) {
   if (id === 'ingredientlibrary') renderIngredientLibrary();
 }
 
+// ===================== QUICK ADD (dashboard glassy + fab) =====================
+function toggleQuickAdd(e) {
+  if (e) e.stopPropagation();
+  var wrap = document.getElementById('quickAddWrap');
+  if (!wrap) return;
+  var opening = !wrap.classList.contains('open');
+  wrap.classList.toggle('open');
+  if (opening) setTimeout(function(){ document.addEventListener('click', _quickAddOutsideClick); }, 0);
+  else document.removeEventListener('click', _quickAddOutsideClick);
+}
+function closeQuickAdd() {
+  var wrap = document.getElementById('quickAddWrap');
+  if (wrap) wrap.classList.remove('open');
+  document.removeEventListener('click', _quickAddOutsideClick);
+}
+function _quickAddOutsideClick(e) {
+  var wrap = document.getElementById('quickAddWrap');
+  if (wrap && !wrap.contains(e.target)) closeQuickAdd();
+}
+function quickAddGo(pageId) {
+  closeQuickAdd();
+  nav(document.querySelector('.sb-item[onclick*="' + pageId + '"]'), pageId);
+}
+function quickAddWater() {
+  closeQuickAdd();
+  nav(document.querySelector('.sb-item[onclick*="nutrition"]'), 'nutrition');
+  setTimeout(function(){ switchNtrTab('water'); }, 50);
+}
+
 // ===================== TOAST =====================
 function toast(msg) {
   var t = document.getElementById('toast');
@@ -2785,7 +2852,6 @@ function toast(msg) {
 var dashDate = '';
 var dpViewYear = null, dpViewMonth = null; // month currently shown inside the open popover
 var DASH_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var DASH_MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var DASH_WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var DASH_WEEKDAY_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -2793,9 +2859,11 @@ function fmtYMD(d) {
   var y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
   return y+'-'+m+'-'+day;
 }
+var DASH_MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function dashDateLabel(dstr) {
   var d = new Date(dstr+'T12:00');
-  return d.getDate()+' '+DASH_MONTH_SHORT[d.getMonth()]+' '+DASH_WEEKDAY_SHORT[d.getDay()];
+  // Short glass-pill format: "Sun, Nov 15"
+  return DASH_WEEKDAY_SHORT[d.getDay()]+', '+DASH_MONTH_SHORT[d.getMonth()]+' '+d.getDate();
 }
 function renderDateNav() {
   var el = document.getElementById('dateDisp');
@@ -2853,7 +2921,7 @@ function renderDatePickerCalendar() {
   var curDash = dashDate || S.today;
   var html = '<div class="dp-cal-head">'
     +'<button type="button" class="dp-cal-nav" onclick="dpShiftMonth(-1)">‹</button>'
-    +'<span class="dp-cal-title">'+DASH_MONTH_SHORT[dpViewMonth]+' '+dpViewYear+'</span>'
+    +'<span class="dp-cal-title">'+DASH_MONTH_NAMES[dpViewMonth]+' '+dpViewYear+'</span>'
     +'<button type="button" class="dp-cal-nav" onclick="dpShiftMonth(1)">›</button>'
     +'</div>'
     +'<div class="dp-cal-weekdays">'+DASH_WEEKDAY_SHORT.map(function(w){return '<span>'+w+'</span>';}).join('')+'</div>'

@@ -1567,7 +1567,7 @@ html.alpha{
 /* Roomier layout — wider left/right breathing room around everything in
    the content area (excluding the sidebar rail and topbar themselves),
    and a tighter max-width so it reads more centered on wide screens. */
-.content{padding:80px 96px 28px !important;max-width:1200px !important;}
+.content{padding:96px 136px 40px !important;max-width:1080px !important;}
 .card{padding:18px !important;}
 .g2,.g3,.g4{gap:14px !important;}
 #habitList,#exList,#goalList,#mealList,#vitalHistory,#measHistory,#savedTimers{gap:14px !important;}
@@ -1575,10 +1575,10 @@ html.alpha{
 .log-chip-grid,.log-field-grid{gap:10px !important;}
 .sec-head{margin:22px 0 12px !important;}
 @media (max-width:1400px){
-  .content{padding:78px 64px 28px !important;}
+  .content{padding:92px 88px 40px !important;}
 }
 @media (max-width:1100px){
-  .content{padding:72px 36px 28px !important;}
+  .content{padding:88px 51px 40px !important;}
 }
 @media (max-width:768px){
   .content{padding:76px 20px 28px !important;max-width:100% !important;}
@@ -2233,14 +2233,23 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   <!-- ── CALENDAR VIEW ── -->
   <div id="hview-calendar">
     <!-- Month nav -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
       <button class="btn sm" onclick="habitMonthNav(-1)">◀</button>
       <div id="h-month-label" style="font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--g);flex:1;text-align:center"></div>
       <button class="btn sm" onclick="habitMonthNav(1)">▶</button>
     </div>
-    <!-- Scrollable calendar grid (own internal scroll only — rest of the page doesn't need to move) -->
-    <div id="habit-calendar-scrollbox" style="overflow:auto;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 300px);">
+    <!-- Scrollable calendar grid -->
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <div id="habit-calendar-wrap" style="min-width:600px"></div>
+    </div>
+    <!-- Weekly donut progress row -->
+    <div class="sec-head" style="margin-top:16px">WEEKLY PROGRESS</div>
+    <div id="habit-weekly-donuts" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
+    <!-- Monthly donut -->
+    <div class="sec-head">MONTHLY OVERVIEW</div>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <div id="habit-monthly-donut" style="width:110px;height:110px;position:relative;flex-shrink:0"></div>
+      <div id="habit-monthly-stats" style="flex:1;min-width:160px"></div>
     </div>
   </div>
 
@@ -2251,18 +2260,8 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
   <!-- ── STATS VIEW ── -->
   <div id="hview-stats" style="display:none">
-    <!-- Weekly donut progress row -->
-    <div class="sec-head" style="margin-top:0">WEEKLY PROGRESS</div>
-    <div id="habit-weekly-donuts" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
-    <!-- Monthly donut -->
-    <div class="sec-head">MONTHLY OVERVIEW</div>
-    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
-      <div id="habit-monthly-donut" style="width:110px;height:110px;position:relative;flex-shrink:0"></div>
-      <div id="habit-monthly-stats" style="flex:1;min-width:160px"></div>
-    </div>
     <div id="habit-stats-content"></div>
   </div>
-
 
   <!-- ── ADD HABIT ── -->
   <div class="sec-head" style="margin-top:16px">ADD HABIT</div>
@@ -2324,13 +2323,9 @@ html.alpha .htab.active{background:var(--gd);color:var(--g)}
 
 /* ── HABIT CALENDAR GRID ── */
 .hcal-table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:9px}
-.hcal-table th{background:var(--card2);color:var(--t2);padding:5px 4px;text-align:center;border:1px solid var(--border);letter-spacing:.5px;font-weight:400;font-size:8px;white-space:nowrap;position:sticky;top:0;z-index:4}
-.hcal-table .hcal-habit-col{text-align:left;padding:6px 8px;background:var(--card);color:var(--t);min-width:130px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;position:sticky;left:0;z-index:2;border:1px solid var(--border);transition:background .12s}
-.hcal-table thead .hcal-habit-col{z-index:5}
-td.hcal-habit-col{cursor:pointer}
-td.hcal-habit-col:hover{background:var(--gd)}
+.hcal-table th{background:var(--card2);color:var(--t2);padding:5px 4px;text-align:center;border:1px solid var(--border);letter-spacing:.5px;font-weight:400;font-size:8px;white-space:nowrap}
+.hcal-table .hcal-habit-col{text-align:left;padding:6px 8px;background:var(--card);color:var(--t);min-width:130px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;position:sticky;left:0;z-index:2;border:1px solid var(--border)}
 html.alpha .hcal-table .hcal-habit-col{font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px;background:#fff}
-html.alpha td.hcal-habit-col:hover{background:var(--g3)}
 .hcal-table td{padding:3px;text-align:center;border:1px solid var(--border);min-width:22px}
 .hcal-cell{width:18px;height:18px;margin:0 auto;border-radius:2px;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;font-size:9px;border:1px solid var(--border);background:var(--t3)}
 .hcal-cell.done{background:var(--g);border-color:var(--g2);color:#000}
@@ -2354,13 +2349,11 @@ html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 /* Category color chips */
 .hcat-chip{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;flex-shrink:0}
 /* Row edit/remove icons — hidden until the row is hovered */
-.hcal-ctx-menu{position:fixed;z-index:9500;background:var(--card);border:1px solid var(--border);border-top:2px solid var(--g);min-width:170px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
-html.alpha .hcal-ctx-menu{box-shadow:0 8px 24px rgba(20,30,25,.18)}
-.hcal-ctx-item{display:flex;align-items:center;gap:9px;padding:9px 8px;font-size:11px;font-family:var(--mono);color:var(--t);cursor:pointer;border-radius:6px;transition:background .12s;letter-spacing:.3px}
-.hcal-ctx-item:hover{background:var(--gd)}
-.hcal-ctx-item.danger{color:var(--red)}
-.hcal-ctx-item.danger:hover{background:rgba(214,40,40,.1)}
-.hcal-ctx-head{font-size:9px;color:var(--t2);padding:4px 8px 8px;border-bottom:1px solid var(--border);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.hcal-row-actions{position:absolute;top:4px;right:4px;display:flex;gap:2px;opacity:0;visibility:hidden;transition:opacity .12s}
+.hcal-habit-col:hover .hcal-row-actions{opacity:1;visibility:visible}
+.hcal-icon-btn{background:var(--card2);border:1px solid var(--border);color:var(--t2);cursor:pointer;font-size:10px;line-height:1;padding:3px 5px;border-radius:3px;transition:color .12s,border-color .12s}
+.hcal-icon-btn:hover{color:var(--g);border-color:var(--g)}
+.hcal-icon-btn.hcal-del:hover{color:var(--red);border-color:var(--red)}
 /* Footer row */
 .hcal-footer{background:var(--g3);color:var(--g);font-weight:700}
 .hcal-footer td{border:1px solid var(--g3);padding:4px 2px;font-family:var(--raj);font-size:11px}
@@ -2395,7 +2388,7 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
 .hcal-table .hcal-habit-col{background:var(--glass-bg) !important;border-color:var(--glass-border) !important;backdrop-filter:blur(6px)}
 .hcal-table td{border-color:var(--glass-border) !important}
 .hcal-cell{border-radius:6px !important;border-color:var(--glass-border) !important}
-.hcal-ctx-menu{background:var(--glass-bg) !important;border-color:var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+.hcal-icon-btn{background:var(--glass-bg) !important;border-color:var(--glass-border) !important;border-radius:8px !important}
 .hwk-card,.hstat-card{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft)}
 html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}
 </style>
@@ -4235,6 +4228,8 @@ function renderHabitCalendar() {
 
   if (!S.habits.length) {
     document.getElementById('habit-calendar-wrap').innerHTML='<div style="font-size:10px;color:var(--t2);padding:20px;text-align:center">No habits added yet. Add habits below.</div>';
+    renderWeeklyDonuts(yr,mo,daysInMonth,today);
+    renderMonthlyDonut(yr,mo,daysInMonth,today);
     return;
   }
 
@@ -4275,10 +4270,14 @@ function renderHabitCalendar() {
     totalCompleted+=doneCnt; totalPossible+=goalPerMonth;
 
     html+='<tr>';
-    html+='<td class="hcal-habit-col" title="'+h.name+'" onclick="showHabitCalMenu(event,'+hIdx+')">';
+    html+='<td class="hcal-habit-col" title="'+h.name+'">';
     html+='<span class="hcat-chip" style="background:'+color+'"></span>';
     html+=(emoji?emoji+' ':'')+h.name;
     html+='<div style="font-size:8px;color:var(--t2);margin-top:1px">'+h.cat+(habitStreak(h)>0?' · 🔥'+habitStreak(h):'')+'</div>';
+    html+='<div class="hcal-row-actions">';
+    html+='<button class="hcal-icon-btn" onclick="event.stopPropagation();toggleHabitEdit('+hIdx+')" title="Edit">✎</button>';
+    html+='<button class="hcal-icon-btn hcal-del" onclick="event.stopPropagation();delHabit('+hIdx+')" title="Remove">✕</button>';
+    html+='</div>';
     html+='</td>';
 
     for(var d=1;d<=daysInMonth;d++){
@@ -4338,6 +4337,8 @@ function renderHabitCalendar() {
   html+='</tbody></table>';
 
   document.getElementById('habit-calendar-wrap').innerHTML=html;
+  renderWeeklyDonuts(yr,mo,daysInMonth,today);
+  renderMonthlyDonut(yr,mo,daysInMonth,today);
 }
 
 function getWeeksInMonth(yr,mo,daysInMonth) {
@@ -4490,15 +4491,6 @@ function renderHabitList() {
 
 /* ── STATS VIEW ── */
 function renderHabitStats() {
-  if (!_habitCalMonth) {
-    var n0=new Date(S.today+'T12:00');
-    _habitCalMonth=n0.getFullYear()+'-'+String(n0.getMonth()+1).padStart(2,'0');
-  }
-  var [syr,smo] = _habitCalMonth.split('-').map(Number);
-  var sDaysInMonth = new Date(syr,smo,0).getDate();
-  renderWeeklyDonuts(syr,smo,sDaysInMonth,S.today);
-  renderMonthlyDonut(syr,smo,sDaysInMonth,S.today);
-
   var el=document.getElementById('habit-stats-content');
   if(!el) return;
   if(!S.habits.length){el.innerHTML='<div style="font-size:10px;color:var(--t2);padding:20px;text-align:center">No habits yet.</div>';return;}
@@ -4552,39 +4544,6 @@ function renderHabitStats() {
     html+='</div>';
   });
   el.innerHTML=html;
-}
-
-/* ── calendar row click → popup menu (edit/customize/remove) ── */
-function closeHabitCalMenu(){
-  var m=document.getElementById('hcalCtxMenu');
-  if(m) m.remove();
-  document.removeEventListener('click', _hcalMenuOutsideClick, true);
-}
-function _hcalMenuOutsideClick(e){
-  var m=document.getElementById('hcalCtxMenu');
-  if(m && !m.contains(e.target)) closeHabitCalMenu();
-}
-function showHabitCalMenu(evt, hIdx){
-  evt.stopPropagation();
-  closeHabitCalMenu();
-  var h=S.habits[hIdx]; if(!h) return;
-  var menu=document.createElement('div');
-  menu.id='hcalCtxMenu';
-  menu.className='hcal-ctx-menu';
-  menu.onclick=function(e){ e.stopPropagation(); };
-  menu.innerHTML=
-    '<div class="hcal-ctx-head">'+(h.emoji?h.emoji+' ':'')+h.name+'</div>'+
-    '<div class="hcal-ctx-item" onclick="closeHabitCalMenu();toggleHabitEdit('+hIdx+')"><span>✎</span><span>Edit / Customize</span></div>'+
-    '<div class="hcal-ctx-item danger" onclick="closeHabitCalMenu();delHabit('+hIdx+')"><span>✕</span><span>Remove Habit</span></div>';
-  document.body.appendChild(menu);
-  // Position near the click, keeping it on-screen
-  var mw=180, mh=110;
-  var x=evt.clientX, y=evt.clientY;
-  if(x+mw>window.innerWidth) x=window.innerWidth-mw-10;
-  if(y+mh>window.innerHeight) y=window.innerHeight-mh-10;
-  menu.style.left=Math.max(10,x)+'px';
-  menu.style.top=Math.max(10,y)+'px';
-  setTimeout(function(){ document.addEventListener('click', _hcalMenuOutsideClick, true); }, 0);
 }
 
 /* ── core actions ── */

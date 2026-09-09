@@ -2233,17 +2233,21 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   <!-- ── CALENDAR VIEW ── -->
   <div id="hview-calendar">
     <!-- Month nav -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <button class="btn sm" onclick="habitMonthNav(-1)">◀</button>
-      <div id="h-month-label" style="font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--g);flex:1;text-align:center"></div>
+      <div id="h-month-label" style="font-family:var(--raj);font-size:14px;font-weight:700;letter-spacing:2px;color:var(--g);flex:1;text-align:center"></div>
       <button class="btn sm" onclick="habitMonthNav(1)">▶</button>
     </div>
-    <!-- Scrollable calendar grid -->
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-      <div id="habit-calendar-wrap" style="min-width:600px"></div>
+    <!-- Horizontally-scrollable calendar grid. overflow-y is pinned to
+         visible so this box never grows its own vertical scrollbar —
+         setting only overflow-x would otherwise make the browser treat
+         overflow-y as 'auto' too, per spec, trapping vertical swipes
+         inside the table instead of scrolling the page. -->
+    <div style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;">
+      <div id="habit-calendar-wrap" style="min-width:520px"></div>
     </div>
     <!-- Weekly donut progress row -->
-    <div class="sec-head" style="margin-top:16px">WEEKLY PROGRESS</div>
+    <div class="sec-head" style="margin-top:12px">WEEKLY PROGRESS</div>
     <div id="habit-weekly-donuts" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
     <!-- Monthly donut -->
     <div class="sec-head">MONTHLY OVERVIEW</div>
@@ -2322,12 +2326,12 @@ html.alpha .htab{font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px
 html.alpha .htab.active{background:var(--gd);color:var(--g)}
 
 /* ── HABIT CALENDAR GRID ── */
-.hcal-table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:9px}
-.hcal-table th{background:var(--card2);color:var(--t2);padding:5px 4px;text-align:center;border:1px solid var(--border);letter-spacing:.5px;font-weight:400;font-size:8px;white-space:nowrap}
-.hcal-table .hcal-habit-col{text-align:left;padding:6px 8px;background:var(--card);color:var(--t);min-width:130px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;position:sticky;left:0;z-index:2;border:1px solid var(--border)}
-html.alpha .hcal-table .hcal-habit-col{font-family:'DM Sans',sans-serif;font-weight:600;font-size:10px;background:#fff}
-.hcal-table td{padding:3px;text-align:center;border:1px solid var(--border);min-width:22px}
-.hcal-cell{width:18px;height:18px;margin:0 auto;border-radius:2px;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;font-size:9px;border:1px solid var(--border);background:var(--t3)}
+.hcal-table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:8px}
+.hcal-table th{background:var(--card2);color:var(--t2);padding:3px 3px;text-align:center;border:1px solid var(--border);letter-spacing:.5px;font-weight:400;font-size:7px;white-space:nowrap;line-height:1.3}
+.hcal-table .hcal-habit-col{text-align:left;padding:4px 6px;background:var(--card);color:var(--t);min-width:104px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px;position:sticky;left:0;z-index:2;border:1px solid var(--border)}
+html.alpha .hcal-table .hcal-habit-col{font-family:'DM Sans',sans-serif;font-weight:600;font-size:9px;background:#fff}
+.hcal-table td{padding:2px;text-align:center;border:1px solid var(--border);min-width:18px}
+.hcal-cell{width:14px;height:14px;margin:0 auto;border-radius:2px;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;font-size:8px;border:1px solid var(--border);background:var(--t3)}
 .hcal-cell.done{background:var(--g);border-color:var(--g2);color:#000}
 .hcal-cell.done-check::after{content:'✓';font-size:8px;color:#000}
 .hcal-cell.skip{background:var(--red);border-color:#3a0015;color:#fff}
@@ -2340,14 +2344,14 @@ html.alpha .hcal-cell.skip{background:var(--red);border-color:#f5a5a5}
 html.alpha .hcal-cell.future{background:#f8f9fc}
 html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 /* Summary cols */
-.hcal-goal-col{background:var(--card2);color:var(--c);font-family:var(--raj);font-size:13px;font-weight:700;padding:4px 8px;border:1px solid var(--border);text-align:center;min-width:36px}
-.hcal-done-col{background:var(--card2);color:var(--g);font-family:var(--raj);font-size:13px;font-weight:700;padding:4px 8px;border:1px solid var(--border);text-align:center;min-width:36px}
-.hcal-pct-col{background:var(--card2);padding:4px 8px;border:1px solid var(--border);min-width:60px}
+.hcal-goal-col{background:var(--card2);color:var(--c);font-family:var(--raj);font-size:11px;font-weight:700;padding:2px 5px;border:1px solid var(--border);text-align:center;min-width:28px}
+.hcal-done-col{background:var(--card2);color:var(--g);font-family:var(--raj);font-size:11px;font-weight:700;padding:2px 5px;border:1px solid var(--border);text-align:center;min-width:28px}
+.hcal-pct-col{background:var(--card2);padding:2px 5px;border:1px solid var(--border);min-width:48px}
 /* Progress bar in pct col */
-.hcal-mini-bar{height:6px;background:var(--t3);border-radius:2px;margin-top:3px;overflow:hidden}
+.hcal-mini-bar{height:5px;background:var(--t3);border-radius:2px;margin-top:2px;overflow:hidden}
 .hcal-mini-fill{height:100%;border-radius:2px;background:var(--g);transition:width .4s}
 /* Category color chips */
-.hcat-chip{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;flex-shrink:0}
+.hcat-chip{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:3px;vertical-align:middle;flex-shrink:0}
 /* Row edit/remove icons — hidden until the row is hovered */
 .hcal-row-actions{position:absolute;top:4px;right:4px;display:flex;gap:2px;opacity:0;visibility:hidden;transition:opacity .12s}
 .hcal-habit-col:hover .hcal-row-actions{opacity:1;visibility:visible}
@@ -2356,7 +2360,7 @@ html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 .hcal-icon-btn.hcal-del:hover{color:var(--red);border-color:var(--red)}
 /* Footer row */
 .hcal-footer{background:var(--g3);color:var(--g);font-weight:700}
-.hcal-footer td{border:1px solid var(--g3);padding:4px 2px;font-family:var(--raj);font-size:11px}
+.hcal-footer td{border:1px solid var(--g3);padding:2px 2px;font-family:var(--raj);font-size:10px}
 .hcal-footer .hcal-habit-col{background:var(--g3);color:var(--g)}
 
 /* ── WEEKLY DONUT ── */
@@ -4243,12 +4247,12 @@ function renderHabitCalendar() {
     var dow=new Date(ds+'T12:00').getDay();
     var isTd = ds===today;
     var isWk = dow===0||dow===6;
-    html+='<th style="'+(isTd?'color:var(--c);border-bottom:2px solid var(--c);':isWk?'color:var(--o2);':'')+'min-width:22px;font-size:8px">';
+    html+='<th style="'+(isTd?'color:var(--c);border-bottom:2px solid var(--c);':isWk?'color:var(--o2);':'')+'min-width:18px;font-size:7px">';
     html+=DAY_NAMES[dow]+'<br>'+d+'</th>';
   }
-  html+='<th style="background:var(--card2);color:var(--c2);font-size:8px;padding:4px 6px;border:1px solid var(--border)">GOAL</th>';
-  html+='<th style="background:var(--card2);color:var(--g);font-size:8px;padding:4px 6px;border:1px solid var(--border)">DONE</th>';
-  html+='<th style="background:var(--card2);color:var(--t2);font-size:8px;padding:4px 6px;border:1px solid var(--border);min-width:70px">PROGRESS</th>';
+  html+='<th style="background:var(--card2);color:var(--c2);font-size:7px;padding:3px 5px;border:1px solid var(--border)">GOAL</th>';
+  html+='<th style="background:var(--card2);color:var(--g);font-size:7px;padding:3px 5px;border:1px solid var(--border)">DONE</th>';
+  html+='<th style="background:var(--card2);color:var(--t2);font-size:7px;padding:3px 5px;border:1px solid var(--border);min-width:52px">PROGRESS</th>';
   html+='</tr></thead><tbody>';
 
   // Per-day completion counts (for footer)

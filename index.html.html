@@ -714,6 +714,14 @@ html.alpha .wt-range-btn.active{color:#fff}
 .wt-current-label{display:block;font-size:8px;letter-spacing:2px;color:var(--t2);font-family:var(--mono)}
 html.alpha .wt-current-label{font-family:'DM Sans',sans-serif;font-weight:700}
 .wt-current-val{display:block;font-size:16px;font-weight:700;color:var(--g);font-family:var(--raj);letter-spacing:.5px}
+.wt-hover-tip{
+  position:fixed;display:none;z-index:50;transform:translate(-50%,-100%) translateY(-8px);
+  background:var(--card2);border:1px solid var(--g);border-radius:6px;padding:5px 10px;
+  font-family:var(--mono);font-size:10px;color:var(--t);white-space:nowrap;pointer-events:none;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+html.alpha .wt-hover-tip{background:#fff;font-family:'DM Sans',sans-serif;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.wt-hover-tip b{color:var(--g)}
 
 .meal-item{background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px;border-left:2px solid var(--border)}
 .meal-top{display:flex;justify-content:space-between;align-items:center}
@@ -1940,6 +1948,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <span class="wt-current-val" id="wtCurrentVal">--</span>
     </div>
     <canvas id="weightChart" height="150"></canvas>
+    <div class="wt-hover-tip" id="wtHoverTip"></div>
   </div>
   <div class="quick-add-wrap" id="quickAddWrap">
     <button class="quick-add-fab" id="quickAddFab" onclick="toggleQuickAdd(event)" title="Quick add" aria-label="Quick add">
@@ -3344,7 +3353,7 @@ function renderDashboard() {
   var ringLbl = document.querySelector('#page-dashboard .ring-lbl');
   if (ringLbl) ringLbl.textContent = (dashDate === S.today) ? 'TODAY' : 'SELECTED DAY';
   document.getElementById('ov-cal').textContent = totCal + ' / ' + S.cfg.calGoal + ' kcal';
-  document.getElementById('ov-prot').textContent = totProt + 'g / ' + S.cfg.protGoal + 'g';
+  document.getElementById('ov-prot').textContent = Math.round(totProt) + 'g / ' + S.cfg.protGoal + 'g';
   document.getElementById('ov-water').textContent = waterL + ' / ' + goalL + ' L';
   document.getElementById('ov-habits').textContent = habDone + ' / ' + S.habits.length;
   document.getElementById('ov-ex').textContent = exDone + ' / ' + d.exercises.length;
@@ -3367,6 +3376,9 @@ function renderDashboard() {
 // Which range the dashboard weight chart currently shows: 'week' (last
 // 7 logged points) or 'month' (last 30 days' worth of logged points).
 var wtChartRange = 'week';
+// Pixel coordinates of each plotted point on the last weight-chart render,
+// used by the hover handler below to find and label the nearest point.
+var wtChartPoints = [];
 function setWeightChartRange(range) {
   wtChartRange = range === 'month' ? 'month' : 'week';
   document.querySelectorAll('.wt-range-btn').forEach(function(b){
@@ -3415,6 +3427,8 @@ function renderWeightChart() {
   if (pts.length < 2) {
     ctx.fillStyle = textColor; ctx.font = '11px ' + mono;
     ctx.fillText('Not enough data. Log measurements to see weight trend.', 10, H/2);
+    wtChartPoints = [];
+    var tipEmpty = document.getElementById('wtHoverTip'); if (tipEmpty) tipEmpty.style.display = 'none';
     return;
   }
 
@@ -3425,7 +3439,7 @@ function renderWeightChart() {
   // bracket both the plotted range AND the current weight, so the
   // current-weight tick is always one of the visible gridlines.
   var span = Math.max(rawMax - rawMin, 4);
-  var niceStep = span <= 8 ? 1 : span <= 16 ? 2 : span <= 30 ? 5 : 10;
+  var niceStep = span <= 4 ? 0.5 : span <= 8 ? 1 : span <= 16 ? 2 : span <= 30 ? 5 : 10;
   var mn = Math.floor((Math.min(rawMin, curWeight) - niceStep*0.8) / niceStep) * niceStep;
   var mx = Math.ceil((Math.max(rawMax, curWeight) + niceStep*0.8) / niceStep) * niceStep;
   if (mx === mn) mx = mn + niceStep;
@@ -3450,7 +3464,7 @@ function renderWeightChart() {
     ctx.beginPath(); ctx.moveTo(padL-6, y); ctx.lineTo(padL, y); ctx.stroke();
     ctx.fillStyle = isCurrent ? lineColor : textColor;
     ctx.font = (isCurrent ? 'bold ' : '') + '9px ' + mono;
-    ctx.fillText(String(tv), padL-9, y);
+    ctx.fillText(tv.toFixed(1), padL-9, y);
   });
   ctx.setLineDash([]);
 
@@ -3483,6 +3497,7 @@ function renderWeightChart() {
   ctx.stroke();
 
   // ---- Data points; last point gets a bigger "current" ring ----
+  wtChartPoints = [];
   pts.forEach(function(p,i){
     var x=xFor(i), y=yFor(p.v);
     var isLast = i === pts.length-1;
@@ -3493,6 +3508,7 @@ function renderWeightChart() {
     } else {
       ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
     }
+    wtChartPoints.push({x:x, y:y, v:p.v, d:p.d});
   });
 
   // ---- X-axis date labels: sparse for month view, every point for week ----
@@ -3511,6 +3527,35 @@ function renderWeightChart() {
     var x=xFor(i), y=yFor(pts[i].v);
     ctx.fillText(pts[i].v.toFixed(1), x, Math.max(y-12, padT+2));
   });
+
+  canvas.onmousemove = wtChartHover;
+  canvas.onmouseleave = wtChartHoverEnd;
+}
+
+// Shows a tooltip with the actual logged weight (and date) for whichever
+// plotted point the cursor is nearest to on the weight-trend chart.
+function wtChartHover(evt) {
+  var tip = document.getElementById('wtHoverTip');
+  if (!tip || !wtChartPoints.length) return;
+  var canvas = document.getElementById('weightChart');
+  var rect = canvas.getBoundingClientRect();
+  var mx = evt.clientX - rect.left;
+  var nearest = null, minDist = Infinity;
+  wtChartPoints.forEach(function(p){
+    var dist = Math.abs(p.x - mx);
+    if (dist < minDist) { minDist = dist; nearest = p; }
+  });
+  if (!nearest || minDist > 26) { tip.style.display = 'none'; return; }
+  var dt = new Date(nearest.d + 'T00:00:00');
+  var lbl = isNaN(dt) ? nearest.d : dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  tip.innerHTML = lbl + ' &middot; <b>' + nearest.v.toFixed(1) + ' kg</b>';
+  tip.style.display = 'block';
+  tip.style.left = (rect.left + nearest.x) + 'px';
+  tip.style.top = (rect.top + nearest.y) + 'px';
+}
+function wtChartHoverEnd() {
+  var tip = document.getElementById('wtHoverTip');
+  if (tip) tip.style.display = 'none';
 }
 
 // Small helper: canvas gradients can't use color-mix(), so fade a CSS
@@ -3604,8 +3649,12 @@ function updateMacroRing(prefix, val, goal, unit) {
   var pct = goal > 0 ? Math.min(100, (val / goal) * 100) : 0;
   var ring = document.getElementById(prefix + '-ring');
   if (ring) { ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C - (C * pct / 100); }
+  // Macro-nutrition values (protein/carbs/fat/fiber — unit 'g') are shown as
+  // clean whole numbers, never decimal progress. Other units (kcal, L) keep
+  // their existing rounding. Weight/measurements are separate and untouched.
+  var isGram = unit === 'g';
   var valEl = document.getElementById(prefix);
-  if (valEl) valEl.textContent = (Math.round(val * 100) / 100);
+  if (valEl) valEl.textContent = isGram ? Math.round(val) : (Math.round(val * 100) / 100);
   var suf = unit === 'kcal' ? ' kcal' : (unit === 'L' ? 'L' : 'g');
   var goalEl = document.getElementById(prefix + '-goal');
   if (goalEl) goalEl.textContent = goal > 0 ? (goal + suf) : '—';
@@ -3615,7 +3664,7 @@ function updateMacroRing(prefix, val, goal, unit) {
   if (goal <= 0) {
     wrap.innerHTML = '<span class="lbl">NO GOAL SET</span>';
   } else {
-    var diff = Math.round((goal - val) * 100) / 100;
+    var diff = isGram ? Math.round(goal - val) : (Math.round((goal - val) * 100) / 100);
     if (diff <= 0) {
       if (diff === 0) { wrap.innerHTML = '<span class="lbl">✓ GOAL REACHED</span>'; wrap.classList.add('is-done'); }
       else { wrap.innerHTML = '<b>' + Math.abs(diff) + suf + '</b><span class="lbl">OVER</span>'; wrap.classList.add('is-over'); }
@@ -3818,6 +3867,7 @@ function renderPendingIngredients() {
         </div>
       </div>
     </div>`).join('');
+  totCal=Math.round(totCal); totPro=Math.round(totPro); totCarb=Math.round(totCarb); totFat=Math.round(totFat); totFib=Math.round(totFib); totOm=Math.round(totOm);
   document.getElementById('ingr-macro-preview').innerHTML = `<span style="color:var(--g)">↳ ${pendingIngredients.length} items · ${totCal}cal · P:${totPro}g C:${totCarb}g F:${totFat}g</span>`;
   summary.style.display = 'block';
   document.getElementById('ms-cal').textContent=totCal; document.getElementById('ms-pro').textContent=totPro;
@@ -3842,7 +3892,14 @@ function savePendingEdit(prefix, j) {
   toast('Ingredient updated!');
 }
 function calcMacrosFromIngredients(ingrs) {
-  return {kcal:ingrs.reduce((a,ig)=>a+ig.cal,0), protein:ingrs.reduce((a,ig)=>a+ig.pro,0), carbs:ingrs.reduce((a,ig)=>a+ig.carb,0), fat:ingrs.reduce((a,ig)=>a+ig.fat,0), fiber:ingrs.reduce((a,ig)=>a+ig.fiber,0), omega3:ingrs.reduce((a,ig)=>a+(ig.omega3||0),0)};
+  return {
+    kcal: Math.round(ingrs.reduce((a,ig)=>a+ig.cal,0)),
+    protein: Math.round(ingrs.reduce((a,ig)=>a+ig.pro,0)),
+    carbs: Math.round(ingrs.reduce((a,ig)=>a+ig.carb,0)),
+    fat: Math.round(ingrs.reduce((a,ig)=>a+ig.fat,0)),
+    fiber: Math.round(ingrs.reduce((a,ig)=>a+ig.fiber,0)),
+    omega3: Math.round(ingrs.reduce((a,ig)=>a+(ig.omega3||0),0))
+  };
 }
 function addMeal() {
   var type = document.getElementById('n-type').value;
@@ -3935,6 +3992,7 @@ function renderMlaIngredients() {
         </div>
       </div>
     </div>`).join('');
+  totCal=Math.round(totCal); totPro=Math.round(totPro); totCarb=Math.round(totCarb); totFat=Math.round(totFat);
   prev.innerHTML=`<span style="color:var(--g)">↳ ${mlaPendingIngredients.length} items · ${totCal}cal · P:${totPro}g C:${totCarb}g F:${totFat}g</span>`;
 }
 function saveMealToLibrary(mealObj) {
@@ -6112,10 +6170,10 @@ function aiExecuteTool(name, args) {
         type:        mealType,
         time:        hh+':'+mm2,
         kcal:        Math.round(args.kcal   || 0),
-        protein:     Math.round((args.protein || 0) * 10) / 10,
-        carbs:       Math.round((args.carbs   || 0) * 10) / 10,
-        fat:         Math.round((args.fat     || 0) * 10) / 10,
-        fiber:       Math.round((args.fiber   || 0) * 10) / 10,
+        protein:     Math.round(args.protein || 0),
+        carbs:       Math.round(args.carbs   || 0),
+        fat:         Math.round(args.fat     || 0),
+        fiber:       Math.round(args.fiber   || 0),
         notes:       args.notes || '',
         ingredients: args.ingredients || []
       };
@@ -6136,10 +6194,10 @@ function aiExecuteTool(name, args) {
         name:     args.name || 'Unnamed Mix',
         type:     args.type || 'Meal',
         kcal:     Math.round(args.kcal    || 0),
-        protein:  Math.round((args.protein || 0) * 10) / 10,
-        carbs:    Math.round((args.carbs   || 0) * 10) / 10,
-        fat:      Math.round((args.fat     || 0) * 10) / 10,
-        fiber:    Math.round((args.fiber   || 0) * 10) / 10,
+        protein:  Math.round(args.protein || 0),
+        carbs:    Math.round(args.carbs   || 0),
+        fat:      Math.round(args.fat     || 0),
+        fiber:    Math.round(args.fiber   || 0),
         notes:    args.notes || 'Saved by AI Agent',
         ingredients: args.ingredients || [],
         savedAt:  new Date().toLocaleDateString()

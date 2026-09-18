@@ -2440,9 +2440,16 @@ html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 /* ── WEEKLY DONUT ── */
 .hwk-card{background:var(--card);border:1px solid var(--border);padding:10px;text-align:center;min-width:100px;flex-shrink:0}
 html.alpha .hwk-card{background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
-.hwk-label{font-size:8px;color:var(--t2);letter-spacing:1px;margin-bottom:6px;font-family:var(--mono)}
+.hwk-label{font-size:8px;color:var(--t2);letter-spacing:1px;margin-bottom:6px;font-family:var(--mono);white-space:nowrap}
 html.alpha .hwk-label{font-family:'DM Sans',sans-serif;font-weight:600}
 .hwk-pct{font-family:var(--raj);font-size:12px;font-weight:700;color:var(--t);margin-top:5px}
+/* Ring + centered % label as one scalable unit — the SVG shrinks with
+   its container (percentage width) and the % text is centered with
+   real positioning instead of hand-tuned negative margins, so it
+   still lands dead-center at any card size, mobile included. */
+.hwk-ring-wrap{position:relative;width:86px;max-width:100%;aspect-ratio:1/1;margin:0 auto}
+.hwk-ring-wrap svg{display:block;width:100%;height:100%}
+.hwk-ring-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--raj);font-size:14px;font-weight:700;color:var(--t)}
 
 /* ── STAT CARD ── */
 .hstat-card{background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:8px}
@@ -2499,29 +2506,58 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
      rule above — it just needs a higher z-index here so it stays above
      the sticky header row, and an even higher one at their shared
      top-left corner cell so neither hides behind the other while
-     scrolling diagonally. */
+     scrolling diagonally. The corner cell (top-left "HABITS" cell) is
+     sticky on BOTH axes at once, so it must win against every other
+     sticky cell in the table, not just the day headers. */
   .hcal-table .hcal-habit-col{z-index:3}
-  .hcal-table thead th.hcal-habit-col{z-index:5}
+  .hcal-table thead th.hcal-habit-col{z-index:6}
   /* The sticky habit-name column sits ABOVE the day cells (higher
-     z-index) so the day cells scroll underneath it, not over it —
-     that part of the stacking was already correct. What needed fixing
-     was the glass itself: it should read as a strongly frosted glass
-     panel (heavy blur, ~90%), not a flat solid color — enough blur
-     that whatever color is scrolling underneath is thoroughly diffused
-     and the habit name stays perfectly legible on top of it. */
+     z-index) so the day cells scroll underneath it, not over it. The
+     glass itself needs to be strongly frosted — a heavy blur so
+     whatever color/date text is scrolling underneath is thoroughly
+     diffused, plus enough backing opacity that the habit name (and
+     the "HABITS" heading) stays perfectly legible on top of it at
+     all times, including while horizontally scrolling past it. */
   .hcal-table .hcal-habit-col{
-    background:color-mix(in srgb, var(--card2) 55%, transparent) !important;
-    backdrop-filter:blur(28px) saturate(1.6) !important;
-    -webkit-backdrop-filter:blur(28px) saturate(1.6) !important;
+    background:color-mix(in srgb, var(--card2) 90%, transparent) !important;
+    backdrop-filter:blur(40px) saturate(1.6) !important;
+    -webkit-backdrop-filter:blur(40px) saturate(1.6) !important;
     box-shadow:2px 0 10px rgba(0,0,0,.28);
   }
-  html.alpha .hcal-table .hcal-habit-col{background:color-mix(in srgb, #ffffff 55%, transparent) !important}
-  .hcal-table .hcal-footer .hcal-habit-col{background:color-mix(in srgb, var(--habit-done-tint) 65%, transparent) !important}
-  html.alpha .hcal-table .hcal-footer .hcal-habit-col{background:color-mix(in srgb, var(--habit-done-tint) 65%, transparent) !important}
+  html.alpha .hcal-table .hcal-habit-col{background:color-mix(in srgb, #ffffff 90%, transparent) !important}
+  .hcal-table .hcal-footer .hcal-habit-col{background:color-mix(in srgb, var(--habit-done-tint) 92%, transparent) !important}
+  html.alpha .hcal-table .hcal-footer .hcal-habit-col{background:color-mix(in srgb, var(--habit-done-tint) 92%, transparent) !important}
+  /* The corner cell (sticky on both axes) is the one place date text
+     visibly slides underneath while horizontally scrolling, so it
+     gets the strongest, most opaque treatment of the column. */
+  .hcal-table thead th.hcal-habit-col{
+    background:var(--card2) !important;
+    backdrop-filter:blur(40px) saturate(1.6) !important;
+    -webkit-backdrop-filter:blur(40px) saturate(1.6) !important;
+  }
+  html.alpha .hcal-table thead th.hcal-habit-col{background:#fff !important}
   /* Slightly bigger than desktop for touch, but smaller than the
      earlier mobile pass (which made them feel oversized). */
   .hcal-cell{width:20px;height:20px;font-size:9px}
   .hcal-table th{min-width:20px}
+}
+
+/* ===== Weekly progress row (mobile): all 4 week cards in a single
+   row, no horizontal or vertical scroll needed to see them. The
+   container switches from a horizontally-scrolling flex strip to a
+   fixed 4-column grid, and the cards/rings/labels shrink to fit. ===== */
+@media (max-width:768px){
+  #habit-weekly-donuts{
+    display:grid !important;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
+    overflow-x:visible !important;
+  }
+  .hwk-card{min-width:0;padding:6px 4px}
+  .hwk-label{font-size:6.5px;letter-spacing:.3px;white-space:normal;line-height:1.2}
+  .hwk-ring-wrap{width:56px}
+  .hwk-ring-pct{font-size:11px}
+  .hwk-pct{font-size:9px;margin-top:3px}
 }
 .hwk-card,.hstat-card{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft)}
 html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}
@@ -4610,13 +4646,14 @@ function renderWeeklyDonuts(yr,mo,daysInMonth,today) {
     var lblStart=parseInt(wk[0].split('-')[2],10);
     var lblEnd=parseInt(wk[wk.length-1].split('-')[2],10);
     html+='<div class="hwk-card">';
-    html+='<div class="hwk-label">WEEK '+(wi+1)+'<br>'+lblStart+'–'+lblEnd+'</div>';
-    html+='<svg width="86" height="86" viewBox="0 0 86 86" style="transform:rotate(-90deg)">';
+    html+='<div class="hwk-label">WEEK '+(wi+1)+': '+lblStart+'–'+lblEnd+'</div>';
+    html+='<div class="hwk-ring-wrap">';
+    html+='<svg viewBox="0 0 86 86" style="transform:rotate(-90deg)">';
     html+='<circle cx="43" cy="43" r="'+r+'" fill="none" stroke="var(--t3)" stroke-width="8"/>';
     html+='<circle cx="43" cy="43" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'"/>';
     html+='</svg>';
-    html+='<div style="margin-top:-62px;font-family:var(--raj);font-size:14px;font-weight:700;color:var(--t)">'+pct+'%</div>';
-    html+='<div style="margin-top:50px"></div>';
+    html+='<div class="hwk-ring-pct">'+pct+'%</div>';
+    html+='</div>';
     html+='<div class="hwk-pct">'+done+'/'+possible+'</div>';
     html+='</div>';
   });

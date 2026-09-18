@@ -5558,6 +5558,14 @@ function renderSbLabels() {
     bubble.style.left = (r.left + r.width/2) + 'px';
     bubble.style.height = pillH + 'px';
     bubble.style.borderRadius = (pillH/2) + 'px';
+    // The floating label pill is a separate fixed-position element from
+    // the circle it's attached to, so it needs its own click handler
+    // that triggers the exact same click the circle itself would run —
+    // and its own hover sync so hovering the text also ripples/lifts
+    // the circle, keeping the two halves feeling like one button.
+    bubble.addEventListener('click', function(){ item.click(); });
+    bubble.addEventListener('mouseenter', function(){ item.classList.add('sb-label-hover'); });
+    bubble.addEventListener('mouseleave', function(){ item.classList.remove('sb-label-hover'); });
     layer.appendChild(bubble);
     sizeSbTipPool(bubble, r);
     // Mount hidden, then flip to .show next frame so it eases in.
@@ -5584,12 +5592,18 @@ function sizeSbTipPool(bubble, r){
 (function(){
   var tip = document.getElementById('sbTip');
   if (!tip) return;
+  var tipItem = null; // the .sb-item this transient bubble currently represents
+  // The splash bubble is a separate fixed-position element, so a click on
+  // its visible (peeking-out) text needs to be forwarded to the circle
+  // it's currently attached to.
+  tip.addEventListener('click', function(){ if (tipItem) tipItem.click(); });
   document.addEventListener('mouseover', function(e){
     if (window.innerWidth < 769) return;
     var item = e.target.closest('.sb .sb-item[data-tip]');
     if (!item) return;
     var label = item.getAttribute('data-tip');
     if (!label) return;
+    tipItem = item;
     var textEl = tip.querySelector('.sb-tip-text');
     if (textEl) textEl.textContent = label;
     tip.classList.toggle('sb-tip-live', item.classList.contains('active'));

@@ -54,6 +54,21 @@
   flex-direction:column;gap:0;
 }
 #loginScreen.hidden{display:none}
+#onboardScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0;
+}
+#onboardScreen.hidden{display:none}
+.hidden{display:none !important}
+.ob-choice-card{
+  background:var(--sb);border:1px solid var(--border);border-radius:10px;
+  padding:16px 18px;margin-bottom:14px;cursor:pointer;transition:border-color .2s,transform .15s;
+}
+.ob-choice-card:hover{border-color:var(--g);transform:translateY(-2px);}
+.ob-choice-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--t);margin-bottom:6px;}
+.ob-choice-desc{font-family:'DM Sans',sans-serif;font-size:11.5px;color:var(--t2);line-height:1.5;}
 .login-box{
   width:360px;background:var(--card);border:1px solid var(--border);
   border-top:2px solid var(--g);padding:36px 32px;
@@ -1529,14 +1544,14 @@ html.alpha .edit-form{background:var(--glass-bg) !important;border:1.5px solid v
 html.alpha .danger-zone{background:var(--glass-bg) !important;border-color:rgba(255,51,85,.28) !important;backdrop-filter:var(--glass-blur)}
 
 /* ---- 5. Login screen — same dramatic glass card + glow in both themes ---- */
-#loginScreen{
+#loginScreen,#onboardScreen{
   background:
     radial-gradient(900px 500px at 15% 10%, color-mix(in srgb, var(--g) 16%, transparent), transparent 60%),
     radial-gradient(800px 500px at 90% 90%, color-mix(in srgb, var(--c) 14%, transparent), transparent 55%),
     radial-gradient(700px 600px at 50% 130%, rgba(170,119,255,.12), transparent 55%),
     #050a09;
 }
-html.alpha #loginScreen{
+html.alpha #loginScreen,html.alpha #onboardScreen{
   background:
     radial-gradient(900px 500px at 15% 10%, color-mix(in srgb, var(--g) 50%, transparent), transparent 60%),
     radial-gradient(800px 500px at 90% 90%, color-mix(in srgb, var(--c) 42%, transparent), transparent 55%),
@@ -1875,30 +1890,71 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     <div class="login-logo">FIT//OS</div>
     <div class="login-sub">Helth is welth 💪</div>
 
-    <button class="login-btn" id="googleLoginBtn" type="button" onclick="doGoogleLogin()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;">
+    <button class="login-btn" id="googleLoginBtn" type="button" onclick="doGoogleLogin()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;">
       <svg width="16" height="16" viewBox="0 0 48 48" style="flex:0 0 auto"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.7 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.3 0 10.2-2 13.9-5.4l-6.4-5.4C29.4 34.8 26.8 36 24 36c-5.3 0-9.9-3.3-11.4-8l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.2-4.2 5.6l6.4 5.4C40.9 36.4 44 30.7 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
-      <span>SIGN IN WITH GOOGLE</span>
+      <span>CONTINUE WITH GOOGLE</span>
     </button>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
-      <div style="flex:1;height:1px;background:var(--border);"></div>
-      <span style="font-family:var(--mono);font-size:9px;color:var(--t2);letter-spacing:1px;">OR</span>
-      <div style="flex:1;height:1px;background:var(--border);"></div>
-    </div>
-
-    <div class="login-label">USER ID</div>
-    <input class="login-inp" id="loginId" type="text" placeholder="Enter your user ID" autocomplete="username"/>
-
-    <div class="login-label">PASSWORD</div>
-    <input class="login-inp" id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password"
-      onkeydown="if(event.key==='Enter')doLogin()"/>
-
-    <button class="login-btn" onclick="doLogin()">[ ACCESS SYSTEM ]</button>
     <div class="login-err" id="loginErr"></div>
 
     <div class="login-sync">
       <span class="fb-status" id="fbStatusDot"></span>
       <span id="fbStatusTxt">Connecting to Firebase...</span>
     </div>
+  </div>
+</div>
+
+<!-- ===== ONBOARDING SCREEN (shown once, for brand-new Google accounts) ===== -->
+<div id="onboardScreen" class="hidden">
+  <div class="login-box" id="onboardBox" style="width:420px;">
+
+    <!-- STEP 1: mandatory basic info -->
+    <div id="onboardStep1">
+      <div class="login-logo" style="font-size:22px;">WELCOME</div>
+      <div class="login-sub" style="margin-bottom:26px;">Let's set up your profile</div>
+
+      <div class="login-label">NAME</div>
+      <input class="login-inp" id="obName" type="text" placeholder="Your name" autocomplete="name"/>
+
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;">
+          <div class="login-label">AGE</div>
+          <input class="login-inp" id="obAge" type="number" min="5" max="120" placeholder="e.g. 25"/>
+        </div>
+        <div style="flex:1;">
+          <div class="login-label">GENDER</div>
+          <select class="login-inp inp" id="obGender" style="cursor:pointer;">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="login-label">BODY WEIGHT (KG)</div>
+      <input class="login-inp" id="obWeight" type="number" min="1" step="0.1" placeholder="e.g. 70"/>
+
+      <button class="login-btn" onclick="onboardStep1Next()">[ CONTINUE ]</button>
+      <div class="login-err" id="onboardErr1"></div>
+    </div>
+
+    <!-- STEP 2: customize vs template -->
+    <div id="onboardStep2" class="hidden">
+      <div class="login-logo" style="font-size:22px;">SET UP YOUR SPACE</div>
+      <div class="login-sub" style="margin-bottom:26px;">How would you like to start?</div>
+
+      <div class="ob-choice-card" onclick="finishOnboarding('custom')">
+        <div class="ob-choice-title">🛠 Customize It Myself</div>
+        <div class="ob-choice-desc">Start with a blank slate — set up your own habits, workouts and goals from scratch.</div>
+      </div>
+
+      <div class="ob-choice-card" onclick="finishOnboarding('template')">
+        <div class="ob-choice-title">📋 Use a Template</div>
+        <div class="ob-choice-desc">Templates tailored to specific occupations/lifestyles are coming soon. For now this will start you off the same as Customize.</div>
+      </div>
+
+      <div class="login-err" id="onboardErr2"></div>
+    </div>
+
   </div>
 </div>
 
@@ -2931,34 +2987,11 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
       <div class="inp-group"><div class="inp-label">INITIALS (2 chars)</div><input class="inp" id="cfg-init" type="text" placeholder="BM" maxlength="2"/></div>
       <div class="inp-group"><div class="inp-label">GENDER</div><select class="inp" id="cfg-gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
     </div>
-    <button class="btn full" onclick="saveProfile()">[ SAVE PROFILE ]</button>
-  </div>
-
-  <div class="sec-head">LOGIN CREDENTIALS</div>
-  <div class="profile-section">
-    <div style="font-size:10px;color:var(--t2);margin-bottom:12px;letter-spacing:.5px">
-      Change your User ID or Password. You'll need to log in again after changing credentials.
-    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div class="inp-group">
-        <div class="inp-label">CURRENT USER ID</div>
-        <input class="inp" id="cur-id-disp" type="text" readonly style="opacity:.6;cursor:default"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label">NEW USER ID</div>
-        <input class="inp" id="new-login-id" type="text" placeholder="New user ID"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label">CURRENT PASSWORD</div>
-        <input class="inp" id="cur-pass-verify" type="password" placeholder="Enter current password"/>
-      </div>
-      <div class="inp-group">
-        <div class="inp-label">NEW PASSWORD</div>
-        <input class="inp" id="new-login-pass" type="password" placeholder="New password (min 4 chars)"/>
-      </div>
+      <div class="inp-group"><div class="inp-label">AGE</div><input class="inp" id="cfg-age" type="number" min="5" max="120" placeholder="25"/></div>
+      <div class="inp-group"><div class="inp-label">BODY WEIGHT (KG)</div><input class="inp" id="cfg-weight" type="number" min="1" step="0.1" placeholder="70"/></div>
     </div>
-    <button class="btn full" onclick="saveCredentials()">[ UPDATE CREDENTIALS ]</button>
-    <div id="cred-msg" style="font-size:10px;text-align:center;margin-top:8px;min-height:14px;font-family:var(--mono)"></div>
+    <button class="btn full" onclick="saveProfile()">[ SAVE PROFILE ]</button>
   </div>
 
   <div class="sec-head">NUTRITION GOALS</div>
@@ -3118,57 +3151,10 @@ function setFbStatus(connected, text) {
 waitForFirebase(() => { setFbStatus(true, 'Firebase Connected'); });
 
 // ===================== LOGIN =====================
-function doLogin() {
-  var id = (document.getElementById('loginId').value || '').trim();
-  var pass = document.getElementById('loginPass').value;
-  var err = document.getElementById('loginErr');
-  err.textContent = '';
-
-  if (!id) { err.textContent = 'Enter your User ID'; return; }
-  if (!pass) { err.textContent = 'Enter your password'; return; }
-
-  err.textContent = 'Verifying...';
-
-  waitForFirebase(async () => {
-    try {
-      var db = window._db;
-      var docId = sanitizeId(id);
-      var userRef = window._fsDoc(db, 'fitos_users', docId);
-      var snap = await window._fsGetDoc(userRef);
-
-      if (!snap.exists()) {
-        // First time — create account with password "1234" only
-        if (pass !== '1234') {
-          err.textContent = 'User not found. Default password is: 1234';
-          return;
-        }
-        // Create new user document
-        await window._fsSetDoc(userRef, {
-          userId: id,
-          password: '1234',
-          createdAt: new Date().toISOString(),
-          data: JSON.stringify(getDefaultState(id))
-        });
-        err.textContent = '';
-        loginSuccess(id, docId);
-      } else {
-        // Existing user — verify password
-        var userData = snap.data();
-        if (userData.password !== pass) {
-          err.textContent = 'Incorrect password';
-          return;
-        }
-        // Load their data
-        err.textContent = '';
-        loadUserDataIntoState(userData);
-        loginSuccess(id, docId);
-      }
-    } catch(e) {
-      err.textContent = 'Connection error. Check internet.';
-      console.error(e);
-    }
-  });
-}
+// NOTE: manual User ID / Password login & registration has been removed.
+// Google Sign-In is the only way to log in or register — see doGoogleLogin()
+// and handleGoogleUser() below. A brand-new Google account is routed into
+// the onboarding flow (see ONBOARDING section) instead of straight into the app.
 
 // Parses the stored JSON blob for a user doc into the live state object S.
 // Shared by classic ID/password login and Google login.
@@ -3181,6 +3167,9 @@ function loadUserDataIntoState(userData) {
       if (!S.ingredientLibrary) S.ingredientLibrary = [];
       if (!S.mealLibrary) S.mealLibrary = [];
       if (!S.dailyData) S.dailyData = {};
+      // Pre-existing accounts (created before onboarding existed) should
+      // never be sent through onboarding — only truly brand-new signups.
+      if (typeof S.onboarded === 'undefined') S.onboarded = true;
       // Remove deprecated default ingredients
       var _toRemove = ['almond', 'riceo 100gm', 'rice 100gm'];
       S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return !_toRemove.includes(i.name.toLowerCase()); });
@@ -3241,7 +3230,13 @@ async function handleGoogleUser(email, uid) {
     var userData = snap.data();
     loadUserDataIntoState(userData);
     window._fsSetDoc(userRef, { authUid: uid, lastLogin: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
-    loginSuccess(userData.userId || email, docId);
+    // Existing accounts that somehow never finished onboarding (e.g. closed
+    // the tab mid-flow) are sent back to it instead of straight into the app.
+    if (!S.onboarded) {
+      beginOnboarding(email, docId);
+    } else {
+      loginSuccess(userData.userId || email, docId);
+    }
     return;
   }
 
@@ -3250,8 +3245,10 @@ async function handleGoogleUser(email, uid) {
     if (migrated) return;
   }
 
-  // No existing data to inherit — start a fresh account for this Gmail address.
+  // Brand-new Gmail address — create the account, but route into onboarding
+  // instead of dropping them straight into the app.
   var fresh = getDefaultState(email.split('@')[0]);
+  fresh.onboarded = false;
   await window._fsSetDoc(userRef, {
     userId: email,
     authEmail: email,
@@ -3260,7 +3257,7 @@ async function handleGoogleUser(email, uid) {
     data: JSON.stringify(fresh)
   });
   Object.assign(S, fresh);
-  loginSuccess(email, docId);
+  beginOnboarding(email, docId);
 }
 
 // One-time migration: if exactly one legacy (pre-Google) user document
@@ -3295,6 +3292,7 @@ async function tryMigrateLegacyAdmin(newDocId, email, uid) {
     window._fsSetDoc(legacyRef, { migratedTo: newDocId, migratedAt: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
 
     loadUserDataIntoState({ data: legacy.data.data, userId: legacy.data.userId });
+    S.onboarded = true;
     loginSuccess(legacy.data.userId || email, newDocId);
     return true;
   } catch (e) {
@@ -3305,7 +3303,7 @@ async function tryMigrateLegacyAdmin(newDocId, email, uid) {
 
 function getDefaultState(id) {
   return {
-    cfg: {name: id.toUpperCase(), initials: (id.slice(0,2)).toUpperCase(), gender:'Male',
+    cfg: {name: id.toUpperCase(), initials: (id.slice(0,2)).toUpperCase(), gender:'Male', age:null,
           calGoal:2200, protGoal:160, carbGoal:220, fatGoal:65, fiberGoal:30, waterGoal:12},
     today: today(),
     dailyData: {},
@@ -3315,7 +3313,8 @@ function getDefaultState(id) {
     vitals: [],
     mealLibrary: [],
     ingredientLibrary: [],
-    streak: 0
+    streak: 0,
+    onboarded: false
   };
 }
 
@@ -3339,6 +3338,69 @@ function loginSuccess(id, docId, silent) {
   // closed — a brand new tab always lands back on the login screen.
   saveSession(id, docId);
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
+}
+
+// ===================== ONBOARDING (new Google accounts only) =====================
+// Holds the identity of the user currently going through onboarding, since
+// they aren't "logged in" (loginSuccess hasn't run yet) while it's shown.
+var _onboardEmail = null;
+var _onboardDocId = null;
+
+function beginOnboarding(email, docId) {
+  _onboardEmail = email;
+  _onboardDocId = docId;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('onboardStep1').classList.remove('hidden');
+  document.getElementById('onboardStep2').classList.add('hidden');
+  document.getElementById('onboardScreen').classList.remove('hidden');
+  // Pre-fill name with whatever we can infer, so the field isn't empty.
+  var nameInp = document.getElementById('obName');
+  if (nameInp && !nameInp.value) nameInp.value = (S.cfg && S.cfg.name) ? S.cfg.name : '';
+}
+
+function onboardStep1Next() {
+  var err = document.getElementById('onboardErr1');
+  err.textContent = '';
+  var name = (document.getElementById('obName').value || '').trim();
+  var age = parseInt(document.getElementById('obAge').value, 10);
+  var gender = document.getElementById('obGender').value;
+  var weight = parseFloat(document.getElementById('obWeight').value);
+
+  if (!name) { err.textContent = 'Please enter your name'; return; }
+  if (!age || age < 5 || age > 120) { err.textContent = 'Please enter a valid age'; return; }
+  if (!weight || weight <= 0) { err.textContent = 'Please enter a valid body weight'; return; }
+
+  // Stash into S.cfg right away so it's ready no matter which path (custom
+  // or template) the user picks on step 2.
+  S.cfg.name = name.toUpperCase();
+  S.cfg.initials = name.trim().slice(0,2).toUpperCase();
+  S.cfg.age = age;
+  S.cfg.gender = gender;
+  S.cfg.weight = weight;
+
+  document.getElementById('onboardStep1').classList.add('hidden');
+  document.getElementById('onboardStep2').classList.remove('hidden');
+}
+
+// mode: 'custom' | 'template' — template presets don't exist yet, so both
+// paths currently behave the same (custom, blank slate); the choice is
+// still recorded on the profile for when templates ship.
+function finishOnboarding(mode) {
+  S.cfg.setupMode = mode;
+
+  // Seed the very first measurement entry from the onboarding weight, so
+  // it shows up immediately in Health/Measurements and the weight chart.
+  if (S.cfg.weight) {
+    S.measurements.push({ date: today(), weight: String(S.cfg.weight) });
+  }
+
+  S.onboarded = true;
+
+  document.getElementById('onboardScreen').classList.add('hidden');
+  loginSuccess(_onboardEmail, _onboardDocId);
+  toast('Welcome, ' + S.cfg.name + '! Your profile is ready.');
+  _onboardEmail = null;
+  _onboardDocId = null;
 }
 
 // ===================== SESSION PERSISTENCE (per-tab only) =====================
@@ -3385,8 +3447,6 @@ function doLogout() {
       window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
     }
     document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('loginId').value = '';
-    document.getElementById('loginPass').value = '';
     document.getElementById('loginErr').textContent = '';
   });
 }
@@ -5262,6 +5322,8 @@ function delGoal(i){S.goals.splice(i,1);save();renderGoals();toast('Goal removed
 function loadProfile() {
   document.getElementById('cfg-name').value = S.cfg.name||'';
   document.getElementById('cfg-init').value = S.cfg.initials||'';
+  document.getElementById('cfg-age').value = S.cfg.age||'';
+  document.getElementById('cfg-weight').value = S.cfg.weight||'';
   document.getElementById('cfg-cal').value = S.cfg.calGoal||'';
   document.getElementById('cfg-prot').value = S.cfg.protGoal||'';
   document.getElementById('cfg-carb').value = S.cfg.carbGoal||'';
@@ -5271,11 +5333,6 @@ function loadProfile() {
   document.getElementById('profileAvatarBig').textContent = S.cfg.initials||'BM';
   document.getElementById('profileNameBig').textContent = (S.cfg.name||'BEAST_MODE').toUpperCase();
   document.getElementById('profileIdBig').textContent = 'ID: ' + (CURRENT_USER_ID||'—');
-  document.getElementById('cur-id-disp').value = CURRENT_USER_ID||'';
-  document.getElementById('cur-pass-verify').value = '';
-  document.getElementById('new-login-id').value = '';
-  document.getElementById('new-login-pass').value = '';
-  document.getElementById('cred-msg').textContent = '';
   try { document.getElementById('cfg-gender').value = S.cfg.gender||'Male'; } catch(e){}
 }
 
@@ -5283,6 +5340,10 @@ function saveProfile() {
   S.cfg.name = document.getElementById('cfg-name').value.trim()||'ATHLETE';
   S.cfg.initials = (document.getElementById('cfg-init').value.trim()||'AT').toUpperCase().slice(0,2);
   S.cfg.gender = document.getElementById('cfg-gender').value;
+  var ageVal = parseInt(document.getElementById('cfg-age').value, 10);
+  S.cfg.age = ageVal || null;
+  var wtVal = parseFloat(document.getElementById('cfg-weight').value);
+  S.cfg.weight = wtVal || null;
   document.getElementById('topUserNameDisp').textContent = S.cfg.name.toUpperCase();
   document.getElementById('topAvatarEl').textContent = S.cfg.initials;
   document.getElementById('topAvatarEl2').textContent = S.cfg.initials;
@@ -5301,67 +5362,6 @@ function saveNutritionGoals() {
   save(); toast('Goals saved!');
 }
 
-function saveCredentials() {
-  var newId = document.getElementById('new-login-id').value.trim();
-  var curPass = document.getElementById('cur-pass-verify').value;
-  var newPass = document.getElementById('new-login-pass').value;
-  var msgEl = document.getElementById('cred-msg');
-  msgEl.style.color = 'var(--red)';
-
-  if (!curPass) { msgEl.textContent = 'Enter current password to verify'; return; }
-  if (!newId && !newPass) { msgEl.textContent = 'Enter new ID or new password'; return; }
-  if (newPass && newPass.length < 4) { msgEl.textContent = 'Password must be at least 4 characters'; return; }
-
-  // Verify current password from Firestore
-  waitForFirebase(async () => {
-    try {
-      var db = window._db;
-      var userRef = window._fsDoc(db, 'fitos_users', CURRENT_USER_DOC_ID);
-      var snap = await window._fsGetDoc(userRef);
-      if (!snap.exists()) { msgEl.textContent = 'User not found'; return; }
-      var userData = snap.data();
-      if (userData.password !== curPass) { msgEl.textContent = 'Current password is incorrect'; return; }
-
-      var updates = {};
-      if (newPass) updates.password = newPass;
-
-      if (newId && newId !== CURRENT_USER_ID) {
-        // Check if new ID already exists
-        var newDocId = sanitizeId(newId);
-        var newRef = window._fsDoc(db, 'fitos_users', newDocId);
-        var newSnap = await window._fsGetDoc(newRef);
-        if (newSnap.exists()) { msgEl.textContent = 'That User ID is already taken'; return; }
-        // Create new doc with new ID, copy all data
-        await window._fsSetDoc(newRef, {
-          ...userData,
-          ...updates,
-          userId: newId,
-          data: JSON.stringify(S)
-        });
-        // Delete old doc (optional — we can skip for safety)
-        CURRENT_USER_ID = newId;
-        CURRENT_USER_DOC_ID = newDocId;
-        document.getElementById('cur-id-disp').value = newId;
-        document.getElementById('profileIdBig').textContent = 'ID: ' + newId;
-        msgEl.style.color = 'var(--g)';
-        msgEl.textContent = '✓ Credentials updated! New ID: ' + newId;
-      } else {
-        // Just update password on same doc
-        await window._fsSetDoc(userRef, updates, {merge:true});
-        msgEl.style.color = 'var(--g)';
-        msgEl.textContent = '✓ Password updated successfully!';
-      }
-      document.getElementById('cur-pass-verify').value = '';
-      document.getElementById('new-login-id').value = '';
-      document.getElementById('new-login-pass').value = '';
-      toast('Credentials updated!');
-    } catch(e) {
-      msgEl.textContent = 'Error updating credentials';
-      console.error(e);
-    }
-  });
-}
-
 function clearToday() {
   if(confirm('Clear all of today\'s data?')){S.dailyData[S.today]={meals:[],exercises:[],glasses:0,customMl:0};S.habits.forEach(h=>delete h.logs[S.today]);save();toast('Today cleared');renderDashboard();}
 }
@@ -5369,11 +5369,10 @@ function clearAllData() {
   if (!CURRENT_USER_DOC_ID) return;
   waitForFirebase(async () => {
     var db=window._db; var userRef=window._fsDoc(db,'fitos_users',CURRENT_USER_DOC_ID);
-    var snap=await window._fsGetDoc(userRef);
-    var pass=snap.exists()?snap.data().password:'1234';
     var fresh=getDefaultState(CURRENT_USER_ID);
+    fresh.onboarded = true; // already-onboarded users stay onboarded after a reset
     Object.assign(S,fresh);
-    await window._fsSetDoc(userRef,{userId:CURRENT_USER_ID,password:pass,data:JSON.stringify(S),lastSaved:new Date().toISOString()});
+    await window._fsSetDoc(userRef,{userId:CURRENT_USER_ID,data:JSON.stringify(S),lastSaved:new Date().toISOString()});
     toast('All data reset!'); renderDashboard();
   });
 }

@@ -9,7 +9,8 @@
 <!-- Firebase SDK (ESM via module script) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC8y4IYzcU_T3CQ4LfZsZH6a-kmVx7UlsI",
@@ -22,11 +23,21 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
 
   window._db = db;
   window._fsDoc = doc;
   window._fsSetDoc = setDoc;
   window._fsGetDoc = getDoc;
+  window._fsCollection = collection;
+  window._fsGetDocs = getDocs;
+
+  window._auth = auth;
+  window._googleProvider = new GoogleAuthProvider();
+  window._signInWithPopup = signInWithPopup;
+  window._signOutFirebase = signOut;
+  window._onAuthStateChanged = onAuthStateChanged;
+
   window._firebaseReady = true;
   window.dispatchEvent(new Event('firebaseReady'));
 </script>
@@ -1863,6 +1874,16 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     <div class="login-logo">FIT//OS</div>
     <div class="login-sub">Helth is welth 💪</div>
 
+    <button class="login-btn" id="googleLoginBtn" type="button" onclick="doGoogleLogin()" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;">
+      <svg width="16" height="16" viewBox="0 0 48 48" style="flex:0 0 auto"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.7 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.3 0 10.2-2 13.9-5.4l-6.4-5.4C29.4 34.8 26.8 36 24 36c-5.3 0-9.9-3.3-11.4-8l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.2-4.2 5.6l6.4 5.4C40.9 36.4 44 30.7 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+      <span>SIGN IN WITH GOOGLE</span>
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--t2);letter-spacing:1px;">OR</span>
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+
     <div class="login-label">USER ID</div>
     <input class="login-inp" id="loginId" type="text" placeholder="Enter your user ID" autocomplete="username"/>
 
@@ -3113,19 +3134,7 @@ function doLogin() {
         }
         // Load their data
         err.textContent = '';
-        if (userData.data) {
-          try {
-            var loaded = JSON.parse(userData.data);
-            Object.assign(S, loaded);
-            // Ensure new fields exist for older accounts
-            if (!S.ingredientLibrary) S.ingredientLibrary = [];
-            if (!S.mealLibrary) S.mealLibrary = [];
-            if (!S.dailyData) S.dailyData = {};
-            // Remove deprecated default ingredients
-            var _toRemove = ['almond', 'riceo 100gm', 'rice 100gm'];
-            S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return !_toRemove.includes(i.name.toLowerCase()); });
-          } catch(e) {}
-        }
+        loadUserDataIntoState(userData);
         loginSuccess(id, docId);
       }
     } catch(e) {
@@ -3133,6 +3142,139 @@ function doLogin() {
       console.error(e);
     }
   });
+}
+
+// Parses the stored JSON blob for a user doc into the live state object S.
+// Shared by classic ID/password login and Google login.
+function loadUserDataIntoState(userData) {
+  if (userData && userData.data) {
+    try {
+      var loaded = JSON.parse(userData.data);
+      Object.assign(S, loaded);
+      // Ensure new fields exist for older accounts
+      if (!S.ingredientLibrary) S.ingredientLibrary = [];
+      if (!S.mealLibrary) S.mealLibrary = [];
+      if (!S.dailyData) S.dailyData = {};
+      // Remove deprecated default ingredients
+      var _toRemove = ['almond', 'riceo 100gm', 'rice 100gm'];
+      S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return !_toRemove.includes(i.name.toLowerCase()); });
+    } catch(e) {}
+  }
+}
+
+// ===================== GOOGLE LOGIN =====================
+// The one Gmail address allowed to auto-inherit the pre-existing
+// (username/password) admin account and its data on first Google sign-in.
+var ADMIN_GOOGLE_EMAIL = 'ceo.nayeemuhammad@gmail.com';
+
+function googleDocId(email) {
+  return 'google_' + sanitizeId(email);
+}
+
+function doGoogleLogin() {
+  var err = document.getElementById('loginErr');
+  var btn = document.getElementById('googleLoginBtn');
+  err.textContent = '';
+
+  if (!window._firebaseReady) { err.textContent = 'Connecting to Firebase...'; return; }
+
+  if (btn) btn.disabled = true;
+  err.textContent = 'Opening Google sign-in...';
+
+  window._signInWithPopup(window._auth, window._googleProvider).then(function(result){
+    var email = (result.user.email || '').trim().toLowerCase();
+    if (!email) { err.textContent = 'This Google account has no email address.'; if(btn) btn.disabled=false; return; }
+    err.textContent = 'Loading your data...';
+    return handleGoogleUser(email, result.user.uid).catch(function(e){
+      console.error(e);
+      err.textContent = 'Could not load your account: ' + (e && e.message ? e.message : 'unknown error');
+    });
+  }).catch(function(e){
+    console.error(e);
+    if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) {
+      err.textContent = '';
+    } else {
+      err.textContent = 'Google sign-in failed: ' + (e && e.message ? e.message : 'unknown error');
+    }
+  }).finally(function(){
+    if (btn) btn.disabled = false;
+  });
+}
+
+// Routes a signed-in Google user to their Firestore doc: loads it if it
+// already exists, otherwise (for the admin email only) tries a one-time
+// migration of the legacy username/password account, otherwise creates
+// a brand-new account for that Gmail address.
+async function handleGoogleUser(email, uid) {
+  var db = window._db;
+  var docId = googleDocId(email);
+  var userRef = window._fsDoc(db, 'fitos_users', docId);
+  var snap = await window._fsGetDoc(userRef);
+
+  if (snap.exists()) {
+    var userData = snap.data();
+    loadUserDataIntoState(userData);
+    window._fsSetDoc(userRef, { authUid: uid, lastLogin: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
+    loginSuccess(userData.userId || email, docId);
+    return;
+  }
+
+  if (email === ADMIN_GOOGLE_EMAIL) {
+    var migrated = await tryMigrateLegacyAdmin(docId, email, uid);
+    if (migrated) return;
+  }
+
+  // No existing data to inherit — start a fresh account for this Gmail address.
+  var fresh = getDefaultState(email.split('@')[0]);
+  await window._fsSetDoc(userRef, {
+    userId: email,
+    authEmail: email,
+    authUid: uid,
+    createdAt: new Date().toISOString(),
+    data: JSON.stringify(fresh)
+  });
+  Object.assign(S, fresh);
+  loginSuccess(email, docId);
+}
+
+// One-time migration: if exactly one legacy (pre-Google) user document
+// exists in fitos_users, copy its data over to the new Google-linked doc
+// and mark the old doc as migrated (kept, never deleted, as a backup).
+async function tryMigrateLegacyAdmin(newDocId, email, uid) {
+  try {
+    var db = window._db;
+    var colRef = window._fsCollection(db, 'fitos_users');
+    var allSnap = await window._fsGetDocs(colRef);
+    var legacyDocs = [];
+    allSnap.forEach(function(d){
+      var data = d.data();
+      if (!data.authEmail && !data.migratedTo && d.id.indexOf('google_') !== 0) {
+        legacyDocs.push({ id: d.id, data: data });
+      }
+    });
+    if (legacyDocs.length !== 1) return false; // none, or ambiguous — don't guess
+
+    var legacy = legacyDocs[0];
+    var newRef = window._fsDoc(db, 'fitos_users', newDocId);
+    await window._fsSetDoc(newRef, {
+      userId: legacy.data.userId || email,
+      authEmail: email,
+      authUid: uid,
+      data: legacy.data.data,
+      migratedFrom: legacy.id,
+      createdAt: new Date().toISOString(),
+      lastSaved: new Date().toISOString()
+    });
+    var legacyRef = window._fsDoc(db, 'fitos_users', legacy.id);
+    window._fsSetDoc(legacyRef, { migratedTo: newDocId, migratedAt: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
+
+    loadUserDataIntoState({ data: legacy.data.data, userId: legacy.data.userId });
+    loginSuccess(legacy.data.userId || email, newDocId);
+    return true;
+  } catch (e) {
+    console.error('Legacy admin migration check failed:', e);
+    return false;
+  }
 }
 
 function getDefaultState(id) {
@@ -3174,6 +3316,9 @@ function doLogout() {
   saveToFirebase(() => {
     CURRENT_USER_ID = null;
     CURRENT_USER_DOC_ID = null;
+    if (window._auth && window._auth.currentUser && window._signOutFirebase) {
+      window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
+    }
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('loginId').value = '';
     document.getElementById('loginPass').value = '';

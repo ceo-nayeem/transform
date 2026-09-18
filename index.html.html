@@ -1166,6 +1166,53 @@ html.alpha .sb-item.active{background:linear-gradient(135deg,color-mix(in srgb, 
 .card-accent{width:3px;border-radius:0 0 0 var(--radius-md)}
 .ex-card,.habit-item,.meal-item{border-left:1px solid var(--glass-border) !important;transition:transform .15s ease, background .15s ease}
 .ex-card:hover,.habit-item:hover{transform:translateX(2px);background:var(--glass-bg2) !important}
+
+/* ---- Meal cards: ultra-premium hover/press motion ----
+   A slow, weighted lift + scale on hover (like a luxury product card),
+   a soft glow that blooms in behind it, a subtle shine sweep across the
+   surface, and a satisfying compress-then-settle on click. All motion
+   uses a spring-like cubic-bezier so it never feels linear/robotic. */
+.meal-item.mi-clickable{
+  position:relative;
+  overflow:hidden;
+  transform:translateY(0) scale(1);
+  transition:transform .45s cubic-bezier(.22,1,.36,1),
+             box-shadow .45s cubic-bezier(.22,1,.36,1),
+             background .3s ease,
+             border-color .3s ease;
+  will-change:transform,box-shadow;
+}
+.meal-item.mi-clickable::before{
+  /* diagonal shine sweep */
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(115deg,transparent 30%,color-mix(in srgb, var(--g) 10%, transparent) 45%,color-mix(in srgb, var(--c) 14%, transparent) 52%,transparent 66%);
+  transform:translateX(-120%);
+  transition:transform .7s cubic-bezier(.22,1,.36,1);
+}
+.meal-item.mi-clickable > *{position:relative;z-index:2}
+.meal-item.mi-clickable:hover{
+  transform:translateY(-5px) scale(1.014) !important;
+  background:var(--glass-bg2) !important;
+  border-left-width:4px;
+  box-shadow:0 22px 48px -12px rgba(0,0,0,.5),
+             0 0 0 1px color-mix(in srgb, var(--g) 18%, transparent),
+             0 4px 24px color-mix(in srgb, var(--g) 16%, transparent) !important;
+}
+.meal-item.mi-clickable:hover::before{transform:translateX(120%)}
+.meal-item.mi-clickable:active{
+  transform:translateY(-2px) scale(.985) !important;
+  transition:transform .12s cubic-bezier(.4,0,.2,1),box-shadow .12s ease !important;
+  box-shadow:0 10px 22px -8px rgba(0,0,0,.45),
+             0 2px 8px color-mix(in srgb, var(--g) 10%, transparent) !important;
+}
+/* Snap back out of the pressed state with a tiny overshoot for a
+   springy, tactile "settle" feel once the click completes. */
+.meal-item.mi-clickable.mi-pressed{animation:mealSettle .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mealSettle{
+  0%{transform:translateY(-2px) scale(.985)}
+  55%{transform:translateY(-6px) scale(1.02)}
+  100%{transform:translateY(-5px) scale(1.014)}
+}
 .ex-card.done{border-color:color-mix(in srgb, var(--g) 35%, transparent) !important;box-shadow:0 0 0 1px color-mix(in srgb, var(--g) 18%, transparent), var(--shadow-soft)}
 .habit-item.done{border-color:color-mix(in srgb, var(--g) 35%, transparent) !important}
 .day-pill{border-radius:var(--radius-sm) !important}
@@ -3713,7 +3760,6 @@ function renderNutrition() {
           <span style="background:var(--t3);padding:1px 6px">${ig.weight}g</span>
           <span style="color:var(--o2)">${ig.cal}cal</span>
           <span>P:${ig.pro}g C:${ig.carb}g F:${ig.fat}g</span>
-          <button onclick="event.stopPropagation();delIngredientFromMeal(${i},${j})" style="background:none;border:none;color:var(--border);cursor:pointer;font-size:10px;margin-left:auto" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--border)'">✕</button>
         </div>`).join('')}
       </div>`;
     }
@@ -3937,7 +3983,17 @@ function confirmDeleteMeal(i) {
   if (!confirm('Delete this meal log? This cannot be undone.')) return;
   delMeal(i);
 }
-function toggleMealEdit(i) { var f=document.getElementById('meal-edit-'+i); if(f) f.classList.toggle('open'); }
+function toggleMealEdit(i) {
+  var f=document.getElementById('meal-edit-'+i); if(f) f.classList.toggle('open');
+  // Play a springy "settle" press animation on the card itself, purely
+  // visual — restart it cleanly even on rapid repeat clicks.
+  var card = f ? f.closest('.meal-item') : null;
+  if (card) {
+    card.classList.remove('mi-pressed');
+    void card.offsetWidth;
+    card.classList.add('mi-pressed');
+  }
+}
 function saveMealEdit(i) {
   var m=getDay(ntrDate).meals[i];
   m.name=document.getElementById('me-name-'+i).value.trim()||m.name;

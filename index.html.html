@@ -2502,21 +2502,22 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
      scrolling diagonally. */
   .hcal-table .hcal-habit-col{z-index:3}
   .hcal-table thead th.hcal-habit-col{z-index:5}
-  /* The sticky column needs to fully hide the day-cells scrolling
-     underneath it, not just tint them — a light glass blur wasn't
-     enough, colored done/missed cells were still bleeding through and
-     making the habit name hard to read. Go heavier here: a strong
-     blur plus a solid-leaning background specifically for this
-     column, only on mobile where it's actually sticky. */
+  /* The sticky habit-name column sits ABOVE the day cells (higher
+     z-index) so the day cells scroll underneath it, not over it —
+     that part of the stacking was already correct. What needed fixing
+     was the glass itself: it should read as a strongly frosted glass
+     panel (heavy blur, ~90%), not a flat solid color — enough blur
+     that whatever color is scrolling underneath is thoroughly diffused
+     and the habit name stays perfectly legible on top of it. */
   .hcal-table .hcal-habit-col{
-    background:var(--card2) !important;
-    backdrop-filter:blur(20px) saturate(1.4) !important;
-    -webkit-backdrop-filter:blur(20px) saturate(1.4) !important;
-    box-shadow:2px 0 8px rgba(0,0,0,.25);
+    background:color-mix(in srgb, var(--card2) 55%, transparent) !important;
+    backdrop-filter:blur(28px) saturate(1.6) !important;
+    -webkit-backdrop-filter:blur(28px) saturate(1.6) !important;
+    box-shadow:2px 0 10px rgba(0,0,0,.28);
   }
-  html.alpha .hcal-table .hcal-habit-col{background:#fff !important}
-  .hcal-table .hcal-footer .hcal-habit-col{background:var(--habit-done-tint) !important}
-  html.alpha .hcal-table .hcal-footer .hcal-habit-col{background:var(--habit-done-tint) !important}
+  html.alpha .hcal-table .hcal-habit-col{background:color-mix(in srgb, #ffffff 55%, transparent) !important}
+  .hcal-table .hcal-footer .hcal-habit-col{background:color-mix(in srgb, var(--habit-done-tint) 65%, transparent) !important}
+  html.alpha .hcal-table .hcal-footer .hcal-habit-col{background:color-mix(in srgb, var(--habit-done-tint) 65%, transparent) !important}
   /* Slightly bigger than desktop for touch, but smaller than the
      earlier mobile pass (which made them feel oversized). */
   .hcal-cell{width:20px;height:20px;font-size:9px}

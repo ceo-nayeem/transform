@@ -2312,12 +2312,12 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <div id="h-month-label" style="font-family:var(--raj);font-size:14px;font-weight:700;letter-spacing:2px;color:var(--g);flex:1;text-align:center"></div>
       <button class="btn sm" onclick="habitMonthNav(1)">▶</button>
     </div>
-    <!-- Horizontally-scrollable calendar grid. overflow-y is pinned to
-         visible so this box never grows its own vertical scrollbar —
-         setting only overflow-x would otherwise make the browser treat
-         overflow-y as 'auto' too, per spec, trapping vertical swipes
-         inside the table instead of scrolling the page. -->
-    <div style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;">
+    <!-- Horizontally-scrollable calendar grid on desktop. On mobile
+         (see media query) this same box also scrolls vertically within
+         itself, with the header row and habit-name column both pinned,
+         so the page itself never needs to be scrolled to see more days
+         or more habits. -->
+    <div id="habit-cal-scroll" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;">
       <div id="habit-calendar-wrap" style="min-width:520px"></div>
     </div>
     <!-- Weekly donut progress row -->
@@ -2467,6 +2467,41 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
 .hcal-table td{border-color:var(--glass-border) !important}
 .hcal-cell{border-radius:6px !important;border-color:var(--glass-border) !important}
 .hcal-icon-btn{background:var(--glass-bg) !important;border-color:var(--glass-border) !important;border-radius:8px !important}
+
+/* ===== Mobile habit calendar: bound the grid to a fixed viewport
+   height so it scrolls INSIDE itself (both directions) instead of the
+   whole page. The habit-name column stays pinned to the left edge
+   while scrolling sideways through the days, AND the day-header row
+   stays pinned to the top while scrolling down through habit rows —
+   so no matter how far you've scrolled either way, you always know
+   which habit and which day you're looking at. Desktop is untouched:
+   this only kicks in under the tablet/mobile breakpoint, where the
+   table used to just grow tall and push its own header off-screen. */
+@media (max-width:768px){
+  #habit-cal-scroll{
+    max-height:56vh;
+    overflow-y:auto;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    border:1px solid var(--glass-border);
+    border-radius:var(--radius-md);
+  }
+  #habit-calendar-wrap{min-width:0 !important}
+  .hcal-table{border-radius:0}
+  /* Header row: sticky to the top of the scroll box */
+  .hcal-table thead th{position:sticky;top:0;z-index:4}
+  /* Habit-name column is already position:sticky;left:0 at the base
+     rule above — it just needs a higher z-index here so it stays above
+     the sticky header row, and an even higher one at their shared
+     top-left corner cell so neither hides behind the other while
+     scrolling diagonally. */
+  .hcal-table .hcal-habit-col{z-index:3}
+  .hcal-table thead th.hcal-habit-col{z-index:5}
+  /* Slightly larger touch targets for the day cells now that the row
+     is genuinely scrollable on a touchscreen. */
+  .hcal-cell{width:26px;height:26px;font-size:10px}
+  .hcal-table th{min-width:26px}
+}
 .hwk-card,.hstat-card{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft)}
 html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}
 </style>

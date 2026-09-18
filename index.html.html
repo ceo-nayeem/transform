@@ -796,13 +796,18 @@ html.alpha .sync-indicator{border-radius:20px;font-family:'DM Sans',sans-serif;f
 .ilsw-dd-name{font-family:var(--mono);font-size:10px;color:var(--t);letter-spacing:.3px}
 .ilsw-dd-meta{font-size:9px;color:var(--t2);font-family:var(--mono)}
 .ilsw-dd-empty{padding:10px 12px;font-size:9px;color:var(--t2);font-family:var(--mono);letter-spacing:1px}
-.ilsw-selected{display:none;margin-top:8px;border-top:1px dashed var(--border);padding-top:8px}
-.ilsw-sel-name{font-family:var(--mono);font-size:10px;color:var(--p);letter-spacing:.5px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.ilsw-sel-base{font-size:9px;color:var(--t2);font-family:var(--mono);margin-bottom:7px}
-.ilsw-wt-row{display:flex;gap:8px;align-items:flex-end}
-.ilsw-wt-row .inp-group{margin-bottom:0;flex:0 0 110px}
-.ilsw-calc-out{flex:1;font-size:9px;font-family:var(--mono);color:var(--t2);line-height:1.7;padding:4px 0}
-.ilsw-add-btn{white-space:nowrap;flex-shrink:0}
+.ilsw-selected{display:none;margin-top:8px;border-top:1px dashed var(--border);padding-top:10px}
+.ilsw-sel-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--p);letter-spacing:.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.ilsw-sel-base{display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:6px;margin-bottom:10px}
+.ilsw-nchip{background:var(--card);border:1px solid var(--border);padding:6px 4px;text-align:center}
+.ilsw-nchip .ilsw-nc-lbl{display:block;font-size:8px;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;font-family:var(--mono)}
+.ilsw-nchip .ilsw-nc-val{display:block;font-size:13px;font-weight:700;color:var(--t);font-family:var(--mono)}
+.ilsw-sel-base-cap{grid-column:1/-1;font-size:9px;color:var(--t2);font-family:var(--mono);margin-bottom:2px}
+.ilsw-wt-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.ilsw-wt-row .inp-group{margin-bottom:0;flex:0 0 130px;order:1}
+.ilsw-add-btn{white-space:nowrap;flex-shrink:0;order:2}
+.ilsw-calc-out{order:3;flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:6px;margin-top:10px}
+.ilsw-calc-out:empty{margin-top:0}
 html.alpha .ilsw{border-radius:8px}
 html.alpha .ilsw-dropdown{border-radius:0 0 8px 8px}
 
@@ -5301,6 +5306,10 @@ function ilswSearch(p) {
   dd.style.display = 'block';
 }
 
+function _ilswChip(lbl, val, colorVar) {
+  return '<div class="ilsw-nchip"><span class="ilsw-nc-lbl">'+lbl+'</span><span class="ilsw-nc-val" style="color:var('+colorVar+')">'+val+'</span></div>';
+}
+
 function ilswSelect(p, id) {
   var lib = S.ingredientLibrary || [];
   var item = lib.find(function(i){ return String(i.id) === String(id); });
@@ -5312,12 +5321,12 @@ function ilswSelect(p, id) {
   _ilswSelName(p).textContent = item.name.toUpperCase();
   var bw = item.baseWeight || 100;
   _ilswSelBase(p).innerHTML =
-    'Per <b style="color:var(--t)">'+bw+'</b>g → '
-    + 'Cal:<b style="color:var(--o2)">'+item.cal+'</b> '
-    + 'Pro:<b style="color:var(--o)">'+item.pro+'</b>g '
-    + 'Carb:<b style="color:var(--c2)">'+item.carb+'</b>g '
-    + 'Fat:<b style="color:var(--g2)">'+item.fat+'</b>g '
-    + 'Fiber:<b style="color:var(--p)">'+(item.fiber||0)+'</b>g';
+    '<div class="ilsw-sel-base-cap">Per <b style="color:var(--t)">'+bw+'</b>g (reference)</div>'
+    + _ilswChip('CAL', item.cal, '--o2')
+    + _ilswChip('PRO', item.pro+'g', '--o')
+    + _ilswChip('CARB', item.carb+'g', '--c2')
+    + _ilswChip('FAT', item.fat+'g', '--g2')
+    + _ilswChip('FIBER', (item.fiber||0)+'g', '--p');
   _ilswSel_(p).style.display = 'block';
   _ilswWt(p).value = '';
   _ilswOut(p).innerHTML = '';
@@ -5336,11 +5345,11 @@ function ilswCalc(p) {
   var fat  = (item.fat  * r).toFixed(1);
   var fib  = ((item.fiber||0) * r).toFixed(1);
   _ilswOut(p).innerHTML =
-    'Cal:<b style="color:var(--o2)">'+cal+'</b> '
-    + 'Pro:<b style="color:var(--o)">'+pro+'</b>g '
-    + 'Carb:<b style="color:var(--c2)">'+carb+'</b>g '
-    + 'Fat:<b style="color:var(--g2)">'+fat+'</b>g '
-    + 'Fib:<b style="color:var(--p)">'+fib+'</b>g';
+    _ilswChip('CAL', cal, '--o2')
+    + _ilswChip('PRO', pro+'g', '--o')
+    + _ilswChip('CARB', carb+'g', '--c2')
+    + _ilswChip('FAT', fat+'g', '--g2')
+    + _ilswChip('FIB', fib+'g', '--p');
 }
 
 function ilswAddToIngredients(p) {

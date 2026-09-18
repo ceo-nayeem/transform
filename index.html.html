@@ -1056,8 +1056,14 @@ html.alpha .mob-sheet-title{font-family:'Barlow Condensed',sans-serif;font-size:
   /* Goals grid */
   .g2{grid-template-columns:1fr 1fr !important;}
 
-  /* Meal macro summary */
-  #meal-macro-summary > div:last-child{flex-direction:column !important;gap:4px !important;}
+  /* Meal macro summary: 2-column grid instead of one-per-line stack */
+  #meal-macro-summary > div:last-child{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    flex-direction:unset !important;
+    gap:6px 10px !important;
+  }
+  #meal-macro-summary > div:last-child > span{white-space:nowrap;}
 }
 
 @media (max-width: 400px) {
@@ -2105,12 +2111,12 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <button class="btn sm" onclick="logMealFromLibrary()" style="white-space:nowrap">+ LOG IT</button>
     </div>
     <div id="n-lib-preview" style="display:none;font-size:10px;font-family:var(--mono);color:var(--t2);padding:6px 10px;margin-bottom:8px;background:var(--card2);border:1px solid var(--border)"></div>
-    <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:2"><div class="inp-label">MEAL NAME (OPTIONAL)</div><input class="inp" id="n-name" type="text" placeholder="Leave blank to use meal type"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">TIME</div><input class="inp" id="n-time" type="time"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">MEAL TYPE</div><select class="inp" id="n-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Pre-workout</option><option>Post-workout</option></select></div>
+    <div class="inp-row meal-basic-row" style="margin-bottom:10px;flex-wrap:wrap">
+      <div class="inp-group" style="flex:2;min-width:140px"><div class="inp-label">MEAL NAME (OPTIONAL)</div><input class="inp" id="n-name" type="text" placeholder="Leave blank to use meal type"/></div>
+      <div class="inp-group" style="flex:1;min-width:90px"><div class="inp-label">TIME</div><input class="inp" id="n-time" type="time"/></div>
+      <div class="inp-group" style="flex:1;min-width:110px"><div class="inp-label">MEAL TYPE</div><select class="inp" id="n-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Pre-workout</option><option>Post-workout</option></select></div>
+      <div class="inp-group" style="flex:1;min-width:110px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="n-notes" type="text" placeholder="extra notes..."/></div>
     </div>
-    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="n-notes" type="text" placeholder="extra notes..."/></div>
     <div style="border:1px solid var(--border);border-left:3px solid var(--c2);padding:12px;margin-bottom:10px;background:var(--card2)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div class="inp-label" style="color:var(--c2);letter-spacing:1.5px">⊕ INGREDIENTS</div>

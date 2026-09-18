@@ -147,42 +147,27 @@ html.alpha{
 /* -- Azure (blue) -- */
 html[data-accent="azure"]{
   --g:#22b8ff;--g2:#0d8fd6;--g3:#00233a;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#7dd3fc;--c2:#38bdf8;
-  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
-  --card:#151515;--card2:#1a1a1a;
-  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
-  --border:#232323;
 }
 html.alpha[data-accent="azure"]{--g:#0284c7;--g2:#075985;--g3:#dbeefc;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#0ea5e9;--c2:#0891b2;}
 
 /* -- Violet (purple) -- */
 html[data-accent="violet"]{
   --g:#b088ff;--g2:#8b5cf6;--g3:#241033;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#e879f9;--c2:#c026d3;
-  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
-  --card:#151515;--card2:#1a1a1a;
-  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
-  --border:#232323;
 }
 html.alpha[data-accent="violet"]{--g:#7c3aed;--g2:#5b21b6;--g3:#ede4fb;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#a855f7;--c2:#9333ea;}
 
 /* -- Amber (orange) -- */
 html[data-accent="amber"]{
   --g:#ffb020;--g2:#e08e00;--g3:#3a2600;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ff8a5c;--c2:#f4703f;
-  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
-  --card:#151515;--card2:#1a1a1a;
-  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
-  --border:#232323;
 }
 html.alpha[data-accent="amber"]{--g:#d97706;--g2:#b45309;--g3:#fdecd3;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ea580c;--c2:#c2410c;}
 
 /* -- Rose (pink) -- */
 html[data-accent="rose"]{
   --g:#ff5c8a;--g2:#e0356b;--g3:#3a0f1e;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ff8fab;--c2:#f43f5e;
-  --bg:#0a0a0a;--sb:#0d0d0d;--panel:#0d0d0d;
-  --card:#151515;--card2:#1a1a1a;
-  --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
-  --border:#232323;
 }
 html.alpha[data-accent="rose"]{--g:#e11d48;--g2:#9f1239;--g3:#fde2e9;--gd:color-mix(in srgb, var(--g) 8%, transparent);--c:#ec4899;--c2:#db2777;}
+
 
 /* ===== PROFILE MENU (topbar) ===== */
 .profile-menu{position:relative}
@@ -1707,6 +1692,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     box-shadow:var(--shadow-soft);position:relative;
   }
   .sb .sb-item:hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2) !important;z-index:5}
+  .sb .sb-item.sb-label-hover{transform:translateY(-2px) scale(1.06);background:var(--glass-bg2) !important;z-index:5}
   .sb .sb-item.active.active{
     background:linear-gradient(135deg,color-mix(in srgb, var(--g) 32%, transparent),color-mix(in srgb, var(--c) 16%, transparent)) !important;
     box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--g) 55%, transparent), var(--shadow-soft) !important;
@@ -1750,8 +1736,15 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     width:28px; /* resting width = circle radius, i.e. fully hidden behind the circle */
     overflow:hidden;
     transition:width .38s cubic-bezier(.32,1.28,.4,1),
-               box-shadow .38s ease;
+               box-shadow .38s ease, background .18s ease;
   }
+  /* Once a bubble has grown out to show its text, its visible (right) half
+     becomes a real clickable/hoverable target — same as clicking the
+     circle. The hidden-behind-the-circle resting sliver stays inert so it
+     never steals the circle's own hover/click. */
+  .sb-tip-bubble.show{pointer-events:auto;cursor:pointer}
+  .sb-tip-bubble.show:hover{background:linear-gradient(165deg, rgba(255,255,255,.16), rgba(255,255,255,.04) 40%, rgba(255,255,255,.06)),
+               var(--glass-bg2,var(--panel))}
   .sb-tip-text{
     position:relative;display:block;white-space:nowrap;
     padding:0 12px 0 30px; /* left padding clears the hidden circle half (circle radius 28px) */

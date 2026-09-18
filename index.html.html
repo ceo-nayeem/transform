@@ -9,7 +9,7 @@
 <!-- Firebase SDK (ESM via module script) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -29,6 +29,7 @@
   window._fsDoc = doc;
   window._fsSetDoc = setDoc;
   window._fsGetDoc = getDoc;
+  window._fsDeleteDoc = deleteDoc;
   window._fsCollection = collection;
   window._fsGetDocs = getDocs;
 
@@ -2994,6 +2995,18 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
       <button class="btn danger" onclick="if(confirm('DELETE ALL DATA? This cannot be undone.'))clearAllData()">[ RESET ALL DATA ]</button>
     </div>
   </div>
+
+  <div class="sec-head">DELETE PROFILE</div>
+  <div class="danger-zone">
+    <div style="font-size:10px;color:var(--t2);margin-bottom:10px;letter-spacing:.5px">
+      Permanently deletes your entire profile — user ID, password and ALL data — from the database. This cannot be undone. Export a backup first if you want to keep a copy. After deletion you'll be signed out and can register a brand new account with any User ID (including this same one).
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <input class="inp" id="delete-profile-confirm" type="text" placeholder="Type DELETE to confirm" style="max-width:220px"/>
+      <button class="btn danger" onclick="deleteProfile()">[ DELETE MY PROFILE ]</button>
+    </div>
+    <div id="deleteProfileMsg" style="font-size:10px;margin-top:8px;min-height:14px;font-family:var(--mono)"></div>
+  </div>
 </div>
 
 </div><!-- end content -->
@@ -3306,7 +3319,7 @@ function getDefaultState(id) {
   };
 }
 
-function loginSuccess(id, docId) {
+function loginSuccess(id, docId, silent) {
   CURRENT_USER_ID = id;
   CURRENT_USER_DOC_ID = docId;
   S.today = today();
@@ -3321,7 +3334,45 @@ function loginSuccess(id, docId) {
   calcStreak();
   renderDashboard();
   setFbStatus(true, 'Firebase Connected');
-  toast('Welcome back, ' + (S.cfg.name || id) + '!');
+  // Remember this session for THIS TAB only (sessionStorage): survives a
+  // reload/refresh in the same tab, but is gone the moment the tab is
+  // closed — a brand new tab always lands back on the login screen.
+  saveSession(id, docId);
+  if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
+}
+
+// ===================== SESSION PERSISTENCE (per-tab only) =====================
+var SESSION_KEY = 'fitos_session';
+function saveSession(id, docId) {
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({userId:id, docId:docId})); } catch(e){}
+}
+function clearSession() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch(e){}
+}
+function getSavedSession() {
+  try {
+    var raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+// On a reload inside the same tab, sessionStorage still has the saved
+// session, so we silently re-fetch that user's doc and log straight back
+// in — no login screen flash. A fresh tab (or the tab being closed and
+// reopened) has no sessionStorage entry, so it correctly shows the login
+// screen.
+function tryRestoreSession() {
+  var sess = getSavedSession();
+  if (!sess || !sess.docId) return;
+  try {
+    var db = window._db;
+    var userRef = window._fsDoc(db, 'fitos_users', sess.docId);
+    window._fsGetDoc(userRef).then(function(snap){
+      if (!snap.exists()) { clearSession(); return; }
+      var userData = snap.data();
+      loadUserDataIntoState(userData);
+      loginSuccess(userData.userId || sess.userId, sess.docId, true);
+    }).catch(function(e){ console.error('Session restore failed:', e); });
+  } catch(e) { console.error(e); }
 }
 
 function doLogout() {
@@ -3329,6 +3380,7 @@ function doLogout() {
   saveToFirebase(() => {
     CURRENT_USER_ID = null;
     CURRENT_USER_DOC_ID = null;
+    clearSession();
     if (window._auth && window._auth.currentUser && window._signOutFirebase) {
       window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
     }
@@ -3336,6 +3388,54 @@ function doLogout() {
     document.getElementById('loginId').value = '';
     document.getElementById('loginPass').value = '';
     document.getElementById('loginErr').textContent = '';
+  });
+}
+
+// Permanently deletes the signed-in user's document from Firestore
+// ('fitos_users'), signs them out, clears the session, and drops them
+// back on the login screen so they (or anyone else) can register that
+// same User ID — or any other — as a brand new account.
+function deleteProfile() {
+  var msgEl = document.getElementById('deleteProfileMsg');
+  var confirmInput = document.getElementById('delete-profile-confirm');
+  if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = ''; }
+
+  if (!CURRENT_USER_DOC_ID) { if (msgEl) msgEl.textContent = 'No profile is currently logged in.'; return; }
+  if (!confirmInput || confirmInput.value.trim().toUpperCase() !== 'DELETE') {
+    if (msgEl) msgEl.textContent = 'Type DELETE in the box first to confirm.';
+    return;
+  }
+  if (!confirm('This will PERMANENTLY delete your profile "' + CURRENT_USER_ID + '" and all its data from the database. This cannot be undone. Continue?')) return;
+
+  waitForFirebase(async () => {
+    try {
+      var db = window._db;
+      var userRef = window._fsDoc(db, 'fitos_users', CURRENT_USER_DOC_ID);
+      await window._fsDeleteDoc(userRef);
+
+      // Also sign out of Google auth if that's how they're logged in.
+      if (window._auth && window._auth.currentUser && window._signOutFirebase) {
+        window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
+      }
+
+      clearSession();
+      CURRENT_USER_ID = null;
+      CURRENT_USER_DOC_ID = null;
+
+      // Reset the in-memory state so nothing from the deleted profile lingers.
+      var fresh = getDefaultState('user');
+      Object.keys(S).forEach(function(k){ delete S[k]; });
+      Object.assign(S, fresh);
+
+      if (confirmInput) confirmInput.value = '';
+      toast('Profile deleted');
+      // Full reload puts the app back at a completely clean login screen.
+      setTimeout(function(){ location.reload(); }, 600);
+    } catch(e) {
+      console.error(e);
+      if (msgEl) msgEl.textContent = 'Delete failed: ' + e.message;
+      toast('Delete failed');
+    }
   });
 }
 
@@ -6248,8 +6348,9 @@ function init() {
   document.getElementById('dateDisp').textContent = (typeof dashDateLabel==='function') ? dashDateLabel(today()) : todayLabel();
   S.today=today();
   if (typeof dashDate !== 'undefined' && !dashDate) dashDate = S.today;
-  // Update Firebase status when ready
-  waitForFirebase(()=>{setFbStatus(true,'Firebase Connected');});
+  // Update Firebase status when ready, then silently restore this tab's
+  // session (if any) so a reload doesn't force a fresh login.
+  waitForFirebase(()=>{setFbStatus(true,'Firebase Connected'); tryRestoreSession();});
   window.addEventListener('resize',()=>{if(document.getElementById('page-dashboard').classList.contains('active'))renderWeightChart();});
 }
 init();

@@ -120,6 +120,11 @@ html.alpha .danger-zone{border-radius:12px;border-color:#f5c6c6;}
   --p:#aa77ff;--red:#ff3355;--y:#ffdd00;
   --t:#f2f2f2;--t2:#9a9a9a;--t3:#2a2a2a;
   --border:#232323;--mono:'Share Tech Mono',monospace;--raj:'Rajdhani',sans-serif;
+  /* Habit-tracker status colors — fixed, never re-themed. A completed
+     habit is always this green and a missed/incomplete one is always
+     this red, in every theme, dark or light, whatever the accent. */
+  --habit-done:#00c853;--habit-done-dim:#00963d;--habit-done-tint:rgba(0,200,83,.14);
+  --habit-miss:#ff3b30;--habit-miss-dim:#d6281e;--habit-miss-tint:rgba(255,59,48,.14);
 }
 
 /* ===== LIGHT MODE ===== */
@@ -425,13 +430,13 @@ html.alpha .check-sq{border-radius:6px;border:2px solid var(--border);width:22px
 html.alpha .ex-card.done .check-sq{background:var(--g);border-color:var(--g);color:#fff}
 html.alpha .habit-item{background:#fff;border:1.5px solid var(--border);border-left:4px solid var(--border);border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
 html.alpha .habit-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
-html.alpha .habit-item.done{border-left-color:var(--g);background:linear-gradient(90deg,#f0fff6,#fff)}
-html.alpha .habit-item.skip{background:linear-gradient(90deg,#fff5f5,#fff)}
+html.alpha .habit-item.done{border-left-color:var(--habit-done);background:linear-gradient(90deg,var(--habit-done-tint),#fff)}
+html.alpha .habit-item.skip{border-left-color:var(--habit-miss);background:linear-gradient(90deg,var(--habit-miss-tint),#fff)}
 html.alpha .habit-name{font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;color:var(--t)}
 html.alpha .habit-meta{font-family:'DM Sans',sans-serif;font-size:10px}
 html.alpha .wd{border-radius:3px;width:10px;height:10px}
-html.alpha .wd.done{background:var(--g);border-color:var(--g)}
-html.alpha .wd.skip{background:#fde8e8;border-color:#f5a5a5}
+html.alpha .wd.done{background:var(--habit-done);border-color:var(--habit-done)}
+html.alpha .wd.skip{background:var(--habit-miss);border-color:var(--habit-miss-dim)}
 html.alpha .water-visual{background:#fff;border:1px solid var(--border);border-radius:12px;gap:6px}
 html.alpha .glass{border-radius:6px;border-width:1.5px;width:34px;height:44px}
 html.alpha .glass.full .glass-fill{background:var(--c)}
@@ -645,14 +650,14 @@ select.inp option{background:var(--card)}
 .ex-card.done .check-sq{background:var(--g3);border-color:var(--g);color:var(--g)}
 .habit-item{background:var(--card);border:1px solid var(--border);padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;cursor:pointer;transition:all .15s;border-left:2px solid var(--border)}
 .habit-item:hover{background:var(--card2)}
-.habit-item.done{border-left-color:var(--g);background:color-mix(in srgb, var(--g) 3%, transparent)}
-.habit-item.skip{background:rgba(255,51,85,.03)}
+.habit-item.done{border-left-color:var(--habit-done);background:color-mix(in srgb, var(--habit-done) 6%, transparent)}
+.habit-item.skip{border-left-color:var(--habit-miss);background:color-mix(in srgb, var(--habit-miss) 6%, transparent)}
 .habit-name{font-size:12px;letter-spacing:.5px}
 .habit-meta{font-size:9px;color:var(--t2);margin-top:3px}
 .week-dots{display:flex;gap:3px;margin-top:6px}
 .wd{width:8px;height:8px;background:var(--t3);border:1px solid var(--border)}
-.wd.done{background:var(--g2);border-color:var(--g2)}
-.wd.skip{background:#200a0a;border-color:#3a1515}
+.wd.done{background:var(--habit-done-dim);border-color:var(--habit-done-dim)}
+.wd.skip{background:var(--habit-miss-tint);border-color:var(--habit-miss-dim)}
 .water-visual{display:flex;gap:5px;flex-wrap:wrap;padding:14px;background:var(--card);border:1px solid var(--border)}
 .water-visual.compact{padding:0;border:none;background:none;gap:4px}
 .water-visual.compact .glass{width:16px;height:22px}
@@ -1214,7 +1219,8 @@ html.alpha .sb-item.active{background:linear-gradient(135deg,color-mix(in srgb, 
   100%{transform:translateY(-5px) scale(1.014)}
 }
 .ex-card.done{border-color:color-mix(in srgb, var(--g) 35%, transparent) !important;box-shadow:0 0 0 1px color-mix(in srgb, var(--g) 18%, transparent), var(--shadow-soft)}
-.habit-item.done{border-color:color-mix(in srgb, var(--g) 35%, transparent) !important}
+.habit-item.done{border-color:color-mix(in srgb, var(--habit-done) 40%, transparent) !important}
+.habit-item.skip{border-color:color-mix(in srgb, var(--habit-miss) 40%, transparent) !important}
 .day-pill{border-radius:var(--radius-sm) !important}
 .day-pill.active{background:linear-gradient(135deg,color-mix(in srgb, var(--g) 22%, transparent),color-mix(in srgb, var(--c) 12%, transparent)) !important;box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--g) 40%, transparent)}
 .chart-wrap canvas,.svg-chart{border-radius:var(--radius-sm)}
@@ -1472,10 +1478,11 @@ html.alpha .avatar,html.alpha .profile-avatar-big{
 }
 html.alpha .mob-fab-inner{background:linear-gradient(135deg,var(--g),var(--c)) !important;box-shadow:0 8px 24px color-mix(in srgb, var(--g) 40%, transparent) !important;}
 html.alpha .streak-chip{background:linear-gradient(135deg,#ff8a00,#ffb648) !important;box-shadow:0 4px 14px rgba(255,138,0,.3) !important;color:#fff !important}
-html.alpha .goal-fill,html.alpha .ex-card.done,html.alpha .habit-item.done{background:initial}
+html.alpha .goal-fill,html.alpha .ex-card.done,html.alpha .habit-item.done,html.alpha .habit-item.skip{background:initial}
 html.alpha .goal-fill{background:linear-gradient(90deg,var(--g),var(--c)) !important}
 html.alpha .ex-card.done{border-color:color-mix(in srgb, var(--g) 40%, transparent) !important;background:linear-gradient(90deg,color-mix(in srgb, var(--g) 8%, transparent),var(--glass-bg)) !important;box-shadow:0 0 0 1px color-mix(in srgb, var(--g) 20%, transparent), var(--shadow-soft) !important}
-html.alpha .habit-item.done{border-color:color-mix(in srgb, var(--g) 40%, transparent) !important;background:linear-gradient(90deg,color-mix(in srgb, var(--g) 8%, transparent),var(--glass-bg)) !important}
+html.alpha .habit-item.done{border-color:color-mix(in srgb, var(--habit-done) 40%, transparent) !important;background:linear-gradient(90deg,color-mix(in srgb, var(--habit-done) 8%, transparent),var(--glass-bg)) !important}
+html.alpha .habit-item.skip{border-color:color-mix(in srgb, var(--habit-miss) 40%, transparent) !important;background:linear-gradient(90deg,color-mix(in srgb, var(--habit-miss) 8%, transparent),var(--glass-bg)) !important}
 html.alpha .toggle-track{background:linear-gradient(135deg,color-mix(in srgb, var(--g) 28%, transparent),color-mix(in srgb, var(--c) 18%, transparent)) !important;border-color:color-mix(in srgb, var(--g) 30%, transparent) !important}
 html.alpha .toggle-knob{background:#00aa6e !important}
 html.alpha .user-stat .dot-pulse{background:var(--g2) !important}
@@ -2399,24 +2406,24 @@ html.alpha .htab.active{background:var(--gd);color:var(--g)}
 html.alpha .hcal-table .hcal-habit-col{font-family:'DM Sans',sans-serif;font-weight:600;font-size:9px;background:#fff}
 .hcal-table td{padding:2px;text-align:center;border:1px solid var(--border);min-width:18px}
 .hcal-cell{width:14px;height:14px;margin:0 auto;border-radius:2px;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;font-size:8px;border:1px solid var(--border);background:var(--t3)}
-.hcal-cell.done{background:var(--g);border-color:var(--g2);color:#000}
+.hcal-cell.done{background:var(--habit-done);border-color:var(--habit-done-dim);color:#000}
 .hcal-cell.done-check::after{content:'✓';font-size:8px;color:#000}
-.hcal-cell.skip{background:var(--red);border-color:#3a0015;color:#fff}
+.hcal-cell.skip{background:var(--habit-miss);border-color:var(--habit-miss-dim);color:#fff}
 .hcal-cell.future{background:transparent;border-color:var(--border);opacity:.35;cursor:default}
 .hcal-cell.today-cell{border-color:var(--c);box-shadow:0 0 0 1px var(--c)}
-.hcal-cell:hover:not(.future){transform:scale(1.2);border-color:var(--g)}
+.hcal-cell:hover:not(.future){transform:scale(1.2);border-color:var(--habit-done)}
 html.alpha .hcal-cell{border-radius:3px;background:#eee}
-html.alpha .hcal-cell.done{background:var(--g);border-color:var(--g2)}
-html.alpha .hcal-cell.skip{background:var(--red);border-color:#f5a5a5}
+html.alpha .hcal-cell.done{background:var(--habit-done);border-color:var(--habit-done-dim)}
+html.alpha .hcal-cell.skip{background:var(--habit-miss);border-color:var(--habit-miss-dim)}
 html.alpha .hcal-cell.future{background:#f8f9fc}
 html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 /* Summary cols */
 .hcal-goal-col{background:var(--card2);color:var(--c);font-family:var(--raj);font-size:11px;font-weight:700;padding:2px 5px;border:1px solid var(--border);text-align:center;min-width:28px}
-.hcal-done-col{background:var(--card2);color:var(--g);font-family:var(--raj);font-size:11px;font-weight:700;padding:2px 5px;border:1px solid var(--border);text-align:center;min-width:28px}
+.hcal-done-col{background:var(--card2);color:var(--habit-done);font-family:var(--raj);font-size:11px;font-weight:700;padding:2px 5px;border:1px solid var(--border);text-align:center;min-width:28px}
 .hcal-pct-col{background:var(--card2);padding:2px 5px;border:1px solid var(--border);min-width:48px}
 /* Progress bar in pct col */
 .hcal-mini-bar{height:5px;background:var(--t3);border-radius:2px;margin-top:2px;overflow:hidden}
-.hcal-mini-fill{height:100%;border-radius:2px;background:var(--g);transition:width .4s}
+.hcal-mini-fill{height:100%;border-radius:2px;background:var(--habit-done);transition:width .4s}
 /* Category color chips */
 .hcat-chip{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:3px;vertical-align:middle;flex-shrink:0}
 /* Row edit/remove icons — hidden until the row is hovered */
@@ -2426,9 +2433,9 @@ html.alpha .hcal-cell.today-cell{border-color:var(--c)}
 .hcal-icon-btn:hover{color:var(--g);border-color:var(--g)}
 .hcal-icon-btn.hcal-del:hover{color:var(--red);border-color:var(--red)}
 /* Footer row */
-.hcal-footer{background:var(--g3);color:var(--g);font-weight:700}
-.hcal-footer td{border:1px solid var(--g3);padding:2px 2px;font-family:var(--raj);font-size:10px}
-.hcal-footer .hcal-habit-col{background:var(--g3);color:var(--g)}
+.hcal-footer{background:var(--habit-done-tint);color:var(--habit-done);font-weight:700}
+.hcal-footer td{border:1px solid var(--habit-done-tint);padding:2px 2px;font-family:var(--raj);font-size:10px}
+.hcal-footer .hcal-habit-col{background:var(--habit-done-tint);color:var(--habit-done)}
 
 /* ── WEEKLY DONUT ── */
 .hwk-card{background:var(--card);border:1px solid var(--border);padding:10px;text-align:center;min-width:100px;flex-shrink:0}
@@ -4438,10 +4445,10 @@ function renderHabitCalendar() {
 
     // Summary cols
     html+='<td class="hcal-goal-col">'+goalPerMonth+'</td>';
-    html+='<td class="hcal-done-col" style="color:'+(doneCnt>=goalPerMonth?'var(--g)':'var(--o2)')+'">'+doneCnt+'</td>';
+    html+='<td class="hcal-done-col" style="color:'+(doneCnt>=goalPerMonth?'var(--habit-done)':'var(--o2)')+'">'+doneCnt+'</td>';
     html+='<td class="hcal-pct-col">';
-    html+='<div style="font-size:9px;color:'+(pct>=100?'var(--g)':pct>=60?'var(--o2)':'var(--red)')+';font-family:var(--raj);font-weight:700">'+pct+'%</div>';
-    html+='<div class="hcal-mini-bar"><div class="hcal-mini-fill" style="width:'+pct+'%;background:'+(pct>=100?'var(--g)':pct>=60?'var(--o2)':'var(--red)')+'"></div></div>';
+    html+='<div style="font-size:9px;color:'+(pct>=100?'var(--habit-done)':pct>=60?'var(--o2)':'var(--habit-miss)')+';font-family:var(--raj);font-weight:700">'+pct+'%</div>';
+    html+='<div class="hcal-mini-bar"><div class="hcal-mini-fill" style="width:'+pct+'%;background:'+(pct>=100?'var(--habit-done)':pct>=60?'var(--o2)':'var(--habit-miss)')+'"></div></div>';
     html+='</td>';
     html+='</tr>';
   });
@@ -4449,14 +4456,14 @@ function renderHabitCalendar() {
   // Footer: completed / incomplete per day
   html+='<tr class="hcal-footer"><td class="hcal-habit-col hcal-footer" style="font-size:9px">COMPLETED</td>';
   for(var d=1;d<=daysInMonth;d++){
-    html+='<td style="background:var(--g3);border:1px solid var(--g3);font-family:var(--raj);font-size:10px;font-weight:700;color:var(--g);text-align:center;padding:3px 2px">'+dayDone[d]+'</td>';
+    html+='<td style="background:var(--habit-done-tint);border:1px solid var(--habit-done-tint);font-family:var(--raj);font-size:10px;font-weight:700;color:var(--habit-done);text-align:center;padding:3px 2px">'+dayDone[d]+'</td>';
   }
-  html+='<td colspan="3" style="background:var(--g3);border:1px solid var(--g3)"></td>';
+  html+='<td colspan="3" style="background:var(--habit-done-tint);border:1px solid var(--habit-done-tint)"></td>';
   html+='</tr>';
-  html+='<tr><td class="hcal-habit-col" style="font-size:9px;color:var(--red)">INCOMPLETE</td>';
+  html+='<tr><td class="hcal-habit-col" style="font-size:9px;color:var(--habit-miss)">INCOMPLETE</td>';
   for(var d=1;d<=daysInMonth;d++){
     var inc=dayTotal[d]-dayDone[d];
-    html+='<td style="background:var(--card2);border:1px solid var(--border);font-family:var(--raj);font-size:10px;font-weight:700;color:'+(inc>0?'var(--red)':'var(--t2)')+';text-align:center;padding:3px 2px">'+inc+'</td>';
+    html+='<td style="background:var(--card2);border:1px solid var(--border);font-family:var(--raj);font-size:10px;font-weight:700;color:'+(inc>0?'var(--habit-miss)':'var(--t2)')+';text-align:center;padding:3px 2px">'+inc+'</td>';
   }
   html+='<td colspan="3" style="background:var(--card2);border:1px solid var(--border)"></td>';
   html+='</tr>';
@@ -4607,7 +4614,7 @@ function renderHabitList() {
     var color=HAB_CAT_COLORS[h.cat]||'var(--g)';
     var st=h.logs[viewDate];
     var isDone=st==='done', isSkip=st==='x';
-    return `<div class="habit-item ${isDone?'done':''}${isSkip?' skip':''}" onclick="habitCheckClick(${i},'${viewDate}')" ondblclick="habitCheckDblClick(${i},'${viewDate}')" style="border-left-color:${isDone?color:isSkip?'var(--red)':'var(--border)'}">
+    return `<div class="habit-item ${isDone?'done':''}${isSkip?' skip':''}" onclick="habitCheckClick(${i},'${viewDate}')" ondblclick="habitCheckDblClick(${i},'${viewDate}')" style="border-left-color:${isDone?'var(--habit-done)':isSkip?'var(--habit-miss)':'var(--border)'}">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:14px">${h.emoji||'◈'}</span>
@@ -4618,12 +4625,12 @@ function renderHabitList() {
           <button class="edit-btn" onclick="event.stopPropagation();toggleHabitEdit(${i})" ondblclick="event.stopPropagation()" style="margin-left:4px">✎ EDIT</button>
         </div>
         <div class="week-dots" style="margin-top:6px">
-          ${weekDates2.map(wd=>{var wst=h.logs[wd];var wDone=wst==='done',wSkip=wst==='x';return `<div class="wd ${wDone?'done':wSkip?'skip':''}" title="${wd}" style="${wDone?'background:'+color+';border-color:'+color:''}"></div>`;}).join('')}
+          ${weekDates2.map(wd=>{var wst=h.logs[wd];var wDone=wst==='done',wSkip=wst==='x';return `<div class="wd ${wDone?'done':wSkip?'skip':''}" title="${wd}" style="${wDone?'background:var(--habit-done);border-color:var(--habit-done)':wSkip?'background:var(--habit-miss);border-color:var(--habit-miss)':''}"></div>`;}).join('')}
           <span style="font-size:8px;color:var(--t2);margin-left:4px">THIS WEEK</span>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div class="check-sq" style="${isDone?'background:'+color+';border-color:'+color+';color:#000;':isSkip?'background:var(--red);border-color:var(--red);color:#fff;':''}">${isDone?'✓':isSkip?'✕':''}</div>
+        <div class="check-sq" style="${isDone?'background:var(--habit-done);border-color:var(--habit-done);color:#000;':isSkip?'background:var(--habit-miss);border-color:var(--habit-miss);color:#fff;':''}">${isDone?'✓':isSkip?'✕':''}</div>
         <button class="del-btn" onclick="event.stopPropagation();delHabit(${i})" ondblclick="event.stopPropagation()" style="font-size:12px">✕</button>
       </div>
     </div>`;
@@ -4654,7 +4661,7 @@ function renderHabitStats() {
       var sst=h.logs[ds4];
       var isDone=sst==='done', isSkip=sst==='x';
       var isToday=ds4===today;
-      var spColor=isDone?color:(isSkip?'var(--red)':'var(--t3)');
+      var spColor=isDone?'var(--habit-done)':(isSkip?'var(--habit-miss)':'var(--t3)');
       sparkHTML+='<div title="'+ds4+'" onclick="habitCheckClick('+i+',\''+ds4+'\')" ondblclick="habitCheckDblClick('+i+',\''+ds4+'\')" style="width:8px;height:16px;border-radius:2px;cursor:pointer;background:'+spColor+(isToday?';box-shadow:0 0 0 1px var(--c)':'')+';flex-shrink:0;transition:all .12s" onmouseover="this.style.opacity=\'0.7\'" onmouseout="this.style.opacity=\'1\'"></div>';
     }
     sparkHTML+='</div><div style="display:flex;justify-content:space-between;font-size:8px;color:var(--t2);margin-top:2px;font-family:var(--mono)"><span>30 days ago</span><span>today</span></div>';

@@ -2502,6 +2502,21 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
      scrolling diagonally. */
   .hcal-table .hcal-habit-col{z-index:3}
   .hcal-table thead th.hcal-habit-col{z-index:5}
+  /* The sticky column needs to fully hide the day-cells scrolling
+     underneath it, not just tint them — a light glass blur wasn't
+     enough, colored done/missed cells were still bleeding through and
+     making the habit name hard to read. Go heavier here: a strong
+     blur plus a solid-leaning background specifically for this
+     column, only on mobile where it's actually sticky. */
+  .hcal-table .hcal-habit-col{
+    background:var(--card2) !important;
+    backdrop-filter:blur(20px) saturate(1.4) !important;
+    -webkit-backdrop-filter:blur(20px) saturate(1.4) !important;
+    box-shadow:2px 0 8px rgba(0,0,0,.25);
+  }
+  html.alpha .hcal-table .hcal-habit-col{background:#fff !important}
+  .hcal-table .hcal-footer .hcal-habit-col{background:var(--habit-done-tint) !important}
+  html.alpha .hcal-table .hcal-footer .hcal-habit-col{background:var(--habit-done-tint) !important}
   /* Slightly bigger than desktop for touch, but smaller than the
      earlier mobile pass (which made them feel oversized). */
   .hcal-cell{width:20px;height:20px;font-size:9px}

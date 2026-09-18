@@ -2110,12 +2110,25 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
       <div class="inp-group" style="flex:1"><div class="inp-label">TIME</div><input class="inp" id="n-time" type="time"/></div>
       <div class="inp-group" style="flex:1"><div class="inp-label">MEAL TYPE</div><select class="inp" id="n-type"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Pre-workout</option><option>Post-workout</option></select></div>
     </div>
+    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="n-notes" type="text" placeholder="extra notes..."/></div>
     <div style="border:1px solid var(--border);border-left:3px solid var(--c2);padding:12px;margin-bottom:10px;background:var(--card2)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div class="inp-label" style="color:var(--c2);letter-spacing:1.5px">⊕ INGREDIENTS</div>
         <div id="ingr-macro-preview" style="font-size:10px;color:var(--t2);font-family:var(--mono)">Add ingredients below</div>
       </div>
       <div id="ingr-list" style="margin-bottom:8px"></div>
+      <div id="meal-macro-summary" style="display:none;background:var(--gd);border:1px solid var(--g3);padding:10px;margin-bottom:10px;font-size:10px;font-family:var(--mono)">
+        <div style="color:var(--g);letter-spacing:1px;margin-bottom:4px">▸ TOTAL MACROS FROM INGREDIENTS</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <span>CAL: <b id="ms-cal" style="color:var(--o2)">0</b> kcal</span>
+          <span>PROTEIN: <b id="ms-pro" style="color:var(--o)">0</b>g</span>
+          <span>CARBS: <b id="ms-carb" style="color:var(--c2)">0</b>g</span>
+          <span>FAT: <b id="ms-fat" style="color:var(--g2)">0</b>g</span>
+          <span>FIBER: <b id="ms-fiber" style="color:var(--p)">0</b>g</span>
+          <span>OMEGA3: <b id="ms-omega3" style="color:var(--c)">0</b>g</span>
+          <span>WEIGHT: <b id="ms-wt" style="color:var(--t)">0</b>g</span>
+        </div>
+      </div>
       <!-- ── Library Search Widget ── -->
       <div class="ilsw" id="ntr-ilsw">
         <div class="ilsw-head">
@@ -2155,19 +2168,6 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
         <button class="btn sm" style="margin-bottom:1px" onclick="addIngredient()">+ ADD</button>
       </div>
     </div>
-    <div id="meal-macro-summary" style="display:none;background:var(--gd);border:1px solid var(--g3);padding:10px;margin-bottom:10px;font-size:10px;font-family:var(--mono)">
-      <div style="color:var(--g);letter-spacing:1px;margin-bottom:4px">▸ TOTAL MACROS FROM INGREDIENTS</div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap">
-        <span>CAL: <b id="ms-cal" style="color:var(--o2)">0</b> kcal</span>
-        <span>PROTEIN: <b id="ms-pro" style="color:var(--o)">0</b>g</span>
-        <span>CARBS: <b id="ms-carb" style="color:var(--c2)">0</b>g</span>
-        <span>FAT: <b id="ms-fat" style="color:var(--g2)">0</b>g</span>
-        <span>FIBER: <b id="ms-fiber" style="color:var(--p)">0</b>g</span>
-        <span>OMEGA3: <b id="ms-omega3" style="color:var(--c)">0</b>g</span>
-        <span>WEIGHT: <b id="ms-wt" style="color:var(--t)">0</b>g</span>
-      </div>
-    </div>
-    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES (optional)</div><input class="inp" id="n-notes" type="text" placeholder="extra notes..."/></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn full" onclick="addMeal()" style="flex:2">[ + LOG MEAL ]</button>
       <button class="btn" onclick="addMealAndSaveToLibrary()" style="flex:1;background:var(--card2);border:1px solid var(--g);color:var(--g)" title="Log today AND save to library">[ 📚 LOG + SAVE ]</button>

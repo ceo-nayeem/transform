@@ -555,12 +555,32 @@ body *{transition:background .3s,color .25s,border-color .25s,box-shadow .25s}
 .sb-label{font-size:11px;letter-spacing:.5px}
 .sb-badge{margin-left:auto;background:var(--g3);color:var(--g2);font-size:8px;padding:2px 5px;font-family:var(--raj);font-weight:700;border:1px solid var(--g3)}
 .notif-dot{width:6px;height:6px;background:var(--red);border-radius:50%;margin-left:auto}
-.main{display:flex;flex-direction:column;overflow:hidden;flex:1;min-width:0}
+.main{display:flex;flex-direction:column;overflow:hidden;flex:1;min-width:0;position:relative}
 .page-header{background:var(--panel);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .page-title{font-family:var(--raj);font-size:15px;font-weight:700;letter-spacing:2px;color:var(--t);display:flex;align-items:center;gap:8px}
 .page-title::before{content:'//';color:var(--g);font-family:var(--mono);font-size:11px}
 .page-path{font-size:9px;color:var(--t2);letter-spacing:1px;margin-top:2px}
 .content{flex:1;overflow-y:auto;padding:70px 20px 30px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+/* Custom pull-to-refresh indicator (mobile only — see markup comment
+   for why the native browser gesture doesn't work in this layout). */
+.ptr-indicator{
+  position:absolute;top:0;left:50%;transform:translate(-50%,-56px);
+  width:34px;height:34px;border-radius:50%;
+  background:var(--glass-bg2,var(--card2));border:1px solid var(--glass-border,var(--border));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-soft,0 4px 14px rgba(0,0,0,.25));
+  z-index:80;pointer-events:none;
+  transition:transform .18s ease;
+}
+.ptr-spinner{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid color-mix(in srgb, var(--g) 30%, transparent);
+  border-top-color:var(--g);
+  transform:rotate(0deg);
+}
+.ptr-indicator.ptr-spin .ptr-spinner{animation:ptrSpin .6s linear infinite}
+@keyframes ptrSpin{to{transform:rotate(360deg)}}
 .page{display:none}.page.active{display:block}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
@@ -1940,7 +1960,14 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 
 <!-- MAIN -->
 <div class="main">
-<div class="content">
+<!-- Custom pull-to-refresh indicator. Chrome's native pull-to-refresh
+     only fires when the DOCUMENT itself is the scrollable element at
+     the top; this app deliberately keeps body/html non-scrolling and
+     scrolls #mainContent internally instead (fixed topbar/sidebar
+     shell), so the native gesture never engages here — this replaces
+     it with an equivalent manual pull gesture, mobile only. -->
+<div class="ptr-indicator" id="ptrIndicator"><span class="ptr-spinner"></span></div>
+<div class="content" id="mainContent">
 
 <!-- ============ DASHBOARD ============ -->
 <div class="page active" id="page-dashboard">
@@ -4477,7 +4504,7 @@ function renderHabitCalendar() {
 
   // Build table
   var html='<table class="hcal-table"><thead><tr>';
-  html+='<th class="hcal-habit-col" style="position:sticky;left:0;z-index:3">HABITS</th>';
+  html+='<th class="hcal-habit-col">HABITS</th>';
   for(var d=1;d<=daysInMonth;d++){
     var ds=yr+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     var dow=new Date(ds+'T12:00').getDay();
@@ -5657,6 +5684,56 @@ document.addEventListener('click', function(e){
 // ===================================================
 // MOBILE NAV & RESPONSIVE JS
 // ===================================================
+
+// ── Custom pull-to-refresh ──
+// The app scrolls #mainContent internally (fixed topbar/sidebar shell)
+// rather than the document itself, so Chrome's native pull-to-refresh
+// never engages here — it only watches document scroll. This restores
+// the same "swipe down at the top to reload" behavior manually, mobile
+// only, on the actual scroll container.
+(function(){
+  var el = document.getElementById('mainContent');
+  var ind = document.getElementById('ptrIndicator');
+  if (!el || !ind) return;
+  var THRESHOLD = 70; // px of pull before a release triggers reload
+  var startY = 0, pulling = false, dist = 0, refreshing = false;
+
+  el.addEventListener('touchstart', function(e){
+    if (window.innerWidth >= 769 || refreshing) return;
+    if (el.scrollTop > 0) { pulling = false; return; }
+    startY = e.touches[0].clientY;
+    pulling = true; dist = 0;
+  }, {passive:true});
+
+  el.addEventListener('touchmove', function(e){
+    if (!pulling || refreshing) return;
+    // If the page has scrolled down since the gesture started (e.g. an
+    // inner element absorbed some movement), stop tracking — only a
+    // pull that starts and stays at scrollTop 0 should count.
+    if (el.scrollTop > 0) { pulling = false; ind.style.transform=''; return; }
+    var y = e.touches[0].clientY;
+    dist = y - startY;
+    if (dist <= 0) { ind.style.transform=''; return; }
+    var pull = Math.min(dist * 0.5, THRESHOLD + 30);
+    ind.style.transform = 'translate(-50%,' + (-56 + pull) + 'px)';
+    ind.classList.toggle('ptr-spin', pull >= THRESHOLD);
+  }, {passive:true});
+
+  el.addEventListener('touchend', function(){
+    if (!pulling || refreshing) { pulling = false; return; }
+    pulling = false;
+    if (dist * 0.5 >= THRESHOLD) {
+      refreshing = true;
+      ind.classList.add('ptr-spin');
+      ind.style.transform = 'translate(-50%,14px)';
+      setTimeout(function(){ location.reload(); }, 250);
+    } else {
+      ind.style.transform = '';
+      ind.classList.remove('ptr-spin');
+    }
+  });
+})();
+
 function toggleMobSidebar() {
   var sb = document.querySelector('.sb');
   var ov = document.getElementById('sbOverlay');

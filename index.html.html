@@ -2973,6 +2973,19 @@ html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !importan
     <button class="btn full" onclick="saveNutritionGoals()">[ SAVE GOALS ]</button>
   </div>
 
+  <div class="sec-head">DATA MANAGEMENT</div>
+  <div class="profile-section">
+    <div style="font-size:10px;color:var(--t2);margin-bottom:10px;letter-spacing:.5px">
+      Export a complete backup of everything in this app — habits, workouts, meals, water, vitals, measurements, goals, meal &amp; ingredient library, and profile settings — as a single JSON file. Import that file back in anytime (on this device or a new one) to restore it.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn full" onclick="exportData()">[ EXPORT DATA (.JSON) ]</button>
+      <button class="btn full" onclick="document.getElementById('importFileInput').click()">[ IMPORT DATA ]</button>
+      <input type="file" id="importFileInput" accept=".json,application/json" style="display:none" onchange="importDataFile(event)"/>
+    </div>
+    <div id="importExportMsg" style="font-size:10px;text-align:center;margin-top:8px;min-height:14px;font-family:var(--mono)"></div>
+  </div>
+
   <div class="sec-head">DANGER ZONE</div>
   <div class="danger-zone">
     <div style="font-size:10px;color:var(--t2);margin-bottom:10px;letter-spacing:.5px">Clears all data for today. Your history and settings remain.</div>
@@ -5263,6 +5276,95 @@ function clearAllData() {
     await window._fsSetDoc(userRef,{userId:CURRENT_USER_ID,password:pass,data:JSON.stringify(S),lastSaved:new Date().toISOString()});
     toast('All data reset!'); renderDashboard();
   });
+}
+
+// ===================== DATA EXPORT / IMPORT =====================
+// Exports the ENTIRE live state object S (cfg, dailyData, habits, goals,
+// measurements, vitals, mealLibrary, ingredientLibrary, streak — everything)
+// as a downloadable JSON file, wrapped with a little metadata for safety.
+function exportData() {
+  var msgEl = document.getElementById('importExportMsg');
+  try {
+    var payload = {
+      app: 'GLASS // OS Fitness Tracker',
+      exportVersion: 1,
+      exportedAt: new Date().toISOString(),
+      userId: CURRENT_USER_ID || 'unknown',
+      data: S
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'glassos-backup-' + (CURRENT_USER_ID || 'user') + '-' + today() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+    toast('Data exported!');
+    if (msgEl) { msgEl.style.color = 'var(--g)'; msgEl.textContent = '✓ Backup file downloaded'; }
+  } catch(e) {
+    console.error(e);
+    toast('Export failed');
+    if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = 'Export failed: ' + e.message; }
+  }
+}
+
+// Reads a previously-exported JSON file (or a raw state dump) and REPLACES
+// all current data with it, then persists to Firebase and reloads the app
+// so every page/tab picks up the restored data cleanly.
+function importDataFile(event) {
+  var file = event.target.files && event.target.files[0];
+  var msgEl = document.getElementById('importExportMsg');
+  if (!file) return;
+  if (msgEl) { msgEl.style.color = 'var(--t2)'; msgEl.textContent = 'Reading file...'; }
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var parsed = JSON.parse(e.target.result);
+      // Accept either the wrapped { data: {...} } export format, or a raw S object.
+      var incoming = (parsed && typeof parsed === 'object' && parsed.data && typeof parsed.data === 'object') ? parsed.data : parsed;
+      var looksValid = incoming && typeof incoming === 'object' &&
+        ('dailyData' in incoming || 'habits' in incoming || 'cfg' in incoming);
+      if (!looksValid) throw new Error('This does not look like a GLASS // OS backup file');
+
+      if (!confirm('Import this backup? This will REPLACE all current data (habits, workouts, meals, water, vitals, measurements, goals, library & settings) with the contents of this file. This cannot be undone.')) {
+        event.target.value = '';
+        if (msgEl) msgEl.textContent = '';
+        return;
+      }
+
+      var fresh = getDefaultState(CURRENT_USER_ID || (incoming.cfg && incoming.cfg.name) || 'user');
+      Object.keys(S).forEach(function(k){ delete S[k]; });
+      Object.assign(S, fresh, incoming);
+      // Guard against an older/partial export missing newer fields.
+      if (!S.ingredientLibrary) S.ingredientLibrary = [];
+      if (!S.mealLibrary) S.mealLibrary = [];
+      if (!S.dailyData) S.dailyData = {};
+      if (!S.habits) S.habits = [];
+      if (!S.goals) S.goals = [];
+      if (!S.measurements) S.measurements = [];
+      if (!S.vitals) S.vitals = [];
+      if (!S.today) S.today = today();
+
+      saveToFirebase(function(){
+        toast('Data imported successfully!');
+        if (msgEl) { msgEl.style.color = 'var(--g)'; msgEl.textContent = '✓ Import complete — reloading...'; }
+        setTimeout(function(){ location.reload(); }, 900);
+      });
+    } catch(err) {
+      console.error(err);
+      toast('Import failed');
+      if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = 'Import failed: ' + err.message; }
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.onerror = function() {
+    if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = 'Could not read that file'; }
+  };
+  reader.readAsText(file);
 }
 
 // ===================== SIDEBAR BADGES =====================

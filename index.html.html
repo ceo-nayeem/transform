@@ -724,6 +724,10 @@ html.alpha .wt-hover-tip{background:#fff;font-family:'DM Sans',sans-serif;font-w
 .wt-hover-tip b{color:var(--g)}
 
 .meal-item{background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px;border-left:2px solid var(--border)}
+.mi-clickable{cursor:pointer;transition:transform .15s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease}
+.mi-clickable:hover{background:var(--card2);transform:translateX(3px);border-left-width:4px}
+.mi-clickable:active{transform:translateX(1px) scale(.995)}
+html.alpha .mi-clickable:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
 .meal-top{display:flex;justify-content:space-between;align-items:center}
 .meal-name{font-size:12px;letter-spacing:.5px}
 .meal-cal{font-size:11px;color:var(--o2)}
@@ -3720,7 +3724,7 @@ function renderNutrition() {
         </div>`).join('')}
       </div>`;
     }
-    return `<div class="meal-item" style="border-left-color:${colors[m.type]||'var(--t2)'}">
+    return `<div class="meal-item mi-clickable" style="border-left-color:${colors[m.type]||'var(--t2)'}" onclick="toggleMealEdit(${i})">
       <div class="meal-top">
         <div style="flex:1">
           <div class="meal-name">${m.name} <span style="font-size:9px;color:var(--t2)">${m.type.toUpperCase()} · ${m.time||''}</span></div>
@@ -3728,12 +3732,10 @@ function renderNutrition() {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="meal-cal">${m.kcal} kcal</div>
-          <button class="edit-btn" onclick="toggleMealEdit(${i})">✎ EDIT</button>
-          <button class="del-btn" onclick="delMeal(${i})">✕</button>
         </div>
       </div>
       ${ingrHTML}
-      <div class="edit-form" id="meal-edit-${i}">
+      <div class="edit-form" id="meal-edit-${i}" onclick="event.stopPropagation()">
         <div class="inp-row" style="margin-bottom:8px;flex-wrap:wrap">
           <div class="inp-group" style="flex:2;min-width:140px"><div class="inp-label">MEAL NAME</div><input class="inp" id="me-name-${i}" type="text" value="${m.name.replace(/"/g,'&quot;')}"/></div>
           <div class="inp-group" style="flex:1;min-width:80px"><div class="inp-label">TIME</div><input class="inp" id="me-time-${i}" type="time" value="${m.time||''}"/></div>
@@ -3774,6 +3776,7 @@ function renderNutrition() {
         <div class="edit-form-actions">
           <button class="btn sm" onclick="saveMealEdit(${i})">[ SAVE ]</button>
           <button class="btn sm danger" onclick="toggleMealEdit(${i})">[ CANCEL ]</button>
+          <button class="btn sm danger" onclick="confirmDeleteMeal(${i})">[ 🗑 DELETE ]</button>
         </div>
       </div>
     </div>`;
@@ -3937,6 +3940,10 @@ function addMeal() {
   save(); renderNutrition(); toast('Meal logged!');
 }
 function delMeal(i) { getDay(ntrDate).meals.splice(i,1); save(); renderNutrition(); toast('Meal removed'); }
+function confirmDeleteMeal(i) {
+  if (!confirm('Delete this meal log? This cannot be undone.')) return;
+  delMeal(i);
+}
 function toggleMealEdit(i) { var f=document.getElementById('meal-edit-'+i); if(f) f.classList.toggle('open'); }
 function saveMealEdit(i) {
   var m=getDay(ntrDate).meals[i];

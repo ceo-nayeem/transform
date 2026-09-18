@@ -2487,7 +2487,12 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
     border-radius:var(--radius-md);
   }
   #habit-calendar-wrap{min-width:0 !important}
-  .hcal-table{border-radius:0}
+  /* The base .hcal-table rule sets overflow:hidden (for its rounded
+     corners) and border-collapse:collapse — both of these silently
+     break position:sticky on th/td in mobile browsers (Safari/Chrome),
+     which is why the habit-name column wasn't actually sticking.
+     Undo both here, only on mobile, where sticky is required. */
+  .hcal-table{border-radius:0;overflow:visible !important;border-collapse:separate;border-spacing:0}
   /* Header row: sticky to the top of the scroll box */
   .hcal-table thead th{position:sticky;top:0;z-index:4}
   /* Habit-name column is already position:sticky;left:0 at the base
@@ -2497,10 +2502,10 @@ html.alpha .hstat-name{font-family:'Barlow Condensed',sans-serif;font-size:15px}
      scrolling diagonally. */
   .hcal-table .hcal-habit-col{z-index:3}
   .hcal-table thead th.hcal-habit-col{z-index:5}
-  /* Slightly larger touch targets for the day cells now that the row
-     is genuinely scrollable on a touchscreen. */
-  .hcal-cell{width:26px;height:26px;font-size:10px}
-  .hcal-table th{min-width:26px}
+  /* Slightly bigger than desktop for touch, but smaller than the
+     earlier mobile pass (which made them feel oversized). */
+  .hcal-cell{width:20px;height:20px;font-size:9px}
+  .hcal-table th{min-width:20px}
 }
 .hwk-card,.hstat-card{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft)}
 html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}

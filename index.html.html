@@ -3346,6 +3346,41 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
 .admin-status-ok{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--g2);letter-spacing:1px;background:var(--g3);border:1px solid var(--g3);padding:4px 9px}
 .admin-todo-list{list-style:none;padding:0;margin:10px 0 0;font-size:11px;color:var(--t2);line-height:2.1}
 .admin-todo-list li:before{content:'○ ';color:var(--t3)}
+.admin-metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.admin-metric-card{background:var(--card);border:1px solid var(--border);padding:13px}
+.admin-metric-label{font-size:8px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.admin-metric-val{font-family:var(--raj);font-size:24px;font-weight:700;color:var(--g)}
+.admin-metric-sub{font-size:9px;color:var(--t2);margin-top:3px}
+.admin-mini-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.admin-mini-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:6px 0;border-bottom:1px solid var(--border)}
+.admin-mini-row:last-child{border-bottom:none}
+.admin-mini-row .nm{color:var(--t)}
+.admin-mini-row .em{color:var(--t2);font-size:9px;display:block;margin-top:1px}
+.admin-mini-row .tm{color:var(--t2);font-size:9px;white-space:nowrap}
+.admin-inp{background:var(--t3);border:1px solid var(--border);color:var(--t);font-family:var(--mono);font-size:11px;padding:8px 10px;outline:none}
+.admin-table{width:100%;border-collapse:collapse;font-size:11px}
+.admin-table th{text-align:left;font-size:8px;letter-spacing:1.5px;color:var(--t2);text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border)}
+.admin-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--t)}
+.admin-table tr:hover td{background:var(--gd)}
+.admin-table .u-name{cursor:pointer}
+.admin-table .u-name:hover{color:var(--g)}
+.admin-badge{font-size:8px;letter-spacing:1px;padding:2px 7px;border:1px solid}
+.admin-badge.active{color:var(--g2);border-color:var(--g3);background:var(--g3)}
+.admin-badge.suspended{color:var(--red);border-color:var(--red);background:rgba(255,51,85,.08)}
+.admin-badge.plan{color:var(--t2);border-color:var(--border);background:var(--t3)}
+.admin-row-actions{display:flex;gap:6px}
+.admin-row-actions button{background:transparent;border:1px solid var(--border);color:var(--t2);font-family:var(--mono);font-size:9px;padding:4px 8px;cursor:pointer}
+.admin-row-actions button:hover{border-color:var(--g);color:var(--g)}
+.admin-detail-panel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100000;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto}
+.admin-detail-panel.open{display:flex}
+.admin-detail-inner{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--g);max-width:720px;width:100%;padding:20px}
+.admin-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.admin-detail-sec{background:var(--card);border:1px solid var(--border);padding:12px}
+.admin-detail-sec h4{font-family:var(--raj);font-size:11px;letter-spacing:1.5px;color:var(--t2);text-transform:uppercase;margin-bottom:8px}
+.admin-kv{display:flex;justify-content:space-between;font-size:11px;padding:3px 0}
+.admin-kv .k{color:var(--t2)}
+.admin-kv .v{color:var(--t)}
+@media (max-width:900px){.admin-metric-grid{grid-template-columns:repeat(2,1fr)}.admin-detail-grid{grid-template-columns:1fr}}
 </style>
 <div id="adminShellOverlay">
   <div class="admin-topbar">
@@ -3370,48 +3405,84 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
     <div class="admin-shell-main" id="adminAuthorized">
       <div class="admin-sb">
         <div class="admin-sb-sec">Overview</div>
-        <div class="admin-sb-item active">▦ Dashboard</div>
+        <div class="admin-sb-item active" id="adminNav-dashboard" onclick="adminNav('dashboard')">▦ Dashboard</div>
         <div class="admin-sb-sec">Management</div>
-        <div class="admin-sb-item locked">Users<span class="lock-tag">PHASE 2</span></div>
-        <div class="admin-sb-item locked">Content<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-item" id="adminNav-users" onclick="adminNav('users')">Users<span class="lock-tag" id="adminUsersCountTag">…</span></div>
+        <div class="admin-sb-item locked">Content<span class="lock-tag">PHASE 3</span></div>
         <div class="admin-sb-sec">Configuration</div>
-        <div class="admin-sb-item locked">App Config<span class="lock-tag">PHASE 2</span></div>
-        <div class="admin-sb-item locked">Feature Flags<span class="lock-tag">PHASE 2</span></div>
-        <div class="admin-sb-item locked">Plans<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-item locked">App Config<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item locked">Feature Flags<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item locked">Plans<span class="lock-tag">PHASE 3</span></div>
         <div class="admin-sb-sec">System</div>
         <div class="admin-sb-item locked">Analytics<span class="lock-tag">PHASE 3</span></div>
         <div class="admin-sb-item locked">Audit Log<span class="lock-tag">PHASE 3</span></div>
         <div class="admin-sb-item locked">System Settings<span class="lock-tag">PHASE 3</span></div>
       </div>
       <div class="admin-content">
-        <div class="admin-card">
-          <div class="admin-card-title">Foundation Status</div>
-          <span class="admin-status-ok">● OWNER ACCESS VERIFIED</span>
-          <div class="admin-todo-list" style="margin-top:12px">
-            <li>Firebase Auth identity confirmed as the owner account</li>
-            <li>Firestore Security Rules independently confirmed the same (this shell only rendered because a real read/write to <code>admin/config</code> succeeded — not because of the client-side email check)</li>
-            <li><code>admin/config</code> document is live in Firestore, ready for Phase 2 (maintenance mode, announcements, app version)</li>
+
+        <!-- ===== DASHBOARD SECTION ===== -->
+        <div id="admin-sec-dashboard" class="admin-sec">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div class="admin-card-title" style="margin:0">Dashboard</div>
+            <button class="admin-exit-btn" onclick="loadAdminUsers(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div class="admin-metric-grid" id="adminMetricGrid">
+            <div style="font-size:11px;color:var(--t2);padding:10px">Loading metrics…</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+            <div class="admin-card">
+              <div class="admin-card-title">Recent Registrations</div>
+              <div id="adminRecentRegs" class="admin-mini-list"></div>
+            </div>
+            <div class="admin-card">
+              <div class="admin-card-title">Recent Activity</div>
+              <div id="adminRecentActivity" class="admin-mini-list"></div>
+            </div>
+          </div>
+          <div class="admin-card" style="margin-top:14px">
+            <div class="admin-card-title">Notes</div>
+            <div class="admin-todo-list">
+              <li>Metrics are computed live from the <code>fitos_users</code> collection — no placeholder numbers</li>
+              <li>"Plan" and "Pro/Free split" are not shown yet — no subscription/plan system exists in the database (Phase 3)</li>
+              <li>Account status enforcement (suspended → blocked login) is a client-side check on login, since this project has no server/Cloud Functions layer — noted under each suspended user</li>
+            </div>
           </div>
         </div>
-        <div class="admin-card">
-          <div class="admin-card-title">Phase 1 Scope (this delivery)</div>
-          <ul class="admin-todo-list">
-            <li>Firestore Security Rules enforcing real owner-only authorization</li>
-            <li>"Go to Backend" menu entry, visible only to the owner account</li>
-            <li>This admin shell with a live-verified access gate</li>
-            <li><code>admin/*</code> collection schema reserved (config, features, plans, content, analytics, auditLogs)</li>
-          </ul>
+
+        <!-- ===== USERS SECTION ===== -->
+        <div id="admin-sec-users" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Users</div>
+            <button class="admin-exit-btn" onclick="loadAdminUsers(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <input class="admin-inp" id="adminUserSearch" type="text" placeholder="Search name or email…" oninput="renderAdminUsersTable()" style="flex:2;min-width:180px"/>
+            <select class="admin-inp" id="adminUserStatusFilter" onchange="renderAdminUsersTable()" style="min-width:120px">
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+            </select>
+            <select class="admin-inp" id="adminUserSort" onchange="renderAdminUsersTable()" style="min-width:150px">
+              <option value="created_desc">Newest first</option>
+              <option value="created_asc">Oldest first</option>
+              <option value="active_desc">Most recently active</option>
+              <option value="name_asc">Name A→Z</option>
+            </select>
+          </div>
+          <div id="adminUsersTableWrap"><div style="font-size:11px;color:var(--t2);padding:10px">Loading users…</div></div>
         </div>
-        <div class="admin-card">
-          <div class="admin-card-title">Planned Next (Phase 2+)</div>
-          <ul class="admin-todo-list">
-            <li>User Management — search/filter/suspend/view detail</li>
-            <li>Real dashboard metrics (users, activity) from actual data</li>
-            <li>Feature Flags &amp; Plan limits read by the main app</li>
-            <li>Audit log for every admin action</li>
-            <li>UID-based modular data migration (users/{uid}/...)</li>
-          </ul>
+
+        <!-- ===== USER DETAIL (overlay panel) ===== -->
+        <div id="adminUserDetailPanel" class="admin-detail-panel">
+          <div class="admin-detail-inner">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+              <div class="admin-card-title" style="margin:0" id="adminDetailName">User</div>
+              <button class="admin-exit-btn" onclick="closeAdminUserDetail()">[ ✕ CLOSE ]</button>
+            </div>
+            <div id="adminDetailBody"></div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -3523,6 +3594,18 @@ async function handleGoogleUser(email, uid) {
 
   if (snap.exists()) {
     var userData = snap.data();
+    // Suspended accounts are blocked at login. This is a client-side check
+    // (there's no server/Cloud Functions layer in this project to enforce
+    // it harder) — it stops normal use immediately, but is not a substitute
+    // for real server-side enforcement if that's ever added later.
+    if (userData.status === 'suspended') {
+      if (window._auth && window._auth.currentUser && window._signOutFirebase) {
+        window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
+      }
+      var errEl = document.getElementById('loginErr');
+      if (errEl) errEl.textContent = 'This account has been suspended.';
+      return;
+    }
     loadUserDataIntoState(userData);
     window._fsSetDoc(userRef, { authUid: uid, lastLogin: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
     // Existing accounts that somehow never finished onboarding (e.g. closed
@@ -3727,6 +3810,15 @@ function tryRestoreSession() {
     window._fsGetDoc(userRef).then(function(snap){
       if (!snap.exists()) { clearSession(); return; }
       var userData = snap.data();
+      if (userData.status === 'suspended') {
+        clearSession();
+        if (window._auth && window._auth.currentUser && window._signOutFirebase) {
+          window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
+        }
+        var errEl = document.getElementById('loginErr');
+        if (errEl) errEl.textContent = 'This account has been suspended.';
+        return;
+      }
       loadUserDataIntoState(userData);
       loginSuccess(userData.userId || sess.userId, sess.docId, true);
     }).catch(function(e){ console.error('Session restore failed:', e); });
@@ -7419,6 +7511,8 @@ async function openAdminBackend() {
       var emailEl = document.getElementById('adminOwnerEmail');
       if (emailEl) emailEl.textContent = u.email;
       _adminShowState('adminAuthorized');
+      adminNav('dashboard');
+      loadAdminUsers(false);
     } catch (e) {
       console.error('Admin authorization check failed:', e);
       showAdminUnauthorized('Server denied the request (Firestore Security Rules). This is expected for any non-owner account.');
@@ -7435,6 +7529,278 @@ function showAdminUnauthorized(msg) {
 function closeAdminBackend() {
   var overlay = document.getElementById('adminShellOverlay');
   if (overlay) overlay.style.display = 'none';
+  closeAdminUserDetail();
+}
+
+// ===================== ADMIN — SECTION NAV =====================
+function adminNav(section) {
+  ['dashboard','users'].forEach(function(s){
+    var sec = document.getElementById('admin-sec-'+s);
+    var nav = document.getElementById('adminNav-'+s);
+    if (sec) sec.style.display = (s===section) ? '' : 'none';
+    if (nav) nav.classList.toggle('active', s===section);
+  });
+  if (section === 'users') renderAdminUsersTable();
+}
+
+// ===================== ADMIN — USERS DATA =====================
+var ADMIN_USERS_CACHE = null; // array of normalized user objects, null until first load
+
+function _adminTimeAgo(iso) {
+  if (!iso) return '—';
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return '—';
+  var diffMs = Date.now() - d.getTime();
+  var mins = Math.floor(diffMs/60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins+'m ago';
+  var hrs = Math.floor(mins/60);
+  if (hrs < 24) return hrs+'h ago';
+  var days = Math.floor(hrs/24);
+  if (days < 30) return days+'d ago';
+  var months = Math.floor(days/30);
+  if (months < 12) return months+'mo ago';
+  return Math.floor(months/12)+'y ago';
+}
+
+function _adminNormalizeUser(docId, raw) {
+  var parsed = {};
+  try { parsed = raw.data ? JSON.parse(raw.data) : {}; } catch(e) { parsed = {}; }
+  var cfg = parsed.cfg || {};
+  return {
+    docId: docId,
+    name: cfg.name || raw.userId || docId,
+    email: raw.authEmail || raw.userId || '—',
+    uid: raw.authUid || '—',
+    createdAt: raw.createdAt || null,
+    lastLogin: raw.lastLogin || null,
+    lastSaved: raw.lastSaved || null,
+    status: raw.status || 'active',
+    plan: raw.plan || 'free', // placeholder — no real plan/billing system exists yet
+    onboarded: parsed.onboarded !== false,
+    gender: cfg.gender || '—',
+    age: cfg.age || null,
+    habitsCount: (parsed.habits||[]).length,
+    goalsCount: (parsed.goals||[]).length,
+    measurementsCount: (parsed.measurements||[]).length,
+    vitalsCount: (parsed.vitals||[]).length,
+    mealLibraryCount: (parsed.mealLibrary||[]).length,
+    ingredientLibraryCount: (parsed.ingredientLibrary||[]).length,
+    streak: parsed.streak || 0,
+    dailyDataDays: parsed.dailyData ? Object.keys(parsed.dailyData).length : 0,
+    lastMeasurement: (parsed.measurements && parsed.measurements.length) ? parsed.measurements[parsed.measurements.length-1] : null,
+    lastVital: (parsed.vitals && parsed.vitals.length) ? parsed.vitals[parsed.vitals.length-1] : null,
+    _raw: raw
+  };
+}
+
+async function loadAdminUsers(force) {
+  if (ADMIN_USERS_CACHE && !force) { renderAdminDashboard(); if(document.getElementById('admin-sec-users').style.display!=='none') renderAdminUsersTable(); return; }
+  try {
+    var db = window._db;
+    var colRef = window._fsCollection(db, 'fitos_users');
+    var snap = await window._fsGetDocs(colRef);
+    var users = [];
+    snap.forEach(function(d){
+      var data = d.data();
+      if (data.migratedTo) return; // superseded legacy doc, not a real account
+      users.push(_adminNormalizeUser(d.id, data));
+    });
+    ADMIN_USERS_CACHE = users;
+    var tag = document.getElementById('adminUsersCountTag');
+    if (tag) tag.textContent = users.length;
+    renderAdminDashboard();
+    if (document.getElementById('admin-sec-users').style.display !== 'none') renderAdminUsersTable();
+  } catch (e) {
+    console.error('loadAdminUsers failed:', e);
+    toast('Failed to load users (see console)');
+  }
+}
+
+function renderAdminDashboard() {
+  var grid = document.getElementById('adminMetricGrid');
+  var regsEl = document.getElementById('adminRecentRegs');
+  var actEl = document.getElementById('adminRecentActivity');
+  if (!grid || !ADMIN_USERS_CACHE) return;
+  var users = ADMIN_USERS_CACHE;
+  var now = Date.now();
+  var total = users.length;
+  var newThisWeek = users.filter(function(u){ return u.createdAt && (now - new Date(u.createdAt).getTime()) <= 7*86400000; }).length;
+  var active30d = users.filter(function(u){
+    var t = u.lastSaved || u.lastLogin;
+    return t && (now - new Date(t).getTime()) <= 30*86400000;
+  }).length;
+  var onboardedCount = users.filter(function(u){ return u.onboarded; }).length;
+  var suspendedCount = users.filter(function(u){ return u.status === 'suspended'; }).length;
+
+  grid.innerHTML =
+    '<div class="admin-metric-card"><div class="admin-metric-label">Total Users</div><div class="admin-metric-val">'+total+'</div></div>' +
+    '<div class="admin-metric-card"><div class="admin-metric-label">New (7d)</div><div class="admin-metric-val" style="color:var(--c)">'+newThisWeek+'</div></div>' +
+    '<div class="admin-metric-card"><div class="admin-metric-label">Active (30d)</div><div class="admin-metric-val" style="color:var(--o2)">'+active30d+'</div></div>' +
+    '<div class="admin-metric-card"><div class="admin-metric-label">Onboarded</div><div class="admin-metric-val" style="color:var(--p)">'+onboardedCount+'</div><div class="admin-metric-sub">of '+total+'</div></div>';
+
+  if (suspendedCount > 0) {
+    grid.innerHTML += '<div class="admin-metric-card"><div class="admin-metric-label">Suspended</div><div class="admin-metric-val" style="color:var(--red)">'+suspendedCount+'</div></div>';
+  }
+
+  var byCreated = users.slice().filter(function(u){return u.createdAt;}).sort(function(a,b){ return new Date(b.createdAt)-new Date(a.createdAt); }).slice(0,5);
+  regsEl.innerHTML = byCreated.length ? byCreated.map(function(u){
+    return '<div class="admin-mini-row"><span><span class="nm">'+u.name+'</span><span class="em">'+u.email+'</span></span><span class="tm">'+_adminTimeAgo(u.createdAt)+'</span></div>';
+  }).join('') : '<div style="font-size:10px;color:var(--t2)">No data yet.</div>';
+
+  var byActivity = users.slice().filter(function(u){return u.lastSaved||u.lastLogin;}).sort(function(a,b){
+    return new Date(b.lastSaved||b.lastLogin) - new Date(a.lastSaved||a.lastLogin);
+  }).slice(0,5);
+  actEl.innerHTML = byActivity.length ? byActivity.map(function(u){
+    return '<div class="admin-mini-row"><span><span class="nm">'+u.name+'</span><span class="em">'+u.email+'</span></span><span class="tm">'+_adminTimeAgo(u.lastSaved||u.lastLogin)+'</span></div>';
+  }).join('') : '<div style="font-size:10px;color:var(--t2)">No data yet.</div>';
+}
+
+function renderAdminUsersTable() {
+  var wrap = document.getElementById('adminUsersTableWrap');
+  if (!wrap || !ADMIN_USERS_CACHE) return;
+  var search = (document.getElementById('adminUserSearch').value || '').toLowerCase();
+  var statusFilter = document.getElementById('adminUserStatusFilter').value;
+  var sortMode = document.getElementById('adminUserSort').value;
+
+  var list = ADMIN_USERS_CACHE.filter(function(u){
+    var matchSearch = !search || u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search);
+    var matchStatus = !statusFilter || u.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  list.sort(function(a,b){
+    if (sortMode === 'created_asc') return new Date(a.createdAt||0) - new Date(b.createdAt||0);
+    if (sortMode === 'active_desc') return new Date(b.lastSaved||b.lastLogin||0) - new Date(a.lastSaved||a.lastLogin||0);
+    if (sortMode === 'name_asc') return a.name.localeCompare(b.name);
+    return new Date(b.createdAt||0) - new Date(a.createdAt||0); // created_desc default
+  });
+
+  if (!list.length) {
+    wrap.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:14px">No users match.</div>';
+    return;
+  }
+
+  wrap.innerHTML = '<table class="admin-table"><thead><tr>' +
+    '<th>Name</th><th>Email</th><th>Created</th><th>Last Active</th><th>Status</th><th>Plan</th><th></th>' +
+    '</tr></thead><tbody>' +
+    list.map(function(u){
+      return '<tr>' +
+        '<td class="u-name" onclick="openAdminUserDetail(\''+u.docId+'\')">'+u.name+'</td>' +
+        '<td>'+u.email+'</td>' +
+        '<td>'+_adminTimeAgo(u.createdAt)+'</td>' +
+        '<td>'+_adminTimeAgo(u.lastSaved||u.lastLogin)+'</td>' +
+        '<td><span class="admin-badge '+(u.status==='suspended'?'suspended':'active')+'">'+u.status.toUpperCase()+'</span></td>' +
+        '<td><span class="admin-badge plan">'+u.plan.toUpperCase()+'</span></td>' +
+        '<td><div class="admin-row-actions">' +
+          '<button onclick="openAdminUserDetail(\''+u.docId+'\')">VIEW</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('') +
+    '</tbody></table>';
+}
+
+function openAdminUserDetail(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
+  if (!u) return;
+  document.getElementById('adminDetailName').textContent = u.name;
+  var lastMeas = u.lastMeasurement;
+  var lastVit = u.lastVital;
+  document.getElementById('adminDetailBody').innerHTML =
+    '<div class="admin-detail-grid">' +
+      '<div class="admin-detail-sec"><h4>Identity</h4>' +
+        '<div class="admin-kv"><span class="k">Email</span><span class="v">'+u.email+'</span></div>' +
+        '<div class="admin-kv"><span class="k">UID</span><span class="v" style="font-size:9px">'+u.uid+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Doc ID</span><span class="v" style="font-size:9px">'+u.docId+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Created</span><span class="v">'+(u.createdAt||'—')+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Last login</span><span class="v">'+(u.lastLogin||'—')+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Status</span><span class="v"><span class="admin-badge '+(u.status==='suspended'?'suspended':'active')+'">'+u.status.toUpperCase()+'</span></span></div>' +
+        '<div class="admin-kv"><span class="k">Plan</span><span class="v"><span class="admin-badge plan">'+u.plan.toUpperCase()+'</span></span></div>' +
+      '</div>' +
+      '<div class="admin-detail-sec"><h4>Profile</h4>' +
+        '<div class="admin-kv"><span class="k">Gender</span><span class="v">'+u.gender+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Age</span><span class="v">'+(u.age||'—')+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Onboarded</span><span class="v">'+(u.onboarded?'Yes':'No')+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Streak</span><span class="v">'+u.streak+' days</span></div>' +
+        '<div class="admin-kv"><span class="k">Days with data</span><span class="v">'+u.dailyDataDays+'</span></div>' +
+      '</div>' +
+      '<div class="admin-detail-sec"><h4>Fitness &amp; Habits</h4>' +
+        '<div class="admin-kv"><span class="k">Habits tracked</span><span class="v">'+u.habitsCount+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Goals set</span><span class="v">'+u.goalsCount+'</span></div>' +
+      '</div>' +
+      '<div class="admin-detail-sec"><h4>Health</h4>' +
+        '<div class="admin-kv"><span class="k">Measurement logs</span><span class="v">'+u.measurementsCount+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Latest weight</span><span class="v">'+(lastMeas&&lastMeas.weight?lastMeas.weight+' kg':'—')+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Vitals logs</span><span class="v">'+u.vitalsCount+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Latest HR</span><span class="v">'+(lastVit&&lastVit.hr?lastVit.hr+' bpm':'—')+'</span></div>' +
+      '</div>' +
+      '<div class="admin-detail-sec"><h4>Libraries</h4>' +
+        '<div class="admin-kv"><span class="k">Meal library</span><span class="v">'+u.mealLibraryCount+' items</span></div>' +
+        '<div class="admin-kv"><span class="k">Ingredient library</span><span class="v">'+u.ingredientLibraryCount+' items</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px">' +
+      (u.status==='suspended'
+        ? '<button class="admin-exit-btn" onclick="adminActivateUser(\''+u.docId+'\')">[ ✓ ACTIVATE ACCOUNT ]</button>'
+        : '<button class="admin-exit-btn" onclick="adminSuspendUser(\''+u.docId+'\')">[ ⛔ SUSPEND ACCOUNT ]</button>') +
+      '<button class="admin-exit-btn" onclick="adminExportUser(\''+u.docId+'\')">[ ⭳ EXPORT JSON ]</button>' +
+      '<button class="admin-exit-btn" style="border-color:var(--red);color:var(--red)" onclick="adminDeleteUser(\''+u.docId+'\')">[ ✕ DELETE ACCOUNT ]</button>' +
+    '</div>';
+  document.getElementById('adminUserDetailPanel').classList.add('open');
+}
+
+function closeAdminUserDetail() {
+  var p = document.getElementById('adminUserDetailPanel');
+  if (p) p.classList.remove('open');
+}
+
+async function adminSuspendUser(docId) {
+  if (!confirm('Suspend this account? They will be signed out and blocked from logging back in until reactivated.')) return;
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'fitos_users', docId);
+    await window._fsSetDoc(ref, { status: 'suspended', statusChangedAt: new Date().toISOString() }, {merge:true});
+    toast('Account suspended');
+    await loadAdminUsers(true);
+    openAdminUserDetail(docId);
+  } catch(e) { console.error(e); toast('Failed to suspend (see console)'); }
+}
+
+async function adminActivateUser(docId) {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'fitos_users', docId);
+    await window._fsSetDoc(ref, { status: 'active', statusChangedAt: new Date().toISOString() }, {merge:true});
+    toast('Account activated');
+    await loadAdminUsers(true);
+    openAdminUserDetail(docId);
+  } catch(e) { console.error(e); toast('Failed to activate (see console)'); }
+}
+
+function adminExportUser(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
+  if (!u) return;
+  var blob = new Blob([JSON.stringify(u._raw, null, 2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = docId + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function adminDeleteUser(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
+  if (!u) return;
+  var typed = prompt('This PERMANENTLY deletes "'+u.name+'" ('+u.email+') and all their data.\nType DELETE to confirm:');
+  if (typed !== 'DELETE') return;
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'fitos_users', docId);
+    await window._fsDeleteDoc(ref);
+    toast('Account deleted');
+    closeAdminUserDetail();
+    await loadAdminUsers(true);
+  } catch(e) { console.error(e); toast('Failed to delete (see console)'); }
 }
 </script>
 </body>

@@ -13,6 +13,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC8y4IYzcU_T3CQ4LfZsZH6a-kmVx7UlsI",
@@ -40,6 +41,9 @@
   window._signInWithPopup = signInWithPopup;
   window._signOutFirebase = signOut;
   window._onAuthStateChanged = onAuthStateChanged;
+
+  var functions = getFunctions(app);
+  window._fnsGeminiProxy = httpsCallable(functions, 'fitOsGeminiProxy');
 
   window._firebaseReady = true;
   window.dispatchEvent(new Event('firebaseReady'));
@@ -2022,20 +2026,20 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 <div class="os">
 <!-- SIDEBAR -->
 <div class="sb">
-  <div class="sb-nav">
+  <div class="sb-nav" id="sbNav">
     <div class="sb-sec">OVERVIEW</div>
-    <div class="sb-item active" onclick="nav(this,'dashboard')" data-tip="Dashboard"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
+    <div class="sb-item active" data-page="dashboard" onclick="nav(this,'dashboard')" data-tip="Dashboard"><span class="sb-icon">▦</span><span class="sb-label">Dashboard</span></div>
 
     <div class="sb-sec">DAILY TRACKING</div>
-    <div class="sb-item" onclick="nav(this,'fitness')" data-tip="Fitness"><span class="sb-icon">⊞</span><span class="sb-label">Fitness</span><span class="sb-badge" id="wkBadge">0/0</span></div>
-    <div class="sb-item" onclick="nav(this,'track')" data-tip="Track"><span class="sb-icon">◎</span><span class="sb-label">Track</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
+    <div class="sb-item" data-page="fitness" onclick="nav(this,'fitness')" data-tip="Fitness"><span class="sb-icon">⊞</span><span class="sb-label">Fitness</span><span class="sb-badge" id="wkBadge">0/0</span></div>
+    <div class="sb-item" data-page="track" onclick="nav(this,'track')" data-tip="Track"><span class="sb-icon">◎</span><span class="sb-label">Track</span><div class="notif-dot" id="habitNotif" style="display:none"></div></div>
 
     <div class="sb-sec">HEALTH</div>
-    <div class="sb-item" onclick="nav(this,'health')" data-tip="Health"><span class="sb-icon">✚</span><span class="sb-label">Health</span></div>
+    <div class="sb-item" data-page="health" onclick="nav(this,'health')" data-tip="Health"><span class="sb-icon">✚</span><span class="sb-label">Health</span></div>
 
     <div class="sb-sec">TOOLS</div>
-    <div class="sb-item" onclick="nav(this,'library')" data-tip="Library"><span class="sb-icon">◉</span><span class="sb-label">Library</span><span class="sb-badge" id="mlBadge">0</span><span class="sb-badge" id="ilBadge">0</span></div>
-    <div class="sb-item" onclick="nav(this,'timer')" data-tip="Tools"><span class="sb-icon">◷</span><span class="sb-label">Timer &amp; Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
+    <div class="sb-item" data-page="library" onclick="nav(this,'library')" data-tip="Library"><span class="sb-icon">◉</span><span class="sb-label">Library</span><span class="sb-badge" id="mlBadge">0</span><span class="sb-badge" id="ilBadge">0</span></div>
+    <div class="sb-item" data-page="timer" onclick="nav(this,'timer')" data-tip="Tools"><span class="sb-icon">◷</span><span class="sb-label">Timer &amp; Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">RUN</span></div>
 
   </div>
 </div>
@@ -2077,28 +2081,28 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
     </div>
   </div>
   <div class="g4" id="dash-cards">
-    <div class="card" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness')">
+    <div class="card" data-widget="calories" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness')">
       <div class="card-accent" style="background:var(--o)"></div>
       <div class="card-label">CALORIES TODAY</div>
       <div class="card-val" style="color:var(--o2);font-size:16px" id="dc-cal">0</div>
       <div class="card-sub" id="dc-cal-sub">of 0 kcal goal</div>
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--o)" id="dc-cal-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness');setTimeout(function(){switchNtrTab('water');},50)">
+    <div class="card" data-widget="water" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness');setTimeout(function(){switchNtrTab('water');},50)">
       <div class="card-accent" style="background:var(--c2)"></div>
       <div class="card-label">WATER TODAY</div>
       <div class="card-val" style="color:var(--c);font-size:16px" id="dc-water">0</div>
       <div class="card-sub" id="dc-water-sub">of 0 L goal</div>
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--c2)" id="dc-water-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness');setTimeout(function(){switchFitnessTab('workout');},50)">
+    <div class="card" data-widget="workout" onclick="nav(document.querySelector('[onclick*=fitness]'),'fitness');setTimeout(function(){switchFitnessTab('workout');},50)">
       <div class="card-accent" style="background:var(--g)"></div>
       <div class="card-label">WORKOUT</div>
       <div class="card-val" style="font-size:16px" id="dc-ex">0/0</div>
       <div class="card-sub" id="dc-ex-sub">exercises done</div>
       <div class="card-bar"><div class="card-bar-fill" id="dc-ex-bar"></div></div>
     </div>
-    <div class="card" onclick="nav(document.querySelector('.sb-item[onclick*=track]'),'habits')">
+    <div class="card" data-widget="habits" onclick="nav(document.querySelector('.sb-item[onclick*=track]'),'habits')">
       <div class="card-accent" style="background:var(--p)"></div>
       <div class="card-label">HABITS</div>
       <div class="card-val" style="color:var(--p);font-size:16px" id="dc-hab">0/0</div>
@@ -3437,6 +3441,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
         <div class="admin-sb-item" id="adminNav-analytics" onclick="adminNav('analytics')">Analytics</div>
         <div class="admin-sb-item" id="adminNav-audit" onclick="adminNav('audit')">Audit Log</div>
         <div class="admin-sb-item" id="adminNav-system" onclick="adminNav('system')">System Settings</div>
+        <div class="admin-sb-item" id="adminNav-datatools" onclick="adminNav('datatools')">Data Tools</div>
       </div>
       <div class="admin-content">
 
@@ -3584,6 +3589,28 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
             <button class="admin-exit-btn" onclick="loadAdminSystemSettings(true)">[ ⟳ REFRESH ]</button>
           </div>
           <div id="adminSystemBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading system settings…</div></div>
+        </div>
+
+        <!-- ===== DATA TOOLS SECTION ===== -->
+        <div id="admin-sec-datatools" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Data Tools</div>
+            <button class="admin-exit-btn" onclick="loadAdminDataTools(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div class="admin-card">
+            <div class="admin-todo-list">
+              <li>Read-only diagnostics. No bulk-delete tooling exists here by design.</li>
+              <li>Export uses each user's existing "EXPORT JSON" button on their detail panel.</li>
+            </div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-title">Migration Status</div>
+            <div id="adminMigrationStatus" style="font-size:11px;color:var(--t2)">Loading…</div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-title">Data Integrity Check</div>
+            <div id="adminIntegrityResults" style="font-size:11px;color:var(--t2)">Loading…</div>
+          </div>
         </div>
 
         <!-- ===== USER DETAIL (overlay panel) ===== -->
@@ -3793,10 +3820,28 @@ async function tryMigrateLegacyAdmin(newDocId, email, uid) {
   }
 }
 
+// Cached onboarding defaults from admin/appConfig, refreshed at boot so
+// getDefaultState() (called synchronously from several places) can use
+// admin-configured values without becoming async itself. Falls back to
+// the hardcoded defaults below if the config hasn't loaded yet or fails.
+var _cachedOnboardingDefaults = null;
+function primeOnboardingDefaultsCache() {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    window._fsGetDoc(ref).then(function(snap){
+      if (snap.exists() && snap.data().onboarding) _cachedOnboardingDefaults = snap.data().onboarding;
+    }).catch(function(e){ console.error('primeOnboardingDefaultsCache failed:', e); });
+  } catch(e) { console.error(e); }
+}
+waitForFirebase(primeOnboardingDefaultsCache);
+
 function getDefaultState(id) {
+  var d = _cachedOnboardingDefaults || {};
   return {
     cfg: {name: id.toUpperCase(), initials: (id.slice(0,2)).toUpperCase(), gender:'Male', age:null,
-          calGoal:2200, protGoal:160, carbGoal:220, fatGoal:65, fiberGoal:30, waterGoal:12},
+          calGoal:d.defaultCalGoal||2200, protGoal:d.defaultProtGoal||160, carbGoal:d.defaultCarbGoal||220,
+          fatGoal:d.defaultFatGoal||65, fiberGoal:30, waterGoal:d.defaultWaterGoal||12},
     today: today(),
     dailyData: {},
     habits: [],
@@ -3832,6 +3877,46 @@ function loginSuccess(id, docId, silent) {
   updateAdminMenuVisibility();
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
   trackEvent('login');
+  applyAppRuntimeConfig();
+}
+
+// Reads admin/appConfig (navigation visibility/order, dashboard widget
+// visibility/order) and applies it to the ALREADY-RENDERED sidebar/dashboard
+// DOM — additive runtime styling only, never regenerates the markup, so the
+// existing UI structure and behavior are preserved untouched. Fails silently
+// (everything stays visible in its default order) if config can't be read.
+async function applyAppRuntimeConfig() {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    var snap = await window._fsGetDoc(ref);
+    if (!snap.exists()) return;
+    var cfg = snap.data();
+
+    if (cfg.navigation && cfg.navigation.length) {
+      var navEl = document.getElementById('sbNav');
+      cfg.navigation.forEach(function(n){
+        var item = navEl ? navEl.querySelector('[data-page="'+n.page+'"]') : null;
+        if (!item) return;
+        item.style.display = n.visible === false ? 'none' : '';
+        item.style.order = String(n.order != null ? n.order : 0);
+      });
+      if (navEl) navEl.style.display = 'flex';
+      if (navEl) navEl.style.flexDirection = 'column';
+    }
+
+    if (cfg.dashboardWidgets && cfg.dashboardWidgets.length) {
+      var dashCards = document.getElementById('dash-cards');
+      cfg.dashboardWidgets.forEach(function(w){
+        var item = dashCards ? dashCards.querySelector('[data-widget="'+w.key+'"]') : null;
+        if (!item) return;
+        item.style.display = w.visible === false ? 'none' : '';
+        item.style.order = String(w.order != null ? w.order : 0);
+      });
+    }
+  } catch (e) {
+    console.error('applyAppRuntimeConfig failed (falling back to defaults):', e);
+  }
 }
 
 // ===================== ONBOARDING (new Google accounts only) =====================
@@ -4054,6 +4139,11 @@ function saveToFirebase(cb) {
       lastSaved: new Date().toISOString()
     }, {merge: true}).then(() => {
       setFbStatus(true, 'Synced ✓');
+      // Additive UID mirror (§1/§17) — never blocks or gates the real save.
+      var u = window._auth && window._auth.currentUser;
+      if (u && u.uid && typeof mirrorToUidStructure === 'function') {
+        mirrorToUidStructure(u.uid, CURRENT_USER_DOC_ID, S);
+      }
       if(cb) cb();
     }).catch(e => {
       console.error('Save error:', e);
@@ -7010,7 +7100,7 @@ html.alpha #ai-key-inp{background:#f8f9fc;color:var(--t);}
     </div>
     <button id="ai-close-btn" onclick="toggleAIPanel()">✕</button>
   </div>
-  <div id="ai-key-row">
+  <div id="ai-key-row" style="display:none">
     <span class="ai-key-lbl">API KEY</span>
     <input id="ai-key-inp" type="password" placeholder="AIza… (saved locally)" />
     <button id="ai-key-save" onclick="aiSaveKey()">[ SAVE ]</button>
@@ -7028,11 +7118,8 @@ html.alpha #ai-key-inp{background:#f8f9fc;color:var(--t);}
 </div>
 `);
 
-  // Load saved key
-  try {
-    var k = localStorage.getItem('gemini_api_key');
-    if (k) document.getElementById('ai-key-inp').value = k;
-  } catch(e){}
+  // Client-side Gemini key storage removed (§15 — key now lives only in
+  // the fitOsGeminiProxy Cloud Function's server-side secret).
 })();
 
 // ── Core Agent Logic ─────────────────────────────────────────────────
@@ -7046,18 +7133,14 @@ function toggleAIPanel() {
   }
 }
 
+// Client-side API key entry is no longer used — the Gemini key lives only
+// in the fitOsGeminiProxy Cloud Function's secret (§15). Kept as no-ops so
+// nothing else in the file breaks if it's still referenced.
 function aiSaveKey() {
-  var k = document.getElementById('ai-key-inp').value.trim();
-  if (!k) { aiAppendMsg('system','⚠ Enter your Gemini API key first.'); return; }
-  try { localStorage.setItem('gemini_api_key', k); } catch(e){}
-  aiAppendMsg('system','✅ API key saved. You can now chat!');
+  aiAppendMsg('system', '✅ No API key needed — the AI Agent is ready to use.');
 }
 
-function aiGetKey() {
-  var inp = (document.getElementById('ai-key-inp').value || '').trim();
-  if (inp) return inp;
-  try { return localStorage.getItem('gemini_api_key') || ''; } catch(e){ return ''; }
-}
+function aiGetKey() { return ''; }
 
 function aiInputKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiSend(); }
@@ -7447,15 +7530,12 @@ function aiExecuteTool(name, args) {
 var _aiHistory = [];
 
 async function callGemini(userPrompt) {
-  var apiKey = aiGetKey();
-  if (!apiKey) throw new Error('No Gemini API key. Please enter your key above.');
+  if (!window._fnsGeminiProxy) throw new Error('AI service is not available right now. Please refresh and try again.');
 
   // Add user turn
   _aiHistory.push({ role:'user', parts:[{ text: userPrompt }] });
 
-  var endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + apiKey;
-  var systemInstruction = { parts:[{ text: aiBuildContext() }] };
-  var generationConfig = { temperature: 0.3, max_output_tokens: 1024 };
+  var systemInstructionText = aiBuildContext();
   var textParts = [];
   // Multiple rounds let the model call getHistory, see the results, then call
   // action tools (logWater/updateHabit/etc.) based on what it found — needed
@@ -7463,28 +7543,21 @@ async function callGemini(userPrompt) {
   var maxRounds = 6;
 
   for (var round = 0; round < maxRounds; round++) {
-    var body = {
-      system_instruction: systemInstruction,
-      contents: _aiHistory,
-      tools: GEMINI_TOOLS,
-      tool_config: { function_calling_config: { mode: 'AUTO' } },
-      generation_config: generationConfig
-    };
-
-    var resp = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    if (!resp.ok) {
-      var errText = await resp.text();
-      var errJson;
-      try { errJson = JSON.parse(errText); } catch(e){}
-      throw new Error(errJson && errJson.error ? errJson.error.message : 'HTTP '+resp.status);
+    var data;
+    try {
+      // Calls the fitOsGeminiProxy Cloud Function — the Gemini API key lives
+      // only in that function's server-side secret, never in this browser.
+      var result = await window._fnsGeminiProxy({
+        systemInstruction: systemInstructionText,
+        contents: _aiHistory,
+        tools: GEMINI_TOOLS
+      });
+      data = result.data;
+    } catch (err) {
+      var msg = (err && err.message) ? err.message : 'AI request failed.';
+      throw new Error(msg);
     }
 
-    var data = await resp.json();
     var candidate = data.candidates && data.candidates[0];
     if (!candidate || !candidate.content) throw new Error('Empty response from Gemini');
 
@@ -7505,9 +7578,9 @@ async function callGemini(userPrompt) {
     for (var i = 0; i < funcCalls.length; i++) {
       var fc = funcCalls[i];
       var actionMsg = aiAppendMsg('agent action', '⚙ Calling: '+fc.name+'…');
-      var result = aiExecuteTool(fc.name, fc.args || {});
-      actionMsg.innerHTML = (typeof result === 'string') ? result : ('📊 '+fc.name+' → '+(Array.isArray(result) ? result.length+' day(s) fetched' : 'done'));
-      toolResults.push({ functionResponse: { name: fc.name, id: fc.id, response: { result: result } } });
+      var toolResult = aiExecuteTool(fc.name, fc.args || {});
+      actionMsg.innerHTML = (typeof toolResult === 'string') ? toolResult : ('📊 '+fc.name+' → '+(Array.isArray(toolResult) ? toolResult.length+' day(s) fetched' : 'done'));
+      toolResults.push({ functionResponse: { name: fc.name, id: fc.id, response: { result: toolResult } } });
     }
 
     // Feed tool results back so the model can either call more tools or reply in text
@@ -7561,7 +7634,165 @@ if (document.fonts && document.fonts.ready) {
 }
 </script>
 
-<!-- ===================== ADMIN BACKEND (Phase 1) =====================
+<!-- ===================== DATA REPOSITORY LAYER (Phase 4) =====================
+  §18 of the build spec: reusable data-access functions instead of scattering
+  Firestore calls through UI code. These wrap the SAME fitos_users blob that
+  save()/saveToFirebase()/loadUserDataIntoState() already use — nothing about
+  the live save/load path changes here, so existing behavior is untouched.
+
+  §1/§17: modular UID-based structure + migration adapter. The new
+  users/{uid}/... tree is written as a MIRROR alongside the existing blob
+  every time a signed-in user saves (see mirrorToUidStructure(), called from
+  saveToFirebase() below). The blob remains the single source of truth for
+  login/loadUserDataIntoState() until migration is verified — per the spec's
+  explicit instruction not to change the normal save/load flow or delete
+  legacy data prematurely. This mirror can be promoted to primary later by
+  swapping loadUserDataIntoState()'s read target once verified. -->
+<script>
+// ---- current-user helpers ----
+function getCurrentUser() {
+  return window._auth && window._auth.currentUser ? window._auth.currentUser : null;
+}
+
+// ---- legacy blob read/write (unchanged behavior, just named per spec) ----
+async function getUserProfile(docId) {
+  var db = window._db;
+  var ref = window._fsDoc(db, 'fitos_users', docId);
+  var snap = await window._fsGetDoc(ref);
+  return snap.exists() ? snap.data() : null;
+}
+async function saveUserProfile(docId, patch) {
+  var db = window._db;
+  var ref = window._fsDoc(db, 'fitos_users', docId);
+  return window._fsSetDoc(ref, patch, {merge:true});
+}
+
+// ---- UID-modular reads, sourced from the parsed blob (mirror-ready) ----
+// These read from the in-memory state S for the CURRENT session (cheapest,
+// always fresh) — once the users/{uid} mirror is promoted to primary, these
+// swap to reading Firestore directly without changing their call signature.
+function getDailyData(dateStr) { return (S.dailyData && S.dailyData[dateStr]) || null; }
+function saveDailyData(dateStr, data) { S.dailyData = S.dailyData || {}; S.dailyData[dateStr] = data; save(); }
+function getUserHabits() { return S.habits || []; }
+function getUserGoals() { return S.goals || []; }
+
+// ---- admin config accessors (thin wrappers around what's already used) ----
+async function getAdminConfig() {
+  var db = window._db;
+  var ref = window._fsDoc(db, 'admin', 'config');
+  var snap = await window._fsGetDoc(ref);
+  return snap.exists() ? snap.data() : null;
+}
+async function updateAdminConfig(patch) {
+  var db = window._db;
+  var ref = window._fsDoc(db, 'admin', 'config');
+  return window._fsSetDoc(ref, patch, {merge:true});
+}
+async function getFeatureFlags() {
+  var db = window._db;
+  var colRef = window._fsCollection(db, 'admin_features');
+  var snap = await window._fsGetDocs(colRef);
+  var out = {};
+  snap.forEach(function(d){ out[d.id] = d.data(); });
+  return out;
+}
+// writeAuditLog() is already defined in the admin script block below.
+
+// ===================== UID MIGRATION ADAPTER =====================
+// Mirrors the current user's blob into users/{uid}/... subcollections.
+// Additive only: never reads from or deletes the legacy fitos_users doc.
+// Failures here are logged but never block the real save.
+async function mirrorToUidStructure(uid, docId, state) {
+  try {
+    var db = window._db;
+    var base = window._fsDoc(db, 'users', uid);
+    await window._fsSetDoc(base, {
+      legacyDocId: docId,
+      mirroredAt: new Date().toISOString()
+    }, {merge:true});
+
+    var profileRef = window._fsDoc(db, 'users/'+uid+'/settings', 'profile');
+    await window._fsSetDoc(profileRef, state.cfg || {}, {merge:true});
+
+    // habits/goals/measurements/vitals are arrays with an `id` field in the
+    // legacy blob — mirror each as its own subcollection doc keyed by that id.
+    var arrayFields = [
+      ['habits','habits'], ['goals','goals'],
+      ['measurements','measurements'], ['vitals','vitals'],
+      ['mealLibrary','mealLibrary'], ['ingredientLibrary','ingredientLibrary']
+    ];
+    for (var i=0;i<arrayFields.length;i++) {
+      var stateKey = arrayFields[i][0], subcol = arrayFields[i][1];
+      var arr = state[stateKey] || [];
+      for (var j=0;j<arr.length;j++) {
+        var item = arr[j];
+        var itemId = String(item.id != null ? item.id : j);
+        var itemRef = window._fsDoc(db, 'users/'+uid+'/'+subcol, itemId);
+        await window._fsSetDoc(itemRef, item, {merge:true});
+      }
+    }
+
+    // Daily data: one doc per YYYY-MM-DD key.
+    var daily = state.dailyData || {};
+    var dailyKeys = Object.keys(daily);
+    for (var k=0;k<dailyKeys.length;k++) {
+      var dref = window._fsDoc(db, 'users/'+uid+'/daily', dailyKeys[k]);
+      await window._fsSetDoc(dref, daily[dailyKeys[k]] || {}, {merge:true});
+    }
+
+    return true;
+  } catch (e) {
+    console.error('mirrorToUidStructure failed (non-blocking):', e);
+    return false;
+  }
+}
+
+// ===================== DATA TOOLS (§13) =====================
+// Read-only diagnostics for the admin panel — no destructive bulk actions.
+async function adminCheckMigrationStatus() {
+  var db = window._db;
+  var colRef = window._fsCollection(db, 'fitos_users');
+  var snap = await window._fsGetDocs(colRef);
+  var total = 0, mirrored = 0, legacyUnclaimed = 0;
+  var checks = [];
+  snap.forEach(function(d){
+    var data = d.data();
+    if (data.migratedTo) { legacyUnclaimed++; return; } // superseded pre-Google doc
+    total++;
+    checks.push({docId: d.id, authUid: data.authUid || null});
+  });
+  for (var i=0;i<checks.length;i++) {
+    if (!checks[i].authUid) continue;
+    try {
+      var uref = window._fsDoc(db, 'users', checks[i].authUid);
+      var usnap = await window._fsGetDoc(uref);
+      if (usnap.exists()) mirrored++;
+    } catch(e) { /* treat as not-yet-mirrored */ }
+  }
+  return { totalAccounts: total, mirroredToUid: mirrored, notYetMirrored: total - mirrored, legacyUnclaimedDocs: legacyUnclaimed };
+}
+
+async function adminDataIntegrityCheck() {
+  var db = window._db;
+  var colRef = window._fsCollection(db, 'fitos_users');
+  var snap = await window._fsGetDocs(colRef);
+  var issues = [];
+  snap.forEach(function(d){
+    var data = d.data();
+    if (data.migratedTo) return;
+    var parsed = null;
+    try { parsed = data.data ? JSON.parse(data.data) : null; } catch(e) {
+      issues.push({docId: d.id, issue: 'Unparseable data JSON'});
+      return;
+    }
+    if (!parsed) { issues.push({docId: d.id, issue: 'Missing data field'}); return; }
+    if (!parsed.cfg) issues.push({docId: d.id, issue: 'Missing cfg/profile'});
+    if (!data.authUid) issues.push({docId: d.id, issue: 'No authUid on record (pre-Google, unmigrated)'});
+  });
+  return issues;
+}
+
+// ===================== ADMIN BACKEND (Phase 1) =====================
   Security model:
   - ADMIN_GOOGLE_EMAIL (declared above, near the Google login code) is the
     single owner identity.
@@ -7679,7 +7910,7 @@ async function writeAuditLog(action, targetType, targetId, before, after) {
 }
 
 // ===================== ADMIN — SECTION NAV =====================
-var ADMIN_SECTIONS = ['dashboard','users','content','appconfig','flags','plans','analytics','audit','system'];
+var ADMIN_SECTIONS = ['dashboard','users','content','appconfig','flags','plans','analytics','audit','system','datatools'];
 function adminNav(section) {
   ADMIN_SECTIONS.forEach(function(s){
     var sec = document.getElementById('admin-sec-'+s);
@@ -7695,6 +7926,7 @@ function adminNav(section) {
   if (section === 'analytics') loadAdminAnalytics(false);
   if (section === 'audit') loadAdminAuditLog(false);
   if (section === 'system') loadAdminSystemSettings(false);
+  if (section === 'datatools') loadAdminDataTools(false);
 }
 
 // ===================== ADMIN — USERS DATA =====================
@@ -8126,7 +8358,22 @@ async function adminPersistContent(action, targetId, before, after) {
 var ADMIN_APPCONFIG_CACHE = null;
 var DEFAULT_APP_CONFIG = {
   greeting: { titlePrefix: 'Welcome back,', namePosition: 'after', titleSuffix: '', description: '' },
-  achievements: [] // {id,title,description,icon,enabled,requirement}
+  achievements: [], // {id,title,description,icon,enabled,requirement}
+  navigation: [
+    {page:'dashboard', label:'Dashboard', visible:true, order:0},
+    {page:'fitness', label:'Fitness', visible:true, order:1},
+    {page:'track', label:'Track', visible:true, order:2},
+    {page:'health', label:'Health', visible:true, order:3},
+    {page:'library', label:'Library', visible:true, order:4},
+    {page:'timer', label:'Timer & Stopwatch', visible:true, order:5}
+  ],
+  dashboardWidgets: [
+    {key:'calories', label:'Calories Today', visible:true, order:0},
+    {key:'water', label:'Water Today', visible:true, order:1},
+    {key:'workout', label:'Workout', visible:true, order:2},
+    {key:'habits', label:'Habits', visible:true, order:3}
+  ],
+  onboarding: { defaultCalGoal:2200, defaultProtGoal:160, defaultCarbGoal:220, defaultFatGoal:65, defaultWaterGoal:12 }
 };
 
 async function loadAdminAppConfig(force) {
@@ -8139,7 +8386,10 @@ async function loadAdminAppConfig(force) {
       var d = snap.data();
       ADMIN_APPCONFIG_CACHE = {
         greeting: Object.assign({}, DEFAULT_APP_CONFIG.greeting, d.greeting||{}),
-        achievements: d.achievements || []
+        achievements: d.achievements || [],
+        navigation: (d.navigation && d.navigation.length) ? d.navigation : DEFAULT_APP_CONFIG.navigation,
+        dashboardWidgets: (d.dashboardWidgets && d.dashboardWidgets.length) ? d.dashboardWidgets : DEFAULT_APP_CONFIG.dashboardWidgets,
+        onboarding: Object.assign({}, DEFAULT_APP_CONFIG.onboarding, d.onboarding||{})
       };
     } else {
       ADMIN_APPCONFIG_CACHE = JSON.parse(JSON.stringify(DEFAULT_APP_CONFIG));
@@ -8158,6 +8408,9 @@ function renderAdminAppConfig() {
   if (!body || !ADMIN_APPCONFIG_CACHE) return;
   var g = ADMIN_APPCONFIG_CACHE.greeting;
   var ach = ADMIN_APPCONFIG_CACHE.achievements || [];
+  var nav = (ADMIN_APPCONFIG_CACHE.navigation||[]).slice().sort(function(a,b){return a.order-b.order;});
+  var widgets = (ADMIN_APPCONFIG_CACHE.dashboardWidgets||[]).slice().sort(function(a,b){return a.order-b.order;});
+  var ob = ADMIN_APPCONFIG_CACHE.onboarding || {};
   body.innerHTML =
     '<div class="admin-card">' +
       '<div class="admin-card-title">Greeting</div>' +
@@ -8166,6 +8419,37 @@ function renderAdminAppConfig() {
       '<div class="admin-form-row"><label>Suffix</label><input class="admin-inp" id="cfgGreetSuffix" style="flex:1" value="'+_esc(g.titleSuffix)+'"/></div>' +
       '<div class="admin-form-row"><label>Description</label><input class="admin-inp" id="cfgGreetDesc" style="flex:1" value="'+_esc(g.description)+'"/></div>' +
       '<button class="admin-exit-btn" onclick="adminSaveGreeting()">[ ✓ SAVE GREETING ]</button>' +
+    '</div>' +
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Navigation (visibility &amp; order)</div>' +
+      nav.map(function(n,i){
+        return '<div class="admin-flag-row"><div><div class="admin-flag-name">'+_esc(n.label)+'</div><div class="admin-flag-key">'+n.page+'</div></div>' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<input class="admin-inp" type="number" style="width:52px" value="'+n.order+'" onchange="adminSetNavOrder(\''+n.page+'\',this.value)"/>' +
+            '<div class="admin-switch'+(n.visible?' on':'')+'" onclick="adminToggleNavVisible(\''+n.page+'\')"><div class="knob"></div></div>' +
+          '</div></div>';
+      }).join('') +
+      '<button class="admin-exit-btn" style="margin-top:8px" onclick="adminSaveNavConfig()">[ ✓ SAVE NAVIGATION ]</button>' +
+    '</div>' +
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Dashboard Widgets (visibility &amp; order)</div>' +
+      widgets.map(function(w,i){
+        return '<div class="admin-flag-row"><div><div class="admin-flag-name">'+_esc(w.label)+'</div><div class="admin-flag-key">'+w.key+'</div></div>' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<input class="admin-inp" type="number" style="width:52px" value="'+w.order+'" onchange="adminSetWidgetOrder(\''+w.key+'\',this.value)"/>' +
+            '<div class="admin-switch'+(w.visible?' on':'')+'" onclick="adminToggleWidgetVisible(\''+w.key+'\')"><div class="knob"></div></div>' +
+          '</div></div>';
+      }).join('') +
+      '<button class="admin-exit-btn" style="margin-top:8px" onclick="adminSaveWidgetConfig()">[ ✓ SAVE WIDGETS ]</button>' +
+    '</div>' +
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Onboarding — Default Setup Values</div>' +
+      '<div class="admin-form-row"><label>Cal Goal</label><input class="admin-inp" style="width:100px" id="obCal" value="'+(ob.defaultCalGoal!=null?ob.defaultCalGoal:'')+'"/></div>' +
+      '<div class="admin-form-row"><label>Protein Goal</label><input class="admin-inp" style="width:100px" id="obProt" value="'+(ob.defaultProtGoal!=null?ob.defaultProtGoal:'')+'"/></div>' +
+      '<div class="admin-form-row"><label>Carb Goal</label><input class="admin-inp" style="width:100px" id="obCarb" value="'+(ob.defaultCarbGoal!=null?ob.defaultCarbGoal:'')+'"/></div>' +
+      '<div class="admin-form-row"><label>Fat Goal</label><input class="admin-inp" style="width:100px" id="obFat" value="'+(ob.defaultFatGoal!=null?ob.defaultFatGoal:'')+'"/></div>' +
+      '<div class="admin-form-row"><label>Water Goal</label><input class="admin-inp" style="width:100px" id="obWater" value="'+(ob.defaultWaterGoal!=null?ob.defaultWaterGoal:'')+'"/></div>' +
+      '<button class="admin-exit-btn" onclick="adminSaveOnboardingConfig()">[ ✓ SAVE ONBOARDING DEFAULTS ]</button>' +
     '</div>' +
     '<div class="admin-card">' +
       '<div style="display:flex;justify-content:space-between;align-items:center">' +
@@ -8183,6 +8467,65 @@ function renderAdminAppConfig() {
           '</div></div>';
       }).join('') : '<div style="font-size:11px;color:var(--t2);padding:8px 0">No achievements defined yet.</div>') +
     '</div>';
+}
+
+function adminToggleNavVisible(page) {
+  var n = ADMIN_APPCONFIG_CACHE.navigation.find(function(x){return x.page===page;});
+  if (n) n.visible = !n.visible;
+  renderAdminAppConfig();
+}
+function adminSetNavOrder(page, val) {
+  var n = ADMIN_APPCONFIG_CACHE.navigation.find(function(x){return x.page===page;});
+  if (n) n.order = parseInt(val,10) || 0;
+}
+async function adminSaveNavConfig() {
+  var before = JSON.parse(JSON.stringify(ADMIN_APPCONFIG_CACHE.navigation));
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    await window._fsSetDoc(ref, {navigation: ADMIN_APPCONFIG_CACHE.navigation}, {merge:true});
+    writeAuditLog('CONFIG_UPDATED', 'appConfig.navigation', 'admin/appConfig', before, ADMIN_APPCONFIG_CACHE.navigation);
+    toast('Navigation config saved');
+  } catch(e) { console.error(e); toast('Failed to save (see console)'); }
+}
+
+function adminToggleWidgetVisible(key) {
+  var w = ADMIN_APPCONFIG_CACHE.dashboardWidgets.find(function(x){return x.key===key;});
+  if (w) w.visible = !w.visible;
+  renderAdminAppConfig();
+}
+function adminSetWidgetOrder(key, val) {
+  var w = ADMIN_APPCONFIG_CACHE.dashboardWidgets.find(function(x){return x.key===key;});
+  if (w) w.order = parseInt(val,10) || 0;
+}
+async function adminSaveWidgetConfig() {
+  var before = JSON.parse(JSON.stringify(ADMIN_APPCONFIG_CACHE.dashboardWidgets));
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    await window._fsSetDoc(ref, {dashboardWidgets: ADMIN_APPCONFIG_CACHE.dashboardWidgets}, {merge:true});
+    writeAuditLog('CONFIG_UPDATED', 'appConfig.dashboardWidgets', 'admin/appConfig', before, ADMIN_APPCONFIG_CACHE.dashboardWidgets);
+    toast('Widget config saved');
+  } catch(e) { console.error(e); toast('Failed to save (see console)'); }
+}
+
+async function adminSaveOnboardingConfig() {
+  var before = Object.assign({}, ADMIN_APPCONFIG_CACHE.onboarding);
+  var after = {
+    defaultCalGoal: parseInt(document.getElementById('obCal').value,10) || 2200,
+    defaultProtGoal: parseInt(document.getElementById('obProt').value,10) || 160,
+    defaultCarbGoal: parseInt(document.getElementById('obCarb').value,10) || 220,
+    defaultFatGoal: parseInt(document.getElementById('obFat').value,10) || 65,
+    defaultWaterGoal: parseInt(document.getElementById('obWater').value,10) || 12
+  };
+  ADMIN_APPCONFIG_CACHE.onboarding = after;
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    await window._fsSetDoc(ref, {onboarding: after}, {merge:true});
+    writeAuditLog('CONFIG_UPDATED', 'appConfig.onboarding', 'admin/appConfig', before, after);
+    toast('Onboarding defaults saved');
+  } catch(e) { console.error(e); toast('Failed to save (see console)'); }
 }
 
 async function adminSaveGreeting() {
@@ -8532,6 +8875,39 @@ async function adminSaveSystemSettings() {
 
 function _esc(s) {
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===================== ADMIN — DATA TOOLS =====================
+async function loadAdminDataTools(force) {
+  var migEl = document.getElementById('adminMigrationStatus');
+  var intEl = document.getElementById('adminIntegrityResults');
+  if (migEl) migEl.textContent = 'Checking migration status…';
+  if (intEl) intEl.textContent = 'Running integrity checks…';
+  try {
+    var status = await adminCheckMigrationStatus();
+    if (migEl) {
+      migEl.innerHTML =
+        '<div class="admin-kv"><span class="k">Total accounts</span><span class="v">'+status.totalAccounts+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Mirrored to users/{uid}</span><span class="v" style="color:var(--g)">'+status.mirroredToUid+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Not yet mirrored</span><span class="v" style="color:var(--o2)">'+status.notYetMirrored+'</span></div>' +
+        '<div class="admin-kv"><span class="k">Superseded legacy docs</span><span class="v">'+status.legacyUnclaimedDocs+'</span></div>' +
+        '<div style="font-size:9px;color:var(--t2);margin-top:6px">Mirroring happens automatically on next save/sync for each account — no action needed.</div>';
+    }
+  } catch(e) {
+    console.error(e);
+    if (migEl) migEl.textContent = 'Failed to check migration status.';
+  }
+  try {
+    var issues = await adminDataIntegrityCheck();
+    if (intEl) {
+      intEl.innerHTML = issues.length
+        ? issues.map(function(i){ return '<div class="admin-kv"><span class="k">'+i.docId+'</span><span class="v" style="color:var(--red)">'+i.issue+'</span></div>'; }).join('')
+        : '<div style="color:var(--g)">No integrity issues found.</div>';
+    }
+  } catch(e) {
+    console.error(e);
+    if (intEl) intEl.textContent = 'Failed to run integrity check.';
+  }
 }
 
 // ===================== ADMIN — AUDIT LOG =====================

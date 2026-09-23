@@ -3477,13 +3477,23 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
             <button class="admin-exit-btn" onclick="loadAdminUsers(true)">[ ⟳ REFRESH ]</button>
           </div>
           <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-            <input class="admin-inp" id="adminUserSearch" type="text" placeholder="Search name or email…" oninput="renderAdminUsersTable()" style="flex:2;min-width:180px"/>
-            <select class="admin-inp" id="adminUserStatusFilter" onchange="renderAdminUsersTable()" style="min-width:120px">
+            <input class="admin-inp" id="adminUserSearch" type="text" placeholder="Search name or email…" oninput="adminUsersFilterChanged()" style="flex:2;min-width:180px"/>
+            <select class="admin-inp" id="adminUserPlanFilter" onchange="adminUsersFilterChanged()" style="min-width:110px">
+              <option value="">All plans</option>
+              <option value="free">Free</option>
+              <option value="pro">Pro</option>
+            </select>
+            <select class="admin-inp" id="adminUserOnboardFilter" onchange="adminUsersFilterChanged()" style="min-width:130px">
+              <option value="">Onboarding: all</option>
+              <option value="yes">Onboarded</option>
+              <option value="no">Not onboarded</option>
+            </select>
+            <select class="admin-inp" id="adminUserStatusFilter" onchange="adminUsersFilterChanged()" style="min-width:120px">
               <option value="">All statuses</option>
               <option value="active">Active</option>
               <option value="suspended">Suspended</option>
             </select>
-            <select class="admin-inp" id="adminUserSort" onchange="renderAdminUsersTable()" style="min-width:150px">
+            <select class="admin-inp" id="adminUserSort" onchange="adminUsersFilterChanged()" style="min-width:150px">
               <option value="created_desc">Newest first</option>
               <option value="created_asc">Oldest first</option>
               <option value="active_desc">Most recently active</option>
@@ -3829,6 +3839,23 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
       updatedAt: new Date().toISOString() };
   }
 
+  // Admin-only (Security Rules: owner). Merges a validated patch into users/{uid}/profile/main.cfg and bumps the
+  // sync marker so the user's open devices reload on next focus. Returns {before, after} or null if nothing changed.
+  async function adminUpdateProfile(u, patch){
+    var db = window._db, pref = window._fsDoc(db, 'users', u, 'profile', 'main');
+    var snap = await window._fsGetDoc(pref);
+    if (!snap.exists()) throw new Error('User profile not found in modular storage');
+    var d = snap.data(), cfg = d.cfg || {}, before = {}, after = {}, any = false;
+    Object.keys(patch).forEach(function(k){
+      if (cfg[k] !== patch[k]) { before[k] = (cfg[k] === undefined ? null : cfg[k]); after[k] = patch[k]; any = true; }
+    });
+    if (!any) return null;
+    var now = new Date().toISOString();
+    await window._fsSetDoc(pref, { cfg: Object.assign({}, cfg, patch), _updatedAt: now }, { merge: true });
+    await window._fsSetDoc(window._fsDoc(db, 'users', u), { uid: u, lastSyncedAt: now, lastWriter: 'admin' }, { merge: true });
+    return { before: before, after: after };
+  }
+
   // Admin: full state of another user from modular storage (null if that user isn't migrated yet).
   async function loadUserState(u){
     var root = await window._fsGetDoc(window._fsDoc(window._db, 'users', u));
@@ -3890,7 +3917,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
   window.dataService = {
     SCHEMA_VERSION: SCHEMA_VERSION, bootstrap: bootstrap, sync: sync, deleteAll: deleteAll,
     isActive: function(){ return active; }, buildBackup: buildBackup, validateBackup: validateBackup,
-    refreshIfRemoteChanged: refreshIfRemoteChanged, summarize: summarize, loadUserState: loadUserState,
+    refreshIfRemoteChanged: refreshIfRemoteChanged, summarize: summarize, loadUserState: loadUserState, adminUpdateProfile: adminUpdateProfile,
     _internals: { split: split, join: join, canon: canon, hash: hash, ensureIds: ensureIds, clean: clean }
   };
 })();
@@ -8072,6 +8099,12 @@ function _adminTimeAgo(iso) {
   return Math.floor(months/12)+'y ago';
 }
 
+// SECURITY: user documents are writable by their owners, so every user-controlled value that reaches the
+// admin UI (innerHTML) is escaped or type-coerced here, once, at the boundary.
+function _isoOrNull(x) { return (typeof x === 'string' && /^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/.test(x)) ? x : null; }
+function _numOrNull(x) { var n = Number(x); return (x === null || x === undefined || x === '' || !isFinite(n)) ? null : n; }
+function _numOr0(x) { var n = Number(x); return isFinite(n) ? n : 0; }
+
 function _adminNormalizeUser(docId, raw) {
   var parsed = {};
   try { parsed = raw.data ? JSON.parse(raw.data) : {}; } catch(e) { parsed = {}; }
@@ -8079,27 +8112,28 @@ function _adminNormalizeUser(docId, raw) {
   var sm = raw.summary || dataService.summarize(parsed); // summary (Stage B) or, for not-yet-migrated users, the legacy blob
   return {
     docId: docId,
-    name: sm.name || cfg.name || raw.userId || docId,
-    email: raw.authEmail || raw.userId || '—',
-    uid: raw.authUid || '—',
-    createdAt: raw.createdAt || null,
-    lastLogin: raw.lastLogin || null,
-    lastSaved: raw.lastSaved || null,
-    status: raw.status || 'active',
-    plan: raw.plan || 'free', // placeholder — no real plan/billing system exists yet
+    nameRaw: String(sm.name || cfg.name || raw.userId || docId),
+    name: _esc(sm.name || cfg.name || raw.userId || docId),
+    email: _esc(raw.authEmail || raw.userId || '—'),
+    uid: _esc(raw.authUid || '—'),
+    createdAt: _isoOrNull(raw.createdAt),
+    lastLogin: _isoOrNull(raw.lastLogin),
+    lastSaved: _isoOrNull(raw.lastSaved),
+    status: (raw.status === 'suspended' || raw.status === 'deleted') ? raw.status : 'active',
+    plan: (raw.plan === 'pro') ? 'pro' : 'free', // placeholder — real plan/billing system arrives in Phase 4
     onboarded: sm.onboarded !== false,
-    gender: sm.gender || '—',
-    age: sm.age || null,
-    habitsCount: sm.habitsCount || 0,
-    goalsCount: sm.goalsCount || 0,
-    measurementsCount: sm.measurementsCount || 0,
-    vitalsCount: sm.vitalsCount || 0,
-    mealLibraryCount: sm.mealLibraryCount || 0,
-    ingredientLibraryCount: sm.ingredientLibraryCount || 0,
-    streak: sm.streak || 0,
-    dailyDataDays: sm.dailyDataDays || 0,
-    lastMeasurement: sm.lastMeasurement || null,
-    lastVital: sm.lastVital || null,
+    gender: _esc(sm.gender || '—'),
+    age: _numOrNull(sm.age),
+    habitsCount: _numOr0(sm.habitsCount),
+    goalsCount: _numOr0(sm.goalsCount),
+    measurementsCount: _numOr0(sm.measurementsCount),
+    vitalsCount: _numOr0(sm.vitalsCount),
+    mealLibraryCount: _numOr0(sm.mealLibraryCount),
+    ingredientLibraryCount: _numOr0(sm.ingredientLibraryCount),
+    streak: _numOr0(sm.streak),
+    dailyDataDays: _numOr0(sm.dailyDataDays),
+    lastMeasurement: sm.lastMeasurement ? { weight: _numOrNull(sm.lastMeasurement.weight) } : null,
+    lastVital: sm.lastVital ? { hr: _numOrNull(sm.lastVital.hr) } : null,
     _raw: raw
   };
 }
@@ -8166,23 +8200,31 @@ function renderAdminDashboard() {
   }).join('') : '<div style="font-size:10px;color:var(--t2)">No data yet.</div>';
 }
 
+var ADMIN_USERS_PAGE = 0, ADMIN_USERS_PAGE_SIZE = 25;
+function adminUsersFilterChanged() { ADMIN_USERS_PAGE = 0; renderAdminUsersTable(); }
+function adminUsersPage(delta) { ADMIN_USERS_PAGE = Math.max(0, ADMIN_USERS_PAGE + delta); renderAdminUsersTable(); }
+
 function renderAdminUsersTable() {
   var wrap = document.getElementById('adminUsersTableWrap');
   if (!wrap || !ADMIN_USERS_CACHE) return;
   var search = (document.getElementById('adminUserSearch').value || '').toLowerCase();
   var statusFilter = document.getElementById('adminUserStatusFilter').value;
   var sortMode = document.getElementById('adminUserSort').value;
+  var planFilter = document.getElementById('adminUserPlanFilter').value;
+  var onbFilter = document.getElementById('adminUserOnboardFilter').value;
 
   var list = ADMIN_USERS_CACHE.filter(function(u){
-    var matchSearch = !search || u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search);
+    var matchSearch = !search || u.nameRaw.toLowerCase().includes(search) || u.email.toLowerCase().includes(_esc(search));
     var matchStatus = !statusFilter || u.status === statusFilter;
-    return matchSearch && matchStatus;
+    var matchPlan = !planFilter || u.plan === planFilter;
+    var matchOnb = !onbFilter || (onbFilter === 'yes' ? u.onboarded : !u.onboarded);
+    return matchSearch && matchStatus && matchPlan && matchOnb;
   });
 
   list.sort(function(a,b){
     if (sortMode === 'created_asc') return new Date(a.createdAt||0) - new Date(b.createdAt||0);
     if (sortMode === 'active_desc') return new Date(b.lastSaved||b.lastLogin||0) - new Date(a.lastSaved||a.lastLogin||0);
-    if (sortMode === 'name_asc') return a.name.localeCompare(b.name);
+    if (sortMode === 'name_asc') return a.nameRaw.localeCompare(b.nameRaw);
     return new Date(b.createdAt||0) - new Date(a.createdAt||0); // created_desc default
   });
 
@@ -8191,10 +8233,19 @@ function renderAdminUsersTable() {
     return;
   }
 
+  var total = list.length, pages = Math.max(1, Math.ceil(total / ADMIN_USERS_PAGE_SIZE));
+  if (ADMIN_USERS_PAGE >= pages) ADMIN_USERS_PAGE = pages - 1;
+  var from = ADMIN_USERS_PAGE * ADMIN_USERS_PAGE_SIZE;
+  var pageList = list.slice(from, from + ADMIN_USERS_PAGE_SIZE);
+  var pager = '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 4px;font-size:10px;color:var(--t2)">' +
+    '<span>' + (from + 1) + '–' + (from + pageList.length) + ' of ' + total + '</span>' +
+    '<span><button class="admin-exit-btn" ' + (ADMIN_USERS_PAGE === 0 ? 'disabled style="opacity:.4"' : '') + ' onclick="adminUsersPage(-1)">[ ← PREV ]</button> ' +
+    'Page ' + (ADMIN_USERS_PAGE + 1) + '/' + pages + ' ' +
+    '<button class="admin-exit-btn" ' + (ADMIN_USERS_PAGE >= pages - 1 ? 'disabled style="opacity:.4"' : '') + ' onclick="adminUsersPage(1)">[ NEXT → ]</button></span></div>';
   wrap.innerHTML = '<table class="admin-table"><thead><tr>' +
     '<th>Name</th><th>Email</th><th>Created</th><th>Last Active</th><th>Status</th><th>Plan</th><th></th>' +
     '</tr></thead><tbody>' +
-    list.map(function(u){
+    pageList.map(function(u){
       return '<tr>' +
         '<td class="u-name" onclick="openAdminUserDetail(\''+u.docId+'\')">'+u.name+'</td>' +
         '<td>'+u.email+'</td>' +
@@ -8207,13 +8258,13 @@ function renderAdminUsersTable() {
         '</div></td>' +
       '</tr>';
     }).join('') +
-    '</tbody></table>';
+    '</tbody></table>' + pager;
 }
 
 function openAdminUserDetail(docId) {
   var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
   if (!u) return;
-  document.getElementById('adminDetailName').textContent = u.name;
+  document.getElementById('adminDetailName').textContent = u.nameRaw;
   var lastMeas = u.lastMeasurement;
   var lastVit = u.lastVital;
   document.getElementById('adminDetailBody').innerHTML =
@@ -8253,15 +8304,84 @@ function openAdminUserDetail(docId) {
       (u.status==='suspended'
         ? '<button class="admin-exit-btn" onclick="adminActivateUser(\''+u.docId+'\')">[ ✓ ACTIVATE ACCOUNT ]</button>'
         : '<button class="admin-exit-btn" onclick="adminSuspendUser(\''+u.docId+'\')">[ ⛔ SUSPEND ACCOUNT ]</button>') +
+      '<button class="admin-exit-btn" onclick="adminOpenEdit(\''+u.docId+'\')">[ ✎ EDIT PROFILE ]</button>' +
       '<button class="admin-exit-btn" onclick="adminExportUser(\''+u.docId+'\')">[ ⭳ EXPORT JSON ]</button>' +
       '<button class="admin-exit-btn" style="border-color:var(--red);color:var(--red)" onclick="adminDeleteUser(\''+u.docId+'\')">[ ✕ DELETE ACCOUNT ]</button>' +
-    '</div>';
+    '</div><div id="adminEditBox" style="margin-top:12px"></div>';
   document.getElementById('adminUserDetailPanel').classList.add('open');
 }
 
 function closeAdminUserDetail() {
   var p = document.getElementById('adminUserDetailPanel');
   if (p) p.classList.remove('open');
+}
+
+// ---- Edit "safe" profile data: display name + daily targets only. Validated, audited (USER_EDITED). ----
+var ADMIN_EDIT_FIELDS = [
+  {k:'name',      label:'Display name',   type:'text',   max:40},
+  {k:'calGoal',   label:'Calorie goal',   type:'number', min:800, max:8000},
+  {k:'protGoal',  label:'Protein goal g', type:'number', min:0,   max:500},
+  {k:'carbGoal',  label:'Carb goal g',    type:'number', min:0,   max:1000},
+  {k:'fatGoal',   label:'Fat goal g',     type:'number', min:0,   max:500},
+  {k:'fiberGoal', label:'Fiber goal g',   type:'number', min:0,   max:200},
+  {k:'waterGoal', label:'Water (glasses)',type:'number', min:0,   max:50}
+];
+async function adminOpenEdit(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
+  var box = document.getElementById('adminEditBox');
+  if (!u || !box) return;
+  box.innerHTML = '<div style="font-size:11px;color:var(--t2)">Loading profile…</div>';
+  try {
+    var authUid = u._raw && u._raw.authUid;
+    var st = authUid ? await dataService.loadUserState(authUid) : null;
+    if (!st) {
+      box.innerHTML = '<div style="font-size:11px;color:var(--o2)">Editing is disabled: this user is not on the new data structure yet (they need to log in once), so edits could be applied to stale data.</div>';
+      return;
+    }
+    var c = st.cfg || {};
+    box.innerHTML = '<div class="admin-detail-sec"><h4>Edit profile (audited)</h4>' +
+      ADMIN_EDIT_FIELDS.map(function(f){
+        return '<div class="admin-form-row"><label>'+f.label+'</label><input class="admin-inp" id="adminEdit_'+f.k+'" type="'+f.type+'" value="'+_esc(c[f.k] === undefined ? '' : c[f.k])+'" style="flex:1;min-width:120px"/></div>';
+      }).join('') +
+      '<div style="display:flex;gap:8px;margin-top:8px"><button class="admin-exit-btn" onclick="adminSaveEdit(\''+u.docId+'\')">[ SAVE CHANGES ]</button>' +
+      '<button class="admin-exit-btn" onclick="document.getElementById(\'adminEditBox\').innerHTML=\'\'">[ CANCEL ]</button></div>' +
+      '<div id="adminEditMsg" style="font-size:10px;color:var(--red);margin-top:6px"></div></div>';
+  } catch (e) {
+    console.error(e);
+    box.innerHTML = '<div style="font-size:11px;color:var(--red)">Could not load profile (see console).</div>';
+  }
+}
+
+async function adminSaveEdit(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
+  var msg = document.getElementById('adminEditMsg');
+  if (!u) return;
+  var patch = {};
+  for (var i = 0; i < ADMIN_EDIT_FIELDS.length; i++) {
+    var f = ADMIN_EDIT_FIELDS[i], raw = document.getElementById('adminEdit_'+f.k).value.trim();
+    if (f.type === 'text') {
+      if (!raw || raw.length > f.max) { msg.textContent = f.label + ' must be 1–' + f.max + ' characters.'; return; }
+      patch[f.k] = raw;
+    } else {
+      if (raw === '') continue; // leave unchanged
+      var n = Number(raw);
+      if (!isFinite(n) || n < f.min || n > f.max) { msg.textContent = f.label + ' must be between ' + f.min + ' and ' + f.max + '.'; return; }
+      patch[f.k] = n;
+    }
+  }
+  if (!confirm('Apply these changes to this user\'s profile? The change will be recorded in the audit log.')) return;
+  try {
+    var res = await dataService.adminUpdateProfile(u._raw.authUid, patch);
+    if (!res) { msg.style.color = 'var(--t2)'; msg.textContent = 'No changes to save.'; return; }
+    if (res.after.name) {
+      // keep the admin list in sync immediately (summary is otherwise refreshed on the user's next save)
+      await window._fsSetDoc(window._fsDoc(window._db, 'fitos_users', docId), { summary: { name: res.after.name } }, { merge: true });
+    }
+    writeAuditLog('USER_EDITED', 'user', docId, res.before, res.after);
+    toast('Profile updated');
+    await loadAdminUsers(true);
+    openAdminUserDetail(docId);
+  } catch (e) { console.error(e); msg.textContent = 'Failed to save (see console).'; }
 }
 
 async function adminSuspendUser(docId) {
@@ -8894,7 +9014,7 @@ async function adminSaveSystemSettings() {
 }
 
 function _esc(s) {
-  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ===================== ADMIN — AUDIT LOG =====================
@@ -8929,10 +9049,15 @@ function renderAdminAuditLog() {
   body.innerHTML = '<div class="admin-card">' + ADMIN_AUDIT_CACHE.map(function(l){
     var detail = '';
     if (l.targetType) detail += l.targetType + (l.targetId ? ' · '+l.targetId : '');
+    var change = '';
+    if (l.before || l.after) {
+      var ch = JSON.stringify(l.before === undefined ? null : l.before) + '  →  ' + JSON.stringify(l.after === undefined ? null : l.after);
+      change = '<div class="admin-audit-meta" style="font-family:var(--mono)">' + _esc(ch.length > 240 ? ch.slice(0, 240) + '…' : ch) + '</div>';
+    }
     return '<div class="admin-audit-row">' +
-      '<span class="admin-audit-action">'+(l.action||'—')+'</span> ' +
-      '<span style="color:var(--t)">'+detail+'</span>' +
-      '<div class="admin-audit-meta">'+(l.adminEmail||'—')+' · '+_adminTimeAgo(l.timestamp)+'</div>' +
+      '<span class="admin-audit-action">'+_esc(l.action||'—')+'</span> ' +
+      '<span style="color:var(--t)">'+_esc(detail)+'</span>' + change +
+      '<div class="admin-audit-meta">'+_esc(l.adminEmail||'—')+' · '+_adminTimeAgo(l.timestamp)+'</div>' +
     '</div>';
   }).join('') + '</div>';
 }
@@ -8940,7 +9065,7 @@ function renderAdminAuditLog() {
 async function adminDeleteUser(docId) {
   var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
   if (!u) return;
-  var typed = prompt('This PERMANENTLY deletes "'+u.name+'" ('+u.email+') and all their data.\nType DELETE to confirm:');
+  var typed = prompt('This PERMANENTLY deletes "'+u.nameRaw+'" ('+u.email+') and all their data.\nType DELETE to confirm:');
   if (typed !== 'DELETE') return;
   try {
     var db = window._db;

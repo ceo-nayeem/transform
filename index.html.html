@@ -11,7 +11,7 @@
 <!-- Firebase SDK (ESM via module script) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -34,6 +34,7 @@
   window._fsDeleteDoc = deleteDoc;
   window._fsCollection = collection;
   window._fsGetDocs = getDocs;
+  window._fsWriteBatch = writeBatch;
 
   window._auth = auth;
   window._googleProvider = new GoogleAuthProvider();
@@ -3603,6 +3604,299 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
 </div>
 
 <script>
+// ===================== DATA SERVICE (Phase 2) =====================
+// Modular, UID-based storage at users/{uid}/{profile|daily|habits|goals|measurements|vitals|
+// mealLibrary|ingredientLibrary|savedTimers}/{id}. The legacy fitos_users/{google_email} blob is
+// NEVER deleted: it is the migration source and (while LEGACY_MIRROR is on) is still written as
+// a rollback copy + because the Admin Console still reads it.
+// Source of truth: modular data, once migration is VERIFIED. Otherwise legacy stays in charge.
+(function(){
+  var SCHEMA_VERSION = 2, MIGRATION_VERSION = 1, BATCH_MAX = 8; // <=8 keeps rule get() calls under the limit
+  var COLLECTIONS = ['daily','habits','goals','measurements','vitals','mealLibrary','ingredientLibrary','savedTimers'];
+  var RESERVED = {dailyData:1,habits:1,goals:1,measurements:1,vitals:1,mealLibrary:1,ingredientLibrary:1,savedTimers:1,ivPresets:1,today:1,cfg:1,streak:1};
+  var active = false, uid = null, srcDocId = null, lastHashes = {}, chain = Promise.resolve();
+  var clientId = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8), seenSync = null, inflight = 0;
+
+  function clean(v){ return JSON.parse(JSON.stringify(v === undefined ? null : v)); }
+  function canon(v){
+    if (v === null || typeof v !== 'object') return JSON.stringify(v === undefined ? null : v);
+    if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+    return '{' + Object.keys(v).sort().map(function(k){ return JSON.stringify(k) + ':' + canon(v[k]); }).join(',') + '}';
+  }
+  function hash(str){ // cyrb53
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  }
+  function docKey(x){ return String(x).replace(/[\/\s]/g, '_').slice(0, 200) || 'x'; }
+  function newId(){ return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function isObj(x){ return x && typeof x === 'object' && !Array.isArray(x); }
+  function omitMeta(d){ var o = Object.assign({}, d); delete o._updatedAt; return o; }
+  function docHash(d){ return hash(canon(omitMeta(d))); }
+
+  // measurements/vitals have no id in the legacy data: give each entry a stable one (persisted).
+  function ensureIds(st){
+    ['measurements','vitals'].forEach(function(k){
+      (st[k] || []).forEach(function(it){ if (isObj(it) && it.id === undefined && it._id === undefined) it._id = newId(); });
+    });
+  }
+
+  function split(st0){
+    var st = clean(st0), docs = {}, extra = {};
+    Object.keys(st).forEach(function(k){ if (!RESERVED[k]) extra[k] = st[k]; });
+    docs['profile/main'] = { cfg: st.cfg || {}, streak: st.streak || 0, extra: extra };
+    var dd = st.dailyData || {};
+    Object.keys(dd).forEach(function(d){ docs['daily/' + docKey(d)] = { date: d, day: dd[d] }; });
+    function addArray(coll, arr, prefix, kind){
+      var seen = {};
+      (arr || []).forEach(function(it, i){
+        var base = isObj(it) ? (it.id !== undefined ? it.id : it._id) : undefined;
+        if (base === undefined) base = 'n' + i;
+        var key = prefix + docKey(base), n = 1, k0 = key;
+        while (seen[key]) { n++; key = k0 + '_' + n; }
+        seen[key] = 1;
+        var body = isObj(it) ? Object.assign({}, it) : { _value: it };
+        body._order = i; if (kind) body._kind = kind;
+        docs[coll + '/' + key] = body;
+      });
+    }
+    addArray('habits', st.habits, '');
+    addArray('goals', st.goals, '');
+    addArray('measurements', st.measurements, '');
+    addArray('vitals', st.vitals, '');
+    addArray('mealLibrary', st.mealLibrary, '');
+    addArray('ingredientLibrary', st.ingredientLibrary, '');
+    addArray('savedTimers', st.savedTimers, 't_', 'timer');
+    addArray('savedTimers', st.ivPresets, 'p_', 'interval');
+    return docs;
+  }
+
+  function strip(d){
+    if (Object.prototype.hasOwnProperty.call(d, '_value') && Object.keys(d).every(function(k){ return k === '_value' || k === '_order' || k === '_kind' || k === '_updatedAt'; })) return d._value;
+    var o = Object.assign({}, d); delete o._order; delete o._updatedAt; delete o._kind; return o;
+  }
+  function join(docs){
+    var st = {}, prof = docs['profile/main'] || {};
+    st.cfg = prof.cfg || {}; st.streak = prof.streak || 0; Object.assign(st, prof.extra || {});
+    st.dailyData = {};
+    var arr = { habits:[], goals:[], measurements:[], vitals:[], mealLibrary:[], ingredientLibrary:[], savedTimers:[], ivPresets:[] };
+    Object.keys(docs).forEach(function(p){
+      var i = p.indexOf('/'), coll = p.slice(0, i), d = docs[p], target;
+      if (coll === 'daily') { st.dailyData[d.date] = d.day; return; }
+      if (coll === 'savedTimers') target = (d._kind === 'interval') ? arr.ivPresets : arr.savedTimers;
+      else target = arr[coll];
+      if (target) target.push(d);
+    });
+    Object.keys(arr).forEach(function(k){
+      arr[k].sort(function(a, b){ return (a._order || 0) - (b._order || 0); });
+      st[k] = arr[k].map(strip);
+    });
+    return st;
+  }
+
+  function ref(path, u){ var i = path.indexOf('/'); return window._fsDoc(window._db, 'users', u || uid, path.slice(0, i), path.slice(i + 1)); }
+
+  async function commitOps(ops, u){
+    var now = new Date().toISOString();
+    for (var i = 0; i < ops.length; i += BATCH_MAX) {
+      var b = window._fsWriteBatch(window._db);
+      ops.slice(i, i + BATCH_MAX).forEach(function(o){
+        if (o.del) b.delete(ref(o.path, u));
+        else b.set(ref(o.path, u), Object.assign({}, o.data, { _updatedAt: now }));
+      });
+      await b.commit();
+    }
+  }
+
+  async function readAll(u){
+    var db = window._db, docs = {};
+    var pr = await window._fsGetDoc(window._fsDoc(db, 'users', u, 'profile', 'main'));
+    if (pr.exists()) docs['profile/main'] = pr.data();
+    var snaps = await Promise.all(COLLECTIONS.map(function(c){ return window._fsGetDocs(window._fsCollection(db, 'users', u, c)); }));
+    snaps.forEach(function(s, i){ s.forEach(function(d){ docs[COLLECTIONS[i] + '/' + d.id] = d.data(); }); });
+    return docs;
+  }
+
+  function setHashes(docs){ lastHashes = {}; Object.keys(docs).forEach(function(p){ lastHashes[p] = docHash(docs[p]); }); }
+
+  function replaceState(ns){
+    var keepToday = S.today;
+    Object.keys(S).forEach(function(k){ delete S[k]; });
+    Object.assign(S, ns);
+    if (!S.cfg || !Object.keys(S.cfg).length) S.cfg = getDefaultState('user').cfg;
+    if (typeof S.onboarded === 'undefined') S.onboarded = true;
+    S.today = keepToday;
+    if (typeof _syncTimersFromState === 'function') _syncTimersFromState();
+  }
+
+  // Runs after the legacy doc has been loaded into S. Never throws; on any problem legacy stays active.
+  async function bootstrap(u, docId){
+    active = false; uid = u; srcDocId = docId; lastHashes = {};
+    try {
+      var rootRef = window._fsDoc(window._db, 'users', u);
+      var root = await window._fsGetDoc(rootRef);
+      var mig = root.exists() ? (root.data().migration || null) : null;
+      if (mig && mig.verified && mig.version >= MIGRATION_VERSION) {
+        var docs = await readAll(u);
+        if (!docs['profile/main']) throw new Error('modular profile missing — falling back to legacy');
+        replaceState(join(docs)); setHashes(docs); active = true;
+        seenSync = root.data().lastSyncedAt || null;
+        return { source: 'modular' };
+      }
+      // ---- one-time, idempotent, non-destructive migration: legacy blob -> modular docs ----
+      ensureIds(S);
+      var parts = split(S), ops = Object.keys(parts).map(function(p){ return { path: p, data: parts[p] }; });
+      await commitOps(ops, u);
+      var back = await readAll(u);
+      var match = canon(join(parts)) === canon(join(back));
+      var counts = {}; COLLECTIONS.forEach(function(c){ counts[c] = 0; });
+      Object.keys(parts).forEach(function(p){ var c = p.split('/')[0]; if (counts[c] !== undefined) counts[c]++; });
+      var base = { uid: u, schemaVersion: SCHEMA_VERSION, updatedAt: new Date().toISOString() };
+      if (!match) {
+        await window._fsSetDoc(rootRef, Object.assign(base, { migration: { version: MIGRATION_VERSION, verified: false, attemptedAt: new Date().toISOString(), error: 'verification mismatch', sourceDocId: docId } }), { merge: true });
+        console.error('dataService: migration verification FAILED — legacy data stays authoritative');
+        return { source: 'legacy', migrated: false };
+      }
+      await window._fsSetDoc(rootRef, Object.assign(base, { migration: { version: MIGRATION_VERSION, verified: true, migratedAt: new Date().toISOString(), sourceDocId: docId, counts: counts, stateHash: hash(canon(join(parts))) } }), { merge: true });
+      setHashes(back); active = true;
+      return { source: 'legacy', migrated: true };
+    } catch (e) {
+      console.error('dataService.bootstrap failed (legacy path stays active):', e);
+      active = false;
+      return { source: 'legacy', error: String(e && e.message || e) };
+    }
+  }
+
+  async function doSync(){
+    if (!active) return;
+    ensureIds(S);
+    var parts = split(S), ops = [], nh = {};
+    Object.keys(parts).forEach(function(p){ var h = docHash(parts[p]); nh[p] = h; if (lastHashes[p] !== h) ops.push({ path: p, data: parts[p] }); });
+    // only delete docs this client actually loaded/wrote — never touches docs another device created
+    Object.keys(lastHashes).forEach(function(p){ if (!(p in parts)) ops.push({ path: p, del: true }); });
+    if (!ops.length) return;
+    inflight++;
+    try {
+      await commitOps(ops);
+      lastHashes = nh;
+      // marker other devices poll (1 small read) to learn that newer data exists
+      var stamp = new Date().toISOString();
+      await window._fsSetDoc(window._fsDoc(window._db, 'users', uid), { uid: uid, lastSyncedAt: stamp, lastWriter: clientId }, { merge: true });
+      seenSync = stamp;
+    } finally { inflight--; }
+  }
+  function sync(){ var p = chain.then(doSync); chain = p.catch(function(){}); return p; }
+
+  // Cheap multi-device refresh: 1 read of users/{uid}; full reload only if ANOTHER device wrote since.
+  // Never runs while this device has unsynced work. Returns true if S was replaced.
+  async function refreshIfRemoteChanged(){
+    if (!active || inflight > 0) return false;
+    var root = await window._fsGetDoc(window._fsDoc(window._db, 'users', uid));
+    if (!root.exists()) return false;
+    var d = root.data();
+    if (!d.lastSyncedAt || d.lastWriter === clientId || d.lastSyncedAt === seenSync) return false;
+    await chain.catch(function(){});                 // let any in-flight save finish first
+    var docs = await readAll(uid);
+    if (!docs['profile/main']) return false;
+    replaceState(join(docs)); setHashes(docs); seenSync = d.lastSyncedAt;
+    return true;
+  }
+
+  // Removes ALL modular docs for a user (used by "Delete Profile"). Throws on failure so the caller aborts.
+  async function deleteAll(u){
+    var docs = await readAll(u), ops = Object.keys(docs).map(function(p){ return { path: p, del: true }; });
+    await commitOps(ops, u);
+    var rootRef = window._fsDoc(window._db, 'users', u);
+    var r = await window._fsGetDoc(rootRef);
+    if (r.exists()) await window._fsDeleteDoc(rootRef);
+    if (u === uid) { active = false; lastHashes = {}; }   // an admin deleting someone else must not disable their own sync
+  }
+
+  // Small per-user summary stored on the legacy account doc so the Admin Console can list users
+  // without downloading everyone's data. Counts/labels only.
+  function summarize(st){
+    var m = (st.measurements || []), v = (st.vitals || []), c = st.cfg || {};
+    var lm = m.length ? m[m.length - 1] : null, lv = v.length ? v[v.length - 1] : null;
+    return { name: c.name || null, gender: c.gender || null, age: c.age || null, onboarded: st.onboarded !== false,
+      streak: st.streak || 0, dailyDataDays: Object.keys(st.dailyData || {}).length,
+      habitsCount: (st.habits || []).length, goalsCount: (st.goals || []).length,
+      measurementsCount: m.length, vitalsCount: v.length,
+      mealLibraryCount: (st.mealLibrary || []).length, ingredientLibraryCount: (st.ingredientLibrary || []).length,
+      lastMeasurement: lm ? { date: lm.date || null, weight: lm.weight || null } : null,
+      lastVital: lv ? { date: lv.date || null, hr: lv.hr || null } : null,
+      updatedAt: new Date().toISOString() };
+  }
+
+  // Admin: full state of another user from modular storage (null if that user isn't migrated yet).
+  async function loadUserState(u){
+    var root = await window._fsGetDoc(window._fsDoc(window._db, 'users', u));
+    var mig = root.exists() ? root.data().migration : null;
+    if (!mig || !mig.verified) return null;
+    var docs = await readAll(u);
+    return docs['profile/main'] ? join(docs) : null;
+  }
+
+  // ---------- backup / restore ----------
+  function countsOf(st){
+    return { dailyDays: Object.keys(st.dailyData || {}).length, habits: (st.habits || []).length, goals: (st.goals || []).length,
+      measurements: (st.measurements || []).length, vitals: (st.vitals || []).length, mealLibrary: (st.mealLibrary || []).length,
+      ingredientLibrary: (st.ingredientLibrary || []).length, savedTimers: (st.savedTimers || []).length, ivPresets: (st.ivPresets || []).length };
+  }
+  function buildBackup(st, userId){
+    var data = clean(st);
+    return { app: 'FIT//OS', exportVersion: 2, schemaVersion: SCHEMA_VERSION, exportedAt: new Date().toISOString(),
+             userId: userId || 'unknown', counts: countsOf(data), checksum: hash(canon(data)), data: data };
+  }
+  var ARRAY_KEYS = ['habits','goals','measurements','vitals','mealLibrary','ingredientLibrary','savedTimers','ivPresets'];
+  // Validates and (if needed) migrates an old/raw backup up to the current schema. Never restores silently.
+  function validateBackup(parsed){
+    var errors = [], warnings = [], data = null;
+    if (!isObj(parsed)) return { ok: false, errors: ['File is not a valid backup object.'], warnings: [], counts: {} };
+    var wrapped = isObj(parsed.data);
+    data = clean(wrapped ? parsed.data : parsed);
+    var fileSchema = wrapped ? (parsed.schemaVersion || 1) : 1;
+    if (fileSchema > SCHEMA_VERSION) errors.push('Backup schema v' + fileSchema + ' is newer than this app supports (v' + SCHEMA_VERSION + '). Update the app first.');
+    if (wrapped && parsed.checksum) {
+      if (hash(canon(data)) !== parsed.checksum) errors.push('Integrity check failed: the file was modified or is corrupted.');
+    } else warnings.push('Legacy backup without an integrity checksum — structure was validated but cannot be verified.');
+    if (!('dailyData' in data || 'habits' in data || 'cfg' in data)) errors.push('This does not look like a FIT//OS backup (no dailyData, habits or cfg).');
+    if ('cfg' in data && !isObj(data.cfg)) errors.push('cfg must be an object.');
+    if ('dailyData' in data && !isObj(data.dailyData)) errors.push('dailyData must be an object.');
+    ARRAY_KEYS.forEach(function(k){ if (k in data && !Array.isArray(data[k])) errors.push(k + ' must be a list.'); });
+    if (isObj(data.dailyData)) {
+      var bad = Object.keys(data.dailyData).filter(function(d){ return !/^\d{4}-\d{2}-\d{2}$/.test(d) || !isObj(data.dailyData[d]); });
+      if (bad.length) errors.push(bad.length + ' daily entr' + (bad.length === 1 ? 'y has' : 'ies have') + ' an invalid date key or shape (e.g. ' + bad[0] + ').');
+    }
+    if (errors.length) return { ok: false, errors: errors, warnings: warnings, counts: {} };
+    // migrate/repair to current schema (non-destructive: only fills missing structure)
+    var repaired = 0;
+    ARRAY_KEYS.forEach(function(k){ if (!Array.isArray(data[k])) data[k] = []; });
+    if (!isObj(data.dailyData)) data.dailyData = {};
+    Object.keys(data.dailyData).forEach(function(d){
+      var day = data.dailyData[d];
+      if (!Array.isArray(day.meals)) { day.meals = []; repaired++; }
+      if (!Array.isArray(day.exercises)) { day.exercises = []; repaired++; }
+      if (typeof day.glasses !== 'number') { day.glasses = 0; repaired++; }
+      if (typeof day.customMl !== 'number') { day.customMl = 0; repaired++; }
+    });
+    ensureIds(data);
+    if (repaired) warnings.push(repaired + ' missing field(s) in daily entries were filled with defaults.');
+    if (fileSchema < SCHEMA_VERSION) warnings.push('Backup is schema v' + fileSchema + '; it was upgraded to v' + SCHEMA_VERSION + ' in memory before restore.');
+    return { ok: true, errors: [], warnings: warnings, data: data, counts: countsOf(data), fileSchema: fileSchema };
+  }
+
+  window.dataService = {
+    SCHEMA_VERSION: SCHEMA_VERSION, bootstrap: bootstrap, sync: sync, deleteAll: deleteAll,
+    isActive: function(){ return active; }, buildBackup: buildBackup, validateBackup: validateBackup,
+    refreshIfRemoteChanged: refreshIfRemoteChanged, summarize: summarize, loadUserState: loadUserState,
+    _internals: { split: split, join: join, canon: canon, hash: hash, ensureIds: ensureIds, clean: clean }
+  };
+})();
+</script>
+
+<script>
 // ===================== AUTH & FIREBASE =====================
 var CURRENT_USER_ID = null;
 var CURRENT_USER_DOC_ID = null; // Firestore doc id (sanitized)
@@ -3636,6 +3930,21 @@ waitForFirebase(() => { setFbStatus(true, 'Firebase Connected'); });
 // and handleGoogleUser() below. A brand-new Google account is routed into
 // the onboarding flow (see ONBOARDING section) instead of straight into the app.
 
+// Saved timers / interval presets live in TM (timer page) but are persisted through S
+// (S.savedTimers / S.ivPresets) so they survive reloads and sync across devices.
+function _mirrorTimersIntoState() {
+  if (typeof TM === 'undefined') return;
+  S.savedTimers = TM.savedTimers || [];
+  S.ivPresets = TM.ivSavedPresets || [];
+}
+function _syncTimersFromState() {
+  if (typeof TM === 'undefined') return;
+  TM.savedTimers = Array.isArray(S.savedTimers) ? S.savedTimers : [];
+  TM.ivSavedPresets = Array.isArray(S.ivPresets) ? S.ivPresets : [];
+  S.savedTimers = TM.savedTimers; S.ivPresets = TM.ivSavedPresets;
+  try { if (typeof renderSavedTimers === 'function') renderSavedTimers(); if (typeof renderIvPresets === 'function') renderIvPresets(); } catch(e) {}
+}
+
 // Parses the stored JSON blob for a user doc into the live state object S.
 // Shared by classic ID/password login and Google login.
 function loadUserDataIntoState(userData) {
@@ -3653,6 +3962,7 @@ function loadUserDataIntoState(userData) {
       // Remove deprecated default ingredients
       var _toRemove = ['almond', 'riceo 100gm', 'rice 100gm'];
       S.ingredientLibrary = S.ingredientLibrary.filter(function(i){ return !_toRemove.includes(i.name.toLowerCase()); });
+      _syncTimersFromState();
     } catch(e) {}
   }
 }
@@ -3721,6 +4031,7 @@ async function handleGoogleUser(email, uid) {
       return;
     }
     loadUserDataIntoState(userData);
+    await dataService.bootstrap(uid, docId);
     window._fsSetDoc(userRef, { authUid: uid, lastLogin: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
     // Existing accounts that somehow never finished onboarding (e.g. closed
     // the tab mid-flow) are sent back to it instead of straight into the app.
@@ -3749,6 +4060,7 @@ async function handleGoogleUser(email, uid) {
     data: JSON.stringify(fresh)
   });
   Object.assign(S, fresh);
+  await dataService.bootstrap(uid, docId);
   beginOnboarding(email, docId);
 }
 
@@ -3785,6 +4097,7 @@ async function tryMigrateLegacyAdmin(newDocId, email, uid) {
 
     loadUserDataIntoState({ data: legacy.data.data, userId: legacy.data.userId });
     S.onboarded = true;
+    await dataService.bootstrap(uid, newDocId);
     loginSuccess(legacy.data.userId || email, newDocId);
     return true;
   } catch (e) {
@@ -3917,28 +4230,36 @@ function getSavedSession() {
 // in — no login screen flash. A fresh tab (or the tab being closed and
 // reopened) has no sessionStorage entry, so it correctly shows the login
 // screen.
-function tryRestoreSession() {
+function _authReady() {
+  var a = window._auth;
+  if (a && typeof a.authStateReady === 'function') return a.authStateReady();
+  return new Promise(function(res){ var un = window._onAuthStateChanged(a, function(){ un(); res(); }); });
+}
+// Waits for Firebase Auth to restore the signed-in user BEFORE reading Firestore
+// (Security Rules require an authenticated request), and only restores a session
+// that belongs to the currently signed-in Google account.
+async function tryRestoreSession() {
   var sess = getSavedSession();
   if (!sess || !sess.docId) return;
   try {
-    var db = window._db;
-    var userRef = window._fsDoc(db, 'fitos_users', sess.docId);
-    window._fsGetDoc(userRef).then(function(snap){
-      if (!snap.exists()) { clearSession(); return; }
-      var userData = snap.data();
-      if (userData.status === 'suspended') {
-        clearSession();
-        if (window._auth && window._auth.currentUser && window._signOutFirebase) {
-          window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
-        }
-        var errEl = document.getElementById('loginErr');
-        if (errEl) errEl.textContent = 'This account has been suspended.';
-        return;
-      }
-      loadUserDataIntoState(userData);
-      loginSuccess(userData.userId || sess.userId, sess.docId, true);
-    }).catch(function(e){ console.error('Session restore failed:', e); });
-  } catch(e) { console.error(e); }
+    await _authReady();
+    var u = window._auth.currentUser;
+    if (!u || !u.email || googleDocId(u.email.trim().toLowerCase()) !== sess.docId) { clearSession(); return; }
+    var userRef = window._fsDoc(window._db, 'fitos_users', sess.docId);
+    var snap = await window._fsGetDoc(userRef);
+    if (!snap.exists()) { clearSession(); return; }
+    var userData = snap.data();
+    if (userData.status === 'suspended') {
+      clearSession();
+      if (window._signOutFirebase) window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
+      var errEl = document.getElementById('loginErr');
+      if (errEl) errEl.textContent = 'This account has been suspended.';
+      return;
+    }
+    loadUserDataIntoState(userData);
+    await dataService.bootstrap(u.uid, sess.docId);
+    loginSuccess(userData.userId || sess.userId, sess.docId, true);
+  } catch(e) { console.error('Session restore failed:', e); }
 }
 
 function doLogout() {
@@ -3977,6 +4298,8 @@ function deleteProfile() {
     try {
       var db = window._db;
       var userRef = window._fsDoc(db, 'fitos_users', CURRENT_USER_DOC_ID);
+      // Modular data first: if this throws, nothing else is deleted and the profile is not resurrected later.
+      if (window._auth && window._auth.currentUser) { await dataService.deleteAll(window._auth.currentUser.uid); }
       await window._fsDeleteDoc(userRef);
 
       // Also sign out of Google auth if that's how they're logged in.
@@ -4036,35 +4359,69 @@ function getDay(d) {
 
 // ===================== FIREBASE SAVE/LOAD =====================
 var _saveTimeout = null;
+var _savePending = false; // true from a change until its save starts
+// Stage B: the big legacy JSON blob is no longer rewritten once modular storage is active.
+// The last blob stays frozen in fitos_users as a recovery snapshot. Set true to resume mirroring.
+var LEGACY_BLOB_MIRROR = false;
 function save() {
   // Debounce saves: wait 1.5s after last change
+  _savePending = true;
   clearTimeout(_saveTimeout);
   setFbStatus(false, 'Saving...');
   _saveTimeout = setTimeout(() => saveToFirebase(), 1500);
 }
 
 function saveToFirebase(cb) {
-  if (!CURRENT_USER_DOC_ID || !window._firebaseReady) { if(cb) cb(); return; }
+  if (!CURRENT_USER_DOC_ID || !window._firebaseReady) { if(cb) cb(false); return; }
+  _savePending = false;
+  try { _mirrorTimersIntoState(); } catch(e) {}
+  var db = window._db;
+  var userRef = window._fsDoc(db, 'fitos_users', CURRENT_USER_DOC_ID);
+  var modularActive = dataService.isActive();
+  // Legacy blob: rollback copy + still read by the Admin Console. A failure here is not fatal
+  // when the modular store is active (e.g. blob outgrowing Firestore's 1 MB doc limit).
+  var legacyP;
   try {
-    var db = window._db;
-    var userRef = window._fsDoc(db, 'fitos_users', CURRENT_USER_DOC_ID);
-    window._fsSetDoc(userRef, {
-      userId: CURRENT_USER_ID,
-      data: JSON.stringify(S),
-      lastSaved: new Date().toISOString()
-    }, {merge: true}).then(() => {
-      setFbStatus(true, 'Synced ✓');
-      if(cb) cb();
-    }).catch(e => {
-      console.error('Save error:', e);
-      setFbStatus(false, 'Save failed!');
-      if(cb) cb();
-    });
-  } catch(e) {
-    console.error(e);
-    if(cb) cb();
-  }
+    var legacyDoc = { userId: CURRENT_USER_ID, lastSaved: new Date().toISOString(), summary: dataService.summarize(S) };
+    if (!modularActive || LEGACY_BLOB_MIRROR) legacyDoc.data = JSON.stringify(S); // fallback mode keeps the old behaviour
+    legacyP = window._fsSetDoc(userRef, legacyDoc, {merge: true}).then(function(){ return true; }).catch(function(e){ console.error('Legacy save error:', e); return false; });
+  } catch(e) { console.error(e); legacyP = Promise.resolve(false); }
+  var modularP = modularActive
+    ? dataService.sync().then(function(){ return true; }).catch(function(e){ console.error('Modular save error:', e); return false; })
+    : Promise.resolve(null);
+  Promise.all([legacyP, modularP]).then(function(r){
+    var ok = (r[1] === null) ? r[0] : r[1]; // modular store is authoritative once active
+    setFbStatus(ok, ok ? 'Synced ✓' : 'Save failed!');
+    if (cb) cb(ok);
+  });
 }
+
+// ===================== MULTI-DEVICE REFRESH =====================
+// No realtime listeners. When the tab regains focus (max once / 30 s) we do ONE small read; if another
+// device saved newer data and this device has nothing unsaved, the app reloads that data in place.
+var _lastRemoteCheck = 0, _remoteCheckBusy = false, _refreshHooked = false;
+async function checkRemoteChanges() {
+  if (_remoteCheckBusy || !CURRENT_USER_DOC_ID || _savePending || !dataService.isActive()) return;
+  if (Date.now() - _lastRemoteCheck < 30000) return;
+  _lastRemoteCheck = Date.now(); _remoteCheckBusy = true;
+  try {
+    if (await dataService.refreshIfRemoteChanged()) {
+      calcStreak();
+      var pg = document.querySelector('.page.active');
+      var id = pg ? pg.id.replace('page-', '') : 'dashboard';
+      if (id === 'health') id = healthActiveTab; else if (id === 'track') id = trackActiveTab; else if (id === 'library') id = libraryActiveTab;
+      nav(null, id);
+      toast('Updated from another device');
+    }
+  } catch(e) { console.error('Remote refresh failed:', e); }
+  finally { _remoteCheckBusy = false; }
+}
+function hookRemoteRefresh() {
+  if (_refreshHooked) return; _refreshHooked = true;
+  document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') checkRemoteChanges(); });
+  window.addEventListener('focus', checkRemoteChanges);
+}
+hookRemoteRefresh();
 
 // ===================== NAV =====================
 var pageTitles = {
@@ -5884,31 +6241,27 @@ function clearAllData() {
   });
 }
 
-// ===================== DATA EXPORT / IMPORT =====================
-// Exports the ENTIRE live state object S (cfg, dailyData, habits, goals,
-// measurements, vitals, mealLibrary, ingredientLibrary, streak — everything)
-// as a downloadable JSON file, wrapped with a little metadata for safety.
+// ===================== DATA EXPORT / IMPORT (schema v2) =====================
+// Backups carry schemaVersion, counts and an integrity checksum. Restore validates the file,
+// upgrades older formats in memory, shows a summary, downloads a safety copy of the CURRENT
+// data first, and only reloads if the cloud save actually succeeded.
+function _downloadJson(filename, payload) {
+  var blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+}
+
 function exportData() {
   var msgEl = document.getElementById('importExportMsg');
   try {
-    var payload = {
-      app: 'GLASS // OS Fitness Tracker',
-      exportVersion: 1,
-      exportedAt: new Date().toISOString(),
-      userId: CURRENT_USER_ID || 'unknown',
-      data: S
-    };
-    var blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'glassos-backup-' + (CURRENT_USER_ID || 'user') + '-' + today() + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+    _mirrorTimersIntoState();
+    var payload = dataService.buildBackup(S, CURRENT_USER_ID || 'unknown');
+    _downloadJson('fitos-backup-' + (CURRENT_USER_ID || 'user') + '-' + today() + '.json', payload);
     toast('Data exported!');
-    if (msgEl) { msgEl.style.color = 'var(--g)'; msgEl.textContent = '✓ Backup file downloaded'; }
+    if (msgEl) { msgEl.style.color = 'var(--g)'; msgEl.textContent = '✓ Backup downloaded (schema v' + payload.schemaVersion + ')'; }
   } catch(e) {
     console.error(e);
     toast('Export failed');
@@ -5916,9 +6269,6 @@ function exportData() {
   }
 }
 
-// Reads a previously-exported JSON file (or a raw state dump) and REPLACES
-// all current data with it, then persists to Firebase and reloads the app
-// so every page/tab picks up the restored data cleanly.
 function importDataFile(event) {
   var file = event.target.files && event.target.files[0];
   var msgEl = document.getElementById('importExportMsg');
@@ -5929,32 +6279,37 @@ function importDataFile(event) {
   reader.onload = function(e) {
     try {
       var parsed = JSON.parse(e.target.result);
-      // Accept either the wrapped { data: {...} } export format, or a raw S object.
-      var incoming = (parsed && typeof parsed === 'object' && parsed.data && typeof parsed.data === 'object') ? parsed.data : parsed;
-      var looksValid = incoming && typeof incoming === 'object' &&
-        ('dailyData' in incoming || 'habits' in incoming || 'cfg' in incoming);
-      if (!looksValid) throw new Error('This does not look like a GLASS // OS backup file');
-
-      if (!confirm('Import this backup? This will REPLACE all current data (habits, workouts, meals, water, vitals, measurements, goals, library & settings) with the contents of this file. This cannot be undone.')) {
+      var v = dataService.validateBackup(parsed);
+      if (!v.ok) throw new Error(v.errors.join(' | '));
+      var c = v.counts;
+      var summary = 'Restore this backup?\n\n' +
+        'Days: ' + c.dailyDays + '  Habits: ' + c.habits + '  Goals: ' + c.goals + '\n' +
+        'Measurements: ' + c.measurements + '  Vitals: ' + c.vitals + '\n' +
+        'Meals: ' + c.mealLibrary + '  Ingredients: ' + c.ingredientLibrary + '  Timers: ' + (c.savedTimers + c.ivPresets);
+      if (v.warnings.length) summary += '\n\nNotes:\n- ' + v.warnings.join('\n- ');
+      summary += '\n\nThis REPLACES all current data. A safety copy of your current data will be downloaded first.';
+      if (!confirm(summary)) {
         event.target.value = '';
         if (msgEl) msgEl.textContent = '';
         return;
       }
 
-      var fresh = getDefaultState(CURRENT_USER_ID || (incoming.cfg && incoming.cfg.name) || 'user');
-      Object.keys(S).forEach(function(k){ delete S[k]; });
-      Object.assign(S, fresh, incoming);
-      // Guard against an older/partial export missing newer fields.
-      if (!S.ingredientLibrary) S.ingredientLibrary = [];
-      if (!S.mealLibrary) S.mealLibrary = [];
-      if (!S.dailyData) S.dailyData = {};
-      if (!S.habits) S.habits = [];
-      if (!S.goals) S.goals = [];
-      if (!S.measurements) S.measurements = [];
-      if (!S.vitals) S.vitals = [];
-      if (!S.today) S.today = today();
+      _mirrorTimersIntoState();
+      _downloadJson('fitos-pre-restore-' + (CURRENT_USER_ID || 'user') + '-' + today() + '.json', dataService.buildBackup(S, CURRENT_USER_ID || 'unknown'));
 
-      saveToFirebase(function(){
+      var fresh = getDefaultState(CURRENT_USER_ID || (v.data.cfg && v.data.cfg.name) || 'user');
+      Object.keys(S).forEach(function(k){ delete S[k]; });
+      Object.assign(S, fresh, v.data);
+      if (typeof v.data.onboarded === 'undefined') S.onboarded = true; // a restored real account must not re-run onboarding
+      S.today = today();
+      _syncTimersFromState();
+
+      saveToFirebase(function(ok){
+        if (!ok) {
+          toast('Restore NOT saved to cloud');
+          if (msgEl) { msgEl.style.color = 'var(--red)'; msgEl.textContent = 'Restore applied locally but the cloud save FAILED. Do not close this tab — try again. (Safety copy of previous data was downloaded.)'; }
+          return;
+        }
         toast('Data imported successfully!');
         if (msgEl) { msgEl.style.color = 'var(--g)'; msgEl.textContent = '✓ Import complete — reloading...'; }
         setTimeout(function(){ location.reload(); }, 900);
@@ -6012,8 +6367,8 @@ function startTimer(){if(TM.t.running)return;if(TM.t.remaining<=0)TM.t.remaining
 function updateTimerDisplay(){var disp=document.getElementById('t-display');var ring=document.getElementById('t-ring');disp.textContent=fmtTime(TM.t.remaining);var pct=TM.t.total>0?TM.t.remaining/TM.t.total:0;ring.style.strokeDashoffset=754*(1-pct);if(TM.t.remaining<=0){disp.className='timer-big done';ring.style.stroke='var(--red)';}else if(TM.t.remaining<=5){disp.className='timer-big warning';ring.style.stroke='var(--o2)';}else if(TM.t.remaining<=TM.t.total*0.3){disp.className='timer-big resting';ring.style.stroke='var(--o)';}else{disp.className='timer-big running';ring.style.stroke='var(--g)';}}
 function pauseTimer(){if(TM.t.running){clearInterval(TM.t.interval);TM.t.running=false;document.getElementById('t-pause-btn').textContent='[ ▶ RESUME ]';document.getElementById('t-phase-lbl').textContent='PAUSED';}else{document.getElementById('t-pause-btn').textContent='[ ⏸ PAUSE ]';startTimer();}}
 function resetTimer(){clearInterval(TM.t.interval);TM.t.running=false;TM.t.remaining=TM.t.total;var disp=document.getElementById('t-display');if(disp){disp.textContent=fmtTime(TM.t.total);disp.className='timer-big';}var ring=document.getElementById('t-ring');if(ring){ring.style.strokeDashoffset='0';ring.style.stroke='var(--g)';}var lbl=document.getElementById('t-phase-lbl');if(lbl)lbl.textContent='READY';var pb=document.getElementById('t-pause-btn');if(pb){pb.style.display='none';pb.textContent='[ ⏸ PAUSE ]';}}
-function saveCustomTimer(){var h=parseInt(document.getElementById('t-h').value)||0;var m=parseInt(document.getElementById('t-m').value)||0;var s=parseInt(document.getElementById('t-s').value)||0;var total=h*3600+m*60+s;var label=document.getElementById('t-label').value.trim()||'Custom Timer';if(total<=0){toast('Set a time first');return;}TM.savedTimers.push({id:Date.now(),label,total});renderSavedTimers();toast('Timer saved: '+label);}
-function renderSavedTimers(){var el=document.getElementById('savedTimers');if(!el)return;if(!TM.savedTimers.length){el.innerHTML='<div style="font-size:13px;color:var(--t2);padding:10px">No saved timers yet.</div>';return;}el.innerHTML=TM.savedTimers.map((t,i)=>`<div class="saved-timer-card"><div><div class="saved-timer-name">${t.label}</div><div class="saved-timer-dur">${fmtTime(t.total)}</div></div><div style="display:flex;gap:8px;align-items:center"><button class="btn sm" onclick="setTimerPreset(${t.total},'${t.label.replace(/'/g,"\\'")}')">▶ USE</button><button class="del-btn" onclick="TM.savedTimers.splice(${i},1);renderSavedTimers()">✕</button></div></div>`).join('');}
+function saveCustomTimer(){var h=parseInt(document.getElementById('t-h').value)||0;var m=parseInt(document.getElementById('t-m').value)||0;var s=parseInt(document.getElementById('t-s').value)||0;var total=h*3600+m*60+s;var label=document.getElementById('t-label').value.trim()||'Custom Timer';if(total<=0){toast('Set a time first');return;}TM.savedTimers.push({id:Date.now(),label,total});renderSavedTimers();save();toast('Timer saved: '+label);}
+function renderSavedTimers(){var el=document.getElementById('savedTimers');if(!el)return;if(!TM.savedTimers.length){el.innerHTML='<div style="font-size:13px;color:var(--t2);padding:10px">No saved timers yet.</div>';return;}el.innerHTML=TM.savedTimers.map((t,i)=>`<div class="saved-timer-card"><div><div class="saved-timer-name">${t.label}</div><div class="saved-timer-dur">${fmtTime(t.total)}</div></div><div style="display:flex;gap:8px;align-items:center"><button class="btn sm" onclick="setTimerPreset(${t.total},'${t.label.replace(/'/g,"\\'")}')">▶ USE</button><button class="del-btn" onclick="TM.savedTimers.splice(${i},1);renderSavedTimers();save()">✕</button></div></div>`).join('');}
 function swStart(){if(TM.sw.running)return;TM.sw.running=true;TM.sw.startMs=Date.now()-TM.sw.elapsed;document.getElementById('sw-start-btn').textContent='[ ⏸ PAUSE ]';document.getElementById('sw-start-btn').onclick=swPause;document.getElementById('sw-lap-btn').style.display='';document.getElementById('sw-phase').textContent='RUNNING';TM.sw.interval=setInterval(swTick,100);beepStart();}
 function swPause(){clearInterval(TM.sw.interval);TM.sw.running=false;TM.sw.elapsed=Date.now()-TM.sw.startMs;document.getElementById('sw-start-btn').textContent='[ ▶ RESUME ]';document.getElementById('sw-start-btn').onclick=swStart;document.getElementById('sw-phase').textContent='PAUSED';}
 function swReset(){clearInterval(TM.sw.interval);TM.sw.running=false;TM.sw.elapsed=0;TM.sw.laps=[];document.getElementById('sw-display').textContent='00:00.0';document.getElementById('sw-display').className='timer-big';document.getElementById('sw-ring').style.strokeDashoffset='754';document.getElementById('sw-start-btn').textContent='[ ▶ START ]';document.getElementById('sw-start-btn').onclick=swStart;document.getElementById('sw-lap-btn').style.display='none';document.getElementById('sw-phase').textContent='READY';renderLaps();}
@@ -6022,8 +6377,8 @@ function swLap(){var lapTime=TM.sw.elapsed;var prev=TM.sw.laps.length?TM.sw.laps
 function renderLaps(){var el=document.getElementById('sw-laps');if(!el)return;if(!TM.sw.laps.length){el.innerHTML='<div style="font-size:13px;color:var(--t2);padding:10px">No laps recorded yet.</div>';return;}var laps=TM.sw.laps;var deltas=laps.map(l=>l.delta);var best=Math.min(...deltas),worst=Math.max(...deltas);el.innerHTML=laps.slice().reverse().map(l=>{var cls=l.num>1?(l.delta===best?'best':l.delta===worst?'worst':''):'';var ms=Math.floor((l.total%1000)/100);var s=Math.floor(l.total/1000)%60;var m=Math.floor(l.total/60000)%60;var h=Math.floor(l.total/3600000);var tStr=h>0?pad2(h)+':'+pad2(m)+':'+pad2(s):pad2(m)+':'+pad2(s)+'.'+ms;var dMs=Math.floor((l.delta%1000)/100);var dS=Math.floor(l.delta/1000)%60;var dM=Math.floor(l.delta/60000)%60;var dStr=dM>0?'+'+pad2(dM)+':'+pad2(dS):'+'+(dS)+'.'+dMs+'s';return`<div class="lap-item ${cls}"><span class="lap-num">LAP ${l.num}</span><span class="lap-time">${tStr}</span><span class="lap-delta ${cls==='best'?'t-up':cls==='worst'?'t-dn':'t-neu'}">${l.num===1?'—':dStr}</span></div>`;}).join('');}
 function ivApplySettings(){TM.iv.work=parseInt(document.getElementById('iv-work').value)||40;TM.iv.rest=parseInt(document.getElementById('iv-rest').value)||20;TM.iv.rounds=parseInt(document.getElementById('iv-rounds').value)||8;TM.iv.warmup=parseInt(document.getElementById('iv-warmup').value)||0;TM.iv.cooldown=parseInt(document.getElementById('iv-cooldown').value)||0;TM.iv.name=document.getElementById('iv-name').value||'Interval';ivReset();toast('Settings applied!');}
 function ivLoadPreset(work,rest,rounds,warmup,cooldown,name){document.getElementById('iv-work').value=work;document.getElementById('iv-rest').value=rest;document.getElementById('iv-rounds').value=rounds;document.getElementById('iv-warmup').value=warmup;document.getElementById('iv-cooldown').value=cooldown;document.getElementById('iv-name').value=name;ivApplySettings();}
-function ivSavePreset(){var p={id:Date.now(),name:document.getElementById('iv-name').value||'My Interval',work:parseInt(document.getElementById('iv-work').value)||40,rest:parseInt(document.getElementById('iv-rest').value)||20,rounds:parseInt(document.getElementById('iv-rounds').value)||8,warmup:parseInt(document.getElementById('iv-warmup').value)||0,cooldown:parseInt(document.getElementById('iv-cooldown').value)||0};TM.ivSavedPresets.push(p);renderIvPresets();toast('Preset saved: '+p.name);}
-function renderIvPresets(){var el=document.getElementById('iv-saved-presets');if(!el||!TM.ivSavedPresets.length)return;el.innerHTML='<div class="sec-head">MY PRESETS</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+TM.ivSavedPresets.map((p,i)=>`<div style="position:relative;display:inline-flex;align-items:center"><button class="preset-btn" onclick="ivLoadPreset(${p.work},${p.rest},${p.rounds},${p.warmup||0},${p.cooldown||0},'${p.name.replace(/'/g,"\\'")}')"> ${p.name}<br><span style="font-size:11px;opacity:.7">${p.work}W/${p.rest}R×${p.rounds}</span></button><button class="del-btn" style="padding:0 4px;font-size:13px" onclick="TM.ivSavedPresets.splice(${i},1);renderIvPresets()">✕</button></div>`).join('')+'</div>';}
+function ivSavePreset(){var p={id:Date.now(),name:document.getElementById('iv-name').value||'My Interval',work:parseInt(document.getElementById('iv-work').value)||40,rest:parseInt(document.getElementById('iv-rest').value)||20,rounds:parseInt(document.getElementById('iv-rounds').value)||8,warmup:parseInt(document.getElementById('iv-warmup').value)||0,cooldown:parseInt(document.getElementById('iv-cooldown').value)||0};TM.ivSavedPresets.push(p);renderIvPresets();save();toast('Preset saved: '+p.name);}
+function renderIvPresets(){var el=document.getElementById('iv-saved-presets');if(!el||!TM.ivSavedPresets.length)return;el.innerHTML='<div class="sec-head">MY PRESETS</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+TM.ivSavedPresets.map((p,i)=>`<div style="position:relative;display:inline-flex;align-items:center"><button class="preset-btn" onclick="ivLoadPreset(${p.work},${p.rest},${p.rounds},${p.warmup||0},${p.cooldown||0},'${p.name.replace(/'/g,"\\'")}')"> ${p.name}<br><span style="font-size:11px;opacity:.7">${p.work}W/${p.rest}R×${p.rounds}</span></button><button class="del-btn" style="padding:0 4px;font-size:13px" onclick="TM.ivSavedPresets.splice(${i},1);renderIvPresets();save()">✕</button></div>`).join('')+'</div>';}
 function ivReset(){clearInterval(TM.iv.interval);TM.iv.running=false;TM.iv.paused=false;TM.iv.currentRound=0;TM.iv.phase='warmup';TM.iv.phaseRemaining=TM.iv.warmup>0?TM.iv.warmup:TM.iv.work;if(TM.iv.warmup===0)TM.iv.phase='work';document.getElementById('iv-display').textContent=fmtTime(TM.iv.phaseRemaining);document.getElementById('iv-display').className='timer-big';document.getElementById('iv-phase').textContent=TM.iv.warmup>0?'WARMUP':'WORK';document.getElementById('iv-round-lbl').textContent='ROUND 0/'+TM.iv.rounds;document.getElementById('iv-ring').style.strokeDashoffset='0';document.getElementById('iv-ring').style.stroke='var(--o)';document.getElementById('iv-start-btn').style.display='';document.getElementById('iv-pause-btn').style.display='none';}
 function ivStart(){if(TM.iv.running)return;TM.iv.running=true;if(!TM.iv.paused){TM.iv.currentRound=TM.iv.warmup>0?0:1;TM.iv.phase=TM.iv.warmup>0?'warmup':'work';TM.iv.phaseRemaining=TM.iv.warmup>0?TM.iv.warmup:TM.iv.work;}TM.iv.paused=false;document.getElementById('iv-start-btn').style.display='none';document.getElementById('iv-pause-btn').style.display='';beepStart();ivUpdateDisplay();TM.iv.interval=setInterval(ivTick,1000);}
 function ivPause(){if(!TM.iv.running)return;clearInterval(TM.iv.interval);TM.iv.running=false;TM.iv.paused=true;document.getElementById('iv-start-btn').style.display='';document.getElementById('iv-start-btn').textContent='[ ▶ RESUME ]';document.getElementById('iv-pause-btn').style.display='none';document.getElementById('iv-phase').textContent='PAUSED';}
@@ -7721,9 +8076,10 @@ function _adminNormalizeUser(docId, raw) {
   var parsed = {};
   try { parsed = raw.data ? JSON.parse(raw.data) : {}; } catch(e) { parsed = {}; }
   var cfg = parsed.cfg || {};
+  var sm = raw.summary || dataService.summarize(parsed); // summary (Stage B) or, for not-yet-migrated users, the legacy blob
   return {
     docId: docId,
-    name: cfg.name || raw.userId || docId,
+    name: sm.name || cfg.name || raw.userId || docId,
     email: raw.authEmail || raw.userId || '—',
     uid: raw.authUid || '—',
     createdAt: raw.createdAt || null,
@@ -7731,19 +8087,19 @@ function _adminNormalizeUser(docId, raw) {
     lastSaved: raw.lastSaved || null,
     status: raw.status || 'active',
     plan: raw.plan || 'free', // placeholder — no real plan/billing system exists yet
-    onboarded: parsed.onboarded !== false,
-    gender: cfg.gender || '—',
-    age: cfg.age || null,
-    habitsCount: (parsed.habits||[]).length,
-    goalsCount: (parsed.goals||[]).length,
-    measurementsCount: (parsed.measurements||[]).length,
-    vitalsCount: (parsed.vitals||[]).length,
-    mealLibraryCount: (parsed.mealLibrary||[]).length,
-    ingredientLibraryCount: (parsed.ingredientLibrary||[]).length,
-    streak: parsed.streak || 0,
-    dailyDataDays: parsed.dailyData ? Object.keys(parsed.dailyData).length : 0,
-    lastMeasurement: (parsed.measurements && parsed.measurements.length) ? parsed.measurements[parsed.measurements.length-1] : null,
-    lastVital: (parsed.vitals && parsed.vitals.length) ? parsed.vitals[parsed.vitals.length-1] : null,
+    onboarded: sm.onboarded !== false,
+    gender: sm.gender || '—',
+    age: sm.age || null,
+    habitsCount: sm.habitsCount || 0,
+    goalsCount: sm.goalsCount || 0,
+    measurementsCount: sm.measurementsCount || 0,
+    vitalsCount: sm.vitalsCount || 0,
+    mealLibraryCount: sm.mealLibraryCount || 0,
+    ingredientLibraryCount: sm.ingredientLibraryCount || 0,
+    streak: sm.streak || 0,
+    dailyDataDays: sm.dailyDataDays || 0,
+    lastMeasurement: sm.lastMeasurement || null,
+    lastVital: sm.lastVital || null,
     _raw: raw
   };
 }
@@ -7935,16 +8291,23 @@ async function adminActivateUser(docId) {
   } catch(e) { console.error(e); toast('Failed to activate (see console)'); }
 }
 
-function adminExportUser(docId) {
+async function adminExportUser(docId) {
   var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
   if (!u) return;
-  var blob = new Blob([JSON.stringify(u._raw, null, 2)], {type:'application/json'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url; a.download = docId + '.json';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  writeAuditLog('USER_EXPORTED', 'user', docId);
+  try {
+    var account = Object.assign({}, u._raw); delete account.data; // account metadata only; no secrets are stored here
+    var state = (u.uid && u.uid !== '—') ? await dataService.loadUserState(u.uid) : null;
+    var payload;
+    if (state) payload = { source: 'modular', account: account, backup: dataService.buildBackup(state, u.email) };
+    else payload = { source: 'legacy', account: account, backup: u._raw && u._raw.data ? JSON.parse(u._raw.data) : null };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = docId + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    writeAuditLog('USER_EXPORTED', 'user', docId);
+  } catch(e) { console.error(e); toast('Export failed (see console)'); }
 }
 
 // ===================== ANALYTICS — EVENT TRACKING (app-wide) =====================
@@ -8582,6 +8945,8 @@ async function adminDeleteUser(docId) {
   try {
     var db = window._db;
     var ref = window._fsDoc(db, 'fitos_users', docId);
+    // Modular data first; if it fails nothing is deleted (otherwise the account could be resurrected on next login).
+    if (u.uid && u.uid !== '—') await dataService.deleteAll(u.uid);
     await window._fsDeleteDoc(ref);
     writeAuditLog('USER_DELETED', 'user', docId, {email: u.email, name: u.name}, null);
     toast('Account deleted');

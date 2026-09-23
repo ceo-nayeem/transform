@@ -3380,6 +3380,26 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
 .admin-kv{display:flex;justify-content:space-between;font-size:11px;padding:3px 0}
 .admin-kv .k{color:var(--t2)}
 .admin-kv .v{color:var(--t)}
+.admin-content-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.admin-content-tab{font-size:10px;letter-spacing:1px;padding:7px 12px;border:1px solid var(--border);color:var(--t2);cursor:pointer;text-transform:uppercase}
+.admin-content-tab.active{color:var(--g);border-color:var(--g);background:var(--gd)}
+.admin-form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
+.admin-form-row label{font-size:9px;letter-spacing:1px;color:var(--t2);text-transform:uppercase;min-width:90px}
+.admin-flag-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;border-bottom:1px solid var(--border)}
+.admin-flag-row:last-child{border-bottom:none}
+.admin-flag-name{font-size:12px;color:var(--t);font-weight:600}
+.admin-flag-key{font-size:9px;color:var(--t2);font-family:var(--mono)}
+.admin-flag-desc{font-size:10px;color:var(--t2);margin-top:2px}
+.admin-switch{width:34px;height:18px;background:var(--t3);border:1px solid var(--border);border-radius:9px;position:relative;cursor:pointer;flex-shrink:0;transition:all .2s}
+.admin-switch.on{background:var(--g3);border-color:var(--g)}
+.admin-switch .knob{width:12px;height:12px;background:var(--t2);border-radius:50%;position:absolute;top:2px;left:2px;transition:all .2s}
+.admin-switch.on .knob{left:18px;background:var(--g)}
+.admin-content-list-item{display:flex;justify-content:space-between;align-items:center;padding:9px 4px;border-bottom:1px solid var(--border);font-size:11px}
+.admin-content-list-item:last-child{border-bottom:none}
+.admin-audit-row{padding:9px 4px;border-bottom:1px solid var(--border);font-size:11px}
+.admin-audit-row:last-child{border-bottom:none}
+.admin-audit-action{color:var(--g);font-family:var(--mono);font-size:10px;letter-spacing:.5px}
+.admin-audit-meta{color:var(--t2);font-size:9px;margin-top:2px}
 @media (max-width:900px){.admin-metric-grid{grid-template-columns:repeat(2,1fr)}.admin-detail-grid{grid-template-columns:1fr}}
 </style>
 <div id="adminShellOverlay">
@@ -3408,15 +3428,15 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
         <div class="admin-sb-item active" id="adminNav-dashboard" onclick="adminNav('dashboard')">▦ Dashboard</div>
         <div class="admin-sb-sec">Management</div>
         <div class="admin-sb-item" id="adminNav-users" onclick="adminNav('users')">Users<span class="lock-tag" id="adminUsersCountTag">…</span></div>
-        <div class="admin-sb-item locked">Content<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item" id="adminNav-content" onclick="adminNav('content')">Content</div>
         <div class="admin-sb-sec">Configuration</div>
-        <div class="admin-sb-item locked">App Config<span class="lock-tag">PHASE 3</span></div>
-        <div class="admin-sb-item locked">Feature Flags<span class="lock-tag">PHASE 3</span></div>
-        <div class="admin-sb-item locked">Plans<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item" id="adminNav-appconfig" onclick="adminNav('appconfig')">App Config</div>
+        <div class="admin-sb-item" id="adminNav-flags" onclick="adminNav('flags')">Feature Flags</div>
+        <div class="admin-sb-item" id="adminNav-plans" onclick="adminNav('plans')">Plans</div>
         <div class="admin-sb-sec">System</div>
-        <div class="admin-sb-item locked">Analytics<span class="lock-tag">PHASE 3</span></div>
-        <div class="admin-sb-item locked">Audit Log<span class="lock-tag">PHASE 3</span></div>
-        <div class="admin-sb-item locked">System Settings<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item" id="adminNav-analytics" onclick="adminNav('analytics')">Analytics</div>
+        <div class="admin-sb-item" id="adminNav-audit" onclick="adminNav('audit')">Audit Log</div>
+        <div class="admin-sb-item" id="adminNav-system" onclick="adminNav('system')">System Settings</div>
       </div>
       <div class="admin-content">
 
@@ -3470,6 +3490,100 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
             </select>
           </div>
           <div id="adminUsersTableWrap"><div style="font-size:11px;color:var(--t2);padding:10px">Loading users…</div></div>
+        </div>
+
+        <!-- ===== CONTENT SECTION ===== -->
+        <div id="admin-sec-content" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Content Management</div>
+            <button class="admin-exit-btn" onclick="loadAdminContent(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div class="admin-card" style="margin-bottom:14px">
+            <div class="admin-todo-list">
+              <li>Global content is separate from each user's personal library — adding items here never touches user data.</li>
+              <li>Stored under <code>admin/content</code> as structured arrays, validated before save (no raw HTML/JS accepted).</li>
+            </div>
+          </div>
+          <div class="admin-content-tabs" id="adminContentTabs"></div>
+          <div id="adminContentBody"></div>
+        </div>
+
+        <!-- ===== APP CONFIG SECTION ===== -->
+        <div id="admin-sec-appconfig" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">App Configuration</div>
+            <button class="admin-exit-btn" onclick="loadAdminAppConfig(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div id="adminAppConfigBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading configuration…</div></div>
+        </div>
+
+        <!-- ===== FEATURE FLAGS SECTION ===== -->
+        <div id="admin-sec-flags" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Feature Flags</div>
+            <div style="display:flex;gap:8px">
+              <button class="admin-exit-btn" onclick="adminOpenNewFlag()">[ + NEW FLAG ]</button>
+              <button class="admin-exit-btn" onclick="loadAdminFeatureFlags(true)">[ ⟳ REFRESH ]</button>
+            </div>
+          </div>
+          <div class="admin-card" style="margin-bottom:14px">
+            <div class="admin-todo-list">
+              <li>The frontend must treat a missing/unreadable flag as <b>disabled</b> (fail safe) — see <code>isFeatureEnabled()</code>.</li>
+            </div>
+          </div>
+          <div id="adminFlagsBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading flags…</div></div>
+        </div>
+
+        <!-- ===== PLANS SECTION ===== -->
+        <div id="admin-sec-plans" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Plans &amp; Limits</div>
+            <button class="admin-exit-btn" onclick="loadAdminPlans(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div class="admin-card" style="margin-bottom:14px">
+            <div class="admin-todo-list">
+              <li>No payment processing exists — this controls <b>limits</b> only. Billing fields are placeholders for a future provider integration.</li>
+              <li>Limits are enforced by <code>getPlanLimit()</code> in the app layer, not just hidden in the UI.</li>
+            </div>
+          </div>
+          <div id="adminPlansBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading plans…</div></div>
+        </div>
+
+        <!-- ===== ANALYTICS SECTION ===== -->
+        <div id="admin-sec-analytics" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Analytics</div>
+            <button class="admin-exit-btn" onclick="loadAdminAnalytics(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div class="admin-metric-grid" id="adminAnalyticsMetricGrid">
+            <div style="font-size:11px;color:var(--t2);padding:10px">Loading event metrics…</div>
+          </div>
+          <div class="admin-card" style="margin-top:14px">
+            <div class="admin-card-title">Feature Usage (events, all time)</div>
+            <div id="adminAnalyticsEventBreakdown" class="admin-mini-list"></div>
+          </div>
+          <div class="admin-card" style="margin-top:14px">
+            <div class="admin-card-title">Recent Events</div>
+            <div id="adminAnalyticsRecent" class="admin-mini-list"></div>
+          </div>
+        </div>
+
+        <!-- ===== AUDIT LOG SECTION ===== -->
+        <div id="admin-sec-audit" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Audit Log</div>
+            <button class="admin-exit-btn" onclick="loadAdminAuditLog(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div id="adminAuditBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading audit log…</div></div>
+        </div>
+
+        <!-- ===== SYSTEM SETTINGS SECTION ===== -->
+        <div id="admin-sec-system" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">System Settings</div>
+            <button class="admin-exit-btn" onclick="loadAdminSystemSettings(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div id="adminSystemBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading system settings…</div></div>
         </div>
 
         <!-- ===== USER DETAIL (overlay panel) ===== -->
@@ -3717,6 +3831,7 @@ function loginSuccess(id, docId, silent) {
   saveSession(id, docId);
   updateAdminMenuVisibility();
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
+  trackEvent('login');
 }
 
 // ===================== ONBOARDING (new Google accounts only) =====================
@@ -3780,6 +3895,7 @@ function finishOnboarding(mode) {
   toast('Welcome, ' + S.cfg.name + '! Your profile is ready.');
   _onboardEmail = null;
   _onboardDocId = null;
+  trackEvent('onboarding_complete');
 }
 
 // ===================== SESSION PERSISTENCE (per-tab only) =====================
@@ -5699,13 +5815,14 @@ function addGoal(){
   S.goals.push({id:Date.now(),name,cat:document.getElementById('gl-cat').value,start:parseFloat(cur),cur:parseFloat(cur),target:parseFloat(tar),unit:document.getElementById('gl-unit').value||'',date:document.getElementById('gl-date').value,complete:false});
   ['gl-name','gl-cur','gl-tar','gl-unit','gl-date'].forEach(id=>document.getElementById(id).value='');
   save();renderGoals();toast('Goal set!');
+  trackEvent('goal_created');
 }
 function updateGoalProgress(){
   var idx=parseInt(document.getElementById('gl-sel').value);var val=parseFloat(document.getElementById('gl-newval').value);
   if(isNaN(val)||isNaN(idx)){toast('Select goal and enter value');return;}
   S.goals[idx].cur=val; document.getElementById('gl-newval').value=''; save();renderGoals();toast('Goal updated!');
 }
-function completeGoal(i){S.goals[i].complete=true;save();renderGoals();toast('Goal completed!');}
+function completeGoal(i){S.goals[i].complete=true;save();renderGoals();toast('Goal completed!');trackEvent('goal_completed');}
 function delGoal(i){S.goals.splice(i,1);save();renderGoals();toast('Goal removed');}
 
 // ===================== PROFILE & SETTINGS =====================
@@ -7532,15 +7649,52 @@ function closeAdminBackend() {
   closeAdminUserDetail();
 }
 
+// ===================== ADMIN — AUDIT LOG (shared writer) =====================
+// Append-only from the admin UI: called by every mutating admin action.
+// Never awaited by callers for its own sake — failures here must not block
+// the underlying action, but are logged to console for visibility.
+async function writeAuditLog(action, targetType, targetId, before, after) {
+  try {
+    var db = window._db;
+    var u = window._auth && window._auth.currentUser;
+    if (!u) return;
+    var logsCol = window._fsCollection(db, 'admin_auditLogs');
+    var logRef = window._fsDoc(logsCol);
+    var entry = {
+      adminUid: u.uid,
+      adminEmail: u.email,
+      role: 'owner',
+      action: action,
+      targetType: targetType || null,
+      targetId: targetId || null,
+      timestamp: new Date().toISOString()
+    };
+    if (before !== undefined) entry.before = before;
+    if (after !== undefined) entry.after = after;
+    await window._fsSetDoc(logRef, entry);
+    ADMIN_AUDIT_CACHE = null; // invalidate so the Audit Log view refetches
+  } catch (e) {
+    console.error('writeAuditLog failed:', e);
+  }
+}
+
 // ===================== ADMIN — SECTION NAV =====================
+var ADMIN_SECTIONS = ['dashboard','users','content','appconfig','flags','plans','analytics','audit','system'];
 function adminNav(section) {
-  ['dashboard','users'].forEach(function(s){
+  ADMIN_SECTIONS.forEach(function(s){
     var sec = document.getElementById('admin-sec-'+s);
     var nav = document.getElementById('adminNav-'+s);
     if (sec) sec.style.display = (s===section) ? '' : 'none';
     if (nav) nav.classList.toggle('active', s===section);
   });
   if (section === 'users') renderAdminUsersTable();
+  if (section === 'content') loadAdminContent(false);
+  if (section === 'appconfig') loadAdminAppConfig(false);
+  if (section === 'flags') loadAdminFeatureFlags(false);
+  if (section === 'plans') loadAdminPlans(false);
+  if (section === 'analytics') loadAdminAnalytics(false);
+  if (section === 'audit') loadAdminAuditLog(false);
+  if (section === 'system') loadAdminSystemSettings(false);
 }
 
 // ===================== ADMIN — USERS DATA =====================
@@ -7755,11 +7909,13 @@ function closeAdminUserDetail() {
 }
 
 async function adminSuspendUser(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
   if (!confirm('Suspend this account? They will be signed out and blocked from logging back in until reactivated.')) return;
   try {
     var db = window._db;
     var ref = window._fsDoc(db, 'fitos_users', docId);
     await window._fsSetDoc(ref, { status: 'suspended', statusChangedAt: new Date().toISOString() }, {merge:true});
+    writeAuditLog('USER_SUSPENDED', 'user', docId, {status: u?u.status:'active'}, {status:'suspended'});
     toast('Account suspended');
     await loadAdminUsers(true);
     openAdminUserDetail(docId);
@@ -7767,10 +7923,12 @@ async function adminSuspendUser(docId) {
 }
 
 async function adminActivateUser(docId) {
+  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
   try {
     var db = window._db;
     var ref = window._fsDoc(db, 'fitos_users', docId);
     await window._fsSetDoc(ref, { status: 'active', statusChangedAt: new Date().toISOString() }, {merge:true});
+    writeAuditLog('USER_ACTIVATED', 'user', docId, {status: u?u.status:'suspended'}, {status:'active'});
     toast('Account activated');
     await loadAdminUsers(true);
     openAdminUserDetail(docId);
@@ -7786,6 +7944,634 @@ function adminExportUser(docId) {
   a.href = url; a.download = docId + '.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  writeAuditLog('USER_EXPORTED', 'user', docId);
+}
+
+// ===================== ANALYTICS — EVENT TRACKING (app-wide) =====================
+// Lightweight, allow-listed event tracker. Call from anywhere in the app:
+//   trackEvent('meal_logged', {mealId: ...})
+// Never tracks keystrokes or arbitrary UI noise — only the named lifecycle
+// events below, per spec §10.
+var ANALYTICS_ALLOWED_EVENTS = [
+  'signup','login','onboarding_complete','meal_logged','water_logged',
+  'workout_completed','habit_completed','goal_created','goal_completed','feature_used'
+];
+function trackEvent(name, meta) {
+  if (ANALYTICS_ALLOWED_EVENTS.indexOf(name) === -1) return;
+  try {
+    if (!window._db || !window._auth || !window._auth.currentUser) return;
+    var db = window._db;
+    var colRef = window._fsCollection(db, 'admin_analytics');
+    var ref = window._fsDoc(colRef);
+    window._fsSetDoc(ref, {
+      event: name,
+      uid: window._auth.currentUser.uid,
+      meta: meta || null,
+      timestamp: new Date().toISOString()
+    }).catch(function(e){ console.error('trackEvent failed:', e); });
+  } catch(e) { console.error('trackEvent failed:', e); }
+}
+
+// ===================== ADMIN — ANALYTICS VIEWER =====================
+var ADMIN_ANALYTICS_CACHE = null;
+
+async function loadAdminAnalytics(force) {
+  if (ADMIN_ANALYTICS_CACHE && !force) { renderAdminAnalytics(); return; }
+  try {
+    var db = window._db;
+    var colRef = window._fsCollection(db, 'admin_analytics');
+    var snap = await window._fsGetDocs(colRef);
+    var events = [];
+    snap.forEach(function(d){ events.push(d.data()); });
+    events.sort(function(a,b){ return new Date(b.timestamp||0) - new Date(a.timestamp||0); });
+    ADMIN_ANALYTICS_CACHE = events;
+    renderAdminAnalytics();
+  } catch (e) {
+    console.error('loadAdminAnalytics failed:', e);
+    var grid = document.getElementById('adminAnalyticsMetricGrid');
+    if (grid) grid.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load analytics.</div>';
+  }
+}
+
+function renderAdminAnalytics() {
+  var grid = document.getElementById('adminAnalyticsMetricGrid');
+  var breakdown = document.getElementById('adminAnalyticsEventBreakdown');
+  var recent = document.getElementById('adminAnalyticsRecent');
+  if (!grid || !ADMIN_ANALYTICS_CACHE) return;
+  var events = ADMIN_ANALYTICS_CACHE;
+  var now = Date.now();
+  var last7d = events.filter(function(e){ return e.timestamp && (now - new Date(e.timestamp).getTime()) <= 7*86400000; }).length;
+  var uniqueUsers7d = {};
+  events.forEach(function(e){ if (e.timestamp && (now - new Date(e.timestamp).getTime()) <= 7*86400000 && e.uid) uniqueUsers7d[e.uid]=1; });
+
+  grid.innerHTML =
+    '<div class="admin-metric-card"><div class="admin-metric-label">Total Events</div><div class="admin-metric-val">'+events.length+'</div></div>' +
+    '<div class="admin-metric-card"><div class="admin-metric-label">Events (7d)</div><div class="admin-metric-val" style="color:var(--c)">'+last7d+'</div></div>' +
+    '<div class="admin-metric-card"><div class="admin-metric-label">Active Users (7d)</div><div class="admin-metric-val" style="color:var(--o2)">'+Object.keys(uniqueUsers7d).length+'</div></div>';
+
+  var counts = {};
+  events.forEach(function(e){ counts[e.event] = (counts[e.event]||0)+1; });
+  var sorted = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; });
+  breakdown.innerHTML = sorted.length ? sorted.map(function(k){
+    return '<div class="admin-mini-row"><span class="nm">'+k+'</span><span class="tm">'+counts[k]+'</span></div>';
+  }).join('') : '<div style="font-size:10px;color:var(--t2)">No events tracked yet.</div>';
+
+  var recentList = events.slice(0,10);
+  recent.innerHTML = recentList.length ? recentList.map(function(e){
+    return '<div class="admin-mini-row"><span class="nm">'+e.event+'</span><span class="tm">'+_adminTimeAgo(e.timestamp)+'</span></div>';
+  }).join('') : '<div style="font-size:10px;color:var(--t2)">No events yet.</div>';
+}
+
+// ===================== ADMIN — CONTENT MANAGEMENT =====================
+var ADMIN_CONTENT_CACHE = null; // { exercises:[], mealTemplates:[], ingredients:[], habitTemplates:[] }
+var ADMIN_CONTENT_TAB = 'exercises';
+var ADMIN_CONTENT_TYPES = [
+  {key:'exercises', label:'Exercises', fields:['name','category']},
+  {key:'mealTemplates', label:'Meal Templates', fields:['name','calories']},
+  {key:'ingredients', label:'Ingredients', fields:['name','unit']},
+  {key:'habitTemplates', label:'Habit Templates', fields:['name','category']}
+];
+
+async function loadAdminContent(force) {
+  if (ADMIN_CONTENT_CACHE && !force) { renderAdminContentTabs(); renderAdminContentList(); return; }
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'content');
+    var snap = await window._fsGetDoc(ref);
+    var defaults = {exercises:[], mealTemplates:[], ingredients:[], habitTemplates:[]};
+    if (snap.exists()) {
+      ADMIN_CONTENT_CACHE = Object.assign({}, defaults, snap.data());
+    } else {
+      ADMIN_CONTENT_CACHE = defaults;
+      await window._fsSetDoc(ref, defaults);
+    }
+    renderAdminContentTabs();
+    renderAdminContentList();
+  } catch (e) {
+    console.error('loadAdminContent failed:', e);
+    var b = document.getElementById('adminContentBody');
+    if (b) b.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load content.</div>';
+  }
+}
+
+function renderAdminContentTabs() {
+  var tabs = document.getElementById('adminContentTabs');
+  if (!tabs) return;
+  tabs.innerHTML = ADMIN_CONTENT_TYPES.map(function(t){
+    var count = (ADMIN_CONTENT_CACHE[t.key]||[]).length;
+    return '<div class="admin-content-tab'+(t.key===ADMIN_CONTENT_TAB?' active':'')+'" onclick="adminSetContentTab(\''+t.key+'\')">'+t.label+' ('+count+')</div>';
+  }).join('');
+}
+
+function adminSetContentTab(key) {
+  ADMIN_CONTENT_TAB = key;
+  renderAdminContentTabs();
+  renderAdminContentList();
+}
+
+function renderAdminContentList() {
+  var body = document.getElementById('adminContentBody');
+  if (!body || !ADMIN_CONTENT_CACHE) return;
+  var type = ADMIN_CONTENT_TYPES.find(function(t){ return t.key===ADMIN_CONTENT_TAB; });
+  var items = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] || [];
+  body.innerHTML = '<div class="admin-card">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+      '<div class="admin-card-title" style="margin:0">'+type.label+'</div>' +
+      '<button class="admin-exit-btn" onclick="adminOpenNewContentItem()">[ + ADD ]</button>' +
+    '</div>' +
+    (items.length ? items.map(function(item,i){
+      var sub = type.fields.slice(1).map(function(f){ return item[f]!=null ? _esc(String(item[f])) : ''; }).filter(Boolean).join(' · ');
+      return '<div class="admin-content-list-item"><span>'+_esc(item[type.fields[0]]||'—')+(sub?' <span style="color:var(--t2);font-size:9px">'+sub+'</span>':'')+'</span>' +
+        '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminDeleteContentItem('+i+')">✕</button></div>';
+    }).join('') : '<div style="font-size:11px;color:var(--t2);padding:8px 0">No items yet.</div>') +
+  '</div>';
+}
+
+function adminOpenNewContentItem() {
+  var type = ADMIN_CONTENT_TYPES.find(function(t){ return t.key===ADMIN_CONTENT_TAB; });
+  var item = {};
+  for (var i=0;i<type.fields.length;i++) {
+    var f = type.fields[i];
+    var v = prompt('Enter '+f+':');
+    if (v === null) return; // cancelled
+    item[f] = String(v).slice(0,120); // structured plain-text field only
+  }
+  item.id = ADMIN_CONTENT_TAB.slice(0,4)+'_'+Date.now();
+  ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] || [];
+  ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB].push(item);
+  adminPersistContent('CONTENT_CREATED', item.id, null, item);
+}
+
+function adminDeleteContentItem(i) {
+  var list = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB];
+  var item = list[i];
+  if (!confirm('Delete "'+(item[Object.keys(item)[0]])+'"?')) return;
+  list.splice(i,1);
+  adminPersistContent('CONTENT_DELETED', item.id, item, null);
+}
+
+async function adminPersistContent(action, targetId, before, after) {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'content');
+    var payload = {}; payload[ADMIN_CONTENT_TAB] = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB];
+    await window._fsSetDoc(ref, payload, {merge:true});
+    renderAdminContentTabs();
+    renderAdminContentList();
+    writeAuditLog(action, 'content:'+ADMIN_CONTENT_TAB, targetId, before, after);
+  } catch(e) { console.error(e); toast('Failed to save content (see console)'); }
+}
+
+// ===================== ADMIN — APP CONFIGURATION =====================
+var ADMIN_APPCONFIG_CACHE = null;
+var DEFAULT_APP_CONFIG = {
+  greeting: { titlePrefix: 'Welcome back,', namePosition: 'after', titleSuffix: '', description: '' },
+  achievements: [] // {id,title,description,icon,enabled,requirement}
+};
+
+async function loadAdminAppConfig(force) {
+  if (ADMIN_APPCONFIG_CACHE && !force) { renderAdminAppConfig(); return; }
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    var snap = await window._fsGetDoc(ref);
+    if (snap.exists()) {
+      var d = snap.data();
+      ADMIN_APPCONFIG_CACHE = {
+        greeting: Object.assign({}, DEFAULT_APP_CONFIG.greeting, d.greeting||{}),
+        achievements: d.achievements || []
+      };
+    } else {
+      ADMIN_APPCONFIG_CACHE = JSON.parse(JSON.stringify(DEFAULT_APP_CONFIG));
+      await window._fsSetDoc(ref, ADMIN_APPCONFIG_CACHE);
+    }
+    renderAdminAppConfig();
+  } catch (e) {
+    console.error('loadAdminAppConfig failed:', e);
+    var body = document.getElementById('adminAppConfigBody');
+    if (body) body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load app configuration.</div>';
+  }
+}
+
+function renderAdminAppConfig() {
+  var body = document.getElementById('adminAppConfigBody');
+  if (!body || !ADMIN_APPCONFIG_CACHE) return;
+  var g = ADMIN_APPCONFIG_CACHE.greeting;
+  var ach = ADMIN_APPCONFIG_CACHE.achievements || [];
+  body.innerHTML =
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Greeting</div>' +
+      '<div class="admin-form-row"><label>Prefix</label><input class="admin-inp" id="cfgGreetPrefix" style="flex:1" value="'+_esc(g.titlePrefix)+'"/></div>' +
+      '<div class="admin-form-row"><label>Name Position</label><select class="admin-inp" id="cfgGreetPos"><option value="after"'+(g.namePosition==='after'?' selected':'')+'>After prefix</option><option value="none"'+(g.namePosition==='none'?' selected':'')+'>Hide name</option></select></div>' +
+      '<div class="admin-form-row"><label>Suffix</label><input class="admin-inp" id="cfgGreetSuffix" style="flex:1" value="'+_esc(g.titleSuffix)+'"/></div>' +
+      '<div class="admin-form-row"><label>Description</label><input class="admin-inp" id="cfgGreetDesc" style="flex:1" value="'+_esc(g.description)+'"/></div>' +
+      '<button class="admin-exit-btn" onclick="adminSaveGreeting()">[ ✓ SAVE GREETING ]</button>' +
+    '</div>' +
+    '<div class="admin-card">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center">' +
+        '<div class="admin-card-title" style="margin:0">Achievements</div>' +
+        '<button class="admin-exit-btn" onclick="adminOpenNewAchievement()">[ + NEW ]</button>' +
+      '</div>' +
+      (ach.length ? ach.map(function(a,i){
+        return '<div class="admin-content-list-item"><div>' +
+          '<span style="margin-right:6px">'+_esc(a.icon||'🏆')+'</span>' +
+          '<span style="color:var(--t)">'+_esc(a.title)+'</span>' +
+          '<span style="color:var(--t2);font-size:9px;margin-left:8px">'+_esc(a.requirement||'')+'</span>' +
+          '</div><div style="display:flex;align-items:center;gap:8px">' +
+          '<div class="admin-switch'+(a.enabled?' on':'')+'" onclick="adminToggleAchievement('+i+')"><div class="knob"></div></div>' +
+          '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminDeleteAchievement('+i+')">✕</button>' +
+          '</div></div>';
+      }).join('') : '<div style="font-size:11px;color:var(--t2);padding:8px 0">No achievements defined yet.</div>') +
+    '</div>';
+}
+
+async function adminSaveGreeting() {
+  var before = Object.assign({}, ADMIN_APPCONFIG_CACHE.greeting);
+  var after = {
+    titlePrefix: (document.getElementById('cfgGreetPrefix').value||'').slice(0,60),
+    namePosition: document.getElementById('cfgGreetPos').value,
+    titleSuffix: (document.getElementById('cfgGreetSuffix').value||'').slice(0,60),
+    description: (document.getElementById('cfgGreetDesc').value||'').slice(0,160)
+  };
+  ADMIN_APPCONFIG_CACHE.greeting = after;
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    await window._fsSetDoc(ref, {greeting: after}, {merge:true});
+    writeAuditLog('CONFIG_UPDATED', 'appConfig.greeting', 'admin/appConfig', before, after);
+    toast('Greeting saved');
+  } catch(e) { console.error(e); toast('Failed to save (see console)'); }
+}
+
+function adminOpenNewAchievement() {
+  var title = prompt('Achievement title:');
+  if (!title) return;
+  var description = prompt('Description:', '') || '';
+  var icon = prompt('Icon (single emoji):', '🏆') || '🏆';
+  var requirement = prompt('Requirement (plain text, shown to admins only — e.g. "7-day streak"):', '') || '';
+  // Structured data only — plain strings, no HTML/JS accepted or rendered as markup.
+  var a = {id: 'ach_'+Date.now(), title: String(title).slice(0,60), description: String(description).slice(0,160),
+            icon: String(icon).slice(0,4), requirement: String(requirement).slice(0,80), enabled:false};
+  ADMIN_APPCONFIG_CACHE.achievements = ADMIN_APPCONFIG_CACHE.achievements || [];
+  ADMIN_APPCONFIG_CACHE.achievements.push(a);
+  adminPersistAchievements('ACHIEVEMENT_CREATED', a.id, null, a);
+}
+
+function adminToggleAchievement(i) {
+  var a = ADMIN_APPCONFIG_CACHE.achievements[i];
+  var before = {enabled: a.enabled};
+  a.enabled = !a.enabled;
+  adminPersistAchievements('ACHIEVEMENT_UPDATED', a.id, before, {enabled:a.enabled});
+}
+
+function adminDeleteAchievement(i) {
+  var a = ADMIN_APPCONFIG_CACHE.achievements[i];
+  if (!confirm('Delete achievement "'+a.title+'"?')) return;
+  ADMIN_APPCONFIG_CACHE.achievements.splice(i,1);
+  adminPersistAchievements('ACHIEVEMENT_DELETED', a.id, a, null);
+}
+
+async function adminPersistAchievements(action, targetId, before, after) {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'appConfig');
+    await window._fsSetDoc(ref, {achievements: ADMIN_APPCONFIG_CACHE.achievements}, {merge:true});
+    renderAdminAppConfig();
+    writeAuditLog(action, 'achievement', targetId, before, after);
+  } catch(e) { console.error(e); toast('Failed to save achievements (see console)'); }
+}
+
+// ===================== ADMIN — PLANS & LIMITS =====================
+var ADMIN_PLANS_CACHE = null;
+var DEFAULT_PLANS = {
+  free: {name:'Free', maximumGoals:5, maximumHabits:8, maximumMealLibraryItems:20, aiAgentEnabled:false},
+  pro:  {name:'Pro',  maximumGoals:-1, maximumHabits:-1, maximumMealLibraryItems:-1, aiAgentEnabled:true}
+};
+
+async function loadAdminPlans(force) {
+  if (ADMIN_PLANS_CACHE && !force) { renderAdminPlans(); return; }
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'plans');
+    var snap = await window._fsGetDoc(ref);
+    if (snap.exists()) {
+      ADMIN_PLANS_CACHE = snap.data();
+    } else {
+      ADMIN_PLANS_CACHE = Object.assign({}, DEFAULT_PLANS);
+      await window._fsSetDoc(ref, ADMIN_PLANS_CACHE);
+    }
+    renderAdminPlans();
+  } catch (e) {
+    console.error('loadAdminPlans failed:', e);
+    var body = document.getElementById('adminPlansBody');
+    if (body) body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load plans.</div>';
+  }
+}
+
+function renderAdminPlans() {
+  var body = document.getElementById('adminPlansBody');
+  if (!body || !ADMIN_PLANS_CACHE) return;
+  var ids = Object.keys(ADMIN_PLANS_CACHE);
+  body.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">' +
+    ids.map(function(pid){
+      var p = ADMIN_PLANS_CACHE[pid];
+      return '<div class="admin-card">' +
+        '<div class="admin-card-title">'+_esc(p.name||pid)+' <span class="admin-badge plan">'+pid.toUpperCase()+'</span></div>' +
+        '<div class="admin-form-row"><label>Max Goals</label><input class="admin-inp" style="width:100px" id="plan-'+pid+'-maximumGoals" value="'+(p.maximumGoals!=null?p.maximumGoals:'')+'"/><span style="font-size:9px;color:var(--t2)">-1 = unlimited</span></div>' +
+        '<div class="admin-form-row"><label>Max Habits</label><input class="admin-inp" style="width:100px" id="plan-'+pid+'-maximumHabits" value="'+(p.maximumHabits!=null?p.maximumHabits:'')+'"/></div>' +
+        '<div class="admin-form-row"><label>Max Meal Items</label><input class="admin-inp" style="width:100px" id="plan-'+pid+'-maximumMealLibraryItems" value="'+(p.maximumMealLibraryItems!=null?p.maximumMealLibraryItems:'')+'"/></div>' +
+        '<div class="admin-flag-row" style="border:none;padding-left:0"><div class="admin-flag-name" style="font-size:11px">AI Agent Access</div>' +
+          '<div class="admin-switch'+(p.aiAgentEnabled?' on':'')+'" onclick="adminTogglePlanBool(\''+pid+'\',\'aiAgentEnabled\')"><div class="knob"></div></div></div>' +
+      '</div>';
+    }).join('') +
+  '</div>' +
+  '<div class="admin-card" style="margin-top:14px">' +
+    '<div class="admin-card-title">Subscription Fields (architecture only — no billing provider connected)</div>' +
+    '<div class="admin-todo-list"><li>Each user account is ready for: plan, status, start date, renewal date, subscription provider, provider customer ID.</li><li>These fields are stored on the user document when a plan changes; no payment processing is implemented.</li></div>' +
+  '</div>' +
+  '<button class="admin-exit-btn" style="margin-top:12px" onclick="adminSavePlans()">[ ✓ SAVE PLAN LIMITS ]</button>';
+}
+
+function adminTogglePlanBool(pid, key) {
+  ADMIN_PLANS_CACHE[pid][key] = !ADMIN_PLANS_CACHE[pid][key];
+  renderAdminPlans();
+}
+
+async function adminSavePlans() {
+  var before = JSON.parse(JSON.stringify(ADMIN_PLANS_CACHE));
+  var ids = Object.keys(ADMIN_PLANS_CACHE);
+  ids.forEach(function(pid){
+    ['maximumGoals','maximumHabits','maximumMealLibraryItems'].forEach(function(field){
+      var el = document.getElementById('plan-'+pid+'-'+field);
+      if (el) {
+        var n = parseInt(el.value, 10);
+        ADMIN_PLANS_CACHE[pid][field] = isNaN(n) ? -1 : n;
+      }
+    });
+  });
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'plans');
+    await window._fsSetDoc(ref, ADMIN_PLANS_CACHE);
+    writeAuditLog('PLAN_UPDATED', 'plans', 'admin/plans', before, ADMIN_PLANS_CACHE);
+    toast('Plan limits saved');
+  } catch(e) { console.error(e); toast('Failed to save plans (see console)'); }
+}
+
+// Frontend-safe limit reader — enforced wherever a user tries to add a
+// goal/habit/etc, not just hidden in the UI. Falls back to Free-tier
+// limits if plans can't be loaded, never to "unlimited".
+async function getPlanLimit(planId, limitKey) {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'plans');
+    var snap = await window._fsGetDoc(ref);
+    var plans = snap.exists() ? snap.data() : DEFAULT_PLANS;
+    var plan = plans[planId] || plans.free || DEFAULT_PLANS.free;
+    var v = plan[limitKey];
+    return (v === undefined) ? DEFAULT_PLANS.free[limitKey] : v;
+  } catch (e) {
+    console.error('getPlanLimit failed, defaulting to Free tier:', e);
+    return DEFAULT_PLANS.free[limitKey];
+  }
+}
+
+// ===================== ADMIN — FEATURE FLAGS =====================
+var ADMIN_FLAGS_CACHE = null;
+var DEFAULT_FEATURE_FLAGS = [
+  {key:'ai_agent', name:'AI Agent', description:'Gemini-powered AI assistant features.'},
+  {key:'achievements', name:'Achievements', description:'Achievement badges and progress tracking.'},
+  {key:'advanced_goals', name:'Advanced Goals', description:'Multi-metric and compound goal types.'},
+  {key:'pro_features', name:'Pro Features', description:'Features gated behind the Pro plan.'},
+  {key:'new_dashboard', name:'New Dashboard', description:'Next-generation dashboard layout (beta).'}
+];
+
+async function loadAdminFeatureFlags(force) {
+  if (ADMIN_FLAGS_CACHE && !force) { renderAdminFlags(); return; }
+  try {
+    var db = window._db;
+    var colRef = window._fsCollection(db, 'admin_features');
+    var snap = await window._fsGetDocs(colRef);
+    var flags = [];
+    snap.forEach(function(d){ flags.push(Object.assign({key:d.id}, d.data())); });
+    if (!flags.length) {
+      // First run: seed the known flags so the frontend has something to read.
+      for (var i=0;i<DEFAULT_FEATURE_FLAGS.length;i++) {
+        var f = DEFAULT_FEATURE_FLAGS[i];
+        var ref = window._fsDoc(db, 'admin_features', f.key);
+        var val = Object.assign({}, f, {enabled:false, beta:false, updatedAt:new Date().toISOString()});
+        await window._fsSetDoc(ref, val);
+        flags.push(Object.assign({key:f.key}, val));
+      }
+    }
+    flags.sort(function(a,b){ return (a.name||a.key).localeCompare(b.name||b.key); });
+    ADMIN_FLAGS_CACHE = flags;
+    renderAdminFlags();
+  } catch (e) {
+    console.error('loadAdminFeatureFlags failed:', e);
+    var body = document.getElementById('adminFlagsBody');
+    if (body) body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load feature flags.</div>';
+  }
+}
+
+function renderAdminFlags() {
+  var body = document.getElementById('adminFlagsBody');
+  if (!body || !ADMIN_FLAGS_CACHE) return;
+  if (!ADMIN_FLAGS_CACHE.length) {
+    body.innerHTML = '<div class="admin-card"><div style="font-size:11px;color:var(--t2)">No feature flags yet.</div></div>';
+    return;
+  }
+  body.innerHTML = '<div class="admin-card">' + ADMIN_FLAGS_CACHE.map(function(f){
+    return '<div class="admin-flag-row">' +
+      '<div><div class="admin-flag-name">'+_esc(f.name||f.key)+(f.beta?' <span class="admin-badge plan">BETA</span>':'')+'</div>' +
+        '<div class="admin-flag-key">'+f.key+'</div>' +
+        (f.description ? '<div class="admin-flag-desc">'+_esc(f.description)+'</div>' : '') +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<div class="admin-switch'+(f.enabled?' on':'')+'" onclick="adminToggleFlag(\''+f.key+'\')"><div class="knob"></div></div>' +
+      '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+async function adminToggleFlag(key) {
+  var f = ADMIN_FLAGS_CACHE.find(function(x){ return x.key === key; });
+  if (!f) return;
+  var before = {enabled: f.enabled};
+  var newVal = !f.enabled;
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin_features', key);
+    await window._fsSetDoc(ref, {enabled:newVal, updatedAt:new Date().toISOString()}, {merge:true});
+    f.enabled = newVal;
+    renderAdminFlags();
+    writeAuditLog('FEATURE_UPDATED', 'feature_flag', key, before, {enabled:newVal});
+    toast('Updated "'+(f.name||key)+'"');
+  } catch(e) { console.error(e); toast('Failed to update flag (see console)'); }
+}
+
+function adminOpenNewFlag() {
+  var key = prompt('Flag key (lowercase, underscores, e.g. "new_feature"):');
+  if (!key) return;
+  key = key.trim().toLowerCase().replace(/[^a-z0-9_]/g,'_');
+  if (!key) return;
+  if ((ADMIN_FLAGS_CACHE||[]).some(function(f){ return f.key === key; })) { toast('That key already exists'); return; }
+  var name = prompt('Display name:', key) || key;
+  var description = prompt('Description (optional):', '') || '';
+  adminCreateFlag(key, name, description);
+}
+
+async function adminCreateFlag(key, name, description) {
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin_features', key);
+    var val = {key:key, name:name, description:description, enabled:false, beta:false, updatedAt:new Date().toISOString()};
+    await window._fsSetDoc(ref, val);
+    ADMIN_FLAGS_CACHE = ADMIN_FLAGS_CACHE || [];
+    ADMIN_FLAGS_CACHE.push(val);
+    ADMIN_FLAGS_CACHE.sort(function(a,b){ return (a.name||a.key).localeCompare(b.name||b.key); });
+    renderAdminFlags();
+    writeAuditLog('FEATURE_CREATED', 'feature_flag', key, null, val);
+    toast('Flag created');
+  } catch(e) { console.error(e); toast('Failed to create flag (see console)'); }
+}
+
+// Frontend-safe flag reader: fails to `false` (disabled) on any error or
+// missing flag, per spec §7 — never assume a feature is on.
+var FEATURE_FLAGS_RUNTIME_CACHE = null;
+async function isFeatureEnabled(key) {
+  try {
+    if (!FEATURE_FLAGS_RUNTIME_CACHE) {
+      var db = window._db;
+      var colRef = window._fsCollection(db, 'admin_features');
+      var snap = await window._fsGetDocs(colRef);
+      var map = {};
+      snap.forEach(function(d){ map[d.id] = d.data(); });
+      FEATURE_FLAGS_RUNTIME_CACHE = map;
+    }
+    var f = FEATURE_FLAGS_RUNTIME_CACHE[key];
+    return !!(f && f.enabled);
+  } catch (e) {
+    console.error('isFeatureEnabled failed, defaulting to disabled:', e);
+    return false;
+  }
+}
+
+// ===================== ADMIN — SYSTEM SETTINGS =====================
+var ADMIN_SYSTEM_CACHE = null;
+
+async function loadAdminSystemSettings(force) {
+  if (ADMIN_SYSTEM_CACHE && !force) { renderAdminSystemSettings(); return; }
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'config');
+    var snap = await window._fsGetDoc(ref);
+    var defaults = {
+      maintenanceMode: false, maintenanceMessage: '', appVersion: '1.0.0',
+      minSupportedVersion: '1.0.0', announcement: '', readOnlyMode: false
+    };
+    ADMIN_SYSTEM_CACHE = snap.exists() ? Object.assign({}, defaults, snap.data()) : defaults;
+    renderAdminSystemSettings();
+  } catch (e) {
+    console.error('loadAdminSystemSettings failed:', e);
+    var body = document.getElementById('adminSystemBody');
+    if (body) body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load system settings. Using safe defaults elsewhere in the app.</div>';
+  }
+}
+
+function renderAdminSystemSettings() {
+  var body = document.getElementById('adminSystemBody');
+  if (!body || !ADMIN_SYSTEM_CACHE) return;
+  var c = ADMIN_SYSTEM_CACHE;
+  body.innerHTML =
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Availability</div>' +
+      '<div class="admin-flag-row"><div><div class="admin-flag-name">Maintenance Mode</div><div class="admin-flag-desc">Blocks normal app usage; show the message below instead.</div></div>' +
+        '<div class="admin-switch'+(c.maintenanceMode?' on':'')+'" onclick="adminToggleSystemBool(\'maintenanceMode\')"><div class="knob"></div></div></div>' +
+      '<div class="admin-form-row" style="margin-top:8px"><label>Message</label><input class="admin-inp" id="sysMaintMsg" style="flex:1" value="'+_esc(c.maintenanceMessage)+'"/></div>' +
+      '<div class="admin-flag-row"><div><div class="admin-flag-name">Read-Only / Emergency Mode</div><div class="admin-flag-desc">Reads allowed, writes blocked app-wide.</div></div>' +
+        '<div class="admin-switch'+(c.readOnlyMode?' on':'')+'" onclick="adminToggleSystemBool(\'readOnlyMode\')"><div class="knob"></div></div></div>' +
+    '</div>' +
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Versioning</div>' +
+      '<div class="admin-form-row"><label>App Version</label><input class="admin-inp" id="sysAppVersion" value="'+_esc(c.appVersion)+'"/></div>' +
+      '<div class="admin-form-row"><label>Min Supported</label><input class="admin-inp" id="sysMinVersion" value="'+_esc(c.minSupportedVersion)+'"/></div>' +
+    '</div>' +
+    '<div class="admin-card">' +
+      '<div class="admin-card-title">Announcement</div>' +
+      '<div class="admin-form-row"><input class="admin-inp" id="sysAnnouncement" style="flex:1" placeholder="Shown as a global banner (blank = none)" value="'+_esc(c.announcement)+'"/></div>' +
+    '</div>' +
+    '<button class="admin-exit-btn" onclick="adminSaveSystemSettings()">[ ✓ SAVE SYSTEM SETTINGS ]</button>';
+}
+
+function adminToggleSystemBool(key) {
+  ADMIN_SYSTEM_CACHE[key] = !ADMIN_SYSTEM_CACHE[key];
+  renderAdminSystemSettings();
+}
+
+async function adminSaveSystemSettings() {
+  var before = Object.assign({}, ADMIN_SYSTEM_CACHE);
+  var after = {
+    maintenanceMode: !!ADMIN_SYSTEM_CACHE.maintenanceMode,
+    maintenanceMessage: (document.getElementById('sysMaintMsg').value||'').slice(0,300),
+    readOnlyMode: !!ADMIN_SYSTEM_CACHE.readOnlyMode,
+    appVersion: (document.getElementById('sysAppVersion').value||'1.0.0').slice(0,20),
+    minSupportedVersion: (document.getElementById('sysMinVersion').value||'1.0.0').slice(0,20),
+    announcement: (document.getElementById('sysAnnouncement').value||'').slice(0,300),
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    var db = window._db;
+    var ref = window._fsDoc(db, 'admin', 'config');
+    await window._fsSetDoc(ref, after, {merge:true});
+    ADMIN_SYSTEM_CACHE = Object.assign({}, ADMIN_SYSTEM_CACHE, after);
+    writeAuditLog('CONFIG_UPDATED', 'system', 'admin/config', before, after);
+    toast('System settings saved');
+  } catch(e) { console.error(e); toast('Failed to save (see console)'); }
+}
+
+function _esc(s) {
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===================== ADMIN — AUDIT LOG =====================
+var ADMIN_AUDIT_CACHE = null;
+
+async function loadAdminAuditLog(force) {
+  if (ADMIN_AUDIT_CACHE && !force) { renderAdminAuditLog(); return; }
+  var body = document.getElementById('adminAuditBody');
+  if (body) body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Loading audit log…</div>';
+  try {
+    var db = window._db;
+    var colRef = window._fsCollection(db, 'admin_auditLogs');
+    var snap = await window._fsGetDocs(colRef);
+    var logs = [];
+    snap.forEach(function(d){ logs.push(Object.assign({id:d.id}, d.data())); });
+    logs.sort(function(a,b){ return new Date(b.timestamp||0) - new Date(a.timestamp||0); });
+    ADMIN_AUDIT_CACHE = logs.slice(0, 200); // most recent 200 — append-only log can grow large
+    renderAdminAuditLog();
+  } catch (e) {
+    console.error('loadAdminAuditLog failed:', e);
+    if (body) body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load audit log.</div>';
+  }
+}
+
+function renderAdminAuditLog() {
+  var body = document.getElementById('adminAuditBody');
+  if (!body) return;
+  if (!ADMIN_AUDIT_CACHE || !ADMIN_AUDIT_CACHE.length) {
+    body.innerHTML = '<div class="admin-card"><div style="font-size:11px;color:var(--t2)">No admin actions recorded yet.</div></div>';
+    return;
+  }
+  body.innerHTML = '<div class="admin-card">' + ADMIN_AUDIT_CACHE.map(function(l){
+    var detail = '';
+    if (l.targetType) detail += l.targetType + (l.targetId ? ' · '+l.targetId : '');
+    return '<div class="admin-audit-row">' +
+      '<span class="admin-audit-action">'+(l.action||'—')+'</span> ' +
+      '<span style="color:var(--t)">'+detail+'</span>' +
+      '<div class="admin-audit-meta">'+(l.adminEmail||'—')+' · '+_adminTimeAgo(l.timestamp)+'</div>' +
+    '</div>';
+  }).join('') + '</div>';
 }
 
 async function adminDeleteUser(docId) {
@@ -7797,6 +8583,7 @@ async function adminDeleteUser(docId) {
     var db = window._db;
     var ref = window._fsDoc(db, 'fitos_users', docId);
     await window._fsDeleteDoc(ref);
+    writeAuditLog('USER_DELETED', 'user', docId, {email: u.email, name: u.name}, null);
     toast('Account deleted');
     closeAdminUserDetail();
     await loadAdminUsers(true);

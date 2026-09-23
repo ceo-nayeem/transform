@@ -2012,6 +2012,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
           </div>
         </div>
         <div class="profile-dropdown-item" onclick="closeProfileMenu();nav(null,'profile')"><span class="sb-icon">◧</span><span>Profile & Settings</span></div>
+        <div class="profile-dropdown-item" id="goToBackendMenuItem" style="display:none" onclick="openAdminBackend()"><span class="sb-icon">⚙</span><span>Go to Backend</span></div>
         <div class="profile-dropdown-item danger" onclick="closeProfileMenu();doLogout()"><span class="sb-icon">⏻</span><span>Logout</span></div>
       </div>
     </div>
@@ -3309,6 +3310,113 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
 
 <div class="toast" id="toast"></div>
 
+<!-- ===================== ADMIN BACKEND SHELL (Phase 1) =====================
+     Owner-only. Visibility of the menu entry point is UX only — real
+     authorization is enforced by Firestore Security Rules (see the rules
+     block delivered alongside this file). Every read/write this shell makes
+     goes through the same rule-checked Firestore calls as the rest of the
+     app; there is no separate "trusted" backend code path on the client. -->
+<style>
+#adminShellOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:99999;flex-direction:column}
+.admin-topbar{background:var(--panel);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.admin-brand{font-family:var(--raj);font-size:16px;font-weight:700;color:var(--g);letter-spacing:2px;display:flex;align-items:center;gap:8px}
+.admin-brand span{font-size:9px;color:var(--t2);font-family:var(--mono);letter-spacing:2px;background:var(--card);border:1px solid var(--border);padding:2px 7px}
+.admin-owner-email{font-size:10px;color:var(--t2);letter-spacing:.5px;font-family:var(--mono)}
+.admin-exit-btn{background:transparent;border:1px solid var(--border);color:var(--t2);font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:7px 14px;cursor:pointer;transition:all .15s}
+.admin-exit-btn:hover{border-color:var(--red);color:var(--red)}
+.admin-body{flex:1;overflow:hidden;display:flex}
+.admin-state{flex:1;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.admin-state.flexshow{display:flex}
+.admin-lock-icon{font-size:34px;color:var(--t2)}
+.admin-state-title{font-family:var(--raj);font-size:16px;font-weight:700;letter-spacing:1px;color:var(--t)}
+.admin-state-sub{font-size:11px;color:var(--t2);max-width:360px;text-align:center;line-height:1.6}
+.admin-shell-main{flex:1;display:none;overflow:hidden}
+.admin-shell-main.flexshow{display:flex}
+.admin-sb{width:200px;background:var(--sb);border-right:1px solid var(--border);flex-shrink:0;padding:14px 0;overflow-y:auto}
+.admin-sb-sec{font-size:8px;color:var(--t3);letter-spacing:2px;padding:10px 16px 4px;text-transform:uppercase}
+.admin-sb-item{display:flex;align-items:center;gap:9px;padding:9px 16px;font-size:11px;color:var(--t);letter-spacing:.5px;cursor:pointer;border-left:2px solid transparent}
+.admin-sb-item:hover{background:var(--gd)}
+.admin-sb-item.active{background:var(--gd);border-left-color:var(--g);color:var(--g)}
+.admin-sb-item.locked{color:var(--t3);cursor:not-allowed}
+.admin-sb-item.locked:hover{background:none}
+.admin-sb-item .lock-tag{margin-left:auto;font-size:7px;background:var(--t3);color:var(--t2);padding:2px 5px;letter-spacing:1px}
+.admin-content{flex:1;overflow-y:auto;padding:20px 26px}
+.admin-card{background:var(--card);border:1px solid var(--border);padding:16px;margin-bottom:14px}
+.admin-card-title{font-family:var(--raj);font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--t);margin-bottom:8px;text-transform:uppercase}
+.admin-status-ok{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:var(--g2);letter-spacing:1px;background:var(--g3);border:1px solid var(--g3);padding:4px 9px}
+.admin-todo-list{list-style:none;padding:0;margin:10px 0 0;font-size:11px;color:var(--t2);line-height:2.1}
+.admin-todo-list li:before{content:'○ ';color:var(--t3)}
+</style>
+<div id="adminShellOverlay">
+  <div class="admin-topbar">
+    <div class="admin-brand">FIT//OS <span>ADMIN BACKEND</span></div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="admin-owner-email" id="adminOwnerEmail"></span>
+      <button class="admin-exit-btn" onclick="closeAdminBackend()">[ ← EXIT TO APP ]</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="admin-state flexshow" id="adminCheckingState">
+      <div class="admin-lock-icon">◌</div>
+      <div class="admin-state-title">VERIFYING ACCESS…</div>
+      <div class="admin-state-sub">Checking owner authorization against Firestore Security Rules.</div>
+    </div>
+    <div class="admin-state" id="adminUnauthorized">
+      <div class="admin-lock-icon">⛔</div>
+      <div class="admin-state-title">ACCESS DENIED</div>
+      <div class="admin-state-sub" id="adminUnauthorizedReason">This account is not authorized to access the backend.</div>
+      <button class="admin-exit-btn" style="margin-top:8px" onclick="closeAdminBackend()">[ RETURN TO APP ]</button>
+    </div>
+    <div class="admin-shell-main" id="adminAuthorized">
+      <div class="admin-sb">
+        <div class="admin-sb-sec">Overview</div>
+        <div class="admin-sb-item active">▦ Dashboard</div>
+        <div class="admin-sb-sec">Management</div>
+        <div class="admin-sb-item locked">Users<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-item locked">Content<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-sec">Configuration</div>
+        <div class="admin-sb-item locked">App Config<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-item locked">Feature Flags<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-item locked">Plans<span class="lock-tag">PHASE 2</span></div>
+        <div class="admin-sb-sec">System</div>
+        <div class="admin-sb-item locked">Analytics<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item locked">Audit Log<span class="lock-tag">PHASE 3</span></div>
+        <div class="admin-sb-item locked">System Settings<span class="lock-tag">PHASE 3</span></div>
+      </div>
+      <div class="admin-content">
+        <div class="admin-card">
+          <div class="admin-card-title">Foundation Status</div>
+          <span class="admin-status-ok">● OWNER ACCESS VERIFIED</span>
+          <div class="admin-todo-list" style="margin-top:12px">
+            <li>Firebase Auth identity confirmed as the owner account</li>
+            <li>Firestore Security Rules independently confirmed the same (this shell only rendered because a real read/write to <code>admin/config</code> succeeded — not because of the client-side email check)</li>
+            <li><code>admin/config</code> document is live in Firestore, ready for Phase 2 (maintenance mode, announcements, app version)</li>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-title">Phase 1 Scope (this delivery)</div>
+          <ul class="admin-todo-list">
+            <li>Firestore Security Rules enforcing real owner-only authorization</li>
+            <li>"Go to Backend" menu entry, visible only to the owner account</li>
+            <li>This admin shell with a live-verified access gate</li>
+            <li><code>admin/*</code> collection schema reserved (config, features, plans, content, analytics, auditLogs)</li>
+          </ul>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-title">Planned Next (Phase 2+)</div>
+          <ul class="admin-todo-list">
+            <li>User Management — search/filter/suspend/view detail</li>
+            <li>Real dashboard metrics (users, activity) from actual data</li>
+            <li>Feature Flags &amp; Plan limits read by the main app</li>
+            <li>Audit log for every admin action</li>
+            <li>UID-based modular data migration (users/{uid}/...)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===================== AUTH & FIREBASE =====================
 var CURRENT_USER_ID = null;
@@ -3524,6 +3632,7 @@ function loginSuccess(id, docId, silent) {
   // reload/refresh in the same tab, but is gone the moment the tab is
   // closed — a brand new tab always lands back on the login screen.
   saveSession(id, docId);
+  updateAdminMenuVisibility();
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
 }
 
@@ -3633,6 +3742,8 @@ function doLogout() {
     if (window._auth && window._auth.currentUser && window._signOutFirebase) {
       window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
     }
+    closeAdminBackend();
+    updateAdminMenuVisibility();
     document.getElementById('loginScreen').classList.remove('hidden');
     document.getElementById('loginErr').textContent = '';
   });
@@ -7238,6 +7349,92 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(function(){ try { if (typeof renderWeightChart === 'function') renderWeightChart(); } catch(e){} });
+}
+</script>
+
+<!-- ===================== ADMIN BACKEND (Phase 1) =====================
+  Security model:
+  - ADMIN_GOOGLE_EMAIL (declared above, near the Google login code) is the
+    single owner identity.
+  - updateAdminMenuVisibility() only controls whether the "Go to Backend"
+    menu item is *shown*. This is pure UX — it never grants access to data.
+  - openAdminBackend() is what actually matters: it performs a real
+    Firestore read (and, the first time, a write) against admin/config.
+    That call only succeeds if the signed-in user's Firebase ID token
+    passes the isOwner() check in Firestore Security Rules. Anyone who
+    fakes the client-side email check (e.g. via devtools) still gets a
+    permission-denied error from Firestore itself and lands on the
+    ACCESS DENIED screen — the frontend has no way to bypass that. -->
+<script>
+function updateAdminMenuVisibility() {
+  var item = document.getElementById('goToBackendMenuItem');
+  if (!item) return;
+  var u = window._auth && window._auth.currentUser;
+  var looksOwner = !!(u && u.email === ADMIN_GOOGLE_EMAIL && u.emailVerified);
+  item.style.display = looksOwner ? '' : 'none';
+}
+
+function _adminShowState(id) {
+  ['adminCheckingState','adminUnauthorized'].forEach(function(s){
+    var el = document.getElementById(s);
+    if (el) el.classList.toggle('flexshow', s === id);
+  });
+  var main = document.getElementById('adminAuthorized');
+  if (main) main.classList.toggle('flexshow', id === 'adminAuthorized');
+}
+
+async function openAdminBackend() {
+  closeProfileMenu();
+  var overlay = document.getElementById('adminShellOverlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  _adminShowState('adminCheckingState');
+
+  var u = window._auth && window._auth.currentUser;
+  var clientLooksOwner = !!(u && u.email === ADMIN_GOOGLE_EMAIL && u.emailVerified);
+  if (!clientLooksOwner) {
+    showAdminUnauthorized('This account is not the owner account.');
+    return;
+  }
+
+  waitForFirebase(async function() {
+    try {
+      var db = window._db;
+      var cfgRef = window._fsDoc(db, 'admin', 'config');
+      var snap = await window._fsGetDoc(cfgRef);
+      if (!snap.exists()) {
+        // First run only. This write succeeds only because Firestore
+        // Security Rules independently confirm the owner identity — it is
+        // not gated by anything on the client.
+        await window._fsSetDoc(cfgRef, {
+          maintenanceMode: false,
+          maintenanceMessage: '',
+          appVersion: '1.0.0',
+          minSupportedVersion: '1.0.0',
+          announcement: '',
+          initializedAt: new Date().toISOString(),
+          initializedBy: u.email
+        });
+      }
+      var emailEl = document.getElementById('adminOwnerEmail');
+      if (emailEl) emailEl.textContent = u.email;
+      _adminShowState('adminAuthorized');
+    } catch (e) {
+      console.error('Admin authorization check failed:', e);
+      showAdminUnauthorized('Server denied the request (Firestore Security Rules). This is expected for any non-owner account.');
+    }
+  });
+}
+
+function showAdminUnauthorized(msg) {
+  var reasonEl = document.getElementById('adminUnauthorizedReason');
+  if (reasonEl) reasonEl.textContent = msg || 'This account is not authorized to access the backend.';
+  _adminShowState('adminUnauthorized');
+}
+
+function closeAdminBackend() {
+  var overlay = document.getElementById('adminShellOverlay');
+  if (overlay) overlay.style.display = 'none';
 }
 </script>
 </body>

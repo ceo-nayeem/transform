@@ -3137,6 +3137,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
   </div>
 
   <div class="sec-head">ADD NEW INGREDIENT</div>
+  <div style="font-size:12px;color:var(--t2);margin:-4px 0 8px">Saved to your account only. Items tagged GLOBAL come from the main library and are read-only.</div>
   <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
     <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
       <div class="inp-group" style="flex:3;min-width:140px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="il-name" type="text" placeholder="e.g. Chicken Breast"/></div>
@@ -5222,7 +5223,7 @@ function recalcMealEditIngredient(mealIdx, ingrIdx) {
   var ig = m.ingredients[ingrIdx]; if (!ig) return;
   var newWt = parseFloat(document.getElementById('me-ig-wt-'+mealIdx+'-'+ingrIdx).value) || 0;
 
-  var libItem = (S.ingredientLibrary||[]).find(function(x){ return x.name.toLowerCase() === (ig.name||'').toLowerCase(); });
+  var libItem = allIng().find(function(x){ return x.name.toLowerCase() === (ig.name||'').toLowerCase(); });
   var cal, pro, carb, fat, fiber, omega3;
   if (libItem) {
     var bw = libItem.baseWeight || 100;
@@ -6567,7 +6568,7 @@ var _ilDragIdx = null;
 
 function renderIngredientLibrary() {
   if (!S.ingredientLibrary) S.ingredientLibrary = [];
-  var lib = S.ingredientLibrary;
+  var lib = allIng();
   var total = lib.length;
   var avgCal = total ? Math.round(lib.reduce(function(a,i){ return a+i.cal; },0) / total) : 0;
   var avgPro = total ? (lib.reduce(function(a,i){ return a+i.pro; },0) / total).toFixed(1) : 0;
@@ -6595,7 +6596,8 @@ function renderIngredientLibrary() {
   _ilSelected.forEach(function(id){ if(!lib.find(function(i){return i.id===id;})) _ilSelected.delete(id); });
 
   var selCount = _ilSelected.size;
-  var allFilteredSelected = filtered.length > 0 && filtered.every(function(i){ return _ilSelected.has(i.id); });
+  var _own = filtered.filter(function(i){ return !i._g; });
+  var allFilteredSelected = _own.length > 0 && _own.every(function(i){ return _ilSelected.has(i.id); });
 
   if (!filtered.length) {
     list.innerHTML = '<div style="font-size:13px;color:var(--t2);padding:10px">'+(total?'No match found.':'No ingredients saved yet.')+'</div>';
@@ -6628,18 +6630,18 @@ function renderIngredientLibrary() {
     var bw = item.baseWeight || 100;
     var isSelected = _ilSelected.has(item.id);
     // find real index in lib for drag-drop
-    var realIdx = lib.indexOf(item);
+    var realIdx = (S.ingredientLibrary||[]).indexOf(item); var G = !!item._g;
     return '<div class="lib-item-wrap '+(isSelected?'lib-item-selected':'')+'" data-id="'+item.id+'" data-idx="'+realIdx+'"'
-      + ' draggable="true"'
+      + (G ? '>' : ' draggable="true"'
       + ' ondragstart="ilDragStart(event,'+realIdx+')"'
       + ' ondragover="ilDragOver(event,'+realIdx+')"'
       + ' ondrop="ilDrop(event,'+realIdx+')"'
-      + ' ondragend="ilDragEnd()">'
-      + '<input type="checkbox" class="lib-item-cb" '+(isSelected?'checked':'')+' onchange="ilToggleSel('+item.id+',this.checked)">'
-      + '<div class="meal-item" style="flex:1;border-left:3px solid var(--p);cursor:default">'
+      + ' ondragend="ilDragEnd()">')
+      + (G ? '<span class="lib-item-cb" style="width:16px;display:inline-block"></span>' : '<input type="checkbox" class="lib-item-cb" '+(isSelected?'checked':'')+' onchange="ilToggleSel('+item.id+',this.checked)">')
+      + '<div class="meal-item" style="flex:1;border-left:3px solid '+(G?'var(--c2)':'var(--p)')+';cursor:default">'
       + '<div class="meal-top">'
       + '<div style="flex:1">'
-      + '<div class="meal-name" style="color:var(--t)">'+item.name+'</div>'
+      + '<div class="meal-name" style="color:var(--t)">'+item.name+'<span style="margin-left:8px;padding:1px 6px;font-size:10px;letter-spacing:1px;border:1px solid '+(G?'var(--c2)':'var(--p)')+';color:'+(G?'var(--c2)':'var(--p)')+'">'+(G?'GLOBAL':'MINE')+'</span></div>'
       + '<div class="meal-detail" style="margin-top:4px">'
       + '<span style="background:var(--t3);padding:1px 6px;font-size:12px;margin-right:6px">per '+bw+(item.unit||'g')+'</span>'
       + '<span style="color:var(--o2);font-weight:600">'+item.cal+' cal</span> · '
@@ -6650,8 +6652,8 @@ function renderIngredientLibrary() {
       + '</div>'
       + '</div>'
       + '<div style="display:flex;gap:6px;align-items:center">'
-      + '<button class="edit-btn" onclick="openIngredientEdit('+item.id+')">✎ EDIT</button>'
-      + '<button class="del-btn" onclick="deleteIngredientFromLibrary('+item.id+')">✕</button>'
+      + (G ? '<span style="font-size:11px;color:var(--t2)">READ-ONLY</span>' : '<button class="edit-btn" onclick="openIngredientEdit('+item.id+')">✎ EDIT</button>'
+      + '<button class="del-btn" onclick="deleteIngredientFromLibrary('+item.id+')">✕</button>')
       + '</div>'
       + '</div>'
       + '<div class="edit-form" id="il-edit-'+item.id+'">'
@@ -6747,7 +6749,7 @@ function ilswSearch(p) {
   var clrBtn = _ilswClr(p);
   if (clrBtn) clrBtn.style.display = q ? '' : 'none';
   var dd = _ilswDD(p);
-  var lib = S.ingredientLibrary || [];
+  var lib = allIng();
   if (!q) { dd.style.display = 'none'; return; }
   var hits = lib.filter(function(i){ return i.name.toLowerCase().includes(q); });
   if (!hits.length) {
@@ -6770,7 +6772,7 @@ function _ilswChip(lbl, val, colorVar) {
 }
 
 function ilswSelect(p, id) {
-  var lib = S.ingredientLibrary || [];
+  var lib = allIng();
   var item = lib.find(function(i){ return String(i.id) === String(id); });
   if (!item) return;
   _ilswSel[p] = item;
@@ -7662,7 +7664,7 @@ function aiBuildContext() {
     ? S.habits.map(function(h){ var st=h.logs[S.today]; return '  • [id:'+h.id+'] '+h.name+' ('+h.cat+') — '+(st==='done'?'DONE':st==='x'?'MISSED':'pending'); }).join('\n')
     : '  (no habits tracked)';
 
-  var libSummary = (S.ingredientLibrary||[]).slice(0,20).map(function(i){
+  var libSummary = allIng().slice(0,20).map(function(i){
     return '  • '+i.name+' (per '+i.baseWeight+'g: '+i.cal+'cal P:'+i.pro+'g C:'+i.carb+'g F:'+i.fat+'g)';
   }).join('\n') || '  (empty)';
 
@@ -8597,6 +8599,7 @@ function renderAdminContentList() {
   var body = document.getElementById('adminContentBody');
   if (!body || !ADMIN_CONTENT_CACHE) return;
   var type = ADMIN_CONTENT_TYPES.find(function(t){ return t.key===ADMIN_CONTENT_TAB; });
+  if (ADMIN_CONTENT_TAB === 'ingredients') { renderAdminIngredientManager(); return; }
   var items = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] || [];
   body.innerHTML = '<div class="admin-card">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
@@ -9119,6 +9122,136 @@ async function adminDeleteUser(docId) {
     closeAdminUserDetail();
     await loadAdminUsers(true);
   } catch(e) { console.error(e); toast('Failed to delete (see console)'); }
+}
+
+// ===================== GLOBAL INGREDIENT LIBRARY (main source = admin) =====================
+// Firestore doc public/ingredientLibrary { items:[...] }. Admin writes; every signed-in user reads.
+// Personal additions stay in S.ingredientLibrary (per user) and are never merged into the global doc.
+var GLOBAL_ING = [];
+function allIng() {
+  var own = S.ingredientLibrary || [], taken = {};
+  own.forEach(function(i){ taken[String(i.name||'').toLowerCase()] = 1; });
+  var g = GLOBAL_ING.filter(function(x){ return !taken[String(x.name||'').toLowerCase()]; })
+                    .map(function(x){ return Object.assign({_g:true}, x); });
+  return g.concat(own);
+}
+async function loadGlobalIngredients() {
+  try {
+    var snap = await window._fsGetDoc(window._fsDoc(window._db, 'public', 'ingredientLibrary'));
+    GLOBAL_ING = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items : [];
+  } catch (e) { console.warn('Global ingredient library unavailable:', e); GLOBAL_ING = []; }
+  if (typeof renderIngredientLibrary === 'function') { try { renderIngredientLibrary(); } catch(e){} }
+}
+(function(){
+  function hook(){ window._onAuthStateChanged(window._auth, function(u){ if (u) loadGlobalIngredients(); }); }
+  if (window._firebaseReady) hook(); else window.addEventListener('firebaseReady', hook);
+})();
+
+// ---- Admin manager (Content Management → Ingredients tab) ----
+var ADMIN_ING = null, ADMIN_ING_Q = '';
+function _agiNum(v){ var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function _agiRead(prefix, id) {
+  var g = function(k){ return document.getElementById(prefix+k+(id!=null?'-'+id:'')); };
+  var name = (g('name').value||'').trim().slice(0,120);
+  if (!name) { toast('Enter ingredient name'); return null; }
+  return { name:name, baseWeight:_agiNum(g('base').value)||100, unit:g('unit').value||'g',
+    cal:_agiNum(g('cal').value), pro:_agiNum(g('pro').value), carb:_agiNum(g('carb').value),
+    fat:_agiNum(g('fat').value), fiber:_agiNum(g('fiber').value) };
+}
+async function renderAdminIngredientManager() {
+  var body = document.getElementById('adminContentBody'); if (!body) return;
+  if (!ADMIN_ING) {
+    body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Loading ingredient library…</div>';
+    try {
+      var snap = await window._fsGetDoc(window._fsDoc(window._db, 'public', 'ingredientLibrary'));
+      ADMIN_ING = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items : [];
+    } catch (e) { console.error(e); body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load ingredient library.</div>'; return; }
+    GLOBAL_ING = ADMIN_ING.slice();
+    if (ADMIN_CONTENT_CACHE) { ADMIN_CONTENT_CACHE.ingredients = ADMIN_ING; renderAdminContentTabs(); }
+  }
+  var units = ['g','pcs','ml','kg','oz','tbsp','tsp'];
+  var unitSel = function(id, cur){ return '<select class="admin-inp" id="'+id+'" style="width:64px">'+units.map(function(u){ return '<option'+(u===(cur||'g')?' selected':'')+'>'+u+'</option>'; }).join('')+'</select>'; };
+  var num = function(id,v,ph){ return '<input class="admin-inp" id="'+id+'" type="number" step="any" value="'+_esc(v)+'" placeholder="'+ph+'" style="width:70px">'; };
+  var q = ADMIN_ING_Q.toLowerCase();
+  var list = ADMIN_ING.filter(function(i){ return !q || String(i.name).toLowerCase().indexOf(q) >= 0; });
+  body.innerHTML =
+    '<div class="admin-card" style="margin-bottom:14px">' +
+      '<div class="admin-card-title">Add to main ingredient library</div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
+        '<input class="admin-inp" id="agi-name" placeholder="Name" style="flex:2;min-width:140px">' +
+        num('agi-base',100,'Base') + unitSel('agi-unit','g') + num('agi-cal','','Cal') + num('agi-pro','','P') +
+        num('agi-carb','','C') + num('agi-fat','','F') + num('agi-fiber','','Fib') +
+        '<button class="admin-exit-btn" onclick="adminAddIng()">[ + ADD ]</button>' +
+      '</div>' +
+      '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
+        '<button class="admin-exit-btn" onclick="adminImportOwnIng()">[ ⇪ IMPORT FROM MY PERSONAL LIBRARY ]</button>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--t2);margin-top:8px">Every item here appears (read-only) in all users\' Ingredient Library and meal search. Users\' own additions never come back here.</div>' +
+    '</div>' +
+    '<div class="admin-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px">' +
+      '<div class="admin-card-title" style="margin:0">Main library ('+ADMIN_ING.length+')</div>' +
+      '<input class="admin-inp" id="agi-search" placeholder="Search…" value="'+_esc(ADMIN_ING_Q)+'" oninput="ADMIN_ING_Q=this.value;adminIngRefreshList()" style="width:160px"></div>' +
+      '<div id="agiList"></div></div>';
+  adminIngRefreshList();
+}
+function adminIngRefreshList() {
+  var host = document.getElementById('agiList'); if (!host || !ADMIN_ING) return;
+  var units = ['g','pcs','ml','kg','oz','tbsp','tsp'];
+  var q = ADMIN_ING_Q.toLowerCase();
+  var rows = ADMIN_ING.filter(function(i){ return !q || String(i.name).toLowerCase().indexOf(q) >= 0; });
+  var num = function(id,v){ return '<input class="admin-inp" id="'+id+'" type="number" step="any" value="'+_esc(v)+'" style="width:64px">'; };
+  host.innerHTML = rows.length ? rows.map(function(i){
+    var k = _esc(i.id);
+    return '<div class="admin-content-list-item" style="flex-wrap:wrap;gap:6px">' +
+      '<input class="admin-inp" id="agie-name-'+k+'" value="'+_esc(i.name)+'" style="flex:2;min-width:130px">' +
+      num('agie-base-'+k,i.baseWeight||100) +
+      '<select class="admin-inp" id="agie-unit-'+k+'" style="width:64px">'+units.map(function(u){ return '<option'+(u===(i.unit||'g')?' selected':'')+'>'+u+'</option>'; }).join('')+'</select>' +
+      num('agie-cal-'+k,i.cal) + num('agie-pro-'+k,i.pro) + num('agie-carb-'+k,i.carb) + num('agie-fat-'+k,i.fat) + num('agie-fiber-'+k,i.fiber||0) +
+      '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminSaveIng(\''+k+'\')">SAVE</button>' +
+      '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminDeleteIng(\''+k+'\')">✕</button></div>';
+  }).join('') : '<div style="font-size:11px;color:var(--t2);padding:8px 0">'+(ADMIN_ING.length?'No match.':'No items yet. Add one above, or import from your personal library.')+'</div>';
+}
+async function adminPersistIng(action, id, before, after) {
+  try {
+    await window._fsSetDoc(window._fsDoc(window._db, 'public', 'ingredientLibrary'), { items: ADMIN_ING, updatedAt: Date.now() });
+    GLOBAL_ING = ADMIN_ING.slice();
+    if (ADMIN_CONTENT_CACHE) ADMIN_CONTENT_CACHE.ingredients = ADMIN_ING;
+    renderAdminContentTabs(); renderAdminIngredientManager(); renderIngredientLibrary();
+    writeAuditLog(action, 'content:ingredients', id, before, after);
+  } catch (e) { console.error(e); toast('Save failed — check Firestore rules for public/ingredientLibrary'); }
+}
+function adminAddIng() {
+  var item = _agiRead('agi-'); if (!item) return;
+  if (ADMIN_ING.some(function(i){ return String(i.name).toLowerCase() === item.name.toLowerCase(); })) { toast('Already in main library'); return; }
+  item.id = 'g_' + Date.now();
+  ADMIN_ING.push(item);
+  adminPersistIng('CONTENT_CREATED', item.id, null, item);
+}
+function adminSaveIng(id) {
+  var cur = ADMIN_ING.find(function(i){ return String(i.id) === String(id); }); if (!cur) return;
+  var item = _agiRead('agie-', id); if (!item) return;
+  var before = Object.assign({}, cur); Object.assign(cur, item);
+  adminPersistIng('CONTENT_UPDATED', cur.id, before, cur);
+}
+function adminDeleteIng(id) {
+  var idx = ADMIN_ING.findIndex(function(i){ return String(i.id) === String(id); }); if (idx < 0) return;
+  var item = ADMIN_ING[idx];
+  if (!confirm('Delete "'+item.name+'" from the main library? It disappears for all users.')) return;
+  ADMIN_ING.splice(idx, 1);
+  adminPersistIng('CONTENT_DELETED', item.id, item, null);
+}
+function adminImportOwnIng() {
+  var own = S.ingredientLibrary || [];
+  var have = {}; ADMIN_ING.forEach(function(i){ have[String(i.name).toLowerCase()] = 1; });
+  var add = own.filter(function(i){ return i.name && !have[String(i.name).toLowerCase()]; });
+  if (!add.length) { toast('Nothing new to import'); return; }
+  if (!confirm('Copy '+add.length+' ingredient(s) from your personal library into the main library?')) return;
+  var stamp = Date.now();
+  add.forEach(function(i, n){
+    ADMIN_ING.push({ id:'g_'+(stamp+n), name:String(i.name).slice(0,120), baseWeight:i.baseWeight||100, unit:i.unit||'g',
+      cal:i.cal||0, pro:i.pro||0, carb:i.carb||0, fat:i.fat||0, fiber:i.fiber||0 });
+  });
+  adminPersistIng('CONTENT_IMPORTED', 'bulk', null, { count: add.length });
 }
 </script>
 </body>

@@ -46,6 +46,7 @@
   window.dispatchEvent(new Event('firebaseReady'));
 </script>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -3655,6 +3656,162 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
   </div>
 </div>
 
+<style id="fx-v2">
+/* ===== FIT//OS v2 — Futuristic Pro design layer (visual only; no logic touched) ===== */
+html{
+  --fx-font:'Inter','Noto Sans Bengali','Noto Sans Khmer',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --fx-disp:'Space Grotesk','Inter','Noto Sans Bengali',-apple-system,'Segoe UI',Arial,sans-serif;
+  --mono:var(--fx-font);--raj:var(--fx-disp);
+  --radius-lg:14px;--radius-md:11px;--radius-sm:8px;
+  --glass-bg:rgba(255,255,255,.035);--glass-bg2:rgba(255,255,255,.065);
+  --glass-border:rgba(255,255,255,.08);--glass-border-hi:rgba(255,255,255,.15);
+  --glass-blur:blur(14px) saturate(140%);
+  --shadow-soft:0 1px 0 rgba(255,255,255,.04) inset,0 6px 20px rgba(0,0,0,.28);
+}
+html.alpha{--glass-bg:rgba(255,255,255,.82);--glass-bg2:#fff;--glass-border:rgba(15,23,42,.09);--glass-border-hi:rgba(15,23,42,.16);--shadow-soft:0 1px 2px rgba(15,23,42,.05),0 6px 18px rgba(15,23,42,.06)}
+html body{font-family:var(--fx-font);font-size:13px;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(900px 500px at 8% -10%,color-mix(in srgb,var(--g) 12%,transparent),transparent 60%),
+  radial-gradient(700px 420px at 105% 0%,color-mix(in srgb,var(--c) 10%,transparent),transparent 55%),#070b0d;background-attachment:fixed}
+html.alpha body{background:radial-gradient(900px 500px at 8% -10%,color-mix(in srgb,var(--g) 8%,transparent),transparent 60%),#eef1f4;background-attachment:fixed}
+html body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 0,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 0,#000 20%,transparent 75%)}
+html.alpha body::before{opacity:.35;background-image:linear-gradient(rgba(15,23,42,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.04) 1px,transparent 1px)}
+#bgParticles{opacity:.35}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--t2) 35%,transparent);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- Top bar: slim HUD strip ---------- */
+html body .topbar{height:48px;padding:0 14px;background:color-mix(in srgb,var(--bg) 72%,transparent) !important;
+  backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+  border-bottom:1px solid var(--glass-border) !important;pointer-events:auto}
+html body .topbar-left,html body .topbar-right{gap:8px}
+html body .app-brand{font-family:var(--fx-disp);font-weight:700;font-size:15px;letter-spacing:.14em;
+  background:linear-gradient(90deg,var(--g),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
+html body #topPagePath{font-size:12px;color:var(--t2);letter-spacing:.04em}
+html body .sb-toggle-btn,html body .mob-menu-btn,html body .theme-toggle-circle,html body .date-nav-arrow{
+  width:30px;height:30px;min-width:30px;border-radius:9px;font-size:14px;padding:0;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--glass-bg);border:1px solid var(--glass-border);box-shadow:none}
+html body .sb-toggle-btn:hover,html body .theme-toggle-circle:hover,html body .date-nav-arrow:hover{background:var(--glass-bg2);border-color:color-mix(in srgb,var(--g) 50%,transparent);transform:none}
+html body .sync-indicator,html body .streak-chip,html body #dateDisp,html body .date-disp{height:30px;padding:0 11px;border-radius:9px;font-size:12px;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;box-shadow:none}
+html body .profile-menu-btn{height:30px;padding:0 6px 0 3px;border-radius:9px;gap:5px}
+html body #topAvatarEl,html body #topAvatarEl2{width:24px;height:24px;font-size:11px;border-radius:7px}
+
+/* ---------- Layout ---------- */
+html body .os{padding-top:48px}
+html body .content{padding:16px 22px 90px;max-width:1380px}
+html body .page-header{margin-bottom:10px}
+html body .g2,html body .g3{gap:10px}html body .g4{gap:8px}
+
+/* ---------- Sidebar: compact square dock ---------- */
+@media (min-width:769px){
+  html body .sb{width:64px !important;flex:0 0 64px !important;border-right:1px solid var(--glass-border);background:color-mix(in srgb,var(--bg) 55%,transparent)}
+  html body .sb .sb-nav{gap:8px;padding:14px 0;justify-content:flex-start}
+  html body .sb .sb-item{width:40px !important;height:40px !important;border-radius:11px !important;box-shadow:none;backdrop-filter:none;background:transparent;border:1px solid transparent}
+  html body .sb .sb-item:hover,html body .sb .sb-item.sb-label-hover{transform:none;background:var(--glass-bg2) !important;border-color:var(--glass-border)}
+  html body .sb .sb-item::after{border-radius:11px}
+  html body .sb .sb-icon{font-size:18px}
+  html body .sb .sb-item.active.active{background:linear-gradient(135deg,color-mix(in srgb,var(--g) 22%,transparent),color-mix(in srgb,var(--c) 10%,transparent)) !important;
+    border-color:color-mix(in srgb,var(--g) 55%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--g) 25%,transparent) !important}
+  html body .sb-tip-bubble{border-radius:10px !important;height:30px !important;box-shadow:none;backdrop-filter:blur(14px)}
+  html body .sb-tip-text{font-family:var(--fx-font);font-size:12px;font-weight:600;letter-spacing:.03em;padding:0 12px 0 26px}
+}
+
+/* ---------- Surfaces ---------- */
+html body .card,html body .vital-card,html body .meas-card,html body .goal-card,html body .chart-wrap,html body .ov-panel,
+html body .profile-section,html body .danger-zone,html body .ilsw,html body .lib-toolbar,html body .water-visual,
+html body .saved-timer-card,html body .meal-item,html body .ex-card,html body .habit-item,html body .day-pill,html body .edit-form{
+  border-radius:var(--radius-md) !important;padding:11px 13px;box-shadow:var(--shadow-soft);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),var(--glass-bg) !important}
+html.alpha body .card,html.alpha body .ov-panel,html.alpha body .vital-card,html.alpha body .meas-card,html.alpha body .goal-card,html.alpha body .chart-wrap,html.alpha body .meal-item,html.alpha body .ex-card,html.alpha body .habit-item{background:#fff !important}
+html body .card{cursor:default;overflow:hidden}
+html body .card:hover{transform:none;background:var(--glass-bg2) !important;border-color:color-mix(in srgb,var(--g) 38%,var(--glass-border)) !important;box-shadow:var(--shadow-soft),0 0 0 1px color-mix(in srgb,var(--g) 14%,transparent)}
+html body .card-accent{width:2px;border-radius:0}
+html body .card-label{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;opacity:.8;margin-bottom:5px}
+html body .card-val,html body .vital-big,html body .meas-val{font-family:var(--fx-disp);font-size:22px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+html body .card-sub{font-size:11.5px;margin-top:3px}
+html body .card-bar{height:3px;border-radius:3px;background:color-mix(in srgb,var(--t2) 18%,transparent);overflow:hidden}
+html body .card-bar-fill{border-radius:3px;background:linear-gradient(90deg,var(--g),var(--c))}
+html body .ov-panel{grid-template-columns:92px 1fr;gap:14px;padding:12px 16px;margin-bottom:10px}
+html body .ov-r{padding:3px 0;font-size:12.5px}
+html body .sec-head{font-family:var(--fx-disp);font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--t2);margin:14px 0 8px}
+html body .sec-head::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--g);box-shadow:0 0 8px var(--g);flex-shrink:0}
+
+/* ---------- Buttons: compact, content-sized ---------- */
+html body .btn,html body .btn.full,html body .btn-ghost,html body .preset-btn,html body .wt-range-btn,html body .edit-btn,html body .del-btn,html body .lib-bulk-btn,html body .log-add-field-btn{
+  width:auto;max-width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:30px;padding:0 13px;border-radius:8px;font-family:var(--fx-font);font-size:12px;font-weight:600;letter-spacing:.03em;text-transform:none;line-height:1;white-space:nowrap}
+html body .btn{background:linear-gradient(135deg,color-mix(in srgb,var(--g) 20%,transparent),color-mix(in srgb,var(--c) 10%,transparent));border:1px solid color-mix(in srgb,var(--g) 55%,transparent);color:var(--g)}
+html body .btn:hover{background:linear-gradient(135deg,color-mix(in srgb,var(--g) 32%,transparent),color-mix(in srgb,var(--c) 16%,transparent));box-shadow:0 0 14px color-mix(in srgb,var(--g) 25%,transparent)}
+html body .btn:active,html body .btn-ghost:active{transform:scale(.97)}
+html body .btn.sm{height:26px;padding:0 10px;font-size:11.5px}
+html body .btn.danger{background:rgba(255,51,85,.08);border-color:rgba(255,51,85,.5);color:var(--red)}
+html body .btn-ghost{background:var(--glass-bg);border:1px dashed var(--glass-border-hi);color:var(--t2)}
+html body .btn-ghost:hover{border-style:solid;border-color:var(--g);color:var(--g);background:var(--gd)}
+html body .preset-btn,html body .wt-range-btn{height:26px;padding:0 10px;font-size:11.5px}
+html body .edit-btn,html body .del-btn{height:26px;padding:0 9px}
+html body .inp-row>.btn,html body .inp-row>.btn-ghost{align-self:flex-end;flex:0 0 auto}
+html body .login-btn{height:36px;padding:0 16px;border-radius:9px;font-size:12.5px;letter-spacing:.06em}
+
+/* ---------- Inputs ---------- */
+html body .inp,html body .login-inp,html body .admin-inp,html body select.inp{height:32px;padding:0 10px;border-radius:8px;font-family:var(--fx-font);font-size:13px;
+  background:color-mix(in srgb,var(--t2) 8%,transparent);border:1px solid var(--glass-border)}
+html body textarea.inp{height:auto;padding:8px 10px}
+html body .inp:focus,html body .login-inp:focus{border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 16%,transparent)}
+html body .inp-label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-bottom:3px}
+html body .inp-group{margin-bottom:7px}html body .inp-row{gap:7px;align-items:flex-end}
+
+/* ---------- Tabs / chips / toggles ---------- */
+html body .timer-tab,html body .htab,html body .hcat-chip,html body .log-chip,html body .pd-mode-btn,html body .admin-content-tab{height:28px;padding:0 12px;border-radius:8px;font-size:12px;font-weight:600;letter-spacing:.02em;text-transform:none}
+html body .wt-range-toggle{padding:2px;border-radius:10px;gap:2px}
+html body .wt-range-btn.active,html body .timer-tab.active,html body .htab.active{background:linear-gradient(135deg,var(--g),var(--c));color:#04120c;border-color:transparent}
+
+/* ---------- Dropdowns / modals / sheets / toast ---------- */
+html body .modal{border-radius:14px;padding:16px;border:1px solid var(--glass-border-hi);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+html body .modal-bg{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html body .modal-title{font-family:var(--fx-disp);font-size:15px;font-weight:600;letter-spacing:.02em}
+html body .modal-actions{gap:8px;justify-content:flex-end}
+html body .profile-dropdown-item{padding:8px 12px;font-size:12.5px;border-radius:8px}
+html body .toast{border-radius:10px;font-size:12.5px;padding:9px 14px}
+html body .quick-add-item{padding:8px 10px;border-radius:9px;font-size:12.5px}
+
+/* ---------- Auth screens ---------- */
+html body .login-box{width:340px;border-radius:16px;padding:28px 26px;border:1px solid var(--glass-border-hi);border-top:1px solid color-mix(in srgb,var(--g) 60%,transparent);
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),var(--card);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 40px color-mix(in srgb,var(--g) 10%,transparent)}
+html body .login-logo{font-family:var(--fx-disp);font-size:18px;letter-spacing:.3em}
+html body .ob-choice-card{padding:12px 14px;border-radius:11px;margin-bottom:10px}
+html body .ob-choice-title{font-family:var(--fx-disp);font-size:14px}
+
+/* ---------- Mobile ---------- */
+@media (max-width:768px){
+  html body .content{padding:12px 12px 96px}
+  html body .topbar{padding:0 10px}
+  html body .ov-panel{grid-template-columns:76px 1fr;padding:10px 12px}
+  html body .card-val,html body .vital-big{font-size:19px}
+  html body .mob-nav{border-radius:16px 16px 0 0;backdrop-filter:blur(16px)}
+  html body .mob-sheet{border-radius:18px 18px 0 0}
+  html body .mob-sheet-btn{border-radius:12px;padding:10px 6px}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+@media (min-width:769px){html body .mob-menu-btn{display:none !important}}
+html body #appBrand{font-family:var(--fx-disp) !important}
+html body .content{max-width:1480px}
+html:root{--font-head:var(--fx-disp);--font-num:var(--fx-disp);--font-ui:var(--fx-font)}
+html body .app-brand,html body .login-logo,html body .page-title,html body .modal-title,html body .sec-head,html body .mob-sheet-title,html body .ob-choice-title,html body .goal-name,html body .ex-name,html body .saved-timer-name,html body .profile-dropdown-name,html body .card-title{font-weight:600 !important;letter-spacing:.02em !important}
+html body .sec-head{font-size:11.5px !important;letter-spacing:.14em !important;text-transform:uppercase !important;font-weight:600 !important}
+html body .app-brand{letter-spacing:.14em !important}
+html body .card-val,html body .vital-big,html body .meas-val,html body .ring-pct,html body .macro-ring-val,html body .hstat-val,html body .goal-pct,html body .meal-cal,html body [class*="-val"],html body [class*="pct"]{font-weight:600 !important;letter-spacing:0 !important}
+/* content area: use the width, no big empty gutters */
+html body .content{padding:60px 26px 40px !important;max-width:1240px !important}
+@media (max-width:768px){html body .content{padding:58px 12px 96px !important;max-width:100% !important}}
+/* tab bars: content-sized segmented control, not a full-width row */
+html body :is(div,nav,section):has(>.htab),html body :is(div,nav,section):has(>.timer-tab){display:inline-flex !important;width:auto !important;max-width:100%;gap:2px;padding:3px;margin-bottom:10px;border-radius:10px;overflow-x:auto;
+  background:color-mix(in srgb,var(--t2) 8%,transparent);border:1px solid var(--glass-border)}
+html body .htab,html body .timer-tab{flex:0 0 auto;height:28px;padding:0 13px;border:0 !important;border-radius:7px;background:transparent !important;color:var(--t2);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center}
+html body .htab:hover,html body .timer-tab:hover{color:var(--t);background:var(--glass-bg2) !important}
+html body .htab.active,html body .timer-tab.active{background:linear-gradient(135deg,color-mix(in srgb,var(--g) 90%,#000),var(--c)) !important;color:#04120c;font-weight:700}
+html body select.inp,html body select{line-height:1.2;padding-top:0;padding-bottom:0;height:34px}
+html body .content{padding-top:56px !important}
+</style>
 <script>
 // ===================== DATA SERVICE (Phase 2) =====================
 // Modular, UID-based storage at users/{uid}/{profile|daily|habits|goals|measurements|vitals|

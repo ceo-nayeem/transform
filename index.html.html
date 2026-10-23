@@ -3137,7 +3137,6 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
   </div>
 
   <div class="sec-head">ADD NEW INGREDIENT</div>
-  <div style="font-size:12px;color:var(--t2);margin:-4px 0 8px">Saved to your account only. Items tagged GLOBAL come from the main library and are read-only.</div>
   <div style="background:var(--card);border:1px solid var(--border);padding:14px;margin-bottom:14px">
     <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
       <div class="inp-group" style="flex:3;min-width:140px"><div class="inp-label">INGREDIENT NAME</div><input class="inp" id="il-name" type="text" placeholder="e.g. Chicken Breast"/></div>
@@ -3155,9 +3154,10 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
   </div>
 
   <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-    <div class="sec-head" style="margin:0;flex:1">INGREDIENT LIBRARY</div>
+    <div class="sec-head" style="margin:0;flex:1">MY INGREDIENTS <span style="font-size:11px;color:var(--t2);font-weight:400">(private to you)</span></div>
     <input class="inp" id="il-search" type="text" placeholder="Search..." style="width:160px;font-size:13px" oninput="renderIngredientLibrary()"/>
   </div>
+  <div id="ilGlobalList"></div>
   <div id="ilList"><div style="font-size:13px;color:var(--t2);padding:10px">No ingredients saved yet. Add your first ingredient above.</div></div>
   </div><!-- end page-ingredientlibrary (library sub-tab) -->
 </div><!-- end page-library -->
@@ -3472,6 +3472,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
         <div class="admin-sb-sec">Management</div>
         <div class="admin-sb-item" id="adminNav-users" onclick="adminNav('users')">◔ <span class="lbl">Users</span><span class="lock-tag" id="adminUsersCountTag">…</span></div>
         <div class="admin-sb-item" id="adminNav-content" onclick="adminNav('content')">▤ <span class="lbl">Content</span></div>
+        <div class="admin-sb-item" id="adminNav-ingredients" onclick="adminNav('ingredients')">◍ <span class="lbl">Ingredient Library</span></div>
         <div class="admin-sb-sec">Configuration</div>
         <div class="admin-sb-item" id="adminNav-appconfig" onclick="adminNav('appconfig')">⚙ <span class="lbl">App Config</span></div>
         <div class="admin-sb-item" id="adminNav-flags" onclick="adminNav('flags')">◈ <span class="lbl">Feature Flags</span></div>
@@ -3559,6 +3560,47 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
           </div>
           <div class="admin-content-tabs" id="adminContentTabs"></div>
           <div id="adminContentBody"></div>
+        </div>
+
+        <!-- ===== INGREDIENT LIBRARY (GLOBAL / MAIN) SECTION ===== -->
+        <div id="admin-sec-ingredients" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Main Ingredient Library</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="admin-exit-btn" onclick="adminIngImportMine()">[ ⇪ IMPORT MY LIBRARY ]</button>
+              <button class="admin-exit-btn" onclick="loadAdminIngredients(true)">[ ⟳ REFRESH ]</button>
+            </div>
+          </div>
+          <div class="admin-card" style="margin-bottom:14px">
+            <div class="admin-todo-list">
+              <li>This is the <b>main library</b> — every user sees these ingredients (read-only) inside their Ingredient Library and meal search.</li>
+              <li>Ingredients users add themselves stay private to that user and never appear here or for other users.</li>
+              <li>Stored under <code>global/ingredientLibrary</code> (readable by signed-in users, writable only by the owner via Security Rules).</li>
+            </div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-title" style="margin-bottom:10px">Add Ingredient</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <input class="admin-inp" id="aing-name" type="text" placeholder="Ingredient name" style="flex:3;min-width:160px" maxlength="80"/>
+              <input class="admin-inp" id="aing-base" type="number" placeholder="Base" value="100" min="1" style="width:90px"/>
+              <select class="admin-inp" id="aing-unit" style="width:90px"><option value="g" selected>g</option><option value="pcs">pcs</option><option value="ml">ml</option><option value="kg">kg</option><option value="oz">oz</option><option value="tbsp">tbsp</option><option value="tsp">tsp</option></select>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+              <input class="admin-inp" id="aing-cal" type="number" placeholder="Calories" min="0" style="flex:1;min-width:90px"/>
+              <input class="admin-inp" id="aing-pro" type="number" placeholder="Protein g" min="0" step="0.1" style="flex:1;min-width:90px"/>
+              <input class="admin-inp" id="aing-carb" type="number" placeholder="Carbs g" min="0" step="0.1" style="flex:1;min-width:90px"/>
+              <input class="admin-inp" id="aing-fat" type="number" placeholder="Fat g" min="0" step="0.1" style="flex:1;min-width:90px"/>
+              <input class="admin-inp" id="aing-fiber" type="number" placeholder="Fiber g" min="0" step="0.1" style="flex:1;min-width:90px"/>
+            </div>
+            <button class="admin-exit-btn" onclick="adminIngAdd()">[ + ADD TO MAIN LIBRARY ]</button>
+          </div>
+          <div class="admin-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <div class="admin-card-title" style="margin:0" id="adminIngTitle">Ingredients</div>
+              <input class="admin-inp" id="aing-search" type="text" placeholder="Search..." oninput="renderAdminIngredients()" style="width:200px"/>
+            </div>
+            <div id="adminIngBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading…</div></div>
+          </div>
         </div>
 
         <!-- ===== APP CONFIG SECTION ===== -->
@@ -4212,6 +4254,7 @@ function loginSuccess(id, docId, silent) {
   // closed — a brand new tab always lands back on the login screen.
   saveSession(id, docId);
   updateAdminMenuVisibility();
+  loadGlobalIngredients();
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
   trackEvent('login');
 }
@@ -5223,7 +5266,7 @@ function recalcMealEditIngredient(mealIdx, ingrIdx) {
   var ig = m.ingredients[ingrIdx]; if (!ig) return;
   var newWt = parseFloat(document.getElementById('me-ig-wt-'+mealIdx+'-'+ingrIdx).value) || 0;
 
-  var libItem = allIng().find(function(x){ return x.name.toLowerCase() === (ig.name||'').toLowerCase(); });
+  var libItem = getAllIngredients().find(function(x){ return x.name.toLowerCase() === (ig.name||'').toLowerCase(); });
   var cal, pro, carb, fat, fiber, omega3;
   if (libItem) {
     var bw = libItem.baseWeight || 100;
@@ -6527,6 +6570,7 @@ function addIngredientToLibrary() {
   if (!S.ingredientLibrary) S.ingredientLibrary = [];
   var exists = S.ingredientLibrary.some(function(i){ return i.name.toLowerCase() === name.toLowerCase(); });
   if (exists) { toast('Ingredient already exists!'); return; }
+  if (GLOBAL_INGREDIENTS.some(function(g){ return g.name.toLowerCase() === name.toLowerCase(); })) { toast('Already in the main library — use COPY to customise'); return; }
   S.ingredientLibrary.push(item);
   ['il-name','il-cal','il-pro','il-carb','il-fat','il-fiber'].forEach(function(id){ document.getElementById(id).value = ''; });
   document.getElementById('il-base').value = '100';
@@ -6562,13 +6606,71 @@ function saveIngredientEdit(id) {
   save(); renderIngredientLibrary(); toast('Ingredient updated!');
 }
 
+// ── Main (global) Ingredient Library ──
+// Managed from the admin console; stored at Firestore global/ingredientLibrary.
+// Held ONLY in this runtime array (never written into the user's own data S / save()),
+// so it is read-only for users and users' personal additions never leak into it.
+var GLOBAL_INGREDIENTS = [];
+
+function _setGlobalIngredients(items) {
+  GLOBAL_INGREDIENTS = (Array.isArray(items) ? items : []).map(function(i){
+    return { id: 'g_' + String(i.id), name: String(i.name || ''), baseWeight: +i.baseWeight || 100, unit: i.unit || 'g',
+             cal: +i.cal || 0, pro: +i.pro || 0, carb: +i.carb || 0, fat: +i.fat || 0, fiber: +i.fiber || 0, _global: true };
+  }).filter(function(i){ return i.name; });
+  try { if (document.getElementById('ilBadge')) document.getElementById('ilBadge').textContent = getAllIngredients().length; } catch(e) {}
+  try { if (document.getElementById('ilGlobalList')) renderIngredientLibrary(); } catch(e) {}
+}
+
+async function loadGlobalIngredients() {
+  try {
+    var snap = await window._fsGetDoc(window._fsDoc(window._db, 'global', 'ingredientLibrary'));
+    _setGlobalIngredients(snap.exists() ? snap.data().items : []);
+  } catch (e) {
+    console.warn('Main ingredient library unavailable:', e && e.message);
+    _setGlobalIngredients([]); // fail safe: personal library keeps working
+  }
+}
+
+// Main library first, then the user's own items (a personal item whose name matches a main item is hidden in merged views).
+function getAllIngredients() {
+  var names = {}; GLOBAL_INGREDIENTS.forEach(function(g){ names[g.name.toLowerCase()] = 1; });
+  var mine = (S.ingredientLibrary || []).filter(function(i){ return !names[String(i.name||'').toLowerCase()]; });
+  return GLOBAL_INGREDIENTS.concat(mine);
+}
+
+function ilCopyGlobal(gid) {
+  var g = GLOBAL_INGREDIENTS.find(function(i){ return i.id === gid; }); if (!g) return;
+  if (!S.ingredientLibrary) S.ingredientLibrary = [];
+  if (S.ingredientLibrary.some(function(i){ return i.name.toLowerCase() === g.name.toLowerCase(); })) { toast('Already in your library'); return; }
+  S.ingredientLibrary.push({ id: Date.now(), name: g.name, baseWeight: g.baseWeight, unit: g.unit, cal: g.cal, pro: g.pro, carb: g.carb, fat: g.fat, fiber: g.fiber, savedAt: new Date().toLocaleDateString() });
+  save(); renderIngredientLibrary(); toast('Copied "' + g.name + '" to your library');
+}
+
+function renderGlobalIngredientBlock() {
+  var box = document.getElementById('ilGlobalList'); if (!box) return;
+  if (!GLOBAL_INGREDIENTS.length) { box.innerHTML = ''; return; }
+  var q = ((document.getElementById('il-search')||{}).value || '').toLowerCase();
+  var list = q ? GLOBAL_INGREDIENTS.filter(function(i){ return i.name.toLowerCase().includes(q); }) : GLOBAL_INGREDIENTS;
+  var h = '<div class="sec-head" style="margin:0 0 8px">MAIN LIBRARY <span style="font-size:11px;color:var(--t2);font-weight:400">(' + GLOBAL_INGREDIENTS.length + ' · shared, read-only)</span></div>';
+  if (!list.length) { box.innerHTML = h + '<div style="font-size:13px;color:var(--t2);padding:6px 0 14px">No match in main library.</div>'; return; }
+  box.innerHTML = h + '<div style="margin-bottom:16px">' + list.map(function(item){
+    var bw = item.baseWeight || 100;
+    return '<div class="meal-item" style="border-left:3px solid var(--o2);cursor:default"><div class="meal-top"><div style="flex:1">'
+      + '<div class="meal-name" style="color:var(--t)">' + _esc(item.name) + ' <span style="font-size:10px;padding:1px 6px;background:var(--t3);color:var(--o2);letter-spacing:1px">MAIN</span></div>'
+      + '<div class="meal-detail" style="margin-top:4px"><span style="background:var(--t3);padding:1px 6px;font-size:12px;margin-right:6px">per ' + bw + _esc(item.unit || 'g') + '</span>'
+      + '<span style="color:var(--o2);font-weight:600">' + item.cal + ' cal</span> · P:<b style="color:var(--o)">' + item.pro + '</b>g C:<b style="color:var(--c2)">' + item.carb + '</b>g F:<b style="color:var(--g2)">' + item.fat + '</b>g Fib:<b style="color:var(--p)">' + item.fiber + '</b>g</div></div>'
+      + '<div><button class="edit-btn" title="Copy to my library to customise" onclick="ilCopyGlobal(\'' + item.id + '\')">⧉ COPY</button></div>'
+      + '</div></div>';
+  }).join('') + '</div>';
+}
+
 // ── Ingredient Library: selection state ──
 var _ilSelected = new Set(); // set of ingredient IDs
 var _ilDragIdx = null;
 
 function renderIngredientLibrary() {
   if (!S.ingredientLibrary) S.ingredientLibrary = [];
-  var lib = allIng();
+  var lib = S.ingredientLibrary;
   var total = lib.length;
   var avgCal = total ? Math.round(lib.reduce(function(a,i){ return a+i.cal; },0) / total) : 0;
   var avgPro = total ? (lib.reduce(function(a,i){ return a+i.pro; },0) / total).toFixed(1) : 0;
@@ -6578,6 +6680,8 @@ function renderIngredientLibrary() {
   if (document.getElementById('il-avgpro')) document.getElementById('il-avgpro').textContent = avgPro+'g';
   if (document.getElementById('il-last'))   document.getElementById('il-last').textContent   = last.length > 12 ? last.slice(0,12)+'…' : last;
   if (document.getElementById('ilBadge'))   document.getElementById('ilBadge').textContent   = total;
+  if (document.getElementById('ilBadge'))   document.getElementById('ilBadge').textContent   = getAllIngredients().length;
+  renderGlobalIngredientBlock();
   var list = document.getElementById('ilList'); if (!list) return;
 
   // Filter
@@ -6596,8 +6700,7 @@ function renderIngredientLibrary() {
   _ilSelected.forEach(function(id){ if(!lib.find(function(i){return i.id===id;})) _ilSelected.delete(id); });
 
   var selCount = _ilSelected.size;
-  var _own = filtered.filter(function(i){ return !i._g; });
-  var allFilteredSelected = _own.length > 0 && _own.every(function(i){ return _ilSelected.has(i.id); });
+  var allFilteredSelected = filtered.length > 0 && filtered.every(function(i){ return _ilSelected.has(i.id); });
 
   if (!filtered.length) {
     list.innerHTML = '<div style="font-size:13px;color:var(--t2);padding:10px">'+(total?'No match found.':'No ingredients saved yet.')+'</div>';
@@ -6630,18 +6733,18 @@ function renderIngredientLibrary() {
     var bw = item.baseWeight || 100;
     var isSelected = _ilSelected.has(item.id);
     // find real index in lib for drag-drop
-    var realIdx = (S.ingredientLibrary||[]).indexOf(item); var G = !!item._g;
+    var realIdx = lib.indexOf(item);
     return '<div class="lib-item-wrap '+(isSelected?'lib-item-selected':'')+'" data-id="'+item.id+'" data-idx="'+realIdx+'"'
-      + (G ? '>' : ' draggable="true"'
+      + ' draggable="true"'
       + ' ondragstart="ilDragStart(event,'+realIdx+')"'
       + ' ondragover="ilDragOver(event,'+realIdx+')"'
       + ' ondrop="ilDrop(event,'+realIdx+')"'
-      + ' ondragend="ilDragEnd()">')
-      + (G ? '<span class="lib-item-cb" style="width:16px;display:inline-block"></span>' : '<input type="checkbox" class="lib-item-cb" '+(isSelected?'checked':'')+' onchange="ilToggleSel('+item.id+',this.checked)">')
-      + '<div class="meal-item" style="flex:1;border-left:3px solid '+(G?'var(--c2)':'var(--p)')+';cursor:default">'
+      + ' ondragend="ilDragEnd()">'
+      + '<input type="checkbox" class="lib-item-cb" '+(isSelected?'checked':'')+' onchange="ilToggleSel('+item.id+',this.checked)">'
+      + '<div class="meal-item" style="flex:1;border-left:3px solid var(--p);cursor:default">'
       + '<div class="meal-top">'
       + '<div style="flex:1">'
-      + '<div class="meal-name" style="color:var(--t)">'+item.name+'<span style="margin-left:8px;padding:1px 6px;font-size:10px;letter-spacing:1px;border:1px solid '+(G?'var(--c2)':'var(--p)')+';color:'+(G?'var(--c2)':'var(--p)')+'">'+(G?'GLOBAL':'MINE')+'</span></div>'
+      + '<div class="meal-name" style="color:var(--t)">'+item.name+'</div>'
       + '<div class="meal-detail" style="margin-top:4px">'
       + '<span style="background:var(--t3);padding:1px 6px;font-size:12px;margin-right:6px">per '+bw+(item.unit||'g')+'</span>'
       + '<span style="color:var(--o2);font-weight:600">'+item.cal+' cal</span> · '
@@ -6652,8 +6755,8 @@ function renderIngredientLibrary() {
       + '</div>'
       + '</div>'
       + '<div style="display:flex;gap:6px;align-items:center">'
-      + (G ? '<span style="font-size:11px;color:var(--t2)">READ-ONLY</span>' : '<button class="edit-btn" onclick="openIngredientEdit('+item.id+')">✎ EDIT</button>'
-      + '<button class="del-btn" onclick="deleteIngredientFromLibrary('+item.id+')">✕</button>')
+      + '<button class="edit-btn" onclick="openIngredientEdit('+item.id+')">✎ EDIT</button>'
+      + '<button class="del-btn" onclick="deleteIngredientFromLibrary('+item.id+')">✕</button>'
       + '</div>'
       + '</div>'
       + '<div class="edit-form" id="il-edit-'+item.id+'">'
@@ -6749,7 +6852,7 @@ function ilswSearch(p) {
   var clrBtn = _ilswClr(p);
   if (clrBtn) clrBtn.style.display = q ? '' : 'none';
   var dd = _ilswDD(p);
-  var lib = allIng();
+  var lib = getAllIngredients();
   if (!q) { dd.style.display = 'none'; return; }
   var hits = lib.filter(function(i){ return i.name.toLowerCase().includes(q); });
   if (!hits.length) {
@@ -6760,7 +6863,7 @@ function ilswSearch(p) {
     var bw = item.baseWeight || 100;
     var per = (item.cal/bw*100).toFixed(0);
     return '<div class="ilsw-dd-item" onclick="ilswSelect(\''+p+'\',\''+item.id+'\')">'
-      + '<span class="ilsw-dd-name">'+_ilswEsc(item.name)+'</span>'
+      + '<span class="ilsw-dd-name">'+_ilswEsc(item.name)+(item._global?' <span style="font-size:9px;color:var(--o2);letter-spacing:1px">MAIN</span>':'')+'</span>'
       + '<span class="ilsw-dd-meta">'+bw+'g → '+item.cal+'cal P:'+item.pro+'g C:'+item.carb+'g F:'+item.fat+'g</span>'
       + '</div>';
   }).join('');
@@ -6772,7 +6875,7 @@ function _ilswChip(lbl, val, colorVar) {
 }
 
 function ilswSelect(p, id) {
-  var lib = allIng();
+  var lib = getAllIngredients();
   var item = lib.find(function(i){ return String(i.id) === String(id); });
   if (!item) return;
   _ilswSel[p] = item;
@@ -7664,7 +7767,7 @@ function aiBuildContext() {
     ? S.habits.map(function(h){ var st=h.logs[S.today]; return '  • [id:'+h.id+'] '+h.name+' ('+h.cat+') — '+(st==='done'?'DONE':st==='x'?'MISSED':'pending'); }).join('\n')
     : '  (no habits tracked)';
 
-  var libSummary = allIng().slice(0,20).map(function(i){
+  var libSummary = getAllIngredients().slice(0,30).map(function(i){
     return '  • '+i.name+' (per '+i.baseWeight+'g: '+i.cal+'cal P:'+i.pro+'g C:'+i.carb+'g F:'+i.fat+'g)';
   }).join('\n') || '  (empty)';
 
@@ -8104,7 +8207,7 @@ async function writeAuditLog(action, targetType, targetId, before, after) {
 }
 
 // ===================== ADMIN — SECTION NAV =====================
-var ADMIN_SECTIONS = ['dashboard','users','content','appconfig','flags','plans','analytics','audit','system'];
+var ADMIN_SECTIONS = ['dashboard','users','content','ingredients','appconfig','flags','plans','analytics','audit','system'];
 function adminNav(section) {
   ADMIN_SECTIONS.forEach(function(s){
     var sec = document.getElementById('admin-sec-'+s);
@@ -8114,6 +8217,7 @@ function adminNav(section) {
   });
   if (section === 'users') renderAdminUsersTable();
   if (section === 'content') loadAdminContent(false);
+  if (section === 'ingredients') loadAdminIngredients(false);
   if (section === 'appconfig') loadAdminAppConfig(false);
   if (section === 'flags') loadAdminFeatureFlags(false);
   if (section === 'plans') loadAdminPlans(false);
@@ -8599,7 +8703,6 @@ function renderAdminContentList() {
   var body = document.getElementById('adminContentBody');
   if (!body || !ADMIN_CONTENT_CACHE) return;
   var type = ADMIN_CONTENT_TYPES.find(function(t){ return t.key===ADMIN_CONTENT_TAB; });
-  if (ADMIN_CONTENT_TAB === 'ingredients') { renderAdminIngredientManager(); return; }
   var items = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] || [];
   body.innerHTML = '<div class="admin-card">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
@@ -8647,6 +8750,132 @@ async function adminPersistContent(action, targetId, before, after) {
     renderAdminContentList();
     writeAuditLog(action, 'content:'+ADMIN_CONTENT_TAB, targetId, before, after);
   } catch(e) { console.error(e); toast('Failed to save content (see console)'); }
+}
+
+// ===================== ADMIN — MAIN (GLOBAL) INGREDIENT LIBRARY =====================
+// Single source of truth for the main library: Firestore doc global/ingredientLibrary { items:[...] }.
+// Users read it (read-only); only the owner can write (see firestore.rules).
+var ADMIN_ING_CACHE = null;   // array of {id,name,baseWeight,unit,cal,pro,carb,fat,fiber}
+var ADMIN_ING_EDIT = null;    // id currently being edited
+
+function _ingNum(v, max) { var n = parseFloat(v); if (!isFinite(n) || n < 0) n = 0; return Math.min(+n.toFixed(2), max || 100000); }
+function _ingClean(raw) {
+  return {
+    id: String(raw.id),
+    name: String(raw.name || '').trim().slice(0,80),
+    baseWeight: Math.max(1, _ingNum(raw.baseWeight, 100000)) || 100,
+    unit: ['g','pcs','ml','kg','oz','tbsp','tsp'].indexOf(raw.unit) >= 0 ? raw.unit : 'g',
+    cal: _ingNum(raw.cal), pro: _ingNum(raw.pro), carb: _ingNum(raw.carb), fat: _ingNum(raw.fat), fiber: _ingNum(raw.fiber)
+  };
+}
+function _ingNewId() { return 'gi' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+async function loadAdminIngredients(force) {
+  if (ADMIN_ING_CACHE && !force) { renderAdminIngredients(); return; }
+  try {
+    var ref = window._fsDoc(window._db, 'global', 'ingredientLibrary');
+    var snap = await window._fsGetDoc(ref);
+    var items = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items : [];
+    ADMIN_ING_CACHE = items.map(_ingClean).filter(function(i){ return i.name; });
+    renderAdminIngredients();
+  } catch (e) {
+    console.error('loadAdminIngredients failed:', e);
+    var b = document.getElementById('adminIngBody');
+    if (b) b.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load. Check that the Firestore rules for <code>global/ingredientLibrary</code> are published.</div>';
+  }
+}
+
+function renderAdminIngredients() {
+  var body = document.getElementById('adminIngBody'); if (!body || !ADMIN_ING_CACHE) return;
+  var q = ((document.getElementById('aing-search')||{}).value || '').trim().toLowerCase();
+  var list = q ? ADMIN_ING_CACHE.filter(function(i){ return i.name.toLowerCase().indexOf(q) >= 0; }) : ADMIN_ING_CACHE;
+  var t = document.getElementById('adminIngTitle'); if (t) t.textContent = 'Ingredients (' + ADMIN_ING_CACHE.length + ')';
+  if (!list.length) { body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:8px 0">' + (ADMIN_ING_CACHE.length ? 'No match.' : 'Main library is empty. Add ingredients above, or use IMPORT MY LIBRARY to bring in your existing ones.') + '</div>'; return; }
+  body.innerHTML = list.map(function(i){
+    var idq = "'" + i.id + "'";
+    if (ADMIN_ING_EDIT === i.id) {
+      var f = function(k, ph, w){ return '<input class="admin-inp" id="aing-e-'+k+'" type="number" step="0.1" min="0" value="'+i[k]+'" placeholder="'+ph+'" style="flex:1;min-width:'+(w||80)+'px"/>'; };
+      return '<div class="admin-content-list-item" style="flex-direction:column;align-items:stretch;gap:8px">'
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap"><input class="admin-inp" id="aing-e-name" type="text" maxlength="80" value="'+_esc(i.name)+'" style="flex:3;min-width:150px"/>'
+        + '<input class="admin-inp" id="aing-e-baseWeight" type="number" min="1" value="'+i.baseWeight+'" style="width:90px"/>'
+        + '<select class="admin-inp" id="aing-e-unit" style="width:90px">' + ['g','pcs','ml','kg','oz','tbsp','tsp'].map(function(u){ return '<option value="'+u+'"'+(i.unit===u?' selected':'')+'>'+u+'</option>'; }).join('') + '</select></div>'
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap">' + f('cal','Cal') + f('pro','Pro') + f('carb','Carb') + f('fat','Fat') + f('fiber','Fiber') + '</div>'
+        + '<div style="display:flex;gap:8px"><button class="admin-exit-btn" onclick="adminIngSaveEdit('+idq+')">[ SAVE ]</button><button class="admin-exit-btn" onclick="adminIngEdit(null)">[ CANCEL ]</button></div>'
+        + '</div>';
+    }
+    return '<div class="admin-content-list-item"><span><b>'+_esc(i.name)+'</b> <span style="color:var(--t2);font-size:11px">per '+i.baseWeight+_esc(i.unit)+' · '+i.cal+' cal · P:'+i.pro+' C:'+i.carb+' F:'+i.fat+' Fib:'+i.fiber+'</span></span>'
+      + '<span style="display:flex;gap:6px"><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminIngEdit('+idq+')">✎</button><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminIngDelete('+idq+')">✕</button></span></div>';
+  }).join('');
+}
+
+function adminIngEdit(id) { ADMIN_ING_EDIT = id; renderAdminIngredients(); }
+
+async function adminIngPersist(action, targetId, before, after) {
+  try {
+    var ref = window._fsDoc(window._db, 'global', 'ingredientLibrary');
+    await window._fsSetDoc(ref, { items: ADMIN_ING_CACHE, updatedAt: new Date().toISOString(), updatedBy: (window._auth && window._auth.currentUser && window._auth.currentUser.email) || 'admin' });
+    if (typeof _setGlobalIngredients === 'function') _setGlobalIngredients(ADMIN_ING_CACHE);
+    renderAdminIngredients();
+    writeAuditLog(action, 'ingredientLibrary', targetId, before, after);
+    return true;
+  } catch (e) { console.error(e); toast('Failed to save main library (check Firestore rules)'); return false; }
+}
+
+async function adminIngAdd() {
+  if (!ADMIN_ING_CACHE) { await loadAdminIngredients(true); if (!ADMIN_ING_CACHE) return; }
+  var g = function(id){ return (document.getElementById(id)||{}).value; };
+  var name = String(g('aing-name')||'').trim();
+  if (!name) { toast('Enter an ingredient name'); return; }
+  if (ADMIN_ING_CACHE.some(function(i){ return i.name.toLowerCase() === name.toLowerCase(); })) { toast('Already in main library'); return; }
+  var item = _ingClean({ id: _ingNewId(), name: name, baseWeight: g('aing-base'), unit: g('aing-unit'), cal: g('aing-cal'), pro: g('aing-pro'), carb: g('aing-carb'), fat: g('aing-fat'), fiber: g('aing-fiber') });
+  ADMIN_ING_CACHE.push(item);
+  if (await adminIngPersist('INGREDIENT_CREATED', item.id, null, item)) {
+    ['aing-name','aing-cal','aing-pro','aing-carb','aing-fat','aing-fiber'].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('aing-base').value = '100';
+    toast('✅ "' + item.name + '" added to main library');
+  } else { ADMIN_ING_CACHE.pop(); renderAdminIngredients(); }
+}
+
+async function adminIngSaveEdit(id) {
+  var idx = ADMIN_ING_CACHE.findIndex(function(i){ return i.id === id; }); if (idx < 0) return;
+  var before = ADMIN_ING_CACHE[idx];
+  var g = function(k){ return (document.getElementById('aing-e-'+k)||{}).value; };
+  var name = String(g('name')||'').trim();
+  if (!name) { toast('Name required'); return; }
+  if (ADMIN_ING_CACHE.some(function(i){ return i.id !== id && i.name.toLowerCase() === name.toLowerCase(); })) { toast('Another item has this name'); return; }
+  var after = _ingClean({ id: id, name: name, baseWeight: g('baseWeight'), unit: g('unit'), cal: g('cal'), pro: g('pro'), carb: g('carb'), fat: g('fat'), fiber: g('fiber') });
+  ADMIN_ING_CACHE[idx] = after; ADMIN_ING_EDIT = null;
+  if (await adminIngPersist('INGREDIENT_UPDATED', id, before, after)) toast('Updated');
+  else { ADMIN_ING_CACHE[idx] = before; renderAdminIngredients(); }
+}
+
+async function adminIngDelete(id) {
+  var idx = ADMIN_ING_CACHE.findIndex(function(i){ return i.id === id; }); if (idx < 0) return;
+  var item = ADMIN_ING_CACHE[idx];
+  if (!confirm('Remove "' + item.name + '" from the main library? It disappears for all users (their personal items are untouched).')) return;
+  ADMIN_ING_CACHE.splice(idx, 1);
+  if (await adminIngPersist('INGREDIENT_DELETED', id, item, null)) toast('Removed');
+  else { ADMIN_ING_CACHE.splice(idx, 0, item); renderAdminIngredients(); }
+}
+
+// Copies the admin's own personal ingredients into the main library (skips names already present),
+// so the pre-existing library becomes the main library without losing anything.
+async function adminIngImportMine() {
+  if (!ADMIN_ING_CACHE) { await loadAdminIngredients(true); if (!ADMIN_ING_CACHE) return; }
+  var mine = (S.ingredientLibrary || []);
+  var have = {}; ADMIN_ING_CACHE.forEach(function(i){ have[i.name.toLowerCase()] = 1; });
+  var add = [];
+  mine.forEach(function(i){
+    var nm = String(i.name || '').trim(); if (!nm || have[nm.toLowerCase()]) return;
+    have[nm.toLowerCase()] = 1;
+    add.push(_ingClean({ id: _ingNewId(), name: nm, baseWeight: i.baseWeight, unit: i.unit, cal: i.cal, pro: i.pro, carb: i.carb, fat: i.fat, fiber: i.fiber }));
+  });
+  if (!add.length) { toast('Nothing new to import from your library'); return; }
+  if (!confirm('Add ' + add.length + ' ingredient(s) from your personal library to the main library (visible to all users)?')) return;
+  var before = ADMIN_ING_CACHE.length;
+  ADMIN_ING_CACHE = ADMIN_ING_CACHE.concat(add);
+  if (await adminIngPersist('INGREDIENT_IMPORTED', 'bulk', { count: before }, { count: ADMIN_ING_CACHE.length })) toast('✅ Imported ' + add.length + ' ingredients');
+  else { ADMIN_ING_CACHE = ADMIN_ING_CACHE.slice(0, before); renderAdminIngredients(); }
 }
 
 // ===================== ADMIN — APP CONFIGURATION =====================
@@ -9122,136 +9351,6 @@ async function adminDeleteUser(docId) {
     closeAdminUserDetail();
     await loadAdminUsers(true);
   } catch(e) { console.error(e); toast('Failed to delete (see console)'); }
-}
-
-// ===================== GLOBAL INGREDIENT LIBRARY (main source = admin) =====================
-// Firestore doc public/ingredientLibrary { items:[...] }. Admin writes; every signed-in user reads.
-// Personal additions stay in S.ingredientLibrary (per user) and are never merged into the global doc.
-var GLOBAL_ING = [];
-function allIng() {
-  var own = S.ingredientLibrary || [], taken = {};
-  own.forEach(function(i){ taken[String(i.name||'').toLowerCase()] = 1; });
-  var g = GLOBAL_ING.filter(function(x){ return !taken[String(x.name||'').toLowerCase()]; })
-                    .map(function(x){ return Object.assign({_g:true}, x); });
-  return g.concat(own);
-}
-async function loadGlobalIngredients() {
-  try {
-    var snap = await window._fsGetDoc(window._fsDoc(window._db, 'public', 'ingredientLibrary'));
-    GLOBAL_ING = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items : [];
-  } catch (e) { console.warn('Global ingredient library unavailable:', e); GLOBAL_ING = []; }
-  if (typeof renderIngredientLibrary === 'function') { try { renderIngredientLibrary(); } catch(e){} }
-}
-(function(){
-  function hook(){ window._onAuthStateChanged(window._auth, function(u){ if (u) loadGlobalIngredients(); }); }
-  if (window._firebaseReady) hook(); else window.addEventListener('firebaseReady', hook);
-})();
-
-// ---- Admin manager (Content Management → Ingredients tab) ----
-var ADMIN_ING = null, ADMIN_ING_Q = '';
-function _agiNum(v){ var n = parseFloat(v); return isNaN(n) ? 0 : n; }
-function _agiRead(prefix, id) {
-  var g = function(k){ return document.getElementById(prefix+k+(id!=null?'-'+id:'')); };
-  var name = (g('name').value||'').trim().slice(0,120);
-  if (!name) { toast('Enter ingredient name'); return null; }
-  return { name:name, baseWeight:_agiNum(g('base').value)||100, unit:g('unit').value||'g',
-    cal:_agiNum(g('cal').value), pro:_agiNum(g('pro').value), carb:_agiNum(g('carb').value),
-    fat:_agiNum(g('fat').value), fiber:_agiNum(g('fiber').value) };
-}
-async function renderAdminIngredientManager() {
-  var body = document.getElementById('adminContentBody'); if (!body) return;
-  if (!ADMIN_ING) {
-    body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Loading ingredient library…</div>';
-    try {
-      var snap = await window._fsGetDoc(window._fsDoc(window._db, 'public', 'ingredientLibrary'));
-      ADMIN_ING = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items : [];
-    } catch (e) { console.error(e); body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load ingredient library.</div>'; return; }
-    GLOBAL_ING = ADMIN_ING.slice();
-    if (ADMIN_CONTENT_CACHE) { ADMIN_CONTENT_CACHE.ingredients = ADMIN_ING; renderAdminContentTabs(); }
-  }
-  var units = ['g','pcs','ml','kg','oz','tbsp','tsp'];
-  var unitSel = function(id, cur){ return '<select class="admin-inp" id="'+id+'" style="width:64px">'+units.map(function(u){ return '<option'+(u===(cur||'g')?' selected':'')+'>'+u+'</option>'; }).join('')+'</select>'; };
-  var num = function(id,v,ph){ return '<input class="admin-inp" id="'+id+'" type="number" step="any" value="'+_esc(v)+'" placeholder="'+ph+'" style="width:70px">'; };
-  var q = ADMIN_ING_Q.toLowerCase();
-  var list = ADMIN_ING.filter(function(i){ return !q || String(i.name).toLowerCase().indexOf(q) >= 0; });
-  body.innerHTML =
-    '<div class="admin-card" style="margin-bottom:14px">' +
-      '<div class="admin-card-title">Add to main ingredient library</div>' +
-      '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
-        '<input class="admin-inp" id="agi-name" placeholder="Name" style="flex:2;min-width:140px">' +
-        num('agi-base',100,'Base') + unitSel('agi-unit','g') + num('agi-cal','','Cal') + num('agi-pro','','P') +
-        num('agi-carb','','C') + num('agi-fat','','F') + num('agi-fiber','','Fib') +
-        '<button class="admin-exit-btn" onclick="adminAddIng()">[ + ADD ]</button>' +
-      '</div>' +
-      '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
-        '<button class="admin-exit-btn" onclick="adminImportOwnIng()">[ ⇪ IMPORT FROM MY PERSONAL LIBRARY ]</button>' +
-      '</div>' +
-      '<div style="font-size:11px;color:var(--t2);margin-top:8px">Every item here appears (read-only) in all users\' Ingredient Library and meal search. Users\' own additions never come back here.</div>' +
-    '</div>' +
-    '<div class="admin-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px">' +
-      '<div class="admin-card-title" style="margin:0">Main library ('+ADMIN_ING.length+')</div>' +
-      '<input class="admin-inp" id="agi-search" placeholder="Search…" value="'+_esc(ADMIN_ING_Q)+'" oninput="ADMIN_ING_Q=this.value;adminIngRefreshList()" style="width:160px"></div>' +
-      '<div id="agiList"></div></div>';
-  adminIngRefreshList();
-}
-function adminIngRefreshList() {
-  var host = document.getElementById('agiList'); if (!host || !ADMIN_ING) return;
-  var units = ['g','pcs','ml','kg','oz','tbsp','tsp'];
-  var q = ADMIN_ING_Q.toLowerCase();
-  var rows = ADMIN_ING.filter(function(i){ return !q || String(i.name).toLowerCase().indexOf(q) >= 0; });
-  var num = function(id,v){ return '<input class="admin-inp" id="'+id+'" type="number" step="any" value="'+_esc(v)+'" style="width:64px">'; };
-  host.innerHTML = rows.length ? rows.map(function(i){
-    var k = _esc(i.id);
-    return '<div class="admin-content-list-item" style="flex-wrap:wrap;gap:6px">' +
-      '<input class="admin-inp" id="agie-name-'+k+'" value="'+_esc(i.name)+'" style="flex:2;min-width:130px">' +
-      num('agie-base-'+k,i.baseWeight||100) +
-      '<select class="admin-inp" id="agie-unit-'+k+'" style="width:64px">'+units.map(function(u){ return '<option'+(u===(i.unit||'g')?' selected':'')+'>'+u+'</option>'; }).join('')+'</select>' +
-      num('agie-cal-'+k,i.cal) + num('agie-pro-'+k,i.pro) + num('agie-carb-'+k,i.carb) + num('agie-fat-'+k,i.fat) + num('agie-fiber-'+k,i.fiber||0) +
-      '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminSaveIng(\''+k+'\')">SAVE</button>' +
-      '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminDeleteIng(\''+k+'\')">✕</button></div>';
-  }).join('') : '<div style="font-size:11px;color:var(--t2);padding:8px 0">'+(ADMIN_ING.length?'No match.':'No items yet. Add one above, or import from your personal library.')+'</div>';
-}
-async function adminPersistIng(action, id, before, after) {
-  try {
-    await window._fsSetDoc(window._fsDoc(window._db, 'public', 'ingredientLibrary'), { items: ADMIN_ING, updatedAt: Date.now() });
-    GLOBAL_ING = ADMIN_ING.slice();
-    if (ADMIN_CONTENT_CACHE) ADMIN_CONTENT_CACHE.ingredients = ADMIN_ING;
-    renderAdminContentTabs(); renderAdminIngredientManager(); renderIngredientLibrary();
-    writeAuditLog(action, 'content:ingredients', id, before, after);
-  } catch (e) { console.error(e); toast('Save failed — check Firestore rules for public/ingredientLibrary'); }
-}
-function adminAddIng() {
-  var item = _agiRead('agi-'); if (!item) return;
-  if (ADMIN_ING.some(function(i){ return String(i.name).toLowerCase() === item.name.toLowerCase(); })) { toast('Already in main library'); return; }
-  item.id = 'g_' + Date.now();
-  ADMIN_ING.push(item);
-  adminPersistIng('CONTENT_CREATED', item.id, null, item);
-}
-function adminSaveIng(id) {
-  var cur = ADMIN_ING.find(function(i){ return String(i.id) === String(id); }); if (!cur) return;
-  var item = _agiRead('agie-', id); if (!item) return;
-  var before = Object.assign({}, cur); Object.assign(cur, item);
-  adminPersistIng('CONTENT_UPDATED', cur.id, before, cur);
-}
-function adminDeleteIng(id) {
-  var idx = ADMIN_ING.findIndex(function(i){ return String(i.id) === String(id); }); if (idx < 0) return;
-  var item = ADMIN_ING[idx];
-  if (!confirm('Delete "'+item.name+'" from the main library? It disappears for all users.')) return;
-  ADMIN_ING.splice(idx, 1);
-  adminPersistIng('CONTENT_DELETED', item.id, item, null);
-}
-function adminImportOwnIng() {
-  var own = S.ingredientLibrary || [];
-  var have = {}; ADMIN_ING.forEach(function(i){ have[String(i.name).toLowerCase()] = 1; });
-  var add = own.filter(function(i){ return i.name && !have[String(i.name).toLowerCase()]; });
-  if (!add.length) { toast('Nothing new to import'); return; }
-  if (!confirm('Copy '+add.length+' ingredient(s) from your personal library into the main library?')) return;
-  var stamp = Date.now();
-  add.forEach(function(i, n){
-    ADMIN_ING.push({ id:'g_'+(stamp+n), name:String(i.name).slice(0,120), baseWeight:i.baseWeight||100, unit:i.unit||'g',
-      cal:i.cal||0, pro:i.pro||0, carb:i.carb||0, fat:i.fat||0, fiber:i.fiber||0 });
-  });
-  adminPersistIng('CONTENT_IMPORTED', 'bulk', null, { count: add.length });
 }
 </script>
 </body>

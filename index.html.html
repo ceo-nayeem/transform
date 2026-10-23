@@ -57,6 +57,29 @@
   flex-direction:column;gap:0;
 }
 #loginScreen.hidden{display:none}
+
+/* ===== BOOT SPLASH (shown only while a saved login is being restored) ===== */
+#bootSplash{position:fixed;inset:0;z-index:10001;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:var(--bg);transition:opacity .45s ease}
+html.boot-restoring #bootSplash{display:flex}
+#bootSplash.out{opacity:0;pointer-events:none}
+#bootSplash::before{content:"";position:absolute;width:520px;height:520px;max-width:90vw;max-height:90vw;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--g) 16%,transparent) 0%,transparent 65%);animation:bootGlow 2.6s ease-in-out infinite}
+.boot-ring{position:relative;width:86px;height:86px}
+.boot-ring i{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:var(--g);animation:bootSpin 1.1s cubic-bezier(.5,.15,.5,.85) infinite}
+.boot-ring i:nth-child(2){inset:10px;border-top-color:transparent;border-right-color:var(--p);animation-duration:1.6s;animation-direction:reverse}
+.boot-ring i:nth-child(3){inset:21px;border-top-color:var(--g2);animation-duration:.9s}
+.boot-ring b{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--g);box-shadow:0 0 14px var(--g);animation:bootPulse 1.4s ease-in-out infinite}
+.boot-logo{position:relative;font-family:var(--mono,monospace);font-weight:800;font-size:28px;letter-spacing:6px;color:var(--t,#fff)}
+.boot-logo span{color:var(--g)}
+.boot-msg{position:relative;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--t2,#888)}
+.boot-msg::after{content:"";display:inline-block;width:1.4em;text-align:left;animation:bootDots 1.4s steps(4,end) infinite}
+.boot-bar{position:relative;width:160px;height:2px;background:color-mix(in srgb,var(--t2,#888) 25%,transparent);overflow:hidden;border-radius:2px}
+.boot-bar::after{content:"";position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(90deg,transparent,var(--g),transparent);animation:bootBar 1.3s ease-in-out infinite}
+@keyframes bootSpin{to{transform:rotate(360deg)}}
+@keyframes bootPulse{0%,100%{transform:scale(.7);opacity:.6}50%{transform:scale(1.25);opacity:1}}
+@keyframes bootGlow{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes bootBar{0%{left:-45%}100%{left:105%}}
+@keyframes bootDots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@media (prefers-reduced-motion:reduce){.boot-ring i,.boot-ring b,#bootSplash::before,.boot-bar::after,.boot-msg::after{animation:none}}
 #onboardScreen{
   position:fixed;inset:0;z-index:9999;
   background:var(--bg);
@@ -1885,6 +1908,32 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 </style>
 </head>
 <body>
+<script>
+// Runs before first paint: if a saved login exists, show the loading splash instead of
+// flashing the login card. No saved login (first visit / logged out / site data cleared)
+// -> the normal login card shows immediately, no splash.
+(function(){
+  try {
+    var has = localStorage.getItem('fitos_session') || sessionStorage.getItem('fitos_session');
+    if (has) document.documentElement.classList.add('boot-restoring');
+  } catch(e) {}
+})();
+function endBootSplash() {
+  var el = document.getElementById('bootSplash');
+  if (!el || !document.documentElement.classList.contains('boot-restoring')) return;
+  el.classList.add('out');
+  setTimeout(function(){ document.documentElement.classList.remove('boot-restoring'); el.classList.remove('out'); }, 480);
+}
+// Safety net: never leave the splash up if something stalls (offline, Firebase blocked, etc.)
+setTimeout(endBootSplash, 15000);
+</script>
+
+<div id="bootSplash" aria-live="polite" role="status">
+  <div class="boot-ring"><i></i><i></i><i></i><b></b></div>
+  <div class="boot-logo">FIT<span>//</span>OS</div>
+  <div class="boot-bar"></div>
+  <div class="boot-msg">Restoring your session</div>
+</div>
 
 <div id="bgParticles"></div>
 
@@ -7392,7 +7441,7 @@ function init() {
   if (typeof dashDate !== 'undefined' && !dashDate) dashDate = S.today;
   // Update Firebase status when ready, then silently restore this tab's
   // session (if any) so a reload doesn't force a fresh login.
-  waitForFirebase(()=>{setFbStatus(true,'Firebase Connected'); tryRestoreSession();});
+  waitForFirebase(()=>{setFbStatus(true,'Firebase Connected'); Promise.resolve(tryRestoreSession()).catch(function(){}).then(endBootSplash);});
   window.addEventListener('resize',()=>{if(document.getElementById('page-dashboard').classList.contains('active'))renderWeightChart();});
 }
 init();

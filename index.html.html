@@ -4,6 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>FIT//OS — Fitness Tracker</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest"/>
+<meta name="theme-color" content="#0a0a0a"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="FIT//OS"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png"/>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+Khmer:wght@400;500;600;700;800&family=Smooch+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"/>
@@ -57,6 +66,16 @@
   flex-direction:column;gap:0;
 }
 #loginScreen.hidden{display:none}
+/* ===== PWA: update banner + iOS install hint ===== */
+#pwaUpdateBar{position:fixed;left:50%;bottom:18px;transform:translate(-50%,24px);opacity:0;pointer-events:none;z-index:10050;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 24px);padding:10px 12px 10px 16px;background:var(--card,#151515);color:var(--t,#fff);border:1px solid var(--g,#00ff88);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.45);font-size:13.5px;transition:opacity .25s ease,transform .25s ease}
+#pwaUpdateBar.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#pwaUpdateBar button{font:inherit;font-weight:700;cursor:pointer;border-radius:8px;padding:7px 12px;border:1px solid var(--g,#00ff88);background:var(--g,#00ff88);color:#04110a}
+#pwaUpdateBar button.ghost{background:transparent;color:var(--t2,#999);border-color:transparent;font-weight:600}
+#pwaIosHint{position:fixed;inset:0;z-index:10060;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55);padding:16px}
+#pwaIosHint.show{display:flex}
+#pwaIosHint .box{width:100%;max-width:380px;background:var(--card,#151515);color:var(--t,#fff);border:1px solid var(--border,#2a2a2a);border-radius:16px;padding:18px 18px 14px;font-size:14px;line-height:1.55}
+#pwaIosHint .box b{color:var(--g,#00ff88)}
+#pwaIosHint .box button{margin-top:12px;width:100%;font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:10px;border:1px solid var(--g,#00ff88);background:transparent;color:var(--g,#00ff88)}
 
 /* ===== BOOT SPLASH (shown only while a saved login is being restored) ===== */
 #bootSplash{position:fixed;inset:0;z-index:10001;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:var(--bg);transition:opacity .45s ease}
@@ -2091,6 +2110,7 @@ setTimeout(endBootSplash, 15000);
           </div>
         </div>
         <div class="profile-dropdown-item" onclick="closeProfileMenu();nav(null,'profile')"><span class="sb-icon">◧</span><span>Profile & Settings</span></div>
+        <div class="profile-dropdown-item" id="installAppMenuItem" style="display:none" onclick="closeProfileMenu();pwaInstall()"><span class="sb-icon">⬇</span><span>Install the web app</span></div>
         <div class="profile-dropdown-item" id="goToBackendMenuItem" style="display:none" onclick="openAdminBackend()"><span class="sb-icon">⚙</span><span>Go to Backend</span></div>
         <div class="profile-dropdown-item danger" onclick="closeProfileMenu();doLogout()"><span class="sb-icon">⏻</span><span>Logout</span></div>
       </div>
@@ -2511,6 +2531,7 @@ setTimeout(endBootSplash, 15000);
     <!-- Weekly donut progress row -->
     <div class="sec-head" style="margin-top:12px">WEEKLY PROGRESS</div>
     <div id="habit-weekly-donuts" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px"></div>
+    <div id="habit-week-detail"></div>
     <!-- Monthly donut -->
     <div class="sec-head">MONTHLY OVERVIEW</div>
     <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
@@ -2737,7 +2758,7 @@ html.alpha .hstat-name{font-family:'Smooch Sans','Noto Sans Khmer','Inter',-appl
 @media (max-width:768px){
   #habit-weekly-donuts{
     display:grid !important;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(var(--hwk-cols,4),1fr);
     gap:6px;
     overflow-x:visible !important;
   }
@@ -2747,6 +2768,23 @@ html.alpha .hstat-name{font-family:'Smooch Sans','Noto Sans Khmer','Inter',-appl
   .hwk-ring-pct{font-size:12.5px}
   .hwk-pct{font-size:12px;margin-top:3px}
 }
+.hwk-card{cursor:pointer;transition:transform .15s ease,border-color .15s ease,opacity .15s ease}
+.hwk-card:hover{transform:translateY(-2px)}
+.hwk-card.future{opacity:.55}
+.hwk-card.current{border-color:var(--g) !important}
+.hwk-card.selected{outline:2px solid var(--g);outline-offset:1px}
+.hwk-now{font-size:9px;letter-spacing:1px;padding:1px 5px;margin-left:3px;border-radius:6px;background:var(--g);color:#04110a;font-weight:800;vertical-align:1px}
+.hwk-detail{margin:10px 0 4px;padding:12px;background:var(--glass-bg,var(--card));border:1px solid var(--glass-border,var(--border));border-radius:var(--radius-md,10px);overflow-x:auto}
+.hwk-detail-head{font-size:13.5px;margin-bottom:8px;color:var(--t)}
+.hwk-detail-days,.hwk-detail-row{display:grid;grid-template-columns:minmax(90px,1.6fr) repeat(7,minmax(26px,1fr)) 44px;align-items:center;gap:4px;min-width:380px}
+.hwk-detail-row{padding:4px 0;border-top:1px solid var(--border)}
+.hwk-dday{text-align:center;font-size:11px;color:var(--t2);line-height:1.15}
+.hwk-dday small{font-size:11px;color:var(--t)}
+.hwk-dday.today{color:var(--g);font-weight:700}
+.hwk-dname{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t)}
+.hwk-dot{height:22px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#04110a;font-weight:800}
+.hwk-dot.fut{opacity:.35}
+.hwk-dtot{text-align:right;font-size:12px;font-family:var(--raj);font-weight:700;color:var(--t2)}
 .hwk-card,.hstat-card{background:var(--glass-bg) !important;border:1px solid var(--glass-border) !important;border-radius:var(--radius-md) !important;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-soft)}
 html.alpha .hwk-card,html.alpha .hstat-card{background:var(--glass-bg) !important;box-shadow:var(--shadow-soft) !important}
 
@@ -5772,6 +5810,7 @@ function habitMonthNav(dir) {
   var d = new Date(_habitCalMonth+'-01T12:00');
   d.setMonth(d.getMonth()+dir);
   _habitCalMonth = d.toISOString().slice(0,7);
+  _habitSelWeek = undefined; // back to auto (current week / none) when switching month
   renderHabitCalendar();
 }
 
@@ -5971,13 +6010,15 @@ function renderHabitCalendar() {
   // Weekly completed / incomplete rows
   var weeks=getWeeksInMonth(yr,mo,daysInMonth);
   html+='<tr><td class="hcal-habit-col" style="font-size:12px;color:var(--g2)">WEEKLY DONE</td>';
-  var wkDoneArr=weeks.map(function(wk){return wk.reduce(function(a,d){return a+dayDone[d]||a+(dayDone[d]||0);},0);});
-  // fill day by day
-  var wkMap={};
-  weeks.forEach(function(wk,wi){wk.forEach(function(d){wkMap[d]=wi;});});
-  for(var d=1;d<=daysInMonth;d++){
-    // show aggregate per week spanning
-    html+='<td style="border:1px solid var(--border);background:var(--card)"></td>';
+  // One cell per week, spanning that week's days inside this month; shows habit-completions done that week.
+  var dayWeek={};
+  weeks.forEach(function(wk,wi){ wk.forEach(function(ds){ dayWeek[ds]=wi; }); });
+  var dd=1;
+  while(dd<=daysInMonth){
+    var wi0=dayWeek[yr+'-'+String(mo).padStart(2,'0')+'-'+String(dd).padStart(2,'0')];
+    var span=0, sum=0;
+    while(dd<=daysInMonth && dayWeek[yr+'-'+String(mo).padStart(2,'0')+'-'+String(dd).padStart(2,'0')]===wi0){ sum+=dayDone[dd]; span++; dd++; }
+    html+='<td colspan="'+span+'" style="border:1px solid var(--border);background:var(--card);font-family:var(--raj);font-size:13px;font-weight:700;color:var(--g2);text-align:center;padding:3px 2px" title="Week '+(wi0+1)+'">'+sum+'</td>';
   }
   html+='<td colspan="3" style="border:1px solid var(--border);background:var(--card)"></td>';
   html+='</tr>';
@@ -5989,20 +6030,22 @@ function renderHabitCalendar() {
   renderMonthlyDonut(yr,mo,daysInMonth,today);
 }
 
+function _hwkYmd(d) {
+  // Local-date formatter (never toISOString: that shifts the date in UTC+ timezones).
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
 function getWeeksInMonth(yr,mo,daysInMonth) {
-  // Always exactly 4 weeks of exactly 7 days, starting Saturday.
-  // Pulls in dates from the previous/next month as needed to fill a week —
-  // shown seamlessly, without labeling them as a different month.
+  // Saturday-to-Friday weeks that cover EVERY day of the month (4, 5 or 6 weeks).
+  // The first week starts on the Saturday on/before the 1st; the last week is the one that
+  // contains the month's final day. Days from the neighbouring month needed to fill a week are included.
   var first=new Date(yr,mo-1,1,12,0,0);
   var backToSat=(first.getDay()-6+7)%7;
-  var anchor=new Date(first); anchor.setDate(first.getDate()-backToSat);
+  var cur=new Date(first); cur.setDate(first.getDate()-backToSat);
+  var last=new Date(yr,mo-1,daysInMonth,12,0,0);
   var weeks=[];
-  for(var wi=0;wi<4;wi++){
+  while(cur<=last){
     var wk=[];
-    for(var di=0;di<7;di++){
-      var nd=new Date(anchor); nd.setDate(anchor.getDate()+wi*7+di);
-      wk.push(nd.toISOString().split('T')[0]);
-    }
+    for(var di=0;di<7;di++){ wk.push(_hwkYmd(cur)); cur.setDate(cur.getDate()+1); }
     weeks.push(wk);
   }
   return weeks;
@@ -6032,40 +6075,82 @@ function getWeeklyProgressColor(pct) {
   return 'rgb(0,255,136)';
 }
 
+var _habitSelWeek; // undefined = auto (current week), '' = none, 'YYYY-MM-DD' = start date of the selected week
+var _HWK_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function _hwkLbl(ds){ var p=ds.split('-'); return parseInt(p[2],10)+' '+_HWK_MON[parseInt(p[1],10)-1]; }
+function _hwkStats(wk,today){
+  var possible=0,done=0;
+  S.habits.forEach(function(h){
+    wk.forEach(function(ds){ if(ds>today) return; possible++; if(h.logs[ds]==='done') done++; });
+  });
+  return {possible:possible,done:done,pct:possible>0?Math.round(done/possible*100):0};
+}
+function habitSelectWeek(startDate){
+  _habitSelWeek=(_habitSelWeek===startDate)?'':startDate;
+  var n=new Date(); var today=_hwkYmd(n);
+  var parts=_habitCalMonth.split('-').map(Number);
+  renderWeeklyDonuts(parts[0],parts[1],new Date(parts[0],parts[1],0).getDate(),today);
+}
+
 function renderWeeklyDonuts(yr,mo,daysInMonth,today) {
   var weeks=getWeeksInMonth(yr,mo,daysInMonth);
   var wrap=document.getElementById('habit-weekly-donuts');
+  var det=document.getElementById('habit-week-detail');
   if(!wrap) return;
-  if(!S.habits.length){wrap.innerHTML='<div style="font-size:13px;color:var(--t2)">No habits.</div>';return;}
+  if(!S.habits.length){wrap.innerHTML='<div style="font-size:13px;color:var(--t2)">No habits.</div>'; if(det) det.innerHTML=''; return;}
+  wrap.style.setProperty('--hwk-cols', weeks.length<=5?weeks.length:3);
+
+  // Which week is highlighted/opened: explicit choice, otherwise the current week (if in this month's view)
+  var curIdx=-1; weeks.forEach(function(wk,wi){ if(wk.indexOf(today)>=0) curIdx=wi; });
+  var selIdx=-1;
+  if(_habitSelWeek===undefined) selIdx=curIdx;
+  else if(_habitSelWeek) weeks.forEach(function(wk,wi){ if(wk[0]===_habitSelWeek) selIdx=wi; });
 
   var html='';
   weeks.forEach(function(wk,wi){
-    var possible=0,done=0;
-    S.habits.forEach(function(h){
-      wk.forEach(function(ds){
-        if(ds>today) return;
-        possible++;
-        if(h.logs[ds]==='done') done++;
-      });
-    });
-    var pct=possible>0?Math.round(done/possible*100):0;
-    var color=getWeeklyProgressColor(pct);
+    var st=_hwkStats(wk,today), pct=st.pct, possible=st.possible, done=st.done;
+    var isFuture=wk[0]>today, isCur=wi===curIdx;
+    var color=isFuture?'var(--t3)':getWeeklyProgressColor(pct);
     var r=36,circ=2*Math.PI*r,offset=circ-(pct/100*circ);
-    var lblStart=parseInt(wk[0].split('-')[2],10);
-    var lblEnd=parseInt(wk[wk.length-1].split('-')[2],10);
-    html+='<div class="hwk-card">';
-    html+='<div class="hwk-label">WEEK '+(wi+1)+': '+lblStart+'–'+lblEnd+'</div>';
+    var d0=wk[0].split('-'), d1=wk[wk.length-1].split('-');
+    var cross=d0[1]!==d1[1];
+    var lbl=cross ? _hwkLbl(wk[0])+'–'+_hwkLbl(wk[6]) : parseInt(d0[2],10)+'–'+parseInt(d1[2],10);
+    html+='<div class="hwk-card'+(isCur?' current':'')+(isFuture?' future':'')+(wi===selIdx?' selected':'')+'" onclick="habitSelectWeek(\''+wk[0]+'\')" title="Click for week details">';
+    html+='<div class="hwk-label">WEEK '+(wi+1)+': '+lbl+(isCur?' <span class="hwk-now">NOW</span>':'')+'</div>';
     html+='<div class="hwk-ring-wrap">';
     html+='<svg viewBox="0 0 86 86" style="transform:rotate(-90deg)">';
     html+='<circle cx="43" cy="43" r="'+r+'" fill="none" stroke="var(--t3)" stroke-width="8"/>';
     html+='<circle cx="43" cy="43" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'"/>';
     html+='</svg>';
-    html+='<div class="hwk-ring-pct">'+pct+'%</div>';
+    html+='<div class="hwk-ring-pct">'+(isFuture?'—':pct+'%')+'</div>';
     html+='</div>';
-    html+='<div class="hwk-pct">'+done+'/'+possible+'</div>';
+    html+='<div class="hwk-pct">'+(isFuture?'Upcoming':done+'/'+possible)+'</div>';
     html+='</div>';
   });
   wrap.innerHTML=html;
+
+  // ----- selected week detail -----
+  if(!det) return;
+  if(selIdx<0){ det.innerHTML=''; return; }
+  var sw=weeks[selIdx], sst=_hwkStats(sw,today);
+  var dn=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var h2='<div class="hwk-detail"><div class="hwk-detail-head"><b>WEEK '+(selIdx+1)+'</b> · '+_hwkLbl(sw[0])+' – '+_hwkLbl(sw[6])
+    +(sw[0]>today?' · <span style="color:var(--t2)">upcoming</span>':' · <b style="color:'+getWeeklyProgressColor(sst.pct)+'">'+sst.pct+'%</b> <span style="color:var(--t2)">('+sst.done+'/'+sst.possible+')</span>')+'</div>';
+  h2+='<div class="hwk-detail-days"><span class="hwk-dname"></span>'+sw.map(function(ds){
+    var dt=new Date(ds+'T12:00'); return '<span class="hwk-dday'+(ds===today?' today':'')+'">'+dn[dt.getDay()]+'<br><small>'+parseInt(ds.split('-')[2],10)+'</small></span>';
+  }).join('')+'<span class="hwk-dtot"></span></div>';
+  S.habits.forEach(function(hb){
+    var hd=0,hp=0;
+    var cells=sw.map(function(ds){
+      var stt=hb.logs[ds], fut=ds>today;
+      if(!fut){ hp++; if(stt==='done') hd++; }
+      var bg=stt==='done'?'background:var(--habit-done);border-color:var(--habit-done)':stt==='x'?'background:var(--habit-miss);border-color:var(--habit-miss)':'';
+      return '<span class="hwk-dot'+(fut?' fut':'')+'" style="'+bg+'" title="'+ds+'">'+(stt==='done'?'✓':stt==='x'?'✕':'')+'</span>';
+    }).join('');
+    h2+='<div class="hwk-detail-row"><span class="hwk-dname" title="'+_esc(hb.name)+'">'+_esc(hb.name)+'</span>'+cells+'<span class="hwk-dtot">'+hd+'/'+hp+'</span></div>';
+  });
+  h2+='</div>';
+  det.innerHTML=h2;
 }
 
 function renderMonthlyDonut(yr,mo,daysInMonth,today) {
@@ -9440,6 +9525,105 @@ async function adminDeleteUser(docId) {
     await loadAdminUsers(true);
   } catch(e) { console.error(e); toast('Failed to delete (see console)'); }
 }
+</script>
+
+<!-- ============ PWA: update banner + iOS hint ============ -->
+<div id="pwaUpdateBar" role="status" aria-live="polite">
+  <span>A new version of FIT//OS is available.</span>
+  <button type="button" onclick="pwaApplyUpdate()">Update now</button>
+  <button type="button" class="ghost" onclick="pwaDismissUpdate()">Later</button>
+</div>
+<div id="pwaIosHint" onclick="if(event.target===this)pwaCloseIosHint()">
+  <div class="box">
+    <b>Install FIT//OS on your iPhone / iPad</b><br>
+    1. Tap the <b>Share</b> button in Safari (square with an arrow).<br>
+    2. Choose <b>Add to Home Screen</b>.<br>
+    3. Tap <b>Add</b>.
+    <button type="button" onclick="pwaCloseIosHint()">Got it</button>
+  </div>
+</div>
+<script>
+// ===================== PWA: install + auto-update =====================
+// Touches no data: only the service worker, the install prompt and a version check on index.html.
+var _pwaDeferred = null, _pwaReg = null, _pwaWaiting = null, _pwaBaseline = null, _pwaDismissed = false;
+function _pwaIsStandalone() {
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+}
+function _pwaIsIos() {
+  var ua = navigator.userAgent || '';
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function _pwaRefreshInstallItem() {
+  var el = document.getElementById('installAppMenuItem'); if (!el) return;
+  var show = !_pwaIsStandalone() && (!!_pwaDeferred || _pwaIsIos());
+  el.style.display = show ? '' : 'none';
+}
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); _pwaDeferred = e; _pwaRefreshInstallItem(); });
+window.addEventListener('appinstalled', function(){ _pwaDeferred = null; _pwaRefreshInstallItem(); try { toast('✅ FIT//OS installed'); } catch(e){} });
+function pwaInstall() {
+  if (_pwaDeferred) {
+    var d = _pwaDeferred; _pwaDeferred = null; _pwaRefreshInstallItem();
+    d.prompt();
+    if (d.userChoice) d.userChoice.then(function(){ _pwaRefreshInstallItem(); }).catch(function(){});
+  } else if (_pwaIsIos()) {
+    document.getElementById('pwaIosHint').classList.add('show');
+  }
+}
+function pwaCloseIosHint() { document.getElementById('pwaIosHint').classList.remove('show'); }
+
+// ----- update banner -----
+function pwaShowUpdate() { if (_pwaDismissed) return; var b = document.getElementById('pwaUpdateBar'); if (b) b.classList.add('show'); }
+function pwaDismissUpdate() { _pwaDismissed = true; var b = document.getElementById('pwaUpdateBar'); if (b) b.classList.remove('show'); }
+function pwaApplyUpdate() {
+  try { if (typeof save === 'function') save(); } catch(e) {}   // flush any pending local edits first
+  if (_pwaWaiting) { _pwaWaiting.postMessage({ type: 'SKIP_WAITING' }); setTimeout(function(){ location.reload(); }, 1500); }
+  else location.reload();
+}
+async function _pwaSignature() {
+  var res = await fetch(location.pathname, { cache: 'no-store' });
+  if (!res.ok) throw new Error('bad status');
+  var tag = res.headers.get('etag') || res.headers.get('last-modified');
+  if (tag) return 'h:' + tag;
+  var buf = await res.arrayBuffer();
+  if (window.crypto && crypto.subtle) {
+    var h = await crypto.subtle.digest('SHA-256', buf);
+    return 'x:' + Array.from(new Uint8Array(h)).slice(0, 12).map(function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+  }
+  return 'l:' + buf.byteLength;
+}
+async function pwaCheckForUpdate() {
+  if (!navigator.onLine) return;
+  try { if (_pwaReg) await _pwaReg.update(); } catch(e) {}
+  try {
+    var sig = await _pwaSignature();
+    if (_pwaBaseline === null) _pwaBaseline = sig;
+    else if (sig !== _pwaBaseline) pwaShowUpdate();
+  } catch(e) {}
+}
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      _pwaReg = reg;
+      if (reg.waiting && navigator.serviceWorker.controller) { _pwaWaiting = reg.waiting; pwaShowUpdate(); }
+      reg.addEventListener('updatefound', function(){
+        var nw = reg.installing; if (!nw) return;
+        nw.addEventListener('statechange', function(){
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) { _pwaWaiting = nw; pwaShowUpdate(); }
+        });
+      });
+    }).catch(function(e){ console.warn('SW registration failed:', e && e.message); });
+    var _reloading = false, _hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if (!_hadController) { _hadController = true; return; }   // first-ever install claiming the page: no reload
+      if (_reloading) return; _reloading = true; location.reload();
+    });
+    setTimeout(pwaCheckForUpdate, 8000);                       // baseline shortly after launch
+    setInterval(pwaCheckForUpdate, 30 * 60 * 1000);            // then every 30 min
+    document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') pwaCheckForUpdate(); });
+    window.addEventListener('online', pwaCheckForUpdate);
+  });
+}
+window.addEventListener('load', _pwaRefreshInstallItem);
 </script>
 </body>
 </html>

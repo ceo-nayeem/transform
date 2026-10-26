@@ -33,8 +33,8 @@ window.FITOS_SITE = {
 
   // ⚠ PUT YOUR REAL NUMBERS HERE (the personal bKash / Nagad numbers customers will Send Money to).
   payment: {
-    bkash: { name: 'bKash', number: '01XXXXXXXXX', kind: 'Send Money', color: '#e2136e' },
-    nagad: { name: 'Nagad', number: '01XXXXXXXXX', kind: 'Send Money', color: '#f7941d' }
+    bkash: { name: 'bKash', number: '01335629707', kind: 'Send Money', color: '#e2136e' },
+    nagad: { name: 'Nagad', number: '01335629707', kind: 'Send Money', color: '#f7941d' }
   },
 
   // Contact details shown on the Contact page and footer. Leave a value '' to hide that item.

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Checkout — FIT//OS Pro</title>
+<meta name="description" content="Upgrade to FIT//OS Pro. Choose a plan, pay with bKash or Nagad and unlock Pro instantly."/>
+<meta name="theme-color" content="#06080a"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Checkout — FIT//OS Pro"/>
+<meta property="og:description" content="Upgrade to FIT//OS Pro. Choose a plan, pay with bKash or Nagad and unlock Pro instantly."/>
+<meta property="og:image" content="assets/img/og.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" type="image/png" sizes="48x48" href="app/icons/favicon-48.png"/>
+<link rel="apple-touch-icon" href="app/icons/apple-touch-icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/site.css"/>
+
+</head>
+<body>
+<div class="bg-glow"></div><div class="bg-grid"></div><div class="noise"></div><div class="scroll-progress"></div>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Launch app</a>
+      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic>Go Pro</a>
+      <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+<div class="mobile-menu">
+  <a href="index.html#features">Features</a><a href="index.html#how">How it works</a><a href="index.html#pricing">Pricing</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+  <a class="btn btn-primary" href="app/" data-appurl>Launch the app →</a>
+</div>
+
+<main class="co-wrap"><div class="wrap">
+  <div class="stepper" id="stepper" aria-label="Checkout progress">
+    <div class="st on" data-st="1"><i>1</i><span>Plan &amp; details</span></div><div class="st-line" data-line="1"></div>
+    <div class="st" data-st="2"><i>2</i><span>Payment</span></div><div class="st-line" data-line="2"></div>
+    <div class="st" data-st="3"><i>3</i><span>Done</span></div>
+  </div>
+
+  <div class="co-grid">
+    <div class="glass co-panel">
+      <!-- STEP 1 -->
+      <section class="co-step show" id="s1">
+        <h2>Choose your plan</h2>
+        <p class="lead">Pick how long you want Pro. You can renew or extend any time.</p>
+        <div class="plan-pick" id="plan-pick" role="radiogroup" aria-label="Plan"></div>
+
+        <h2 style="font-size:1.25rem;margin-bottom:12px">Your details</h2>
+        <div class="auth-box" id="auth-box">
+          <div class="who" id="auth-who"><b>Sign in with Google</b><small>We use your Google account as your verified email — Pro is linked to it.</small></div>
+          <button class="btn btn-google" id="btn-google" type="button"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.7 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.6 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.3 0 10.2-2 13.9-5.4l-6.4-5.4C29.4 34.8 26.8 36 24 36c-5.3 0-9.9-3.3-11.4-8l-6.6 5.1C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.2-4.2 5.6l6.4 5.4C40.9 36.4 44 30.7 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg><span>Continue with Google</span></button>
+        </div>
+        <div class="row2" style="margin-bottom:6px">
+          <div class="field"><label for="f-name">Full name</label><input class="inp" id="f-name" autocomplete="name" placeholder="Your full name" maxlength="80"/><div class="err" id="e-name"></div></div>
+          <div class="field"><label for="f-phone">Mobile number</label><input class="inp" id="f-phone" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX" maxlength="16"/><div class="err" id="e-phone"></div></div>
+        </div>
+        <div class="field" style="margin-bottom:14px"><label for="f-email">Gmail / Google email</label><input class="inp" id="f-email" type="email" placeholder="Sign in above to fill this" readonly/><div class="hint">Locked to the Google account you signed in with.</div></div>
+        <div class="co-actions"><button class="btn btn-primary" id="to-pay" type="button" data-magnetic disabled>Continue to payment <span class="arr">→</span></button></div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="co-step" id="s2">
+        <h2>Pay with bKash or Nagad</h2>
+        <p class="lead">Send the exact amount, then paste your Transaction ID below.</p>
+        <div class="pay-tabs" id="pay-tabs" role="tablist"></div>
+        <div class="pay-box" id="pay-box"></div>
+        <ol class="how-pay" id="how-pay"></ol>
+        <div class="warn" style="margin-top:18px"><span>⚠️</span><span><b>Paste the TrxID exactly</b> as it appears in your SMS / app — same letters and numbers, no extra spaces. If it does not match our records, the payment cannot be verified.</span></div>
+        <div class="field" style="margin-bottom:6px"><label for="f-trx">Transaction ID (TrxID)</label><input class="inp trx-inp" id="f-trx" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. 9G7H6F5D4C" maxlength="16"/><div class="err" id="e-trx" role="alert"></div></div>
+        <div class="err" id="e-submit" role="alert" style="margin-bottom:8px"></div>
+        <div class="co-actions"><button class="btn btn-ghost" id="back1" type="button">← Back</button><button class="btn btn-primary" id="submit-pay" type="button" data-magnetic><span id="submit-lbl">Submit payment</span></button></div>
+        <p class="hint" style="margin-top:14px">After you submit, Pro unlocks right away. We verify your payment and you will get a confirmation inside the app.</p>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="co-step" id="s3">
+        <div class="success">
+          <div class="check"><svg viewBox="0 0 48 48"><path d="M12 25l8 8 16-18"/></svg></div>
+          <h2>Payment submitted!</h2>
+          <span class="badge-pending">⏳ Verification pending</span>
+          <p class="lead" style="font-size:15px;margin:4px 0">Your Pro access is <b style="color:var(--g)">already unlocked</b>. We will verify your payment shortly — you will see a confirmation notification in the app when it is done.</p>
+          <div class="succ-card" id="succ-card"></div>
+          <div class="redir" id="redir"><svg class="redir-ring" viewBox="0 0 34 34"><circle class="bg" cx="17" cy="17" r="14"/><circle class="fg" id="redir-fg" cx="17" cy="17" r="14"/></svg><span>Opening the app in <b id="redir-n">5</b>s…</span></div>
+          <div class="co-actions" style="width:100%"><a class="btn btn-primary" id="go-app" href="app/" data-appurl>Go to app →</a><button class="btn btn-ghost" id="stay" type="button">Stay on this page</button></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="glass summary" aria-label="Order summary">
+      <h3>Order summary</h3>
+      <div class="sum-row"><span>Plan</span><b id="sum-plan">—</b></div>
+      <div class="sum-row"><span>Duration</span><b id="sum-dur">—</b></div>
+      <div class="sum-row"><span>Account</span><b id="sum-email">Not signed in</b></div>
+      <div class="sum-total"><span style="color:var(--t2)">Total</span><b id="sum-total">—</b></div>
+      <div id="sum-note" class="hint"></div>
+      <ul class="sum-perks"><li>Unlimited goals, habits &amp; meals</li><li>AI Agent access</li><li>Instant Pro access on submit</li><li>Pay with bKash or Nagad</li></ul>
+    </aside>
+  </div>
+</div></main>
+<div class="toast" role="status"></div>
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
+        <p class="foot-about">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
+      </div>
+      <div><h4>Product</h4><ul><li><a href="index.html#features">Features</a></li><li><a href="index.html#how">How it works</a></li><li><a href="index.html#pricing">Pricing</a></li><li><a href="app/" data-appurl>Launch app</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="index.html#faq">FAQ</a></li></ul></div>
+      <div><h4>Get in touch</h4><ul>
+        <li data-contact-box><a data-contact="email" href="#">Email</a></li>
+        <li data-contact-box><a data-contact="whatsapp" href="#">WhatsApp</a></li>
+        <li data-contact-box><a data-contact="facebook" href="#">Facebook</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span>Pay securely with bKash &amp; Nagad</span></div>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/site.js" defer></script>
+<script type="module" src="assets/js/checkout.js"></script>
+</body>
+</html>

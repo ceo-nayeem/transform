@@ -831,6 +831,64 @@ html.alpha .wt-current-label{font-family:'Noto Sans Khmer','Inter',-apple-system
 html.alpha .wt-hover-tip{background:#fff;font-family:'Noto Sans Khmer','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.15)}
 .wt-hover-tip b{color:var(--g)}
 
+/* ===== Weight trend v2: 1W / 1M / 1Y / Custom, stats strip, hover tooltip ===== */
+.wt-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.wt-range-toggle{flex-wrap:nowrap;max-width:100%}
+.wt-range-btn{font-size:12px;padding:6px 11px;letter-spacing:1px;white-space:nowrap}
+.wt-custom{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;margin:0 0 10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+.wt-custom label{display:flex;flex-direction:column;gap:4px;font-size:10px;letter-spacing:2px;color:var(--t2);font-family:var(--mono)}
+.wt-custom input[type=date]{font:inherit;font-size:13px;letter-spacing:0;color:var(--t);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color-scheme:dark light;min-width:140px}
+.wt-custom input[type=date]:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb, var(--g) 18%, transparent)}
+.wt-quick{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.wt-quick button{font:inherit;font-size:11px;letter-spacing:1px;color:var(--t2);background:none;border:1px solid var(--border);border-radius:14px;padding:5px 10px;cursor:pointer}
+.wt-quick button:hover{color:var(--g);border-color:var(--g)}
+.wt-stats{display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:8px;margin-bottom:12px}
+.wt-stat{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:8px 10px;min-width:0}
+.wt-stat-l{display:block;font-size:10px;letter-spacing:1.6px;color:var(--t2);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wt-stat-v{display:block;font-size:17px;font-weight:700;color:var(--t);font-family:var(--raj);letter-spacing:.4px;margin-top:2px}
+.wt-stat-v small{font-size:11px;color:var(--t2);font-weight:600}
+.wt-stat-main{background:linear-gradient(135deg,color-mix(in srgb, var(--p) 16%, var(--card2)),color-mix(in srgb, var(--g) 10%, var(--card2)));border-color:color-mix(in srgb, var(--p) 45%, var(--border));box-shadow:0 0 22px color-mix(in srgb, var(--p) 14%, transparent)}
+.wt-stat-main .wt-stat-v{font-size:26px;color:var(--p);text-shadow:0 0 14px color-mix(in srgb, var(--p) 40%, transparent)}
+#wtCurrentVal{color:var(--g)}
+.wt-chart-wrap canvas{cursor:crosshair}
+.wt-foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--t2);letter-spacing:.4px}.wt-foot b{color:var(--g)}
+.wt-hover-tip{display:none;text-align:center;line-height:1.35;padding:7px 12px;border-radius:10px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 8px 26px rgba(0,0,0,.4),0 0 16px color-mix(in srgb, var(--g) 25%, transparent)}
+.wt-hover-tip .d{display:block;font-size:11px;color:var(--t2);letter-spacing:.4px}
+.wt-hover-tip b{display:block;font-size:17px;font-family:var(--raj)}
+.wt-hover-tip i{display:block;font-style:normal;font-size:11px}
+@media (max-width:640px){
+  .wt-stats{grid-template-columns:1fr 1fr}
+  .wt-stat-main{grid-column:1 / -1}
+  .wt-range-btn{padding:6px 9px;font-size:11.5px}
+  .wt-quick{margin-left:0}
+  .wt-custom input[type=date]{min-width:0;width:100%}
+  .wt-custom label{flex:1 1 130px}
+}
+/* weight history list */
+.wh-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.wh-sum>div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 11px}
+.wh-sum span{display:block;font-size:10px;letter-spacing:1.6px;color:var(--t2);font-family:var(--mono)}
+.wh-sum b{display:block;font-family:var(--raj);font-size:19px;margin-top:2px}
+.wh-sum small,.wh-w small{font-size:11px;color:var(--t2);font-weight:600}
+.wh-month{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:14px 2px 6px;font-size:11px;letter-spacing:2px;color:var(--g);font-family:var(--mono)}
+.wh-month em{font-style:normal;color:var(--t2);letter-spacing:1px}
+.wh-row{display:grid;grid-template-columns:78px 86px 78px 1fr 32px;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-left:2px solid var(--g);border-radius:10px;padding:9px 12px;margin-bottom:6px;transition:border-color .2s,transform .2s,box-shadow .2s}
+.wh-row:hover{border-color:var(--g);box-shadow:0 0 16px color-mix(in srgb, var(--g) 14%, transparent)}
+.wh-date b{display:block;font-size:14px}.wh-date span{display:block;font-size:11px;color:var(--t2)}
+.wh-w{font-family:var(--raj);font-size:20px;font-weight:700;color:var(--t)}
+.wh-d{font-size:12.5px;font-weight:600}
+.wh-ex{font-size:12px;color:var(--t2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wh-more{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#measHistory{display:block !important}
+#measHistory > .wh-row{margin-bottom:6px !important}
+#measHistory > .wh-month{margin:16px 2px 8px !important}
+#measHistory > .wh-sum{margin-bottom:6px !important}
+@media (max-width:640px){
+  .wh-row{grid-template-columns:64px 1fr auto 28px;row-gap:2px}
+  .wh-ex{grid-column:1 / -2;grid-row:2;white-space:normal}
+  .wh-row .del-btn{grid-row:1 / span 2;grid-column:4}
+}
+
 .meal-item{background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px;border-left:2px solid var(--border)}
 .mi-clickable{cursor:pointer;transition:transform .15s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease}
 .mi-clickable:hover{background:var(--card2);transform:translateX(3px);border-left-width:4px}
@@ -2228,20 +2286,31 @@ setTimeout(endBootSplash, 15000);
       <div class="card-bar"><div class="card-bar-fill" style="background:var(--p)" id="dc-hab-bar"></div></div>
     </div>
   </div>
-  <div class="sec-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+  <div class="sec-head wt-head">
     <span>WEIGHT TREND</span>
     <div class="wt-range-toggle" id="wtRangeToggle">
-      <button class="wt-range-btn active" data-range="week" onclick="setWeightChartRange('week')">Weekly</button>
-      <button class="wt-range-btn" data-range="month" onclick="setWeightChartRange('month')">Monthly</button>
+      <button class="wt-range-btn active" data-range="week" onclick="setWeightChartRange('week')">1W</button>
+      <button class="wt-range-btn" data-range="month" onclick="setWeightChartRange('month')">1M</button>
+      <button class="wt-range-btn" data-range="year" onclick="setWeightChartRange('year')">1Y</button>
+      <button class="wt-range-btn" data-range="custom" onclick="setWeightChartRange('custom')">Custom</button>
     </div>
   </div>
+  <div class="wt-custom" id="wtCustom" style="display:none">
+    <label>FROM<input type="date" id="wtFrom" onchange="wtCustomChanged()"/></label>
+    <label>TO<input type="date" id="wtTo" onchange="wtCustomChanged()"/></label>
+    <div class="wt-quick"><button onclick="wtQuickRange(14)">14D</button><button onclick="wtQuickRange(90)">3M</button><button onclick="wtQuickRange(180)">6M</button></div>
+  </div>
   <div class="chart-wrap wt-chart-wrap">
-    <div class="wt-current-badge" id="wtCurrentBadge" style="display:none">
-      <span class="wt-current-label">CURRENT</span>
-      <span class="wt-current-val" id="wtCurrentVal">--</span>
+    <div class="wt-stats" id="wtStats">
+      <div class="wt-stat wt-stat-main"><span class="wt-stat-l" id="wtAvgLbl">AVERAGE</span><span class="wt-stat-v" id="wtAvg">--<small> kg</small></span></div>
+      <div class="wt-stat" id="wtCurrentBadge"><span class="wt-stat-l">CURRENT</span><span class="wt-stat-v" id="wtCurrentVal">--</span></div>
+      <div class="wt-stat"><span class="wt-stat-l">LOWEST</span><span class="wt-stat-v" id="wtLow">--</span></div>
+      <div class="wt-stat"><span class="wt-stat-l">HIGHEST</span><span class="wt-stat-v" id="wtHigh">--</span></div>
+      <div class="wt-stat"><span class="wt-stat-l">CHANGE</span><span class="wt-stat-v" id="wtChg">—</span></div>
     </div>
     <canvas id="weightChart" height="150"></canvas>
     <div class="wt-hover-tip" id="wtHoverTip"></div>
+    <div class="wt-foot"><span id="wtCountWrap"><b id="wtCount">0</b> days logged in range</span><span>Hover or tap any dot for the exact weight</span></div>
   </div>
   <div class="quick-add-wrap" id="quickAddWrap">
     <button class="quick-add-fab" id="quickAddFab" onclick="toggleQuickAdd(event)" title="Quick add" aria-label="Quick add">
@@ -3076,7 +3145,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
     </div>
     <button class="btn full" onclick="logMeasurements()">[ + SAVE MEASUREMENTS ]</button>
   </div>
-  <div class="sec-head">MEASUREMENT HISTORY</div>
+  <div class="sec-head" style="display:flex;justify-content:space-between;gap:10px"><span>MEASUREMENT HISTORY</span><span id="measHistCount" style="color:var(--t2);font-size:11px;letter-spacing:1.5px"></span></div>
   <div id="measHistory"><div style="font-size:13px;color:var(--t2);padding:10px">No measurements logged yet.</div></div>
   </div>
 
@@ -4861,6 +4930,7 @@ function switchFitnessTab(tab) {
   }
 }
 function nav(btn, id) {
+  try { if (typeof wtChartHoverEnd === 'function') wtChartHoverEnd(); } catch(e){}
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
   var origId = id; // remember the specific sub-page requested, before it's folded into its combined parent
@@ -5074,190 +5144,296 @@ function renderDashboard() {
   updateSidebarBadges();
 }
 
-// Which range the dashboard weight chart currently shows: 'week' (last
-// 7 logged points) or 'month' (last 30 days' worth of logged points).
+// ===================== WEIGHT TREND (dashboard) =====================
+// Ranges: 'week' (7 days), 'month' (30 days), 'year' (365 days) and 'custom' (any from/to dates).
+// Ranges are calendar based, so the average always means "average of what was logged in that period".
 var wtChartRange = 'week';
-// Pixel coordinates of each plotted point on the last weight-chart render,
-// used by the hover handler below to find and label the nearest point.
+var wtCustom = { from: '', to: '' };
+try {
+  var _wr = localStorage.getItem('fitos_wt_range');
+  if (['week','month','year','custom'].indexOf(_wr) >= 0) wtChartRange = _wr;
+  var _wc = JSON.parse(localStorage.getItem('fitos_wt_custom') || 'null');
+  if (_wc && _wc.from && _wc.to) wtCustom = _wc;
+} catch(e) {}
+// Pixel coordinates of each plotted point on the last render (used by the hover/touch handler).
 var wtChartPoints = [];
+var wtHoverIdx = -1;
+
+function wtDay(s){ var p = String(s || '').slice(0,10).split('-'); if (p.length < 3) return NaN; return Math.round(Date.UTC(+p[0], +p[1]-1, +p[2]) / 864e5); }
+function wtDayStr(n){ return new Date(n * 864e5).toISOString().slice(0,10); }
+function wtFmt(n, o){ return new Date(n * 864e5).toLocaleDateString('en-GB', Object.assign({ timeZone: 'UTC' }, o)); }
+function wtSave(){ try { localStorage.setItem('fitos_wt_range', wtChartRange); localStorage.setItem('fitos_wt_custom', JSON.stringify(wtCustom)); } catch(e){} }
+
 function setWeightChartRange(range) {
-  wtChartRange = range === 'month' ? 'month' : 'week';
-  document.querySelectorAll('.wt-range-btn').forEach(function(b){
-    b.classList.toggle('active', b.getAttribute('data-range') === wtChartRange);
-  });
+  wtChartRange = ['week','month','year','custom'].indexOf(range) >= 0 ? range : 'week';
+  if (wtChartRange === 'custom' && !(wtCustom.from && wtCustom.to)) {
+    var t = wtDay(today());
+    wtCustom = { from: wtDayStr(t - 29), to: wtDayStr(t) };
+  }
+  wtHoverIdx = -1; wtSave();
   renderWeightChart();
 }
+function wtCustomChanged() {
+  var f = document.getElementById('wtFrom'), t = document.getElementById('wtTo');
+  if (!f || !t || !f.value || !t.value) return;
+  var a = f.value, b = t.value;
+  if (a > b) { var x = a; a = b; b = x; }
+  wtCustom = { from: a, to: b };
+  wtHoverIdx = -1; wtSave();
+  renderWeightChart();
+}
+function wtQuickRange(days) {   // chips under the custom date pickers
+  var t = wtDay(today());
+  wtCustom = { from: wtDayStr(t - (days - 1)), to: wtDayStr(t) };
+  wtHoverIdx = -1; wtSave();
+  renderWeightChart();
+}
+
+// One value per day (the last entry logged that day), oldest -> newest.
+function wtSeries() {
+  var map = {};
+  (S.measurements || []).forEach(function(m){
+    var v = parseFloat(m.weight), d = wtDay(m.date);
+    if (!v || isNaN(d)) return;
+    map[d] = { day: d, v: v, d: String(m.date).slice(0,10) };
+  });
+  return Object.keys(map).map(function(k){ return map[k]; }).sort(function(a,b){ return a.day - b.day; });
+}
+function wtWindow() {
+  var end = wtDay(today()), start;
+  if (wtChartRange === 'week') start = end - 6;
+  else if (wtChartRange === 'month') start = end - 29;
+  else if (wtChartRange === 'year') start = end - 364;
+  else {
+    var s = wtDay(wtCustom.from), e = wtDay(wtCustom.to);
+    if (isNaN(s) || isNaN(e)) { start = end - 29; }
+    else { start = Math.min(s, e); end = Math.max(s, e); }
+  }
+  return { start: start, end: end };
+}
+function wtRangeLabel(win) {
+  if (wtChartRange === 'week') return 'LAST 7 DAYS';
+  if (wtChartRange === 'month') return 'LAST 30 DAYS';
+  if (wtChartRange === 'year') return 'LAST 12 MONTHS';
+  return wtFmt(win.start, { day:'numeric', month:'short', year:'numeric' }).toUpperCase() + ' – ' + wtFmt(win.end, { day:'numeric', month:'short', year:'numeric' }).toUpperCase();
+}
+function wtSyncUI(win) {
+  document.querySelectorAll('.wt-range-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-range') === wtChartRange); });
+  var box = document.getElementById('wtCustom');
+  if (box) box.style.display = wtChartRange === 'custom' ? '' : 'none';
+  var f = document.getElementById('wtFrom'), t = document.getElementById('wtTo');
+  if (f && t && wtChartRange === 'custom') {
+    f.value = wtDayStr(win.start); t.value = wtDayStr(win.end);
+    t.max = wtDayStr(wtDay(today()));
+  }
+}
+function wtSet(id, html) { var el = document.getElementById(id); if (el) el.innerHTML = html; }
+function wtSigned(x) { var r = Math.round(x * 10) / 10; return (r > 0 ? '+' : '') + r.toFixed(1); }
 
 function renderWeightChart() {
   var canvas = document.getElementById('weightChart');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
   var dpr = window.devicePixelRatio || 1;
-  var cssW = canvas.offsetWidth || 560, cssH = 200;
+  var cssW = canvas.offsetWidth || 560, cssH = cssW < 420 ? 220 : 250;
   canvas.width = cssW * dpr; canvas.height = cssH * dpr;
   canvas.style.height = cssH + 'px';
+  canvas.style.touchAction = 'pan-y';
   ctx.setTransform(dpr,0,0,dpr,0,0);
   var W = cssW, H = cssH;
-  var padL = 50, padR = 18, padT = 62, padB = 30;
+  var padL = 46, padR = 16, padT = 26, padB = 30;
   ctx.clearRect(0,0,W,H);
-  var isAlpha = document.documentElement.classList.contains('alpha');
   var cs = getComputedStyle(document.documentElement);
   var lineColor = (cs.getPropertyValue('--g')||'#00ff88').trim();
   var cyanColor = (cs.getPropertyValue('--c')||'#00e5ff').trim();
+  var purple = (cs.getPropertyValue('--p')||'#aa77ff').trim();
   var gridColor = (cs.getPropertyValue('--border')||'#0f2a1e').trim();
   var textColor = (cs.getPropertyValue('--t2')||'#5a9a70').trim();
-  var textColorStrong = (cs.getPropertyValue('--t')||'#f2f2f2').trim();
+  var textStrong = (cs.getPropertyValue('--t')||'#f2f2f2').trim();
   var cardColor = (cs.getPropertyValue('--card')||'#151515').trim();
   var mono = "'Noto Sans Khmer','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif";
   var raj = "'Smooch Sans','Noto Sans Khmer','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
 
-  var allPts = S.measurements.map(function(m){ return {d:m.date, v:parseFloat(m.weight)}; }).filter(function(p){ return p.v; });
-  var sliceN = wtChartRange === 'month' ? 30 : 7;
-  var pts = allPts.slice(-sliceN);
+  var all = wtSeries();
+  var win = wtWindow();
+  wtSyncUI(win);
+  var pts = all.filter(function(p){ return p.day >= win.start && p.day <= win.end; });
 
-  var badge = document.getElementById('wtCurrentBadge');
-  var badgeVal = document.getElementById('wtCurrentVal');
-  if (allPts.length) {
-    var cur = allPts[allPts.length-1].v;
-    if (badge) badge.style.display = '';
-    if (badgeVal) badgeVal.textContent = cur.toFixed(1) + ' kg';
-  } else if (badge) {
-    badge.style.display = 'none';
+  // ---- stats strip (average first — it is the headline number) ----
+  var label = wtRangeLabel(win);
+  wtSet('wtAvgLbl', 'AVERAGE · ' + label);
+  var tip = document.getElementById('wtHoverTip');
+  if (tip && tip.parentNode !== document.body) document.body.appendChild(tip);   // keep it viewport-fixed (card has backdrop-filter)
+  if (all.length) wtSet('wtCurrentVal', all[all.length-1].v.toFixed(1) + ' kg'); else wtSet('wtCurrentVal', '--');
+  if (pts.length) {
+    var vals = pts.map(function(p){ return p.v; });
+    var avg = vals.reduce(function(a,b){ return a + b; }, 0) / vals.length;
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var chg = pts[pts.length-1].v - pts[0].v;
+    wtSet('wtAvg', avg.toFixed(1) + '<small> kg</small>');
+    wtSet('wtLow', lo.toFixed(1)); wtSet('wtHigh', hi.toFixed(1));
+    wtSet('wtChg', pts.length > 1 ? '<span class="' + (chg > 0.04 ? 't-up' : chg < -0.04 ? 't-dn' : 't-neu') + '">' + wtSigned(chg) + '</span>' : '—');
+    wtSet('wtCount', String(pts.length));
+  } else {
+    wtSet('wtAvg', '--<small> kg</small>'); wtSet('wtLow', '--'); wtSet('wtHigh', '--'); wtSet('wtChg', '—'); wtSet('wtCount', '0');
   }
 
-  if (pts.length < 2) {
-    ctx.fillStyle = textColor; ctx.font = '12.5px ' + mono;
-    ctx.fillText('Not enough data. Log measurements to see weight trend.', 10, H/2);
-    wtChartPoints = [];
-    var tipEmpty = document.getElementById('wtHoverTip'); if (tipEmpty) tipEmpty.style.display = 'none';
+  if (!pts.length) {
+    wtChartPoints = []; if (tip) tip.style.display = 'none';
+    ctx.fillStyle = textColor; ctx.font = '13px ' + mono; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(all.length ? 'No weight logged in this period.' : 'Not enough data. Log measurements to see your weight trend.', W/2, H/2);
+    canvas.onpointermove = canvas.onpointerdown = canvas.onpointerleave = null;
     return;
   }
 
-  var vals = pts.map(function(p){ return p.v; });
-  var rawMin = Math.min.apply(null, vals), rawMax = Math.max.apply(null, vals);
-  var curWeight = allPts[allPts.length-1].v;
-  // Ruler scale: round to clean whole-number ticks that comfortably
-  // bracket both the plotted range AND the current weight, so the
-  // current-weight tick is always one of the visible gridlines.
-  var span = Math.max(rawMax - rawMin, 4);
-  var niceStep = span <= 4 ? 0.5 : span <= 8 ? 1 : span <= 16 ? 2 : span <= 30 ? 5 : 10;
-  var mn = Math.floor((Math.min(rawMin, curWeight) - niceStep*0.8) / niceStep) * niceStep;
-  var mx = Math.ceil((Math.max(rawMax, curWeight) + niceStep*0.8) / niceStep) * niceStep;
+  var avgV = pts.reduce(function(a,p){ return a + p.v; }, 0) / pts.length;
+  var rawMin = Math.min.apply(null, pts.map(function(p){return p.v;})), rawMax = Math.max.apply(null, pts.map(function(p){return p.v;}));
+  var span = Math.max(rawMax - rawMin, 3);
+  var niceStep = span <= 3 ? 0.5 : span <= 8 ? 1 : span <= 16 ? 2 : span <= 40 ? 5 : 10;
+  var mn = Math.floor((rawMin - niceStep*0.6) / niceStep) * niceStep;
+  var mx = Math.ceil((rawMax + niceStep*0.6) / niceStep) * niceStep;
   if (mx === mn) mx = mn + niceStep;
   var ticks = [];
-  for (var t = mn; t <= mx + 0.0001; t += niceStep) ticks.push(Math.round(t*10)/10);
+  for (var tk = mn; tk <= mx + 0.0001; tk += niceStep) ticks.push(Math.round(tk*10)/10);
 
   var chartW = W - padL - padR, chartH = H - padT - padB;
   function yFor(v){ return padT + (1-(v-mn)/(mx-mn)) * chartH; }
-  var xStep = pts.length > 1 ? chartW / (pts.length - 1) : 0;
-  function xFor(i){ return padL + i*xStep; }
+  // time-based x axis; starts at the first logged day in range (min 7-day view) and ends at the window end
+  var d0 = Math.max(win.start, Math.min(pts[0].day, win.end - 6)), d1 = win.end;
+  if (d1 <= d0) { d1 = d0 + 1; }
+  function xFor(day){ return padL + (day - d0) / (d1 - d0) * chartW; }
 
-  // ---- Measurement-scale ruler: tick marks + labeled numbers on the left ----
+  // ---- ruler grid ----
   ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
   ticks.forEach(function(tv){
     var y = yFor(tv);
-    var isCurrent = Math.abs(tv - Math.round(curWeight/niceStep)*niceStep) < 0.001;
-    ctx.strokeStyle = gridColor; ctx.setLineDash(isCurrent ? [] : [3,3]); ctx.lineWidth = 1;
+    ctx.strokeStyle = gridColor; ctx.setLineDash([3,4]); ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-    // Tick notch just left of the axis
-    ctx.setLineDash([]);
-    ctx.strokeStyle = isCurrent ? lineColor : textColor; ctx.lineWidth = isCurrent ? 2 : 1;
-    ctx.beginPath(); ctx.moveTo(padL-6, y); ctx.lineTo(padL, y); ctx.stroke();
-    ctx.fillStyle = isCurrent ? lineColor : textColor;
-    ctx.font = (isCurrent ? 'bold ' : '') + '11px ' + mono;
+    ctx.setLineDash([]); ctx.strokeStyle = textColor; ctx.globalAlpha = .6;
+    ctx.beginPath(); ctx.moveTo(padL-5, y); ctx.lineTo(padL, y); ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = textColor; ctx.font = '11px ' + mono;
     ctx.fillText(tv.toFixed(1), padL-9, y);
   });
   ctx.setLineDash([]);
 
-  // ---- Current-weight marker line across the whole chart width, so the
-  // needle "sits" on the ruler at the live weight even between ticks ----
-  var curY = yFor(curWeight);
+  // ---- average line ----
+  var ay = yFor(avgV);
   ctx.save();
-  ctx.strokeStyle = lineColor; ctx.globalAlpha = .55; ctx.lineWidth = 1.5; ctx.setLineDash([1,4]);
-  ctx.beginPath(); ctx.moveTo(padL, curY); ctx.lineTo(W-padR, curY); ctx.stroke();
+  ctx.strokeStyle = purple; ctx.globalAlpha = .85; ctx.lineWidth = 1.4; ctx.setLineDash([7,5]);
+  ctx.beginPath(); ctx.moveTo(padL, ay); ctx.lineTo(W-padR, ay); ctx.stroke();
   ctx.restore();
-  // Needle notch on the axis, bright, always at the exact current weight
-  ctx.fillStyle = lineColor;
-  ctx.beginPath(); ctx.moveTo(padL-8,curY); ctx.lineTo(padL-1,curY-4); ctx.lineTo(padL-1,curY+4); ctx.closePath(); ctx.fill();
+  ctx.font = 'bold 11px ' + mono; var aTxt = 'AVG ' + avgV.toFixed(1);
+  var aW = ctx.measureText(aTxt).width + 12;
+  var aX = W - padR - aW, aY = ay - 10 < padT ? ay + 4 : ay - 20;
+  ctx.fillStyle = cardColor; ctx.fillRect(aX, aY, aW, 16); ctx.fillStyle = purple; ctx.globalAlpha = .2; ctx.fillRect(aX, aY, aW, 16); ctx.globalAlpha = 1;
+  ctx.fillStyle = purple; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(aTxt, aX + aW/2, aY + 8.5);
 
-  // ---- Gradient area fill under the trend line ----
-  var grad = ctx.createLinearGradient(0,padT,0,padT+chartH);
-  grad.addColorStop(0, color_mix_fallback(lineColor,.30));
-  grad.addColorStop(1, color_mix_fallback(lineColor,0));
-  ctx.beginPath();
-  pts.forEach(function(p,i){ var x=xFor(i), y=yFor(p.v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-  ctx.lineTo(xFor(pts.length-1), padT+chartH); ctx.lineTo(xFor(0), padT+chartH); ctx.closePath();
-  ctx.fillStyle = grad; ctx.fill();
+  // ---- area + glowing trend line ----
+  var xs = pts.map(function(p){ return xFor(p.day); }), ys = pts.map(function(p){ return yFor(p.v); });
+  if (pts.length > 1) {
+    var grad = ctx.createLinearGradient(0,padT,0,padT+chartH);
+    grad.addColorStop(0, color_mix_fallback(lineColor,.30)); grad.addColorStop(1, color_mix_fallback(lineColor,0));
+    ctx.beginPath();
+    pts.forEach(function(p,i){ i===0 ? ctx.moveTo(xs[i],ys[i]) : ctx.lineTo(xs[i],ys[i]); });
+    ctx.lineTo(xs[pts.length-1], padT+chartH); ctx.lineTo(xs[0], padT+chartH); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+    var lg = ctx.createLinearGradient(padL,0,W-padR,0);
+    lg.addColorStop(0, lineColor); lg.addColorStop(1, cyanColor);
+    ctx.save();
+    ctx.shadowColor = lineColor; ctx.shadowBlur = 10;
+    ctx.strokeStyle = lg; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.beginPath();
+    pts.forEach(function(p,i){ i===0 ? ctx.moveTo(xs[i],ys[i]) : ctx.lineTo(xs[i],ys[i]); });
+    ctx.stroke(); ctx.restore();
+  }
 
-  // ---- Trend line (gradient stroke g→c for a bit of visual interest) ----
-  var lineGrad = ctx.createLinearGradient(padL,0,W-padR,0);
-  lineGrad.addColorStop(0, lineColor); lineGrad.addColorStop(1, cyanColor);
-  ctx.strokeStyle = lineGrad; ctx.lineWidth = 2.5; ctx.lineJoin='round'; ctx.lineCap='round';
-  ctx.beginPath();
-  pts.forEach(function(p,i){ var x=xFor(i), y=yFor(p.v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
-  ctx.stroke();
+  // ---- hover crosshair ----
+  if (wtHoverIdx >= 0 && wtHoverIdx < pts.length) {
+    ctx.save(); ctx.strokeStyle = lineColor; ctx.globalAlpha = .45; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xs[wtHoverIdx], padT); ctx.lineTo(xs[wtHoverIdx], padT+chartH); ctx.stroke(); ctx.restore();
+  }
 
-  // ---- Data points; last point gets a bigger "current" ring ----
+  // ---- every logged day is a dot (hover/tap any dot to read its weight) ----
+  var dotR = pts.length > 120 ? 1.8 : pts.length > 45 ? 2.4 : 3.2;
   wtChartPoints = [];
   pts.forEach(function(p,i){
-    var x=xFor(i), y=yFor(p.v);
-    var isLast = i === pts.length-1;
-    if (isLast) {
+    var x = xs[i], y = ys[i], isLast = i === pts.length-1, isHot = i === wtHoverIdx;
+    if (isHot) {
+      ctx.save(); ctx.shadowColor = lineColor; ctx.shadowBlur = 16;
+      ctx.fillStyle = cardColor; ctx.beginPath(); ctx.arc(x,y,7.5,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = lineColor; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore();
+      ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    } else if (isLast) {
       ctx.fillStyle = cardColor; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill();
       ctx.strokeStyle = lineColor; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.stroke();
       ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
     } else {
-      ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = lineColor; ctx.beginPath(); ctx.arc(x,y,dotR,0,Math.PI*2); ctx.fill();
     }
-    wtChartPoints.push({x:x, y:y, v:p.v, d:p.d});
+    wtChartPoints.push({ x:x, y:y, v:p.v, day:p.day, i:i });
   });
 
-  // ---- X-axis date labels: sparse for month view, every point for week ----
+  // ---- x axis labels ----
+  var spanD = d1 - d0;
   ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillStyle = textColor; ctx.font = '11px ' + mono;
-  var labelEvery = wtChartRange === 'month' ? Math.ceil(pts.length/6) : 1;
-  pts.forEach(function(p,i){
-    if (i % labelEvery !== 0 && i !== pts.length-1) return;
-    var dt = new Date(p.d + 'T00:00:00');
-    var lbl = isNaN(dt) ? p.d : (dt.getMonth()+1) + '/' + dt.getDate();
-    ctx.fillText(lbl, xFor(i), H - padB + 6);
-  });
+  var nLab = spanD <= 8 ? spanD : Math.max(2, Math.min(7, Math.floor(chartW / 72)));
+  var fmt = spanD > 200 ? { month:'short', year:'2-digit' } : { day:'numeric', month:'short' };
+  var lastLabX = -1e9;
+  for (var li = 0; li <= nLab; li++) {
+    var dd = Math.round(d0 + spanD * li / nLab), lx = xFor(dd);
+    if (lx - lastLabX < 46) continue; lastLabX = lx;
+    var al = li === 0 ? 'left' : li === nLab ? 'right' : 'center';
+    ctx.textAlign = al;
+    ctx.fillText(wtFmt(dd, fmt), al === 'left' ? Math.max(lx - 6, 2) : al === 'right' ? Math.min(lx + 6, W - 2) : lx, H - padB + 8);
+  }
 
-  // ---- First/last value callouts above the line ----
-  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.font = 'bold 12px ' + raj; ctx.fillStyle = textColorStrong;
-  [0, pts.length-1].forEach(function(i){
-    var x=xFor(i), y=yFor(pts[i].v);
-    ctx.fillText(pts[i].v.toFixed(1), x, Math.max(y-12, padT+2));
-  });
+  // ---- first / last value callouts ----
+  if (pts.length <= 60) {
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.font = 'bold 12px ' + raj; ctx.fillStyle = textStrong;
+    [0, pts.length-1].filter(function(v,i,a){ return a.indexOf(v) === i; }).forEach(function(i){
+      ctx.fillText(pts[i].v.toFixed(1), Math.min(Math.max(xs[i], padL+10), W-padR-10), Math.max(ys[i]-12, padT+2));
+    });
+  }
 
-  canvas.onmousemove = wtChartHover;
-  canvas.onmouseleave = wtChartHoverEnd;
+  canvas.onpointermove = wtChartHover;
+  canvas.onpointerdown = wtChartHover;
+  canvas.onpointerleave = function(e){ if (!e || e.pointerType === 'mouse' || !e.pointerType) wtChartHoverEnd(); };
 }
 
-// Shows a tooltip with the actual logged weight (and date) for whichever
-// plotted point the cursor is nearest to on the weight-trend chart.
+// Hover (mouse) / touch (finger): finds the nearest logged day, highlights it and shows its weight.
 function wtChartHover(evt) {
   var tip = document.getElementById('wtHoverTip');
   if (!tip || !wtChartPoints.length) return;
   var canvas = document.getElementById('weightChart');
   var rect = canvas.getBoundingClientRect();
-  var mx = evt.clientX - rect.left;
+  var mx = evt.clientX - rect.left, my = evt.clientY - rect.top;
   var nearest = null, minDist = Infinity;
   wtChartPoints.forEach(function(p){
-    var dist = Math.abs(p.x - mx);
-    if (dist < minDist) { minDist = dist; nearest = p; }
+    var dx = Math.abs(p.x - mx); if (dx < minDist) { minDist = dx; nearest = p; }
   });
-  if (!nearest || minDist > 26) { tip.style.display = 'none'; return; }
-  var dt = new Date(nearest.d + 'T00:00:00');
-  var lbl = isNaN(dt) ? nearest.d : dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  tip.innerHTML = lbl + ' &middot; <b>' + nearest.v.toFixed(1) + ' kg</b>';
+  var reach = evt.pointerType === 'touch' ? 30 : 24;
+  if (!nearest || minDist > reach) { if (wtHoverIdx !== -1) { wtHoverIdx = -1; renderWeightChart(); } tip.style.display = 'none'; return; }
+  if (wtHoverIdx !== nearest.i) { wtHoverIdx = nearest.i; renderWeightChart(); }
+  var all = wtSeries(), prev = null;
+  for (var k = 0; k < all.length; k++) { if (all[k].day === nearest.day) { prev = k > 0 ? all[k-1] : null; break; } }
+  var delta = prev ? nearest.v - prev.v : null;
+  var dStr = delta === null ? '' : '<i class="' + (delta > 0.04 ? 't-up' : delta < -0.04 ? 't-dn' : 't-neu') + '">' + (delta > 0.04 ? '▲ ' : delta < -0.04 ? '▼ ' : '● ') + wtSigned(delta) + ' kg vs prev</i>';
+  tip.innerHTML = '<span class="d">' + wtFmt(nearest.day, { weekday:'short', day:'numeric', month:'short', year:'numeric' }) + '</span><b>' + nearest.v.toFixed(1) + ' kg</b>' + dStr;
   tip.style.display = 'block';
-  tip.style.left = (rect.left + nearest.x) + 'px';
+  var left = rect.left + nearest.x;
+  var tw = tip.offsetWidth || 120;
+  left = Math.min(Math.max(left, tw/2 + 8), window.innerWidth - tw/2 - 8);
+  tip.style.left = left + 'px';
   tip.style.top = (rect.top + nearest.y) + 'px';
 }
 function wtChartHoverEnd() {
   var tip = document.getElementById('wtHoverTip');
   if (tip) tip.style.display = 'none';
+  if (wtHoverIdx !== -1) { wtHoverIdx = -1; var c = document.getElementById('weightChart'); if (c && c.offsetParent) renderWeightChart(); }
 }
+// touch: tapping elsewhere or scrolling dismisses the tooltip (mouse uses pointerleave)
+document.addEventListener('pointerdown', function(e){ if (e.target && e.target.id !== 'weightChart') wtChartHoverEnd(); }, true);
+window.addEventListener('scroll', function(){ var t = document.getElementById('wtHoverTip'); if (t && t.style.display === 'block') wtChartHoverEnd(); }, { passive: true });
 
 // Small helper: canvas gradients can't use color-mix(), so fade a CSS
 // color (hex or rgb) to a given alpha manually for the area-fill gradient.
@@ -6524,9 +6700,60 @@ function renderMeasurements(){
     if(last.weight&&last.height){var h=last.height/100;var bmi=(last.weight/(h*h)).toFixed(1);document.getElementById('m-bmi').textContent=bmi;document.getElementById('m-bmi-lbl').textContent=bmi<18.5?'Underweight':bmi<25?'Normal':bmi<30?'Overweight':'Obese';}
   }
   ['weight','bf','chest','waist','hips','arm','thigh','calf'].forEach(f=>{var el=document.getElementById('m-'+f+'-ch');if(el)el.innerHTML=ch(f);});
-  var hist=document.getElementById('measHistory');
-  if(!S.measurements.length){hist.innerHTML='<div style="font-size:13px;color:var(--t2);padding:10px">No measurements logged yet.</div>';return;}
-  hist.innerHTML=S.measurements.slice().reverse().slice(0,5).map((m,i)=>{var realIdx=S.measurements.length-1-i;return`<div style="background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px"><div style="display:flex;justify-content:space-between"><div><div style="font-size:13px;color:var(--t2);margin-bottom:4px">${m.date}</div><div style="font-size:13.5px">Wt: ${m.weight||'--'}kg · BF: ${m.bf||'--'}% · Chest: ${m.chest||'--'} · Waist: ${m.waist||'--'} · Arm: ${m.arm||'--'} cm</div></div><button class="del-btn" onclick="delMeas(${realIdx})">✕</button></div></div>`;}).join('');
+  renderMeasHistory();
+}
+// Full measurement history — no cap. Newest first, grouped by month, loaded 30 rows at a time.
+var measHistShown = 30;
+function measHistMore(all){ measHistShown = all ? 1e9 : measHistShown + 30; renderMeasHistory(); }
+function renderMeasHistory(){
+  var hist = document.getElementById('measHistory'); if (!hist) return;
+  var list = (S.measurements || []).map(function(m, i){ return { m: m, i: i, day: wtDay(m.date) }; });
+  var cnt = document.getElementById('measHistCount'); if (cnt) cnt.textContent = list.length ? list.length + ' ENTRIES' : '';
+  if (!list.length) { hist.innerHTML = '<div style="font-size:13px;color:var(--t2);padding:10px">No measurements logged yet.</div>'; return; }
+  list.sort(function(a,b){ return (isNaN(a.day)?0:a.day) - (isNaN(b.day)?0:b.day) || a.i - b.i; });
+  // change vs the previous entry that had a weight
+  var lastW = null;
+  list.forEach(function(r){ var w = parseFloat(r.m.weight); r.w = w || null; r.delta = (w && lastW !== null) ? w - lastW : null; if (w) lastW = w; });
+  var ws = list.filter(function(r){ return r.w; });
+  var summary = '';
+  if (ws.length) {
+    var sum = ws.reduce(function(a,r){ return a + r.w; }, 0), avgAll = sum / ws.length;
+    var lo = Math.min.apply(null, ws.map(function(r){return r.w;})), hi = Math.max.apply(null, ws.map(function(r){return r.w;}));
+    var tot = ws[ws.length-1].w - ws[0].w;
+    summary = '<div class="wh-sum">'
+      + '<div><span>FIRST LOG</span><b>' + ws[0].w.toFixed(1) + '<small> kg</small></b></div>'
+      + '<div><span>LATEST</span><b>' + ws[ws.length-1].w.toFixed(1) + '<small> kg</small></b></div>'
+      + '<div><span>ALL-TIME AVG</span><b>' + avgAll.toFixed(1) + '<small> kg</small></b></div>'
+      + '<div><span>TOTAL CHANGE</span><b class="' + (tot > 0.04 ? 't-up' : tot < -0.04 ? 't-dn' : 't-neu') + '">' + wtSigned(tot) + '<small> kg</small></b></div>'
+      + '<div><span>LOWEST / HIGHEST</span><b>' + lo.toFixed(1) + ' / ' + hi.toFixed(1) + '</b></div>'
+      + '</div>';
+  }
+  var rows = list.slice().reverse();
+  var shown = rows.slice(0, measHistShown);
+  var out = summary, curMonth = '';
+  // monthly averages for the month headers
+  var mAgg = {};
+  list.forEach(function(r){ if (!r.w || isNaN(r.day)) return; var k = String(r.m.date).slice(0,7); (mAgg[k] = mAgg[k] || []).push(r.w); });
+  shown.forEach(function(r){
+    var mk = isNaN(r.day) ? '' : String(r.m.date).slice(0,7);
+    if (mk !== curMonth) {
+      curMonth = mk;
+      var arr = mAgg[mk] || [], av = arr.length ? (arr.reduce(function(a,b){return a+b;},0) / arr.length) : null;
+      out += '<div class="wh-month"><span>' + (mk ? wtFmt(r.day, { month:'long', year:'numeric' }).toUpperCase() : 'UNDATED') + '</span>' + (av !== null ? '<em>AVG ' + av.toFixed(1) + ' kg · ' + arr.length + ' logs</em>' : '') + '</div>';
+    }
+    var m = r.m, extra = [];
+    if (m.bf) extra.push('BF ' + m.bf + '%'); if (m.chest) extra.push('Chest ' + m.chest); if (m.waist) extra.push('Waist ' + m.waist);
+    if (m.hips) extra.push('Hips ' + m.hips); if (m.arm) extra.push('Arm ' + m.arm); if (m.thigh) extra.push('Thigh ' + m.thigh); if (m.calf) extra.push('Calf ' + m.calf);
+    var dl = r.delta === null ? '<span class="wh-d t-neu">—</span>' : '<span class="wh-d ' + (r.delta > 0.04 ? 't-up' : r.delta < -0.04 ? 't-dn' : 't-neu') + '">' + (r.delta > 0.04 ? '▲ ' : r.delta < -0.04 ? '▼ ' : '● ') + wtSigned(r.delta) + '</span>';
+    out += '<div class="wh-row"><div class="wh-date"><b>' + (isNaN(r.day) ? m.date : wtFmt(r.day, { day:'numeric', month:'short' })) + '</b><span>' + (isNaN(r.day) ? '' : wtFmt(r.day, { weekday:'short', year:'numeric' })) + '</span></div>'
+      + '<div class="wh-w">' + (r.w ? r.w.toFixed(1) + '<small> kg</small>' : '—') + '</div>' + dl
+      + '<div class="wh-ex">' + (extra.length ? extra.join(' · ') + (m.chest||m.waist||m.hips||m.arm||m.thigh||m.calf ? ' cm' : '') : '') + '</div>'
+      + '<button class="del-btn" onclick="delMeas(' + r.i + ')" title="Delete">✕</button></div>';
+  });
+  if (rows.length > shown.length) {
+    out += '<div class="wh-more"><button class="btn" onclick="measHistMore(false)">[ SHOW 30 MORE · ' + (rows.length - shown.length) + ' LEFT ]</button><button class="btn" onclick="measHistMore(true)">[ SHOW ALL ]</button></div>';
+  }
+  hist.innerHTML = out;
 }
 function logMeasurements(){
   var w=document.getElementById('ml-weight').value; if(!w){toast('Enter at least weight');return;}

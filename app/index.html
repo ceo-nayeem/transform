@@ -883,6 +883,228 @@ html.alpha .wt-hover-tip{background:#fff;font-family:'Noto Sans Khmer','Inter',-
 #measHistory > .wh-row{margin-bottom:6px !important}
 #measHistory > .wh-month{margin:16px 2px 8px !important}
 #measHistory > .wh-sum{margin-bottom:6px !important}
+
+/* ===================== WORKOUT 2.0 ===================== */
+.wk-tabs{display:flex;gap:6px;padding:4px;margin:0 0 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;position:sticky;top:0;z-index:5}
+.wk-tab{flex:1;font:inherit;font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--t2);background:none;border:none;border-radius:10px;padding:10px 6px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.wk-tab:hover{color:var(--t)}
+.wk-tab.active{color:#04140e;background:linear-gradient(135deg,var(--g),var(--c));box-shadow:0 4px 18px color-mix(in srgb,var(--g) 35%,transparent)}
+html.alpha .wk-tab.active{color:#fff}
+.wk-btn{font:inherit;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--t);background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:10px 16px;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.wk-btn:hover{border-color:var(--g);color:var(--g)}
+.wk-btn.primary{color:#04140e;background:linear-gradient(135deg,var(--g),var(--c));border-color:transparent;box-shadow:0 4px 16px color-mix(in srgb,var(--g) 28%,transparent)}
+html.alpha .wk-btn.primary{color:#fff}
+.wk-btn.primary:hover{color:#04140e;filter:brightness(1.08);transform:translateY(-1px)}
+html.alpha .wk-btn.primary:hover{color:#fff}
+.wk-btn.sm{padding:7px 11px;font-size:12px;border-radius:9px}
+.wk-btn.ok{background:var(--card2);color:var(--g);border:1px solid var(--g);box-shadow:none}
+.wk-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.wk-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.wk-actions .wk-btn{flex:1 1 150px}
+.wk-actions .wk-btn.primary{flex:2 1 200px}
+.wk-stats4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.wk-stat{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:14px;padding:12px 14px;position:relative;overflow:hidden}
+.wk-stat::after{content:"";position:absolute;inset:auto -20% -60% auto;width:90px;height:90px;background:radial-gradient(circle,color-mix(in srgb,var(--g) 18%,transparent),transparent 70%)}
+.wk-stat .l{font-size:10.5px;letter-spacing:1.8px;color:var(--t2);font-family:var(--mono)}
+.wk-stat .v{font-family:var(--raj);font-size:24px;font-weight:700;color:var(--t);margin-top:2px}
+.wk-stat .s{font-size:11.5px;color:var(--t2)}
+.wk-prog{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+.wk-prog-t{flex:1;height:8px;border-radius:99px;background:var(--t3);overflow:hidden}
+.wk-prog-f{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--c));box-shadow:0 0 12px var(--g);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.wk-prog-p{font-family:var(--mono);font-size:12px;color:var(--g);min-width:38px;text-align:right}
+/* type colours */
+.t-strength{--tc:var(--g)}.t-bodyweight{--tc:var(--c)}.t-cardio{--tc:var(--o)}.t-interval{--tc:var(--y)}.t-timed{--tc:var(--p)}.t-flex{--tc:var(--g2)}
+/* exercise cards */
+#exList{display:block !important}
+.wk-list,#exList{position:relative}
+.wk-card{display:flex;gap:10px;align-items:stretch;background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 7%,var(--card)),var(--card));border:1px solid var(--border);border-left:3px solid var(--tc);border-radius:14px;padding:12px;margin-bottom:10px;position:relative;transition:box-shadow .2s,border-color .2s,opacity .2s;touch-action:pan-y}
+.wk-card:hover{box-shadow:0 0 22px color-mix(in srgb,var(--tc) 14%,transparent);border-color:color-mix(in srgb,var(--tc) 40%,var(--border))}
+.wk-card.done{background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 12%,var(--card)),var(--card))}
+.wk-card.done .wk-name{color:var(--t2)}
+.wk-card.dragging{z-index:30;box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px var(--tc);opacity:.96;transition:none;cursor:grabbing}
+.is-dragging .wk-card:not(.dragging){transition:transform .18s ease}
+.wk-handle{flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:18px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;border-radius:8px}
+.wk-handle:hover,.wk-handle:focus-visible{color:var(--tc);background:var(--t3);outline:none}
+.wk-handle:active{cursor:grabbing}
+.wk-num{flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--tc);background:color-mix(in srgb,var(--tc) 14%,transparent);margin-top:1px}
+.wk-body{flex:1;min-width:0}
+.wk-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.wk-name{font-family:var(--raj);font-size:17px;font-weight:700;letter-spacing:.3px;word-break:break-word}
+.wk-type{display:inline-flex;align-items:center;gap:4px;font-size:10px;letter-spacing:1.2px;font-weight:700;color:var(--tc);background:color-mix(in srgb,var(--tc) 12%,transparent);border:1px solid color-mix(in srgb,var(--tc) 35%,transparent);border-radius:99px;padding:2px 8px;white-space:nowrap}
+.wk-tags,.wk-tpl-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.wk-mus{font-size:11px;color:var(--t2);background:var(--t3);border-radius:99px;padding:2px 8px}
+.wk-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.wk-pill{font-size:12px;color:var(--t2);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 9px;white-space:nowrap}
+.wk-pill b{color:var(--t);font-weight:700}
+.wk-sets{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px}
+.wk-sets-l{font-size:10px;letter-spacing:1.6px;color:var(--t2);font-family:var(--mono);margin-right:2px}
+.wk-set{width:32px;height:32px;border-radius:10px;border:1.5px solid var(--border);background:var(--card2);color:var(--t2);font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.wk-set:hover{border-color:var(--tc);color:var(--tc)}
+.wk-set.on{background:var(--tc);border-color:var(--tc);color:#04140e;box-shadow:0 0 12px color-mix(in srgb,var(--tc) 55%,transparent)}
+html.alpha .wk-set.on{color:#fff}
+.wk-more{font-size:12px;color:var(--t2)}
+.wk-notes{margin-top:8px;font-size:12.5px;color:var(--t2)}
+.wk-side{flex:none;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:8px}
+.wk-check{width:34px;height:34px;border-radius:11px;border:2px solid var(--border);background:var(--card2);color:transparent;font-size:17px;font-weight:800;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.wk-check:hover{border-color:var(--tc)}
+.wk-check.on{background:var(--tc);border-color:var(--tc);color:#04140e;box-shadow:0 0 16px color-mix(in srgb,var(--tc) 60%,transparent)}
+html.alpha .wk-check.on{color:#fff}
+.wk-act{display:flex;gap:2px}
+.wk-ib{width:30px;height:30px;border-radius:8px;background:none;border:none;color:var(--t2);font-size:15px;cursor:pointer;transition:all .15s}
+.wk-ib:hover{background:var(--t3);color:var(--g)}
+.wk-ib.del:hover{color:var(--red)}
+.wk-card.compact{padding:10px;margin-bottom:6px;border-radius:11px}
+.wk-card.compact .wk-name{font-size:15px}
+.wk-empty{text-align:center;padding:34px 16px;border:1px dashed var(--border);border-radius:16px;background:var(--card);margin-bottom:12px}
+.wk-empty-ic{font-size:40px;filter:drop-shadow(0 0 14px var(--g))}
+.wk-empty-t{font-family:var(--raj);font-size:19px;font-weight:700;margin-top:6px}
+.wk-empty-s{font-size:13px;color:var(--t2);margin:6px auto 14px;max-width:420px}
+.wk-empty-b{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.wk-none{font-size:13px;color:var(--t2);padding:12px 4px}
+/* tooltip, snack, rest */
+.wk-tip{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:12px;font-weight:700;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 50%,transparent);cursor:help;vertical-align:middle;margin-left:4px;font-family:var(--mono);line-height:1}
+.wk-tip:hover,.wk-tip:focus{background:var(--c);color:#04140e;outline:none}
+#wkTipBox{position:fixed;z-index:10050;max-width:280px;padding:10px 13px;border-radius:12px;background:color-mix(in srgb,var(--card2) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--c);color:var(--t);font-size:12.5px;line-height:1.5;box-shadow:0 12px 36px rgba(0,0,0,.5),0 0 18px color-mix(in srgb,var(--c) 22%,transparent);opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .14s,transform .14s}
+#wkTipBox.show{opacity:1;transform:none}
+#wkSnack{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);z-index:10040;display:flex;align-items:center;gap:14px;background:var(--card2);border:1px solid var(--border);color:var(--t);padding:10px 14px;border-radius:12px;font-size:13px;box-shadow:0 10px 32px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:all .25s;max-width:calc(100vw - 24px)}
+#wkSnack.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+#wkSnack button{font:inherit;font-weight:800;letter-spacing:1px;font-size:12px;color:var(--g);background:none;border:none;cursor:pointer}
+#wkRest{position:fixed;left:50%;bottom:150px;transform:translate(-50%,20px);z-index:10030;width:min(340px,calc(100vw - 24px));background:linear-gradient(135deg,var(--card2),var(--card));border:1px solid var(--g);border-radius:16px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 24px color-mix(in srgb,var(--g) 25%,transparent);opacity:0;pointer-events:none;transition:all .25s}
+#wkRest.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+#wkRest .r-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#wkRestName{font-size:10.5px;letter-spacing:1.6px;color:var(--t2);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#wkRestTime{font-family:var(--raj);font-size:30px;font-weight:700;color:var(--g);text-shadow:0 0 14px color-mix(in srgb,var(--g) 50%,transparent)}
+#wkRest .r-b{display:flex;gap:6px}
+#wkRest .r-b button{font:inherit;font-size:11.5px;font-weight:800;letter-spacing:1px;color:var(--t);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px 9px;cursor:pointer}
+#wkRest .r-b button:hover{border-color:var(--g);color:var(--g)}
+#wkRest .r-bar{height:4px;border-radius:9px;background:var(--t3);margin-top:8px;overflow:hidden}
+#wkRestFill{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--c));transition:width .25s linear}
+/* modal */
+.wk-modal{position:fixed;inset:0;z-index:10020;background:rgba(2,6,10,.66);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
+.wk-modal.open{display:flex;animation:wkFade .18s ease}
+@keyframes wkFade{from{opacity:0}to{opacity:1}}
+@keyframes wkRise{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.wk-sheet{width:min(760px,100%);max-height:min(88vh,900px);display:flex;flex-direction:column;background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid color-mix(in srgb,var(--g) 30%,var(--border));border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px color-mix(in srgb,var(--g) 10%,transparent);animation:wkRise .24s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+.wk-modal.builder .wk-sheet{width:min(620px,100%)}
+.wk-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border)}
+.wk-sheet-title{font-family:var(--raj);font-size:20px;font-weight:700;letter-spacing:.4px}
+.wk-x{width:34px;height:34px;border-radius:10px;background:var(--t3);border:none;color:var(--t);font-size:15px;cursor:pointer}
+.wk-x:hover{color:var(--red)}
+.wk-sheet-body{padding:16px 18px;overflow:auto;overscroll-behavior:contain;flex:1}
+.wk-sheet-foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--border);background:color-mix(in srgb,var(--card) 70%,transparent)}
+.wk-sheet-foot .wk-btn.primary{flex:1}
+.wk-fg{margin-bottom:14px}
+.wk-fg>label{display:block;font-size:10.5px;letter-spacing:1.8px;color:var(--t2);font-family:var(--mono);margin-bottom:6px}
+.wk-hint{font-size:11.5px;color:var(--t2);letter-spacing:0;font-family:inherit;font-weight:400;margin-left:6px}
+#wkNameHint{color:var(--g);margin:6px 0 0}
+.wk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 12px}
+.wk-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wk-typebtn{font:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px;border-radius:12px;border:1.5px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer;transition:all .15s}
+.wk-typebtn .ic{font-size:20px}.wk-typebtn .lb{font-size:11.5px;font-weight:700}
+.wk-typebtn:hover{border-color:var(--tc);color:var(--t)}
+.wk-typebtn.on{border-color:var(--tc);color:var(--tc);background:color-mix(in srgb,var(--tc) 12%,var(--card2));box-shadow:0 0 16px color-mix(in srgb,var(--tc) 28%,transparent)}
+.wk-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.wk-chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.wk-chip{font:inherit;font-size:12.5px;font-weight:600;white-space:nowrap;padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer;transition:all .15s}
+.wk-chip:hover{color:var(--t);border-color:var(--g)}
+.wk-chip.on{background:color-mix(in srgb,var(--g) 16%,var(--card2));border-color:var(--g);color:var(--g)}
+.wk-mtabs{display:flex;gap:6px;margin-bottom:12px}
+.wk-mtabs button{flex:1;font:inherit;font-size:12.5px;font-weight:700;letter-spacing:1.3px;padding:9px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer}
+.wk-mtabs button.on{color:var(--g);border-color:var(--g);background:color-mix(in srgb,var(--g) 10%,var(--card2))}
+.wk-tpl-bar{margin-bottom:10px}
+.wk-tpl-count{font-size:11.5px;color:var(--t2);margin:4px 2px 10px}
+.wk-tpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.wk-tpl{background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 7%,var(--card)),var(--card));border:1px solid var(--border);border-left:3px solid var(--tc);border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;transition:box-shadow .2s,border-color .2s}
+.wk-tpl:hover{border-color:color-mix(in srgb,var(--tc) 50%,var(--border));box-shadow:0 0 18px color-mix(in srgb,var(--tc) 14%,transparent)}
+.wk-tpl-top{display:flex;align-items:center;gap:4px}
+.wk-tpl-top b{font-family:var(--raj);font-size:15.5px;flex:1;min-width:0}
+.wk-main{font-size:9.5px;letter-spacing:1.4px;font-weight:800;color:var(--o);border:1px solid var(--o);border-radius:99px;padding:1px 7px}
+.wk-tpl-sum{font-size:12px;color:var(--t2)}
+.wk-tpl-act{display:flex;gap:6px;margin-top:auto;padding-top:4px}
+.wk-tpl-act .primary{flex:1}
+.wk-rt-h{font-size:10.5px;letter-spacing:1.8px;color:var(--t2);font-family:var(--mono);margin:6px 0 8px}
+.wk-rt-save{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:14px}
+.wk-rt-row{display:flex;gap:8px}.wk-rt-row .inp{flex:1}
+.wk-rt{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.wk-rt-i{min-width:0;display:flex;flex-direction:column}.wk-rt-i b{font-family:var(--raj);font-size:15.5px}.wk-rt-i span{font-size:12px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk-rt-b{display:flex;gap:6px;flex:none}
+/* progress */
+.wk-ranges{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.wk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.wk-kpi{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:14px;padding:12px 14px;position:relative;overflow:hidden}
+.wk-kpi.hot{border-color:color-mix(in srgb,var(--g) 45%,var(--border));box-shadow:0 0 22px color-mix(in srgb,var(--g) 12%,transparent)}
+.wk-kpi .k-ic{position:absolute;right:10px;top:8px;font-size:18px;color:var(--g);opacity:.5}
+.wk-kpi .k-l{font-size:10px;letter-spacing:1.7px;color:var(--t2);font-family:var(--mono)}
+.wk-kpi .k-v{font-family:var(--raj);font-size:26px;font-weight:700;margin-top:2px;line-height:1.15}
+.wk-kpi .k-v small{font-size:12px;color:var(--t2);font-weight:600}
+.wk-kpi .k-s i{font-style:normal;font-size:11.5px;color:var(--t2)}
+.wk-kpi .k-s i.up,.wk-pe-sum .up{color:var(--g)}.wk-kpi .k-s i.dn,.wk-pe-sum .dn{color:var(--red)}
+.wk-panel{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;min-width:0}
+.wk-ph{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.wk-ph span{font-size:11px;letter-spacing:2px;font-weight:700;color:var(--g);font-family:var(--mono)}
+.wk-ph em{font-style:normal;font-size:11.5px;color:var(--t2)}
+.wk-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+svg.wks{width:100%;height:auto;display:block;overflow:visible}
+.wks-grid{stroke:var(--border);stroke-dasharray:3 4}
+.wks-ax{fill:var(--t2);font-size:10.5px;font-family:var(--mono)}
+.wks-bar{transition:filter .15s,opacity .15s}.wks-b:hover .wks-bar{filter:drop-shadow(0 0 6px var(--g)) brightness(1.2)}
+.wks-line{fill:none;stroke:var(--g);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 5px var(--g))}
+.wks-dot{fill:var(--card);stroke:var(--g);stroke-width:2.4}.wks-d:hover .wks-dot{r:6;fill:var(--g)}
+.wk-hm{fill:var(--t3);cursor:pointer;transition:filter .15s}.wk-hm:hover{filter:brightness(1.4)}
+.wk-hm.l1{fill:color-mix(in srgb,var(--g) 28%,var(--t3))}.wk-hm.l2{fill:color-mix(in srgb,var(--g) 52%,var(--t3))}.wk-hm.l3{fill:color-mix(in srgb,var(--g) 78%,var(--t3))}.wk-hm.l4{fill:var(--g)}
+.wk-legend{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-size:11px;color:var(--t2);margin-top:6px}
+.wk-legend i.wk-hm{display:inline-block;width:13px;height:13px;border-radius:3px;background:var(--t3);cursor:default}
+.wk-legend i.l1{background:color-mix(in srgb,var(--g) 28%,var(--t3))}.wk-legend i.l2{background:color-mix(in srgb,var(--g) 52%,var(--t3))}.wk-legend i.l3{background:color-mix(in srgb,var(--g) 78%,var(--t3))}.wk-legend i.l4{background:var(--g)}
+.wk-bar{display:grid;grid-template-columns:96px 1fr 34px;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px}
+.wk-bar .t{height:9px;border-radius:99px;background:var(--t3);overflow:hidden}.wk-bar .f{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--g),var(--c));box-shadow:0 0 8px color-mix(in srgb,var(--g) 50%,transparent)}
+.wk-bar .v{text-align:right;color:var(--t2);font-family:var(--mono)}.wk-bar .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-split{display:flex;height:16px;border-radius:99px;overflow:hidden;gap:2px;margin-bottom:10px}
+.wk-split .seg{background:var(--tc);min-width:6px;box-shadow:0 0 10px color-mix(in srgb,var(--tc) 50%,transparent)}
+.wk-leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px}.wk-leg .lg{display:inline-flex;align-items:center;gap:5px;color:var(--t2)}.wk-leg .lg i{width:9px;height:9px;border-radius:50%;background:var(--tc)}.wk-leg b{color:var(--t)}.wk-leg em{font-style:normal;opacity:.7}
+.wk-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.wk-mini div{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px}.wk-mini b{display:block;font-family:var(--raj);font-size:19px}.wk-mini span{font-size:10.5px;color:var(--t2)}
+.wk-pr{display:grid;grid-template-columns:24px 1fr auto auto;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;transition:background .15s}
+.wk-pr:hover{background:var(--t3)}.wk-pr .rk{font-family:var(--mono);font-size:12px;color:var(--g);font-weight:700}
+.wk-pr .nm{font-family:var(--raj);font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wk-pr .nm em{display:block;font-family:inherit;font-style:normal;font-size:11px;color:var(--t2)}
+.wk-pr .bs{font-size:12px;color:var(--t2);white-space:nowrap}.wk-pr .e1{font-family:var(--raj);font-size:17px;font-weight:700;color:var(--g);white-space:nowrap}.wk-pr .e1 small{font-size:10px;color:var(--t2);font-weight:600}
+.wk-pe-sum{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--t2);margin-top:8px}.wk-pe-sum b{color:var(--t)}
+#wkPE{margin-bottom:10px}
+/* history */
+.wk-hbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.wk-hbar .inp{flex:1 1 160px;min-width:0}
+.wk-hcustom{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.wk-hcustom label{flex:1 1 130px;font-size:10px;letter-spacing:1.8px;color:var(--t2);font-family:var(--mono)}.wk-hcustom .inp{margin-top:4px;width:100%}
+#wkHSum{font-size:12.5px;color:var(--t2);margin:2px 2px 12px}#wkHSum b{color:var(--g)}
+.wk-day{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:12px}
+.wk-day-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wk-day-d{display:flex;flex-direction:column;min-width:96px}.wk-day-d b{font-family:var(--raj);font-size:21px;line-height:1.1}.wk-day-d span{font-size:11.5px;color:var(--t2)}
+.wk-day-s{display:flex;gap:6px 14px;flex-wrap:wrap;flex:1;font-size:12px;color:var(--t2)}.wk-day-s b{color:var(--t)}
+.wk-day-b{display:flex;gap:6px}
+.wk-day-bar{height:3px;background:var(--t3);border-radius:9px;margin:10px 0;overflow:hidden}.wk-day-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--c))}
+.wk-more-w{text-align:center;margin:6px 0 16px}
+/* responsive */
+@media (max-width:760px){
+  .wk-stats4{grid-template-columns:repeat(2,1fr)}
+  .wk-kpis{grid-template-columns:repeat(2,1fr)}
+  .wk-two{grid-template-columns:1fr}
+  .wk-tpl-grid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .wk-tab{font-size:11.5px;letter-spacing:.8px;padding:9px 2px}
+  .wk-card{padding:10px 8px;gap:6px}
+  .wk-handle{width:22px;font-size:17px}
+  .wk-num{display:none}
+  .wk-name{font-size:16px}
+  .wk-set{width:34px;height:34px}
+  .wk-modal{padding:0;align-items:flex-end}
+  .wk-sheet{width:100%;max-height:92vh;border-radius:20px 20px 0 0}
+  .wk-grid{grid-template-columns:1fr 1fr}
+  .wk-types{grid-template-columns:repeat(3,1fr)}
+  .wk-bar{grid-template-columns:78px 1fr 28px}
+  .wk-pr{grid-template-columns:20px 1fr auto}.wk-pr .bs{display:none}
+  .wk-day-h{gap:8px}.wk-day-b{margin-left:auto}
+  #wkRest{bottom:140px}
+  #wkSnack{bottom:84px}
+}
+@media (prefers-reduced-motion:reduce){.wk-sheet,.wk-modal.open{animation:none}.wk-prog-f,.wk-card,.wk-btn{transition:none}}
+.admin-chk{display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:var(--t)}
 @media (max-width:640px){
   .wh-row{grid-template-columns:64px 1fr auto 28px;row-gap:2px}
   .wh-ex{grid-column:1 / -2;grid-row:2;white-space:normal}
@@ -2549,32 +2771,50 @@ setTimeout(endBootSplash, 15000);
 
   <!-- ============ WORKOUT ============ -->
   <div id="page-workout" style="display:none">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="day-strip" id="dayStrip" style="flex:1;margin-bottom:0"></div><input type="date" class="inp" id="wk-date-pick" style="width:130px;font-size:13px" onchange="selectWkDay(this.value,null)"/></div>
-  <div style="font-size:12px;color:var(--t2);letter-spacing:1px;margin-bottom:12px" id="wkDayLabel"></div>
-  <div class="g4" style="margin-bottom:12px">
-    <div class="card"><div class="card-label">DONE</div><div class="card-val" id="wk-done">0</div><div class="card-sub">exercises</div></div>
-    <div class="card"><div class="card-label">TOTAL</div><div class="card-val" id="wk-total">0</div><div class="card-sub">planned</div></div>
-    <div class="card"><div class="card-label">VOLUME</div><div class="card-val" style="font-size:16px" id="wk-vol">0</div><div class="card-sub">kg total</div></div>
-    <div class="card"><div class="card-label">SETS DONE</div><div class="card-val" id="wk-sets">0</div><div class="card-sub">sets</div></div>
+  <div class="wk-tabs" role="tablist" aria-label="Workout sections">
+    <button class="wk-tab active" id="wkt-session" role="tab" onclick="wkSetView('session')">◉ SESSION</button>
+    <button class="wk-tab" id="wkt-progress" role="tab" onclick="wkSetView('progress')">▲ PROGRESS</button>
+    <button class="wk-tab" id="wkt-history" role="tab" onclick="wkSetView('history')">◷ HISTORY</button>
   </div>
-  <div class="sec-head">EXERCISES</div>
-  <div id="exList"><div style="font-size:13px;color:var(--t2);padding:10px">No exercises for this day yet.</div></div>
-  <div id="wk-add-section">
-  <div class="sec-head">ADD EXERCISE</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row" style="margin-bottom:8px">
-      <div class="inp-group" style="flex:3"><div class="inp-label">EXERCISE NAME</div><input class="inp" id="ex-name" type="text" placeholder="e.g. Bench Press"/></div>
-      <div class="inp-group" style="flex:2"><div class="inp-label">MUSCLE GROUP</div><select class="inp" id="ex-muscle"><option>Chest</option><option>Back</option><option>Shoulders</option><option>Biceps</option><option>Triceps</option><option>Legs</option><option>Core</option><option>Cardio</option><option>Full Body</option></select></div>
+
+  <!-- ── SESSION ── -->
+  <div id="wk-view-session">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="day-strip" id="dayStrip" style="flex:1;margin-bottom:0"></div><input type="date" class="inp" id="wk-date-pick" style="width:130px;font-size:13px" onchange="selectWkDay(this.value,null)"/></div>
+    <div style="font-size:12px;color:var(--t2);letter-spacing:1px;margin-bottom:12px" id="wkDayLabel"></div>
+    <div class="wk-stats4">
+      <div class="wk-stat"><div class="l">DONE</div><div class="v" id="wk-done">0/0</div><div class="s">exercises</div></div>
+      <div class="wk-stat"><div class="l">VOLUME</div><div class="v" id="wk-vol">0</div><div class="s">kg lifted</div></div>
+      <div class="wk-stat"><div class="l">SETS</div><div class="v" id="wk-sets">0</div><div class="s">completed</div></div>
+      <div class="wk-stat"><div class="l">CARDIO</div><div class="v" id="wk-cardio">0</div><div class="s">minutes</div></div>
     </div>
-    <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:1"><div class="inp-label">SETS</div><input class="inp" id="ex-sets" type="number" placeholder="4" min="1"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">REPS</div><input class="inp" id="ex-reps" type="text" placeholder="8-10"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">WEIGHT (kg)</div><input class="inp" id="ex-weight" type="text" placeholder="BW or kg"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">REST (sec)</div><input class="inp" id="ex-rest" type="number" placeholder="90"/></div>
+    <div class="wk-prog"><div class="wk-prog-t"><span class="wk-prog-f" id="wkProgFill"></span></div><span class="wk-prog-p" id="wkProgPct">0%</span></div>
+    <div class="wk-actions">
+      <button class="wk-btn primary" onclick="wkOpenBuilder()">＋ ADD EXERCISE</button>
+      <button class="wk-btn" onclick="wkOpenTemplates('lib')">✦ TEMPLATES</button>
+      <button class="wk-btn" onclick="wkOpenTemplates('routines')">⟲ ROUTINES</button>
     </div>
-    <button class="btn full" onclick="addExercise()">[ + ADD EXERCISE ]</button>
+    <div class="sec-head" style="display:flex;justify-content:space-between;align-items:center"><span>EXERCISES</span><span style="font-size:11px;color:var(--t2);letter-spacing:.5px;font-weight:400">⠿ drag to reorder · tap sets to log</span></div>
+    <div id="exList"><div style="font-size:13px;color:var(--t2);padding:10px">No exercises for this day yet.</div></div>
   </div>
-  </div><!-- end wk-add-section -->
+
+  <!-- ── PROGRESS ── -->
+  <div id="wk-view-progress" style="display:none">
+    <div class="wk-ranges">
+      <button class="wk-chip" id="wkr-7" onclick="wkSetRange('7')">7 DAYS</button><button class="wk-chip" id="wkr-30" onclick="wkSetRange('30')">30 DAYS</button><button class="wk-chip" id="wkr-90" onclick="wkSetRange('90')">90 DAYS</button><button class="wk-chip" id="wkr-365" onclick="wkSetRange('365')">1 YEAR</button><button class="wk-chip" id="wkr-all" onclick="wkSetRange('all')">ALL TIME</button>
+    </div>
+    <div id="wkProgBody"></div>
+  </div>
+
+  <!-- ── HISTORY ── -->
+  <div id="wk-view-history" style="display:none">
+    <div class="wk-ranges">
+      <button class="wk-chip" id="wkh-7" onclick="wkHSet('range','7')">7 DAYS</button><button class="wk-chip" id="wkh-30" onclick="wkHSet('range','30')">30 DAYS</button><button class="wk-chip" id="wkh-90" onclick="wkHSet('range','90')">90 DAYS</button><button class="wk-chip" id="wkh-365" onclick="wkHSet('range','365')">1 YEAR</button><button class="wk-chip" id="wkh-all" onclick="wkHSet('range','all')">ALL</button><button class="wk-chip" id="wkh-custom" onclick="wkHSet('range','custom')">CUSTOM</button>
+    </div>
+    <div class="wk-hcustom" id="wkHCustom" style="display:none"><label>FROM<input class="inp" type="date" id="wkHFrom" onchange="wkHSet('from',this.value)"/></label><label>TO<input class="inp" type="date" id="wkHTo" onchange="wkHSet('to',this.value)"/></label></div>
+    <div class="wk-hbar"><input class="inp" type="search" id="wkHQ" placeholder="Search exercise or muscle…" oninput="wkHSet('q',this.value)"/><select class="inp" id="wkHPart" onchange="wkHSet('part',this.value)"></select></div>
+    <div id="wkHSum"></div>
+    <div id="wkHistBody"></div>
+  </div>
   </div><!-- end page-workout -->
 
 </div><!-- end page-fitness -->
@@ -3520,6 +3760,11 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
   </div>
 </div>
 
+<!-- Workout 2.0 overlays -->
+<div class="wk-modal" id="wkModal" onclick="wkModalBg(event)"><div class="wk-sheet" role="dialog" aria-modal="true" aria-labelledby="wkModalTitle"><div class="wk-sheet-head"><div class="wk-sheet-title" id="wkModalTitle"></div><button class="wk-x" onclick="wkCloseModal()" aria-label="Close">✕</button></div><div class="wk-sheet-body" id="wkModalBody"></div><div class="wk-sheet-foot" id="wkModalFoot"></div></div></div>
+<div id="wkTipBox" role="tooltip"></div>
+<div id="wkSnack" role="status" aria-live="polite"></div>
+<div id="wkRest" role="timer" aria-live="off"><div class="r-top"><div><div id="wkRestName">REST</div><div id="wkRestTime">0:00</div></div><div class="r-b"><button onclick="wkRestAdd(15)">+15s</button><button onclick="wkRestStop()">SKIP</button></div></div><div class="r-bar"><span id="wkRestFill"></span></div></div>
 <div class="toast" id="toast"></div>
 
 <!-- ===================== ADMIN BACKEND SHELL (Phase 1) =====================
@@ -3684,6 +3929,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
         <div class="admin-sb-item" id="adminNav-content" onclick="adminNav('content')">▤ <span class="lbl">Content</span></div>
         <div class="admin-sb-item" id="adminNav-payments" onclick="adminNav('payments')">৳ <span class="lbl">Payments</span><span class="lock-tag" id="adminPayCountTag" style="display:none">0</span></div>
         <div class="admin-sb-item" id="adminNav-ingredients" onclick="adminNav('ingredients')">◍ <span class="lbl">Ingredient Library</span></div>
+        <div class="admin-sb-item" id="adminNav-workouts" onclick="adminNav('workouts')">⊞ <span class="lbl">Workout Library</span></div>
         <div class="admin-sb-sec">Configuration</div>
         <div class="admin-sb-item" id="adminNav-appconfig" onclick="adminNav('appconfig')">⚙ <span class="lbl">App Config</span></div>
         <div class="admin-sb-item" id="adminNav-flags" onclick="adminNav('flags')">◈ <span class="lbl">Feature Flags</span></div>
@@ -3838,6 +4084,45 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
               <input class="admin-inp" id="aing-search" type="text" placeholder="Search..." oninput="renderAdminIngredients()" style="width:200px"/>
             </div>
             <div id="adminIngBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading…</div></div>
+          </div>
+        </div>
+
+        <!-- ===== WORKOUT LIBRARY (SHARED TEMPLATES) SECTION ===== -->
+        <div id="admin-sec-workouts" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Workout Library</div>
+            <button class="admin-exit-btn" onclick="loadAdminWorkouts(true)">[ ⟳ REFRESH ]</button>
+          </div>
+          <div class="admin-card" style="margin-bottom:14px">
+            <div class="admin-todo-list">
+              <li>The app already ships with <b>140 built-in exercise templates</b> (10 per body part, with form guides).</li>
+              <li>Templates you add here are shown to <b>every user</b> (read-only, marked MAIN) in Fitness → Workout → Templates.</li>
+              <li>Stored under <code>global/workoutLibrary</code> (readable by signed-in users, writable only by the owner).</li>
+            </div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-title" style="margin-bottom:10px">Add Template</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <input class="admin-inp" id="awk-name" type="text" placeholder="Exercise name" style="flex:3;min-width:170px" maxlength="80"/>
+              <select class="admin-inp" id="awk-group" style="flex:1;min-width:110px" title="Library group"></select>
+              <select class="admin-inp" id="awk-type" style="flex:1;min-width:130px" onchange="adminWkTypeChanged()"></select>
+            </div>
+            <div style="font-size:11px;color:var(--t2);margin-bottom:6px">Body parts worked (tick all that apply)</div>
+            <div id="awk-muscles" style="display:flex;gap:6px 12px;flex-wrap:wrap;margin-bottom:10px;font-size:12px"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <input class="admin-inp" id="awk-p1" type="text" style="flex:1;min-width:110px"/>
+              <input class="admin-inp" id="awk-p2" type="text" style="flex:1;min-width:110px"/>
+              <input class="admin-inp" id="awk-p3" type="text" style="flex:1;min-width:110px"/>
+            </div>
+            <textarea class="admin-inp" id="awk-desc" rows="2" maxlength="220" placeholder="Short form guide (shown on hover): how to do it, key cues…" style="width:100%;margin-bottom:10px"></textarea>
+            <button class="admin-exit-btn" onclick="adminWkAdd()">[ + ADD TO SHARED LIBRARY ]</button>
+          </div>
+          <div class="admin-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <div class="admin-card-title" style="margin:0" id="adminWkTitle">Shared templates</div>
+              <input class="admin-inp" id="awk-search" type="text" placeholder="Search..." oninput="renderAdminWorkouts()" style="width:200px"/>
+            </div>
+            <div id="adminWkBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading…</div></div>
           </div>
         </div>
 
@@ -4495,6 +4780,7 @@ function loginSuccess(id, docId, silent) {
   saveSession(id, docId);
   updateAdminMenuVisibility();
   loadGlobalIngredients();
+  loadGlobalWorkouts();
   if (typeof loadEntitlement === 'function') loadEntitlement();
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
   trackEvent('login');
@@ -4984,7 +5270,7 @@ function quickAddGo(pageId) {
 function quickAddGoWorkout() {
   closeQuickAdd();
   nav(document.querySelector('.sb-item[onclick*="fitness"]'), 'fitness');
-  setTimeout(function(){ switchFitnessTab('workout'); }, 50);
+  setTimeout(function(){ switchFitnessTab('workout'); try { wkSetView('session'); wkOpenBuilder(); } catch(e) {} }, 50);
 }
 function quickAddWater() {
   closeQuickAdd();
@@ -5995,69 +6281,782 @@ function logMealFromLibrary() {
 
 // ===================== WORKOUT =====================
 var wkDate = '';
+// ===================== WORKOUT 2.0 =====================
+// Data lives where it always did: S.dailyData[date].exercises[] (synced per day through the normal save() path).
+// Exercises gained optional fields (type, muscles[], dur, dist, intens, kcal, work, hold, notes, setsDone, tip, id);
+// old entries keep working (they are normalised on the fly).  Custom routines live in S.wkRoutines.
+var WK_PARTS = ['Chest','Back','Shoulders','Biceps','Triceps','Forearms','Core','Glutes','Quads','Hamstrings','Calves','Full Body','Cardio','Mobility'];
+var WK_TYPES = {
+  strength:  { label:'Strength',     icon:'🏋️', hint:'Weights · sets × reps × kg',       sets:true },
+  bodyweight:{ label:'Bodyweight',   icon:'🤸', hint:'Sets × reps (add weight if you like)', sets:true },
+  cardio:    { label:'Cardio',       icon:'🏃', hint:'Time · distance · intensity',      sets:false },
+  interval:  { label:'Interval/HIIT',icon:'⚡', hint:'Rounds of work and rest',          sets:true },
+  timed:     { label:'Timed hold',   icon:'⏱️', hint:'Planks, wall sits · sets × seconds', sets:true },
+  flex:      { label:'Stretch',      icon:'🧘', hint:'Mobility & stretching · minutes',  sets:false }
+};
+var WK_TYPE_ORDER = ['strength','bodyweight','cardio','interval','timed','flex'];
+var WK_INTENSITY = ['Low','Moderate','High','Max'];
+var WK_LIB_RAW = [["Chest","Barbell Bench Press","strength",["Chest","Triceps","Shoulders"],[4,"8-10",90],"Lie flat, feet planted, shoulder blades pinched. Lower the bar to mid-chest and press up without bouncing."],["Chest","Incline Dumbbell Press","strength",["Chest","Shoulders","Triceps"],[3,"10-12",75],"Bench at 30°. Press the dumbbells over your upper chest and lower slowly for 2–3 seconds."],["Chest","Decline Bench Press","strength",["Chest","Triceps"],[3,"8-10",90],"Declined bench shifts work to the lower chest. Keep wrists over elbows and touch the lower chest."],["Chest","Dumbbell Fly","strength",["Chest"],[3,"12-15",60],"Keep a slight elbow bend. Open the arms until you feel a deep chest stretch, then hug the weights back together."],["Chest","Cable Crossover","strength",["Chest"],[3,"12-15",60],"Step forward with cables set high. Sweep hands down and together in front of the lower chest and squeeze for 1 second."],["Chest","Push-Ups","bodyweight",["Chest","Triceps","Shoulders","Core"],[4,"15",60],"Body in one straight line, hands slightly wider than shoulders. Chest to the floor, then press back up."],["Chest","Chest Dips","bodyweight",["Chest","Triceps"],[3,"8-12",90],"Lean forward with elbows slightly out. Lower until upper arms are parallel to the floor, then press up. Add weight later."],["Chest","Machine Chest Press","strength",["Chest","Triceps"],[3,"10-12",75],"Set the seat so handles line up with mid-chest. Press smoothly without locking the elbows. Beginner friendly."],["Chest","Incline Push-Ups","bodyweight",["Chest","Shoulders"],[3,"12-15",45],"Hands on a bench or table. An easier push-up that trains the upper chest, ideal for beginners."],["Chest","Pec Deck Machine","strength",["Chest"],[3,"12-15",60],"Elbows at shoulder height. Squeeze the chest to bring the pads together and return slowly."],["Back","Pull-Ups","bodyweight",["Back","Biceps"],[4,"8",90],"Overhand grip a little wider than shoulders. Pull your chest toward the bar, leading with the elbows, then lower fully."],["Back","Lat Pulldown","strength",["Back","Biceps"],[4,"10-12",75],"Lean back slightly and pull the bar to the upper chest while squeezing the shoulder blades down. No swinging."],["Back","Barbell Bent-Over Row","strength",["Back","Biceps","Core"],[4,"8-10",90],"Hinge to about 45°, flat back. Pull the bar to your lower ribs and lower with control."],["Back","One-Arm Dumbbell Row","strength",["Back","Biceps"],[3,"10-12",60],"Hand and knee on a bench. Pull the dumbbell toward your hip, keeping the torso still."],["Back","Seated Cable Row","strength",["Back","Biceps"],[3,"10-12",75],"Sit tall. Pull the handle to your belly, squeeze the shoulder blades together, and return slowly."],["Back","Deadlift","strength",["Back","Glutes","Hamstrings","Core"],[4,"5",150],"Bar over mid-foot, back flat. Push the floor away so hips and shoulders rise together, then lock out with the glutes."],["Back","T-Bar Row","strength",["Back","Biceps"],[3,"10",75],"Chest supported or hinged. Drive the elbows back and squeeze the mid-back at the top."],["Back","Face Pull","strength",["Back","Shoulders"],[3,"15",45],"Rope at face height. Pull toward your forehead with elbows high. Great for rear delts and posture."],["Back","Straight-Arm Pulldown","strength",["Back"],[3,"12-15",60],"Arms nearly straight, pull the bar down to your thighs using the lats. Keep the ribs down."],["Back","Inverted Row","bodyweight",["Back","Biceps"],[3,"10-12",60],"Hang under a low bar with a straight body. Pull your chest to the bar. Lower the bar height to make it easier."],["Shoulders","Barbell Overhead Press","strength",["Shoulders","Triceps","Core"],[4,"6-8",120],"Bar at collarbone, glutes and abs tight. Press straight up, moving the head through at the top."],["Shoulders","Seated Dumbbell Press","strength",["Shoulders","Triceps"],[3,"10",75],"Back supported. Press the dumbbells overhead until arms are straight without shrugging."],["Shoulders","Lateral Raise","strength",["Shoulders"],[4,"12-15",45],"Light weights, slight elbow bend. Raise arms to shoulder height, lead with the elbows, lower slowly."],["Shoulders","Front Raise","strength",["Shoulders"],[3,"12",45],"Lift the weight to eye level with straight arms. Don't swing the body."],["Shoulders","Rear Delt Fly","strength",["Shoulders","Back"],[3,"12-15",45],"Hinge forward and open the arms wide like wings, squeezing the rear shoulders."],["Shoulders","Arnold Press","strength",["Shoulders","Triceps"],[3,"10",75],"Start with palms facing you, rotate them outward as you press overhead. Reverse on the way down."],["Shoulders","Dumbbell Upright Row","strength",["Shoulders","Back"],[3,"12",60],"Use light weight. Pull the elbows up to shoulder height, no higher, keeping the weights close to the body."],["Shoulders","Pike Push-Ups","bodyweight",["Shoulders","Triceps"],[3,"8-12",60],"Hips high in an inverted V. Lower your head toward the floor and press back up. A great bodyweight shoulder builder."],["Shoulders","Barbell Shrug","strength",["Shoulders","Back"],[3,"12-15",60],"Lift the shoulders straight up toward the ears (not rolling), pause at the top, lower slowly."],["Shoulders","Machine Shoulder Press","strength",["Shoulders","Triceps"],[3,"10-12",75],"Adjust the seat so handles start at shoulder height. A safe way to train heavy overhead."],["Biceps","Barbell Curl","strength",["Biceps"],[3,"8-10",60],"Elbows pinned to the sides. Curl the bar up without swinging and lower for 2–3 seconds."],["Biceps","Alternating Dumbbell Curl","strength",["Biceps"],[3,"10-12",60],"Twist the palm up as you curl. Alternate arms and keep the upper arm still."],["Biceps","Hammer Curl","strength",["Biceps","Forearms"],[3,"10-12",60],"Palms face each other. Builds the brachialis and forearm for thicker-looking arms."],["Biceps","Incline Dumbbell Curl","strength",["Biceps"],[3,"10-12",60],"Lie back on a 45° bench so arms hang behind you. Deep stretch at the bottom, curl up without moving the elbows."],["Biceps","Preacher Curl","strength",["Biceps"],[3,"10",60],"Upper arms on the pad. Curl up and lower fully, but stop short of locking out hard at the bottom."],["Biceps","Concentration Curl","strength",["Biceps"],[3,"12",45],"Seated, elbow braced against the inner thigh. Curl slowly and squeeze hard at the top."],["Biceps","Cable Curl","strength",["Biceps"],[3,"12-15",45],"Constant cable tension. Keep elbows fixed and squeeze at the top."],["Biceps","EZ-Bar Curl","strength",["Biceps"],[3,"8-12",60],"Angled grip is gentler on the wrists. Curl with strict form, no hip drive."],["Biceps","Spider Curl","strength",["Biceps"],[3,"10-12",45],"Chest on an incline bench, arms hanging straight down. Curl up with a strong peak contraction."],["Biceps","Chin-Ups","bodyweight",["Biceps","Back"],[3,"6-10",90],"Underhand shoulder-width grip. Pull until the chin clears the bar, lower fully. Biceps-heavy pull."],["Triceps","Close-Grip Bench Press","strength",["Triceps","Chest"],[4,"8-10",90],"Hands shoulder-width apart. Keep elbows tucked and press up. A heavy triceps mass builder."],["Triceps","Rope Pushdown","strength",["Triceps"],[3,"12-15",45],"Elbows pinned to ribs. Push down and spread the rope at the bottom, squeeze for 1 second."],["Triceps","Skull Crushers","strength",["Triceps"],[3,"10-12",60],"Lower the bar toward the forehead by bending only at the elbows, then extend. Use a spotter or light weight."],["Triceps","Overhead Dumbbell Extension","strength",["Triceps"],[3,"10-12",60],"Hold one dumbbell overhead with both hands, lower behind the head, extend up. Trains the long head."],["Triceps","Bench Dips","bodyweight",["Triceps","Shoulders"],[3,"12-15",60],"Hands on a bench behind you. Lower until elbows are about 90° and press up. Bend the knees to make it easier."],["Triceps","Diamond Push-Ups","bodyweight",["Triceps","Chest"],[3,"10-15",60],"Hands form a diamond under the chest. Keep elbows close to the body. A tougher push-up for the triceps."],["Triceps","Cable Overhead Extension","strength",["Triceps"],[3,"12-15",45],"Face away from the cable, rope behind the head. Extend arms forward and up with elbows fixed."],["Triceps","Triceps Kickback","strength",["Triceps"],[3,"12-15",45],"Hinge forward, upper arm parallel to the floor. Straighten the elbow back and squeeze."],["Triceps","Single-Arm Cable Pushdown","strength",["Triceps"],[3,"12",45],"Push one handle down at a time to fix strength imbalances between arms."],["Triceps","Reverse-Grip Pushdown","strength",["Triceps"],[3,"12-15",45],"Underhand grip emphasises the medial head. Use lighter weight and keep wrists straight."],["Forearms","Barbell Wrist Curl","strength",["Forearms"],[3,"15-20",45],"Forearms on thighs, palms up. Let the bar roll to the fingertips and curl it back up with the wrists."],["Forearms","Reverse Wrist Curl","strength",["Forearms"],[3,"15-20",45],"Palms down. Lift the back of the hands up. Use light weight to build the top of the forearm."],["Forearms","Reverse Barbell Curl","strength",["Forearms","Biceps"],[3,"10-12",60],"Overhand grip curl. Targets the forearm extensors and brachioradialis."],["Forearms","Zottman Curl","strength",["Forearms","Biceps"],[3,"10",60],"Curl up with palms up, rotate to palms down at the top, lower slowly. Works biceps and forearms together."],["Forearms","Farmer's Walk","timed",["Forearms","Core","Full Body"],[3,40,60],"Hold heavy dumbbells at your sides and walk tall. Builds grip, traps and core. Time per set."],["Forearms","Dead Hang","timed",["Forearms","Back"],[3,30,60],"Hang from a pull-up bar with a firm grip. Improves grip strength and decompresses the spine."],["Forearms","Plate Pinch Hold","timed",["Forearms"],[3,30,45],"Pinch two plates together smooth-side out and hold. Builds finger and thumb strength."],["Forearms","Wrist Roller","strength",["Forearms"],[3,"2",60],"Roll the weight up by twisting the wrists, then lower it slowly. Brutal but effective."],["Forearms","Finger Curls","strength",["Forearms"],[3,"15",45],"Let the bar roll down to your fingertips then curl it back into the palm."],["Forearms","Hand Gripper Squeezes","strength",["Forearms"],[3,"12-15",45],"Squeeze the gripper fully and hold for 1 second. Great for grip endurance."],["Core","Plank","timed",["Core"],[3,45,45],"Elbows under shoulders, body straight, glutes and abs tight. Don't let the hips sag."],["Core","Side Plank","timed",["Core"],[3,30,30],"Stack the feet, lift the hips and hold in a straight line. Do both sides."],["Core","Crunches","bodyweight",["Core"],[3,"20",45],"Lower back stays on the floor. Curl the ribs toward the hips and exhale at the top."],["Core","Bicycle Crunch","bodyweight",["Core"],[3,"20",45],"Bring the opposite elbow to the knee with slow, controlled pedaling."],["Core","Hanging Leg Raise","bodyweight",["Core"],[3,"12",60],"Hang from a bar and lift the legs without swinging. Curl the pelvis up for more ab work."],["Core","Russian Twist","bodyweight",["Core"],[3,"20",45],"Lean back slightly with the feet raised and rotate the torso side to side. Hold a plate to progress."],["Core","Cable Crunch","strength",["Core"],[3,"15",60],"Kneel facing the cable, round the spine and crunch the elbows toward the knees."],["Core","Ab Wheel Rollout","bodyweight",["Core"],[3,"10",60],"Roll out as far as you can keep the back flat, then pull back with the abs. Advanced."],["Core","Mountain Climbers","timed",["Core","Cardio","Shoulders"],[3,30,30],"From a plank, drive the knees to the chest quickly. Keeps the heart rate up while working the abs."],["Core","Dead Bug","bodyweight",["Core"],[3,"12",45],"On your back, lower the opposite arm and leg while keeping the lower back pressed down. Excellent for beginners."],["Glutes","Barbell Hip Thrust","strength",["Glutes","Hamstrings"],[4,"10",90],"Upper back on a bench, bar on hips. Drive through the heels and squeeze the glutes at the top."],["Glutes","Glute Bridge","bodyweight",["Glutes","Hamstrings"],[3,"15",45],"Lie on your back, feet flat. Lift the hips and squeeze the glutes for 1–2 seconds at the top."],["Glutes","Bulgarian Split Squat","strength",["Glutes","Quads"],[3,"8-10",75],"Rear foot on a bench. Lower straight down until the front thigh is parallel and drive up through the heel."],["Glutes","Cable Glute Kickback","strength",["Glutes"],[3,"12-15",45],"Ankle strap on a low cable. Kick the leg back without arching the lower back."],["Glutes","Donkey Kicks","bodyweight",["Glutes"],[3,"15-20",45],"On all fours, push one heel to the ceiling keeping the knee bent. Squeeze at the top."],["Glutes","Fire Hydrants","bodyweight",["Glutes"],[3,"15",45],"On all fours, lift the knee out to the side like a dog. Warms up and strengthens the outer glutes."],["Glutes","Sumo Deadlift","strength",["Glutes","Quads","Back"],[4,"6-8",120],"Wide stance, toes out. Keep the chest up and push the floor apart as you stand."],["Glutes","Step-Ups","strength",["Glutes","Quads"],[3,"10-12",60],"Step onto a box and drive through the heel of the lead leg. Don't push off the back foot."],["Glutes","Banded Lateral Walk","bodyweight",["Glutes"],[3,"15",30],"Band above the knees, half squat and take small side steps. Keep tension all the time."],["Glutes","Kettlebell Swing","strength",["Glutes","Hamstrings","Core"],[4,"15",60],"Hinge at the hips and snap them forward to swing the bell to chest height. Power comes from the hips, not arms."],["Quads","Barbell Back Squat","strength",["Quads","Glutes","Core"],[4,"6-8",120],"Bar on the upper back, brace the core. Sit down between the hips until thighs are parallel, then drive up."],["Quads","Front Squat","strength",["Quads","Core"],[3,"6-8",120],"Bar on the front shoulders, elbows high. Keeps the torso upright and hits the quads."],["Quads","Leg Press","strength",["Quads","Glutes"],[4,"10-12",90],"Feet shoulder-width on the platform. Lower until knees are about 90° without letting the hips lift."],["Quads","Leg Extension","strength",["Quads"],[3,"12-15",60],"Extend the knees fully and squeeze the quads at the top. Lower slowly; avoid heavy jerking."],["Quads","Goblet Squat","strength",["Quads","Glutes","Core"],[3,"10-12",60],"Hold a dumbbell at the chest. A beginner-friendly squat that teaches good depth and posture."],["Quads","Walking Lunges","strength",["Quads","Glutes"],[3,"20",60],"Take a long step, drop the back knee close to the floor and drive through the front heel. 10 steps each leg."],["Quads","Hack Squat","strength",["Quads"],[3,"10-12",90],"Back flat on the pad, feet low on the platform for more quad focus."],["Quads","Bodyweight Squat","bodyweight",["Quads","Glutes"],[3,"20",45],"Feet shoulder-width, chest up, sit back and down, drive up through the whole foot."],["Quads","Wall Sit","timed",["Quads"],[3,45,45],"Back against a wall, thighs parallel to the floor. Hold. A simple burn for the quads."],["Quads","Jump Squat","bodyweight",["Quads","Glutes","Cardio"],[3,"12",60],"Squat down then jump explosively. Land softly with bent knees."],["Hamstrings","Romanian Deadlift","strength",["Hamstrings","Glutes","Back"],[4,"8-10",90],"Soft knees, hips pushed back, bar close to the legs. Lower until a hamstring stretch, then squeeze the glutes to stand."],["Hamstrings","Lying Leg Curl","strength",["Hamstrings"],[3,"10-12",60],"Curl the heels toward the glutes and lower slowly. Keep the hips down on the pad."],["Hamstrings","Seated Leg Curl","strength",["Hamstrings"],[3,"10-12",60],"Pull the pad under you with the hamstrings and control the return."],["Hamstrings","Stiff-Leg Deadlift","strength",["Hamstrings","Back"],[3,"8-10",90],"Legs nearly straight, hinge at the hips with a flat back. Feel the stretch behind the thighs."],["Hamstrings","Good Morning","strength",["Hamstrings","Back","Glutes"],[3,"10-12",75],"Bar on the upper back, hinge forward with a flat spine, return by driving the hips forward. Use light weight."],["Hamstrings","Nordic Hamstring Curl","bodyweight",["Hamstrings"],[3,"5-8",90],"Kneel with feet anchored, lower the torso forward as slowly as possible. Very hard and very effective."],["Hamstrings","Single-Leg Dumbbell RDL","strength",["Hamstrings","Glutes","Core"],[3,"10",60],"Balance on one leg, hinge forward with the other leg extended behind. Builds balance too."],["Hamstrings","Stability Ball Leg Curl","bodyweight",["Hamstrings","Glutes"],[3,"12",45],"Heels on a ball, hips up. Roll the ball in by bending the knees."],["Hamstrings","Cable Pull-Through","strength",["Hamstrings","Glutes"],[3,"12-15",60],"Face away from a low cable, hinge back and snap the hips forward. Great hip-hinge learner."],["Hamstrings","Back Extension","bodyweight",["Hamstrings","Glutes","Back"],[3,"12-15",45],"On the hyperextension bench, lower the torso and raise it to a straight line without over-arching."],["Calves","Standing Calf Raise","strength",["Calves"],[4,"12-15",45],"Full range: stretch at the bottom, rise high on the toes and pause 1 second."],["Calves","Seated Calf Raise","strength",["Calves"],[4,"15-20",45],"Knees bent trains the soleus. Slow reps with a pause at the top."],["Calves","Leg Press Calf Raise","strength",["Calves"],[4,"15",45],"Only the balls of the feet on the platform. Press through the toes with a full stretch."],["Calves","Single-Leg Calf Raise","bodyweight",["Calves"],[3,"15",30],"Stand on one foot on a step and rise as high as possible. Hold something for balance."],["Calves","Donkey Calf Raise","strength",["Calves"],[3,"15",45],"Hinge at the hips with weight on the lower back, rise on the toes. Classic calf builder."],["Calves","Smith Machine Calf Raise","strength",["Calves"],[3,"12-15",45],"Balls of the feet on a plate. Rise high and lower into a deep stretch."],["Calves","Tibialis Raise","bodyweight",["Calves"],[3,"15-20",30],"Heels on the floor, back against a wall; lift the toes up. Strengthens the shins and helps prevent shin splints."],["Calves","Pogo Jumps","bodyweight",["Calves","Cardio"],[3,"20",30],"Small, quick jumps with straight legs, bouncing off the toes. Builds ankle stiffness and speed."],["Calves","Toe Walk","timed",["Calves"],[3,30,30],"Walk forward on the tiptoes with the heels high. Simple and effective."],["Calves","Eccentric Stair Calf Raise","bodyweight",["Calves"],[3,"10",45],"Rise with both feet, then lower slowly with one foot for 4–5 seconds."],["Full Body","Burpees","bodyweight",["Full Body","Cardio"],[3,"12",45],"Squat down, jump back to a plank, push-up, jump in and leap up. A total-body conditioning classic."],["Full Body","Barbell Thruster","strength",["Full Body","Quads","Shoulders"],[3,"10",75],"Front squat straight into an overhead press in one smooth motion."],["Full Body","Dumbbell Clean & Press","strength",["Full Body","Shoulders","Back"],[3,"8-10",75],"Pull the dumbbells to the shoulders explosively, then press overhead."],["Full Body","Turkish Get-Up","strength",["Full Body","Core","Shoulders"],[3,"3",90],"Stand up from lying while holding a weight overhead. Slow, technical and excellent for stability."],["Full Body","Medicine Ball Slam","strength",["Full Body","Core"],[3,"12",45],"Reach overhead and slam the ball into the floor with full force."],["Full Body","Bear Crawl","timed",["Full Body","Core","Shoulders"],[3,30,30],"Knees hover just above the floor. Crawl forward keeping the back flat."],["Full Body","Box Jump","bodyweight",["Full Body","Quads","Glutes"],[3,"8",60],"Jump onto a sturdy box with soft landing, then step down. Trains explosive power."],["Full Body","Battle Rope Waves","interval",["Full Body","Shoulders","Core"],[6,30,30],"Alternate arms making big waves with the rope. Keep a half squat. 30 s on, 30 s off."],["Full Body","Sled Push","strength",["Full Body","Quads","Glutes"],[4,"20 m",90],"Lean forward and drive the sled with powerful steps. Excellent conditioning with low joint stress."],["Full Body","Bodyweight Circuit","interval",["Full Body"],[4,40,20],"Cycle through squats, push-ups, lunges and planks, 40 s work and 20 s rest. No equipment needed."],["Cardio","Running","cardio",["Cardio","Quads","Calves"],[30,"Moderate"],"Steady pace where you can still talk in short sentences. Start with run/walk intervals if you are new."],["Cardio","Brisk Walking","cardio",["Cardio"],[40,"Low"],"Fast enough to raise your heart rate but easy on the joints. A perfect starting point for everyone."],["Cardio","Cycling","cardio",["Cardio","Quads"],[30,"Moderate"],"Indoor or outdoor. Keep a steady cadence of about 80–90 rpm."],["Cardio","Jump Rope","cardio",["Cardio","Calves"],[10,"High"],"Stay on the balls of the feet with small jumps. Rest briefly when form slips."],["Cardio","Swimming","cardio",["Cardio","Full Body"],[30,"Moderate"],"Low impact, full-body cardio. Alternate strokes if you get tired."],["Cardio","Rowing Machine","cardio",["Cardio","Back","Quads"],[20,"Moderate"],"Drive with the legs first, then lean back and pull the handle to the ribs. Reverse on the way back."],["Cardio","Stair Climber","cardio",["Cardio","Glutes","Quads"],[15,"High"],"Don't lean on the rails. Take full steps and keep the chest up."],["Cardio","Elliptical","cardio",["Cardio"],[25,"Moderate"],"A smooth low-impact machine. Add resistance or incline for a harder session."],["Cardio","HIIT Sprints","interval",["Cardio","Quads","Hamstrings"],[8,30,30],"All-out effort for the work phase then a full recovery. Warm up for 5 minutes first."],["Cardio","Tabata Burpees","interval",["Cardio","Full Body"],[8,20,10],"20 seconds all-out and 10 seconds rest for 8 rounds. Only 4 minutes but very intense."],["Mobility","Cat-Cow Stretch","flex",["Mobility","Back","Core"],[5],"On all fours, alternate arching and rounding the spine with your breath. Warms up the whole back."],["Mobility","Child's Pose","flex",["Mobility","Back"],[3],"Sit back on the heels with arms stretched forward. Breathe deeply and relax the lower back."],["Mobility","Standing Hamstring Stretch","flex",["Mobility","Hamstrings"],[5],"Heel on a low step, hinge forward with a flat back until you feel a stretch. Hold 30 seconds per side."],["Mobility","Hip Flexor Stretch","flex",["Mobility","Quads","Glutes"],[5],"Half-kneeling lunge, tuck the pelvis and shift forward. Great after long sitting."],["Mobility","Doorway Chest Stretch","flex",["Mobility","Chest","Shoulders"],[3],"Forearms on a door frame, step through gently until the chest opens. Hold 30 seconds."],["Mobility","Band Shoulder Dislocates","flex",["Mobility","Shoulders"],[5],"With a band or stick, swing straight arms from front to back overhead. Improves shoulder mobility."],["Mobility","Pigeon Pose","flex",["Mobility","Glutes"],[5],"Front shin angled across the mat, back leg extended. Deep hip and glute stretch; ease in slowly."],["Mobility","Thoracic Spine Rotation","flex",["Mobility","Back"],[5],"On all fours with a hand behind the head, rotate the elbow up toward the ceiling. Improves upper back mobility."],["Mobility","Sun Salutation Flow","flex",["Mobility","Full Body"],[10],"A flowing yoga sequence that stretches and activates the whole body. Move with your breath."],["Mobility","Foam Rolling","flex",["Mobility","Full Body"],[10],"Roll slowly over tight muscles and pause on tender spots for 20–30 seconds. Avoid rolling directly over joints."]];
+// Built-in library → objects  ({g:group, n:name, t:type, m:muscles, p:params, d:description})
+var WK_LIB = WK_LIB_RAW.map(function(r, i){ return { key:'b'+i, g:r[0], n:r[1], t:r[2], m:r[3], p:r[4], d:r[5] }; });
+var GLOBAL_WK = [];     // extra templates added by the admin (Firestore global/workoutLibrary)
+
+function wkId() { return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function wkEsc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function wkHasSets(t) { return !!(WK_TYPES[t] && WK_TYPES[t].sets); }
+function wkNum(v) { var n = parseFloat(v); return isFinite(n) ? n : 0; }
+function wkFmt(n) { n = Math.round(n); return n >= 10000 ? (Math.round(n / 100) / 10) + 'k' : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function wkDayNum(s) { var p = String(s || '').slice(0,10).split('-'); return p.length < 3 ? NaN : Math.round(Date.UTC(+p[0], +p[1]-1, +p[2]) / 864e5); }
+function wkDayStr(n) { return new Date(n * 864e5).toISOString().slice(0,10); }
+function wkDateFmt(s, o) { var n = wkDayNum(s); return isNaN(n) ? String(s) : new Date(n * 864e5).toLocaleDateString('en-GB', Object.assign({ timeZone:'UTC' }, o)); }
+
+// Make any (old or new) exercise entry complete. Safe to call repeatedly.
+function wkNorm(e) {
+  if (!e.id) e.id = wkId();
+  if (!WK_TYPES[e.type]) e.type = 'strength';
+  if (!Array.isArray(e.muscles) || !e.muscles.length) e.muscles = [e.muscle || 'Full Body'];
+  e.muscle = e.muscles[0];
+  if (typeof e.setsDone !== 'number') e.setsDone = e.done ? (parseInt(e.sets) || 0) : 0;
+  return e;
+}
+function wkEx(date) { var d = getDay(date); (d.exercises || (d.exercises = [])).forEach(wkNorm); return d.exercises; }
+function wkFind(date, id) { var l = wkEx(date); for (var i = 0; i < l.length; i++) if (l[i].id === id) return { list: l, idx: i, e: l[i] }; return null; }
+function wkSetsEff(e) { var n = parseInt(e.sets) || 0; return e.done ? n : Math.min(e.setsDone || 0, n); }
+function wkRepsAvg(r) { var m = String(r == null ? '' : r).match(/\d+(\.\d+)?/g); if (!m) return 0; var v = m.map(Number); return v.reduce(function(a,b){ return a + b; }, 0) / v.length; }
+function wkVol(e) { if (e.type !== 'strength' && e.type !== 'bodyweight') return 0; return wkNum(e.weight) * wkRepsAvg(e.reps) * wkSetsEff(e); }
+function wkPace(min, km) { if (!min || !km) return ''; var p = min / km, m = Math.floor(p), s = Math.round((p - m) * 60); if (s === 60) { m++; s = 0; } return m + ':' + (s < 10 ? '0' : '') + s + ' /km'; }
+
+// Pills ({v,l}) describing an entry, per type
+function wkPills(e) {
+  var P = [];
+  switch (e.type) {
+    case 'cardio':
+      if (e.dur) P.push({ v:e.dur, l:'MIN' }); if (e.dist) P.push({ v:e.dist, l:'KM' });
+      if (e.dur && e.dist) P.push({ v:wkPace(e.dur, e.dist).replace(' /km',''), l:'/KM' });
+      if (e.intens) P.push({ v:e.intens, l:'' }); if (e.kcal) P.push({ v:e.kcal, l:'KCAL' }); break;
+    case 'flex': if (e.dur) P.push({ v:e.dur, l:'MIN' }); break;
+    case 'interval': P.push({ v:e.sets || 0, l:'ROUNDS' }); P.push({ v:(e.work || 0) + 's', l:'WORK' }); P.push({ v:(e.rest || 0) + 's', l:'REST' }); break;
+    case 'timed': P.push({ v:e.sets || 0, l:'SETS' }); P.push({ v:(e.hold || 0) + 's', l:'HOLD' }); if (e.rest) P.push({ v:e.rest + 's', l:'REST' }); break;
+    case 'bodyweight': P.push({ v:e.sets || 0, l:'SETS' }); P.push({ v:e.reps || '-', l:'REPS' });
+      P.push({ v:(e.weight && String(e.weight).toUpperCase() !== 'BW' && wkNum(e.weight)) ? '+' + e.weight + 'kg' : 'BW', l:'' }); if (e.rest) P.push({ v:e.rest + 's', l:'REST' }); break;
+    default: P.push({ v:e.sets || 0, l:'SETS' }); P.push({ v:e.reps || '-', l:'REPS' });
+      P.push({ v:(e.weight === '' || e.weight == null) ? '—' : e.weight, l:'KG' }); if (e.rest) P.push({ v:e.rest + 's', l:'REST' });
+  }
+  return P;
+}
+function wkSummary(e) { return wkPills(e).map(function(p){ return p.v + (p.l ? ' ' + p.l.toLowerCase() : ''); }).join(' · '); }
+
+// ---------- view switching ----------
+var wkView = 'session';
+try { var _wv = localStorage.getItem('fitos_wk_view'); if (['session','progress','history'].indexOf(_wv) >= 0) wkView = _wv; } catch(e) {}
+function wkSetView(v) {
+  wkView = v; try { localStorage.setItem('fitos_wk_view', v); } catch(e) {}
+  renderWorkout();
+}
+function wkRefresh() { renderWorkout(); }
+
+// ---------- SESSION view ----------
 function renderWorkout() {
   if (!wkDate) wkDate = S.today;
-  var dayNames=['MON','TUE','WED','THU','FRI','SAT','SUN'];
-  // Build week from wkDate
-  var wkBase=new Date(wkDate+'T12:00');var dow=wkBase.getDay();var mon=new Date(wkBase);mon.setDate(wkBase.getDate()-(dow===0?6:dow-1));
-  var dates=[];for(var wi=0;wi<7;wi++){var nd=new Date(mon);nd.setDate(mon.getDate()+wi);dates.push(nd.toISOString().split('T')[0]);}
-  document.getElementById('dayStrip').innerHTML=dates.map((d,i)=>{var dd=getDay(d);var hasDone=dd.exercises.some(e=>e.done);return`<div class="day-pill ${d===wkDate?'active':''} ${hasDone&&d!==wkDate?'done':''}" onclick="selectWkDay('${d}',null)"><div class="dp-name">${dayNames[i]}</div><div class="dp-num">${parseInt(d.split('-')[2])}</div></div>`;}).join('');
-  var pick=document.getElementById('wk-date-pick');if(pick)pick.value=wkDate;
-  document.getElementById('wkDayLabel').textContent=new Date(wkDate+'T12:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}).toUpperCase()+(wkDate===S.today?' — TODAY':'');
-  var d=getDay(wkDate);
-  var done=d.exercises.filter(e=>e.done).length;
-  var vol=d.exercises.filter(e=>e.done).reduce((a,e)=>{var kg=parseFloat(e.weight)||0;return a+kg*(parseInt(e.sets)||1);},0);
-  var sets=d.exercises.filter(e=>e.done).reduce((a,e)=>a+(parseInt(e.sets)||0),0);
-  document.getElementById('wk-done').textContent=done; document.getElementById('wk-total').textContent=d.exercises.length;
-  document.getElementById('wk-vol').textContent=vol; document.getElementById('wk-sets').textContent=sets;
-  document.getElementById('wkBadge').textContent=done+'/'+d.exercises.length;
-  var wkAddSec=document.getElementById('wk-add-section');if(wkAddSec)wkAddSec.style.display=(wkDate===S.today)?'':'none';
-  var list=document.getElementById('exList');
-  if(!d.exercises.length){list.innerHTML='<div style="font-size:13px;color:var(--t2);padding:10px">No exercises yet.</div>';return;}
-  var muscles=['Chest','Back','Shoulders','Biceps','Triceps','Legs','Core','Cardio','Full Body'];
-  list.innerHTML=d.exercises.map((e,i)=>`<div class="ex-card ${e.done?'done':''}" onclick="toggleEx(${i},this)">
-    <div class="ex-top"><span class="ex-name">${e.name}</span>
-    <div style="display:flex;gap:8px;align-items:center"><span class="ex-tag">${e.muscle}</span><div class="check-sq">${e.done?'OK':''}</div>
-    <button class="edit-btn" onclick="event.stopPropagation();toggleExEdit(${i})">✎</button>
-    <button class="del-btn" onclick="event.stopPropagation();delEx(${i})" style="font-size:14.5px">✕</button></div></div>
-    <div class="ex-meta"><span><b>${e.sets}</b> SETS</span><span><b>${e.reps}</b> REPS</span><span><b>${e.weight}</b> KG</span><span><b>${e.rest}</b>s REST</span></div>
-    <div class="edit-form" id="ex-edit-${i}" onclick="event.stopPropagation()">
-      <div class="inp-row" style="flex-wrap:wrap;margin-bottom:8px">
-        <div class="inp-group" style="flex:2;min-width:120px"><div class="inp-label">NAME</div><input class="inp" id="ee-name-${i}" type="text" value="${e.name.replace(/"/g,'&quot;')}"/></div>
-        <div class="inp-group" style="flex:2;min-width:100px"><div class="inp-label">MUSCLE</div><select class="inp" id="ee-muscle-${i}">${muscles.map(m=>`<option${m===e.muscle?' selected':''}>${m}</option>`).join('')}</select></div>
-      </div>
-      <div class="inp-row" style="flex-wrap:wrap">
-        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">SETS</div><input class="inp" id="ee-sets-${i}" type="number" value="${e.sets}"/></div>
-        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">REPS</div><input class="inp" id="ee-reps-${i}" type="text" value="${e.reps}"/></div>
-        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">WEIGHT</div><input class="inp" id="ee-weight-${i}" type="text" value="${e.weight}"/></div>
-        <div class="inp-group" style="flex:1;min-width:55px"><div class="inp-label">REST(s)</div><input class="inp" id="ee-rest-${i}" type="number" value="${e.rest}"/></div>
-      </div>
-      <div class="edit-form-actions">
-        <button class="btn sm" onclick="saveExEdit(${i})">[ SAVE ]</button>
-        <button class="btn sm danger" onclick="toggleExEdit(${i})">[ CANCEL ]</button>
-      </div>
-    </div>
-  </div>`).join('');
+  ['session','progress','history'].forEach(function(v){
+    var sec = document.getElementById('wk-view-' + v), tab = document.getElementById('wkt-' + v);
+    if (sec) sec.style.display = (v === wkView) ? '' : 'none';
+    if (tab) tab.classList.toggle('active', v === wkView);
+  });
+  var list = wkEx(wkDate);
+  var done = list.filter(function(e){ return e.done; }).length;
+  var bd = document.getElementById('wkBadge'); if (bd) bd.textContent = done + '/' + list.length;
+  if (wkView === 'progress') { wkRenderProgress(); return; }
+  if (wkView === 'history') { wkRenderHistory(); return; }
+
+  var dayNames = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  var wkBase = new Date(wkDate + 'T12:00'), dow = wkBase.getDay(), mon = new Date(wkBase);
+  mon.setDate(wkBase.getDate() - (dow === 0 ? 6 : dow - 1));
+  var dates = []; for (var wi = 0; wi < 7; wi++) { var nd = new Date(mon); nd.setDate(mon.getDate() + wi); dates.push(nd.toISOString().split('T')[0]); }
+  document.getElementById('dayStrip').innerHTML = dates.map(function(d, i){
+    var dd = getDay(d), has = (dd.exercises || []).some(function(e){ return e.done; });
+    return '<div class="day-pill ' + (d === wkDate ? 'active' : '') + ' ' + (has && d !== wkDate ? 'done' : '') + '" onclick="selectWkDay(\'' + d + '\',null)"><div class="dp-name">' + dayNames[i] + '</div><div class="dp-num">' + parseInt(d.split('-')[2]) + '</div></div>';
+  }).join('');
+  var pick = document.getElementById('wk-date-pick'); if (pick) pick.value = wkDate;
+  document.getElementById('wkDayLabel').textContent = new Date(wkDate + 'T12:00').toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' }).toUpperCase() + (wkDate === S.today ? ' — TODAY' : '');
+
+  var vol = 0, sets = 0, cardio = 0;
+  list.forEach(function(e){ vol += wkVol(e); sets += wkHasSets(e.type) ? wkSetsEff(e) : 0; if (e.done && (e.type === 'cardio' || e.type === 'flex')) cardio += wkNum(e.dur); });
+  var set = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
+  set('wk-done', done + '/' + list.length); set('wk-vol', wkFmt(vol)); set('wk-sets', sets); set('wk-cardio', Math.round(cardio));
+  var pct = list.length ? Math.round(done / list.length * 100) : 0;
+  var bar = document.getElementById('wkProgFill'); if (bar) bar.style.width = pct + '%';
+  set('wkProgPct', pct + '%');
+  var box = document.getElementById('exList'); if (!box) return;
+  if (!list.length) {
+    box.innerHTML = '<div class="wk-empty"><div class="wk-empty-ic">🏋️</div><div class="wk-empty-t">No exercises planned for this day</div><div class="wk-empty-s">Add your own, or pick from 140+ ready-made exercises with form tips.</div><div class="wk-empty-b"><button class="wk-btn primary" onclick="wkOpenBuilder()">＋ ADD EXERCISE</button><button class="wk-btn" onclick="wkOpenTemplates(\'lib\')">✦ BROWSE TEMPLATES</button></div></div>';
+    return;
+  }
+  box.innerHTML = list.map(function(e, i){ return wkCardHTML(e, i, wkDate, false); }).join('');
 }
-function selectWkDay(d,el){dashDateGoto(d);}
-function toggleEx(i){var d=getDay(wkDate);d.exercises[i].done=!d.exercises[i].done;save();renderWorkout();}
-function delEx(i){getDay(wkDate).exercises.splice(i,1);save();renderWorkout();toast('Exercise removed');}
-function toggleExEdit(i){var f=document.getElementById('ex-edit-'+i);if(f)f.classList.toggle('open');}
-function saveExEdit(i){
-  var d=getDay(wkDate);var e=d.exercises[i];
-  e.name=document.getElementById('ee-name-'+i).value.trim()||e.name;
-  e.muscle=document.getElementById('ee-muscle-'+i).value;
-  e.sets=parseInt(document.getElementById('ee-sets-'+i).value)||e.sets;
-  e.reps=document.getElementById('ee-reps-'+i).value||e.reps;
-  e.weight=document.getElementById('ee-weight-'+i).value||e.weight;
-  e.rest=parseInt(document.getElementById('ee-rest-'+i).value)||e.rest;
-  save();renderWorkout();toast('Exercise updated!');
+function selectWkDay(d, el) { dashDateGoto(d); }
+
+function wkTypeBadge(e) { var t = WK_TYPES[e.type]; return '<span class="wk-type t-' + e.type + '">' + t.icon + ' ' + t.label.toUpperCase() + '</span>'; }
+function wkCardHTML(e, i, date, compact) {
+  var pills = wkPills(e).map(function(p){ return '<span class="wk-pill"><b>' + wkEsc(p.v) + '</b>' + (p.l ? ' ' + p.l : '') + '</span>'; }).join('');
+  var muscles = e.muscles.map(function(m){ return '<span class="wk-mus">' + wkEsc(m) + '</span>'; }).join('');
+  var tip = e.tip ? ' <span class="wk-tip" tabindex="0" data-tip="' + wkEsc(e.tip) + '" aria-label="Form guide">ⓘ</span>' : '';
+  var did = wkEsc(date), eid = wkEsc(e.id), n = parseInt(e.sets) || 0;
+  var prog = '';
+  if (wkHasSets(e.type) && n > 0 && !compact) {
+    var chips = ''; for (var k = 1; k <= Math.min(n, 12); k++) chips += '<button class="wk-set' + (k <= (e.done ? n : (e.setsDone || 0)) ? ' on' : '') + '" onclick="wkSet(\'' + did + '\',\'' + eid + '\',' + k + ')" aria-label="Set ' + k + '">' + k + '</button>';
+    if (n > 12) chips += '<span class="wk-more">+' + (n - 12) + '</span>';
+    prog = '<div class="wk-sets"><span class="wk-sets-l">' + (e.type === 'interval' ? 'ROUNDS' : 'SETS') + '</span>' + chips + '</div>';
+  }
+  var check = '<button class="wk-check' + (e.done ? ' on' : '') + '" onclick="wkToggle(\'' + did + '\',\'' + eid + '\')" aria-label="' + (e.done ? 'Mark not done' : 'Mark done') + '" title="' + (e.done ? 'Done — tap to undo' : 'Mark as done') + '">' + (e.done ? '✓' : '') + '</button>';
+  var handle = compact ? '' : '<div class="wk-handle" tabindex="0" role="button" aria-label="Drag to reorder (or use arrow keys)" title="Drag to reorder" onpointerdown="wkDragStart(event)" onkeydown="wkHandleKey(event,\'' + eid + '\')">⠿</div>';
+  return '<div class="wk-card t-' + e.type + (e.done ? ' done' : '') + (compact ? ' compact' : '') + '" data-id="' + eid + '">' +
+    handle +
+    (compact ? '' : '<div class="wk-num">' + (i + 1) + '</div>') +
+    '<div class="wk-body">' +
+      '<div class="wk-top"><div class="wk-name">' + wkEsc(e.name) + tip + '</div>' + wkTypeBadge(e) + '</div>' +
+      '<div class="wk-tags">' + muscles + '</div>' +
+      '<div class="wk-meta">' + pills + '</div>' +
+      prog +
+      (e.notes ? '<div class="wk-notes">📝 ' + wkEsc(e.notes) + '</div>' : '') +
+    '</div>' +
+    '<div class="wk-side">' + check +
+      '<div class="wk-act"><button class="wk-ib" onclick="wkEdit(\'' + did + '\',\'' + eid + '\')" title="Edit" aria-label="Edit">✎</button>' +
+      '<button class="wk-ib" onclick="wkDup(\'' + did + '\',\'' + eid + '\')" title="Duplicate" aria-label="Duplicate">⧉</button>' +
+      '<button class="wk-ib del" onclick="wkDel(\'' + did + '\',\'' + eid + '\')" title="Remove" aria-label="Remove">✕</button></div>' +
+    '</div></div>';
 }
-function addExercise(){
-  var name=document.getElementById('ex-name').value.trim(); if(!name){toast('Enter exercise name');return;}
-  getDay(wkDate).exercises.push({name,muscle:document.getElementById('ex-muscle').value,sets:parseInt(document.getElementById('ex-sets').value)||3,reps:document.getElementById('ex-reps').value||'10',weight:document.getElementById('ex-weight').value||'BW',rest:parseInt(document.getElementById('ex-rest').value)||60,done:false});
-  ['ex-name','ex-sets','ex-reps','ex-weight','ex-rest'].forEach(id=>document.getElementById(id).value='');
-  save();renderWorkout();toast('Exercise added!');
+
+// ---------- actions on entries ----------
+var _wkDoneFired = {};
+function wkAfter(date) {
+  save(); renderWorkout();
+  try { updateSidebarBadges(); } catch(e) {}
+  try { if (document.getElementById('page-dashboard').classList.contains('active')) renderDashboard(); } catch(e) {}
+  var l = wkEx(date);
+  if (l.length && l.every(function(e){ return e.done; })) {
+    var k = date + ':' + l.length;
+    if (!_wkDoneFired[k]) { _wkDoneFired[k] = 1; toast('🎉 Session complete — great work!'); try { trackEvent('workout_completed'); } catch(e) {} }
+  }
+}
+function wkToggle(date, id) {
+  var f = wkFind(date, id); if (!f) return; var e = f.e;
+  if (e.done) { e.done = false; e.setsDone = 0; delete e.doneAt; }
+  else { e.done = true; e.setsDone = parseInt(e.sets) || 0; e.doneAt = Date.now(); wkRestStop(); }
+  wkAfter(date);
+}
+function wkSet(date, id, n) {
+  var f = wkFind(date, id); if (!f) return; var e = f.e, total = parseInt(e.sets) || 0, cur = e.done ? total : (e.setsDone || 0);
+  var next = (n === cur) ? n - 1 : n;
+  e.setsDone = next; e.done = total > 0 && next >= total;
+  if (e.done) { e.doneAt = Date.now(); wkRestStop(); } else delete e.doneAt;
+  if (next > cur && !e.done && wkNum(e.rest) > 0) wkRestStart(wkNum(e.rest), e.name);
+  wkAfter(date);
+}
+function wkDup(date, id) {
+  var f = wkFind(date, id); if (!f) return;
+  var c = JSON.parse(JSON.stringify(f.e)); c.id = wkId(); c.done = false; c.setsDone = 0; delete c.doneAt;
+  f.list.splice(f.idx + 1, 0, c); save(); wkRefreshAll(); toast('Exercise duplicated');
+}
+var _wkSnackT = null, _wkUndo = null;
+function wkSnack(msg, undoFn) {
+  var el = document.getElementById('wkSnack'); if (!el) return;
+  _wkUndo = undoFn || null;
+  el.innerHTML = '<span>' + wkEsc(msg) + '</span>' + (undoFn ? '<button onclick="wkDoUndo()">UNDO</button>' : '');
+  el.classList.add('show'); clearTimeout(_wkSnackT); _wkSnackT = setTimeout(function(){ el.classList.remove('show'); _wkUndo = null; }, 7000);
+}
+function wkDoUndo() { var f = _wkUndo; _wkUndo = null; var el = document.getElementById('wkSnack'); if (el) el.classList.remove('show'); if (f) f(); }
+function wkDel(date, id) {
+  var f = wkFind(date, id); if (!f) return;
+  var removed = f.list.splice(f.idx, 1)[0], at = f.idx;
+  save(); wkRefreshAll();
+  wkSnack('Removed "' + removed.name + '"', function(){ var l = wkEx(date); l.splice(Math.min(at, l.length), 0, removed); save(); wkRefreshAll(); toast('Restored'); });
+}
+function wkRefreshAll() {
+  renderWorkout(); try { updateSidebarBadges(); } catch(e) {}
+  try { if (document.getElementById('page-dashboard').classList.contains('active')) renderDashboard(); } catch(e) {}
+}
+function wkMove(id, dir) {
+  var l = wkEx(wkDate), i = l.findIndex(function(e){ return e.id === id; }), j = i + dir;
+  if (i < 0 || j < 0 || j >= l.length) return;
+  var t = l[i]; l[i] = l[j]; l[j] = t; save(); renderWorkout();
+  var h = document.querySelector('.wk-card[data-id="' + id + '"] .wk-handle'); if (h) h.focus();
+}
+function wkHandleKey(ev, id) {
+  if (ev.key === 'ArrowUp') { ev.preventDefault(); wkMove(id, -1); }
+  else if (ev.key === 'ArrowDown') { ev.preventDefault(); wkMove(id, 1); }
+}
+
+// ---------- drag & drop (mouse + touch + pen, with auto-scroll) ----------
+var wkDrag = null;
+function wkScroller(el) {
+  for (var n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+    var oy = getComputedStyle(n).overflowY;
+    if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight + 2) return n;
+  }
+  return document.scrollingElement || document.documentElement;
+}
+function wkDragStart(ev) {
+  if (ev.button != null && ev.button !== 0) return;
+  var handle = ev.currentTarget, card = handle.closest('.wk-card'), list = card.parentNode;
+  ev.preventDefault();
+  var sc = wkScroller(list);
+  wkDrag = { card:card, list:list, handle:handle, startY:ev.clientY, y:ev.clientY, sc:sc, scTop:sc.scrollTop, raf:0, order0:Array.prototype.map.call(list.children, function(c){ return c.dataset.id; }).join(',') };
+  card.classList.add('dragging'); list.classList.add('is-dragging');
+  // listen on the document: re-ordering moves the card in the DOM, which would drop a pointer capture on the handle
+  wkDrag.pid = ev.pointerId;
+  wkDrag.mv = function(e){ if (wkDrag && e.pointerId === wkDrag.pid) { wkDrag.y = e.clientY; e.preventDefault(); } };
+  wkDrag.up = function(e){ if (wkDrag && e.pointerId === wkDrag.pid) wkDragEnd(); };
+  document.addEventListener('pointermove', wkDrag.mv, { passive:false });
+  document.addEventListener('pointerup', wkDrag.up);
+  document.addEventListener('pointercancel', wkDrag.up);
+  var loop = function(){ if (!wkDrag) return; wkDragStep(); wkDrag.raf = requestAnimationFrame(loop); };
+  wkDrag.raf = requestAnimationFrame(loop);
+}
+function wkDragStep() {
+  var d = wkDrag, card = d.card, list = d.list;
+  // auto-scroll near the viewport edges
+  var edge = 70, step = 0;
+  if (d.y < edge) step = -Math.ceil((edge - d.y) / 5); else if (d.y > window.innerHeight - edge) step = Math.ceil((d.y - (window.innerHeight - edge)) / 5);
+  if (step) { var before = d.sc.scrollTop; d.sc.scrollTop += step; var moved = d.sc.scrollTop - before; if (moved) d.startY -= moved; }
+  var dy = d.y - d.startY;
+  card.style.transform = 'translateY(' + dy + 'px)';
+  var rect = card.getBoundingClientRect(), center = rect.top + rect.height / 2;
+  var prev = card.previousElementSibling, next = card.nextElementSibling, sib = null;
+  if (prev && center < prev.getBoundingClientRect().top + prev.offsetHeight / 2) sib = prev;
+  else if (next && center > next.getBoundingClientRect().top + next.offsetHeight / 2) sib = next;
+  if (sib) {
+    var sibTop = sib.getBoundingClientRect().top, cardTopBefore = card.offsetTop;
+    if (sib === prev) list.insertBefore(card, prev); else list.insertBefore(card, next.nextSibling);
+    d.startY += card.offsetTop - cardTopBefore;
+    card.style.transform = 'translateY(' + (d.y - d.startY) + 'px)';
+    // smooth FLIP for the card that got displaced
+    var delta = sibTop - sib.getBoundingClientRect().top;
+    if (delta) { sib.style.transition = 'none'; sib.style.transform = 'translateY(' + delta + 'px)'; sib.getBoundingClientRect(); sib.style.transition = 'transform .18s ease'; sib.style.transform = ''; }
+    // renumber live
+    Array.prototype.forEach.call(list.children, function(c, i){ var n = c.querySelector('.wk-num'); if (n) n.textContent = i + 1; });
+  }
+}
+function wkDragEnd() {
+  var d = wkDrag; if (!d) return; wkDrag = null; cancelAnimationFrame(d.raf);
+  document.removeEventListener('pointermove', d.mv); document.removeEventListener('pointerup', d.up); document.removeEventListener('pointercancel', d.up);
+  d.card.style.transform = ''; d.card.classList.remove('dragging'); d.list.classList.remove('is-dragging');
+  var ids = Array.prototype.map.call(d.list.children, function(c){ return c.dataset.id; });
+  if (ids.join(',') !== d.order0) {
+    var l = wkEx(wkDate), map = {}; l.forEach(function(e){ map[e.id] = e; });
+    var re = ids.map(function(id){ return map[id]; }).filter(Boolean);
+    if (re.length === l.length) { getDay(wkDate).exercises = re; save(); toast('Order saved'); }
+  }
+  renderWorkout();
+}
+
+// ---------- modal shell ----------
+function wkOpenModal(title, bodyHTML, footHTML, cls) {
+  var m = document.getElementById('wkModal'); if (!m) return;
+  document.getElementById('wkModalTitle').innerHTML = title;
+  document.getElementById('wkModalBody').innerHTML = bodyHTML;
+  var f = document.getElementById('wkModalFoot'); f.innerHTML = footHTML || ''; f.style.display = footHTML ? '' : 'none';
+  m.className = 'wk-modal open ' + (cls || '');
+  document.getElementById('wkModalBody').scrollTop = 0;
+}
+function wkCloseModal() { var m = document.getElementById('wkModal'); if (m) m.className = 'wk-modal'; wkTipHide(); wkB = null; }
+function wkModalBg(ev) { if (ev.target && ev.target.id === 'wkModal') wkCloseModal(); }
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { var m = document.getElementById('wkModal'); if (m && m.classList.contains('open')) wkCloseModal(); } });
+
+// ---------- exercise builder (add / edit) ----------
+var wkB = null;
+function wkFieldDefs(t) {
+  switch (t) {
+    case 'cardio':   return [{k:'dur',l:'DURATION (min)',ty:'number',ph:'30',st:'1'},{k:'dist',l:'DISTANCE (km)',ty:'number',ph:'5',st:'0.01'},{k:'intens',l:'INTENSITY',ty:'select'},{k:'kcal',l:'CALORIES (opt.)',ty:'number',ph:'300',st:'1'}];
+    case 'flex':     return [{k:'dur',l:'DURATION (min)',ty:'number',ph:'10',st:'1'}];
+    case 'interval': return [{k:'sets',l:'ROUNDS',ty:'number',ph:'8',st:'1'},{k:'work',l:'WORK (sec)',ty:'number',ph:'30',st:'1'},{k:'rest',l:'REST (sec)',ty:'number',ph:'30',st:'1'}];
+    case 'timed':    return [{k:'sets',l:'SETS',ty:'number',ph:'3',st:'1'},{k:'hold',l:'HOLD (sec)',ty:'number',ph:'45',st:'1'},{k:'rest',l:'REST (sec)',ty:'number',ph:'45',st:'1'}];
+    case 'bodyweight': return [{k:'sets',l:'SETS',ty:'number',ph:'3',st:'1'},{k:'reps',l:'REPS',ty:'text',ph:'12 or 8-10'},{k:'weight',l:'ADDED WEIGHT (kg)',ty:'text',ph:'BW'},{k:'rest',l:'REST (sec)',ty:'number',ph:'60',st:'1'}];
+    default:         return [{k:'sets',l:'SETS',ty:'number',ph:'4',st:'1'},{k:'reps',l:'REPS',ty:'text',ph:'8-10'},{k:'weight',l:'WEIGHT (kg)',ty:'text',ph:'60'},{k:'rest',l:'REST (sec)',ty:'number',ph:'90',st:'1'}];
+  }
+}
+function wkTplDefaults(t, p) {   // library params → exercise fields
+  var o = {}; p = p || [];
+  if (t === 'strength' || t === 'bodyweight') { o.sets = p[0]; o.reps = p[1]; o.rest = p[2]; if (t === 'bodyweight') o.weight = 'BW'; }
+  else if (t === 'timed') { o.sets = p[0]; o.hold = p[1]; o.rest = p[2]; }
+  else if (t === 'interval') { o.sets = p[0]; o.work = p[1]; o.rest = p[2]; }
+  else if (t === 'cardio') { o.dur = p[0]; o.intens = p[1] || 'Moderate'; }
+  else if (t === 'flex') { o.dur = p[0]; }
+  return o;
+}
+function wkAllNames() {
+  var seen = {}, out = [];
+  WK_LIB.concat(GLOBAL_WK).forEach(function(t){ var k = t.n.toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(t.n); } });
+  var days = S.dailyData || {};
+  Object.keys(days).forEach(function(d){ (days[d].exercises || []).forEach(function(e){ var k = String(e.name || '').toLowerCase(); if (k && !seen[k]) { seen[k] = 1; out.push(e.name); } }); });
+  return out;
+}
+function wkOpenBuilder(opts) {
+  opts = opts || {};
+  var date = opts.date || wkDate || S.today, e = opts.exercise || null, mode = opts.mode || 'add';
+  var base = e ? JSON.parse(JSON.stringify(e)) : { type:'strength', muscles:[] };
+  if (opts.preset) base = Object.assign(base, opts.preset);
+  wkNorm(base);
+  if (!e && !opts.preset) base.muscles = [];
+  wkB = { mode:mode, date:date, origDate:date, id:mode === 'edit' ? base.id : null, e:base };
+  wkBuilderRender();
+}
+function wkBuilderRender() {
+  var b = wkB, e = b.e, t = e.type, fields = wkFieldDefs(t);
+  var typeBtns = WK_TYPE_ORDER.map(function(k){ var T = WK_TYPES[k]; return '<button type="button" class="wk-typebtn t-' + k + (k === t ? ' on' : '') + '" onclick="wkBType(\'' + k + '\')"><span class="ic">' + T.icon + '</span><span class="lb">' + T.label + '</span></button>'; }).join('');
+  var parts = WK_PARTS.slice(); (e.muscles || []).forEach(function(m){ if (parts.indexOf(m) < 0) parts.push(m); });
+  var chips = parts.map(function(m){ var on = e.muscles.indexOf(m) >= 0; return '<button type="button" class="wk-chip' + (on ? ' on' : '') + '" onclick="wkBMuscle(this,\'' + wkEsc(m).replace(/'/g, '\\\'') + '\')">' + wkEsc(m) + '</button>'; }).join('');
+  var inputs = fields.map(function(f){
+    var v = e[f.k] == null ? '' : e[f.k], id = 'wkf-' + f.k;
+    if (f.ty === 'select') return '<div class="wk-fg"><label for="' + id + '">' + f.l + '</label><select class="inp" id="' + id + '">' + WK_INTENSITY.map(function(o){ return '<option' + (o === (v || 'Moderate') ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select></div>';
+    return '<div class="wk-fg"><label for="' + id + '">' + f.l + '</label><input class="inp" id="' + id + '" type="' + f.ty + '" inputmode="' + (f.ty === 'number' ? 'decimal' : 'text') + '" step="' + (f.st || 'any') + '" min="0" placeholder="' + (f.ph || '') + '" value="' + wkEsc(v) + '"/></div>';
+  }).join('');
+  var body =
+    '<div class="wk-fg"><label>EXERCISE TYPE <span class="wk-hint">' + WK_TYPES[t].hint + '</span></label><div class="wk-types">' + typeBtns + '</div></div>' +
+    '<div class="wk-fg"><label for="wkf-name">EXERCISE NAME</label><input class="inp" id="wkf-name" list="wkNames" type="text" maxlength="80" placeholder="e.g. Bench Press" value="' + wkEsc(e.name || '') + '" onchange="wkNameChanged()" autocomplete="off"/><datalist id="wkNames">' + wkAllNames().map(function(n){ return '<option value="' + wkEsc(n) + '">'; }).join('') + '</datalist><div class="wk-hint" id="wkNameHint"></div></div>' +
+    '<div class="wk-fg"><label>BODY PARTS <span class="wk-hint">select every muscle this exercise works</span></label><div class="wk-chips" id="wkChips">' + chips + '</div></div>' +
+    '<div class="wk-grid">' + inputs + '</div>' +
+    '<div class="wk-fg"><label for="wkf-notes">NOTES (optional)</label><input class="inp" id="wkf-notes" type="text" maxlength="160" placeholder="tempo, machine setting, how it felt…" value="' + wkEsc(e.notes || '') + '"/></div>' +
+    '<div class="wk-fg"><label for="wkf-date">DATE</label><input class="inp" id="wkf-date" type="date" value="' + wkEsc(b.date) + '"/></div>';
+  var foot = '<button class="wk-btn" onclick="wkCloseModal()">CANCEL</button><button class="wk-btn primary" onclick="wkSaveBuilder()">' + (b.mode === 'edit' ? '✓ SAVE CHANGES' : '＋ ADD TO WORKOUT') + '</button>';
+  wkOpenModal(b.mode === 'edit' ? '✎ Edit exercise' : '＋ New exercise', body, foot, 'builder');
+}
+function wkBRead() {   // pull current DOM values into wkB.e
+  var e = wkB.e, g = function(id){ var el = document.getElementById(id); return el ? el.value : undefined; };
+  var n = g('wkf-name'); if (n !== undefined) e.name = n.trim();
+  var no = g('wkf-notes'); if (no !== undefined) e.notes = no.trim();
+  var dt = g('wkf-date'); if (dt) wkB.date = dt;
+  wkFieldDefs(e.type).forEach(function(f){ var v = g('wkf-' + f.k); if (v !== undefined) e[f.k] = v; });
+}
+function wkBType(t) {
+  wkBRead();
+  var e = wkB.e; if (e.type === t) return;
+  var wasAuto = e.muscles.length === 1 && (e.muscles[0] === 'Cardio' || e.muscles[0] === 'Mobility');
+  e.type = t;
+  if (t === 'cardio' && (!e.muscles.length || wasAuto)) e.muscles = ['Cardio'];
+  if (t === 'flex' && (!e.muscles.length || wasAuto)) e.muscles = ['Mobility'];
+  wkBuilderRender();
+}
+function wkBMuscle(btn, m) {
+  var e = wkB.e, i = e.muscles.indexOf(m);
+  if (i >= 0) e.muscles.splice(i, 1); else e.muscles.push(m);
+  btn.classList.toggle('on', i < 0);
+}
+function wkNameChanged() {
+  if (!wkB || wkB.mode !== 'add') return;
+  var nm = (document.getElementById('wkf-name').value || '').trim().toLowerCase(); if (!nm) return;
+  var t = WK_LIB.concat(GLOBAL_WK).find(function(x){ return x.n.toLowerCase() === nm; });
+  var hint = document.getElementById('wkNameHint');
+  if (!t) { if (hint) hint.textContent = ''; return; }
+  wkBRead();
+  var e = wkB.e; e.type = t.t; e.muscles = t.m.slice(); e.tip = t.d; e.name = t.n;
+  var d = wkTplDefaults(t.t, t.p); Object.keys(d).forEach(function(k){ e[k] = d[k]; });
+  wkBuilderRender();
+  var h = document.getElementById('wkNameHint'); if (h) h.textContent = '✦ Template matched — fields filled in. Adjust anything you like.';
+}
+function wkSaveBuilder() {
+  wkBRead();
+  var b = wkB, e = b.e;
+  if (!e.name) { toast('Enter an exercise name'); var n = document.getElementById('wkf-name'); if (n) n.focus(); return; }
+  if (!e.muscles.length) { toast('Select at least one body part'); return; }
+  var num = function(v, d){ var n = parseFloat(v); return isFinite(n) && n >= 0 ? n : d; };
+  var x = { id: b.id || wkId(), name: e.name, type: e.type, muscles: e.muscles.slice(), muscle: e.muscles[0], notes: e.notes || '', done: !!e.done, setsDone: e.setsDone || 0 };
+  if (e.tip) x.tip = e.tip;
+  if (e.doneAt) x.doneAt = e.doneAt;
+  switch (e.type) {
+    case 'cardio': x.dur = num(e.dur, 0); x.dist = num(e.dist, 0); x.intens = e.intens || 'Moderate'; x.kcal = num(e.kcal, 0); x.sets = 1; break;
+    case 'flex': x.dur = num(e.dur, 0); x.sets = 1; break;
+    case 'interval': x.sets = Math.max(1, Math.round(num(e.sets, 8))); x.work = num(e.work, 30); x.rest = num(e.rest, 30); break;
+    case 'timed': x.sets = Math.max(1, Math.round(num(e.sets, 3))); x.hold = num(e.hold, 30); x.rest = num(e.rest, 45); break;
+    case 'bodyweight': x.sets = Math.max(1, Math.round(num(e.sets, 3))); x.reps = String(e.reps || '10'); x.weight = String(e.weight || 'BW'); x.rest = num(e.rest, 60); break;
+    default: x.sets = Math.max(1, Math.round(num(e.sets, 3))); x.reps = String(e.reps || '10'); x.weight = String(e.weight == null ? '' : e.weight); x.rest = num(e.rest, 60);
+  }
+  if (wkHasSets(x.type)) { x.setsDone = Math.min(x.setsDone, x.sets); if (x.done) x.setsDone = x.sets; }
+  var date = b.date || b.origDate;
+  if (b.mode === 'edit') {
+    var f = wkFind(b.origDate, b.id);
+    if (f && date === b.origDate) f.list[f.idx] = x;
+    else { if (f) f.list.splice(f.idx, 1); wkEx(date).push(x); }
+  } else wkEx(date).push(x);        // new entries always go to the END of the list
+  save(); wkCloseModal(); wkRefreshAll();
+  if (wkView === 'history') wkRenderHistory();
+  toast(b.mode === 'edit' ? 'Exercise updated' : 'Exercise added');
+  if (b.mode !== 'edit' && date !== wkDate) toast('Added to ' + wkDateFmt(date, { day:'numeric', month:'short' }));
+}
+function wkEdit(date, id) { var f = wkFind(date, id); if (!f) return; wkOpenBuilder({ mode:'edit', date:date, exercise:f.e }); }
+
+// ---------- templates library ----------
+var wkTplState = { tab:'lib', q:'', part:'All', added:{} };
+function wkOpenTemplates(tab) {
+  wkTplState.tab = tab || 'lib';
+  wkB = null;
+  var m = document.getElementById('wkModal');
+  var tabs = '<div class="wk-mtabs"><button id="wkmt-lib" onclick="wkTplTab(\'lib\')">✦ LIBRARY</button><button id="wkmt-routines" onclick="wkTplTab(\'routines\')">⟲ ROUTINES</button></div>';
+  wkOpenModal('Exercise templates', tabs + '<div id="wkTplBody"></div>', '', 'tpl');
+  wkTplTab(wkTplState.tab);
+}
+function wkTplTab(tab) {
+  wkTplState.tab = tab;
+  ['lib','routines'].forEach(function(k){ var b = document.getElementById('wkmt-' + k); if (b) b.classList.toggle('on', k === tab); });
+  var body = document.getElementById('wkTplBody'); if (!body) return;
+  if (tab === 'lib') {
+    var chips = ['All'].concat(WK_PARTS).map(function(p){ return '<button class="wk-chip' + (wkTplState.part === p ? ' on' : '') + '" onclick="wkTplPart(\'' + p + '\')">' + p + '</button>'; }).join('');
+    body.innerHTML = '<div class="wk-tpl-bar"><input class="inp" id="wkTplQ" type="search" placeholder="Search 140+ exercises…" value="' + wkEsc(wkTplState.q) + '" oninput="wkTplState.q=this.value;wkTplRender()"/></div><div class="wk-chips scroll" id="wkTplChips">' + chips + '</div><div class="wk-tpl-count" id="wkTplCount"></div><div class="wk-tpl-grid" id="wkTplRes"></div>';
+    wkTplRender();
+  } else wkRoutinesRender();
+}
+function wkTplPart(p) {
+  wkTplState.part = p;
+  var c = document.getElementById('wkTplChips'); if (c) Array.prototype.forEach.call(c.children, function(b){ b.classList.toggle('on', b.textContent === p); });
+  wkTplRender();
+}
+function wkTplAll() { return WK_LIB.concat(GLOBAL_WK.map(function(g){ return { key:'g' + g.id, g:g.g, n:g.n, t:g.t, m:g.m || [], p:g.p || [], d:g.d || '', main:true }; })); }
+function wkTplRender() {
+  var res = document.getElementById('wkTplRes'); if (!res) return;
+  var q = wkTplState.q.trim().toLowerCase(), part = wkTplState.part;
+  var items = wkTplAll().filter(function(t){
+    if (part !== 'All' && t.g !== part && t.m.indexOf(part) < 0) return false;
+    if (q && (t.n.toLowerCase().indexOf(q) < 0 && t.m.join(' ').toLowerCase().indexOf(q) < 0 && t.g.toLowerCase().indexOf(q) < 0)) return false;
+    return true;
+  });
+  // exercises of the chosen group first, then others that also train it
+  if (part !== 'All') items.sort(function(a, b){ return (b.g === part) - (a.g === part); });
+  var c = document.getElementById('wkTplCount'); if (c) c.textContent = items.length + ' exercise' + (items.length === 1 ? '' : 's') + ' · hover ⓘ or a card for the form guide';
+  if (!items.length) { res.innerHTML = '<div class="wk-none">No exercise matches. Use <b>＋ ADD EXERCISE</b> to create your own.</div>'; return; }
+  res.innerHTML = items.map(function(t){
+    var sum = wkSummary(Object.assign({ type:t.t }, wkTplDefaults(t.t, t.p)));
+    var n = wkTplState.added[t.key] || 0;
+    return '<div class="wk-tpl t-' + t.t + '" data-tip="' + wkEsc(t.d) + '"><div class="wk-tpl-top"><b>' + wkEsc(t.n) + '</b>' + (t.main ? '<span class="wk-main">MAIN</span>' : '') + '<span class="wk-tip" tabindex="0" data-tip="' + wkEsc(t.d) + '" aria-label="Form guide">ⓘ</span></div>' +
+      '<div class="wk-tpl-tags"><span class="wk-type t-' + t.t + '">' + WK_TYPES[t.t].icon + ' ' + WK_TYPES[t.t].label.toUpperCase() + '</span>' + t.m.map(function(m){ return '<span class="wk-mus">' + wkEsc(m) + '</span>'; }).join('') + '</div>' +
+      '<div class="wk-tpl-sum">' + wkEsc(sum) + '</div>' +
+      '<div class="wk-tpl-act"><button class="wk-btn sm primary' + (n ? ' ok' : '') + '" onclick="wkTplAdd(\'' + t.key + '\',this)">' + (n ? '✓ ADDED' + (n > 1 ? ' ×' + n : '') : '＋ ADD') + '</button><button class="wk-btn sm" onclick="wkTplEdit(\'' + t.key + '\')" title="Customise before adding">✎ CUSTOMISE</button></div></div>';
+  }).join('');
+}
+function wkTplFind(key) { return wkTplAll().find(function(t){ return t.key === key; }); }
+function wkTplToEx(t) {
+  var d = wkTplDefaults(t.t, t.p);
+  return Object.assign({ id: wkId(), name: t.n, type: t.t, muscles: t.m.slice(), muscle: t.m[0], tip: t.d, notes: '', done: false, setsDone: 0 }, d, { sets: d.sets != null ? d.sets : 1 });
+}
+function wkTplAdd(key, btn) {
+  var t = wkTplFind(key); if (!t) return;
+  wkEx(wkDate).push(wkTplToEx(t)); save();
+  wkTplState.added[key] = (wkTplState.added[key] || 0) + 1;
+  if (btn) { btn.classList.add('ok'); btn.textContent = '✓ ADDED' + (wkTplState.added[key] > 1 ? ' ×' + wkTplState.added[key] : ''); }
+  wkRefreshAll(); toast('Added "' + t.n + '"');
+}
+function wkTplEdit(key) { var t = wkTplFind(key); if (!t) return; wkTplState.added = {}; wkOpenBuilder({ mode:'add', date:wkDate, preset: wkTplToEx(t) }); }
+
+// ---------- routines (saved workouts) ----------
+function wkRoutines() { if (!Array.isArray(S.wkRoutines)) S.wkRoutines = []; return S.wkRoutines; }
+function wkRoutinesRender() {
+  var body = document.getElementById('wkTplBody'); if (!body) return;
+  var cur = wkEx(wkDate), rs = wkRoutines();
+  var days = Object.keys(S.dailyData || {}).filter(function(d){ return d !== wkDate && (S.dailyData[d].exercises || []).length; }).sort().reverse().slice(0, 8);
+  body.innerHTML =
+    '<div class="wk-rt-save"><div class="wk-rt-h">SAVE THIS SESSION AS A ROUTINE</div><div class="wk-rt-row"><input class="inp" id="wkRtName" type="text" maxlength="40" placeholder="e.g. Push Day A" ' + (cur.length ? '' : 'disabled') + '/><button class="wk-btn primary" onclick="wkRoutineSave()" ' + (cur.length ? '' : 'disabled') + '>SAVE (' + cur.length + ')</button></div>' + (cur.length ? '' : '<div class="wk-hint">Add exercises to the selected day first.</div>') + '</div>' +
+    '<div class="wk-rt-h">MY ROUTINES</div>' +
+    (rs.length ? rs.map(function(r, i){
+      var parts = {}; r.items.forEach(function(e){ (e.muscles || []).forEach(function(m){ parts[m] = 1; }); });
+      return '<div class="wk-rt"><div class="wk-rt-i"><b>' + wkEsc(r.name) + '</b><span>' + r.items.length + ' exercises · ' + Object.keys(parts).slice(0, 5).join(', ') + '</span></div><div class="wk-rt-b"><button class="wk-btn sm primary" onclick="wkRoutineApply(' + i + ')">＋ ADD TO DAY</button><button class="wk-btn sm" onclick="wkRoutineDel(' + i + ')" aria-label="Delete routine">🗑</button></div></div>';
+    }).join('') : '<div class="wk-none">No routines yet. Build a session, then save it here to reuse any day.</div>') +
+    '<div class="wk-rt-h" style="margin-top:16px">REPEAT A PAST SESSION</div>' +
+    (days.length ? days.map(function(d){
+      var l = S.dailyData[d].exercises;
+      return '<div class="wk-rt"><div class="wk-rt-i"><b>' + wkDateFmt(d, { weekday:'short', day:'numeric', month:'short' }) + '</b><span>' + l.length + ' exercises · ' + wkEsc(l.slice(0, 3).map(function(e){ return e.name; }).join(', ')) + (l.length > 3 ? '…' : '') + '</span></div><div class="wk-rt-b"><button class="wk-btn sm" onclick="wkCopyDay(\'' + d + '\')">⧉ COPY</button></div></div>';
+    }).join('') : '<div class="wk-none">No earlier sessions to copy yet.</div>');
+}
+function wkCleanItem(e) {
+  var c = JSON.parse(JSON.stringify(e)); delete c.id; delete c.done; delete c.setsDone; delete c.doneAt; return c;
+}
+function wkRoutineSave() {
+  var nm = (document.getElementById('wkRtName').value || '').trim(); if (!nm) { toast('Name your routine'); return; }
+  var items = wkEx(wkDate).map(wkCleanItem); if (!items.length) return;
+  var rs = wkRoutines(), ix = rs.findIndex(function(r){ return r.name.toLowerCase() === nm.toLowerCase(); });
+  var r = { id: ix >= 0 ? rs[ix].id : wkId(), name: nm, items: items, savedAt: new Date().toISOString() };
+  if (ix >= 0) rs[ix] = r; else rs.push(r);
+  save(); wkRoutinesRender(); toast(ix >= 0 ? 'Routine updated' : 'Routine saved');
+}
+function wkInsertItems(items, date) {
+  var l = wkEx(date); items.forEach(function(it){ var c = JSON.parse(JSON.stringify(it)); c.id = wkId(); c.done = false; c.setsDone = 0; delete c.doneAt; l.push(wkNorm(c)); });
+}
+function wkRoutineApply(i) { var r = wkRoutines()[i]; if (!r) return; wkInsertItems(r.items, wkDate); save(); wkRefreshAll(); wkRoutinesRender(); toast('Added ' + r.items.length + ' exercises'); }
+function wkRoutineDel(i) {
+  var rs = wkRoutines(), r = rs[i]; if (!r) return;
+  rs.splice(i, 1); save(); wkRoutinesRender();
+  wkSnack('Deleted routine "' + r.name + '"', function(){ wkRoutines().splice(Math.min(i, wkRoutines().length), 0, r); save(); if (document.getElementById('wkTplBody')) wkRoutinesRender(); });
+}
+function wkCopyDay(d) { var l = wkEx(d); wkInsertItems(l.map(wkCleanItem), wkDate); save(); wkRefreshAll(); wkRoutinesRender(); toast('Copied ' + l.length + ' exercises'); }
+
+// ---------- hover / tap guide tooltip ----------
+var _wkTipEl = null;
+function wkTipShow(el) {
+  var t = el.getAttribute('data-tip'); if (!t) return;
+  var box = document.getElementById('wkTipBox'); if (!box) return;
+  box.textContent = t; box.classList.add('show'); _wkTipEl = el;
+  var r = el.getBoundingClientRect(), bw = box.offsetWidth, bh = box.offsetHeight;
+  var left = Math.min(Math.max(r.left + r.width / 2 - bw / 2, 8), window.innerWidth - bw - 8);
+  var top = r.top - bh - 10; if (top < 8) top = r.bottom + 10;
+  box.style.left = left + 'px'; box.style.top = top + 'px';
+}
+function wkTipHide() { var box = document.getElementById('wkTipBox'); if (box) box.classList.remove('show'); _wkTipEl = null; }
+document.addEventListener('mouseover', function(e){ if (e.target.closest) { var el = e.target.closest('[data-tip]'); if (el && !(e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents)) wkTipShow(el); } });
+document.addEventListener('mouseout', function(e){ if (e.target.closest) { var el = e.target.closest('[data-tip]'); if (el && (!e.relatedTarget || !el.contains(e.relatedTarget))) wkTipHide(); } });
+document.addEventListener('focusin', function(e){ if (e.target.classList && e.target.classList.contains('wk-tip')) wkTipShow(e.target); });
+document.addEventListener('focusout', function(e){ if (e.target.classList && e.target.classList.contains('wk-tip')) wkTipHide(); });
+document.addEventListener('click', function(e){   // touch: tap ⓘ to toggle, tap anywhere else to close
+  var ic = e.target.closest && e.target.closest('.wk-tip');
+  if (ic) { e.stopPropagation(); if (_wkTipEl === ic) wkTipHide(); else wkTipShow(ic); }
+  else if (_wkTipEl) wkTipHide();
+}, true);
+window.addEventListener('scroll', function(){ if (_wkTipEl) wkTipHide(); }, { passive:true, capture:true });
+
+// ---------- rest timer ----------
+var wkRest = { t:null, end:0, total:0, name:'' };
+function wkRestStart(sec, name) {
+  wkRestStop(); wkRest.total = sec; wkRest.end = Date.now() + sec * 1000; wkRest.name = name || '';
+  var el = document.getElementById('wkRest'); if (el) el.classList.add('show');
+  wkRest.t = setInterval(wkRestTick, 250); wkRestTick();
+}
+function wkRestStop() { clearInterval(wkRest.t); wkRest.t = null; var el = document.getElementById('wkRest'); if (el) el.classList.remove('show'); }
+function wkRestAdd(s) { if (wkRest.t) { wkRest.end += s * 1000; wkRest.total += s; wkRestTick(); } }
+function wkRestTick() {
+  var left = Math.max(0, Math.ceil((wkRest.end - Date.now()) / 1000));
+  var tm = document.getElementById('wkRestTime'), nm = document.getElementById('wkRestName'), fl = document.getElementById('wkRestFill');
+  if (tm) tm.textContent = Math.floor(left / 60) + ':' + (left % 60 < 10 ? '0' : '') + (left % 60);
+  if (nm) nm.textContent = 'REST · ' + wkRest.name;
+  if (fl) fl.style.width = (100 - left / Math.max(1, wkRest.total) * 100) + '%';
+  if (left <= 0) {
+    wkRestStop(); toast('⏱ Rest over — next set!');
+    try { if (navigator.vibrate) navigator.vibrate([180, 80, 180]); } catch(e) {}
+    try { var C = window.AudioContext || window.webkitAudioContext, c = new C(), o = c.createOscillator(), g = c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value = 880; g.gain.value = .12; o.start(); o.stop(c.currentTime + .22); } catch(e) {}
+  }
+}
+
+// ---------- shared analytics helpers ----------
+var wkRange = '30', wkMetric = 'vol', wkProgEx = '';
+try { var _r = localStorage.getItem('fitos_wk_range'); if (['7','30','90','365','all'].indexOf(_r) >= 0) wkRange = _r; } catch(e) {}
+function wkSetRange(r) { wkRange = r; try { localStorage.setItem('fitos_wk_range', r); } catch(e) {} wkRenderProgress(); }
+function wkSetMetric(m) { wkMetric = m; wkRenderProgress(); }
+function wkBounds(r) {
+  var end = wkDayNum(today());
+  if (r === 'all') { var ks = Object.keys(S.dailyData || {}).map(wkDayNum).filter(function(n){ return !isNaN(n); }); return { start: ks.length ? Math.min.apply(null, ks) : end, end: end }; }
+  var n = parseInt(r) || 30; return { start: end - n + 1, end: end };
+}
+// per-day aggregate for every day with entries inside [start,end]
+function wkAgg(start, end) {
+  var out = { days:{}, t:{ sessions:0, ex:0, sets:0, vol:0, cardio:0, km:0, flex:0 }, muscle:{}, types:{} };
+  Object.keys(S.dailyData || {}).forEach(function(d){
+    var n = wkDayNum(d); if (isNaN(n) || n < start || n > end) return;
+    var list = wkEx(d); if (!list.length) return;
+    var a = { date:d, n:n, total:list.length, done:0, sets:0, vol:0, cardio:0, km:0 };
+    list.forEach(function(e){
+      var s = wkHasSets(e.type) ? wkSetsEff(e) : 0;
+      a.sets += s; a.vol += wkVol(e);
+      if (e.done) {
+        a.done++; out.types[e.type] = (out.types[e.type] || 0) + 1;
+        if (e.type === 'cardio') { a.cardio += wkNum(e.dur); a.km += wkNum(e.dist); }
+        if (e.type === 'flex') out.t.flex += wkNum(e.dur);
+        var credit = s > 0 ? s : 1; e.muscles.forEach(function(m){ out.muscle[m] = (out.muscle[m] || 0) + credit; });
+      }
+    });
+    out.days[d] = a;
+    if (a.done) { out.t.sessions++; out.t.ex += a.done; out.t.sets += a.sets; out.t.vol += a.vol; out.t.cardio += a.cardio; out.t.km += a.km; }
+  });
+  return out;
+}
+function wkStreak() {
+  var n = wkDayNum(today()), c = 0, days = S.dailyData || {};
+  var has = function(x){ var d = days[wkDayStr(x)]; return !!(d && (d.exercises || []).some(function(e){ return e.done; })); };
+  if (!has(n)) n--;                       // today not logged yet: streak still alive until midnight
+  while (has(n)) { c++; n--; }
+  return c;
+}
+function wkDelta(cur, prev) {
+  if (!isFinite(prev) || prev <= 0) return cur > 0 ? '<i class="up">NEW</i>' : '<i>—</i>';
+  var p = Math.round((cur - prev) / prev * 100);
+  return p === 0 ? '<i>＝ same</i>' : '<i class="' + (p > 0 ? 'up' : 'dn') + '">' + (p > 0 ? '▲ ' : '▼ ') + Math.abs(p) + '%</i>';
+}
+function wkHM(min) { min = Math.round(min); return min >= 60 ? Math.floor(min / 60) + 'h ' + (min % 60) + 'm' : min + 'm'; }
+function wkMetricVal(a, m) { return m === 'vol' ? a.vol : m === 'sets' ? a.sets : m === 'ex' ? a.done : a.cardio; }
+var WK_METRICS = { vol:{ l:'VOLUME', u:'kg' }, sets:{ l:'SETS', u:'sets' }, ex:{ l:'EXERCISES', u:'done' }, cardio:{ l:'CARDIO', u:'min' } };
+
+// ---------- SVG charts ----------
+function wkBarSVG(items, unit, id) {
+  var W = 640, H = 210, pl = 44, pr = 8, pt = 16, pb = 26, cw = W - pl - pr, ch = H - pt - pb;
+  var max = Math.max.apply(null, items.map(function(i){ return i.v; }).concat([1]));
+  var step = Math.pow(10, Math.floor(Math.log10(max))); var nice = Math.ceil(max / step * 2) / 2 * step; if (nice < max) nice = max; max = nice;
+  var g = '', i;
+  for (i = 0; i <= 3; i++) { var y = pt + ch - ch * i / 3, v = max * i / 3; g += '<line class="wks-grid" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y + '" y2="' + y + '"/><text class="wks-ax" x="' + (pl - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + wkFmt(v) + '</text>'; }
+  var bw = cw / items.length, bars = '', labs = '', every = Math.ceil(items.length / 7);
+  items.forEach(function(it, k) {
+    var h = it.v > 0 ? Math.max(2, ch * it.v / max) : 0, x = pl + k * bw + bw * .16, w = bw * .68;
+    bars += '<g class="wks-b"><rect x="' + (pl + k * bw) + '" y="' + pt + '" width="' + bw + '" height="' + ch + '" fill="transparent"/><rect class="wks-bar" x="' + x + '" y="' + (pt + ch - h) + '" width="' + w + '" height="' + h + '" rx="' + Math.min(3, w / 2) + '" fill="url(#' + id + ')"/><title>' + wkEsc(it.tip) + '</title></g>';
+    if (k % every === 0) labs += '<text class="wks-ax" x="' + (pl + k * bw + bw / 2) + '" y="' + (H - 8) + '" text-anchor="middle">' + wkEsc(it.label) + '</text>';
+  });
+  return '<svg class="wks" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Trend chart"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--g)"/><stop offset="1" stop-color="var(--c)" stop-opacity=".55"/></linearGradient></defs>' + g + bars + labs + '</svg>';
+}
+function wkLineSVG(pts, unit, id) {
+  var W = 640, H = 210, pl = 44, pr = 14, pt = 16, pb = 26, cw = W - pl - pr, ch = H - pt - pb;
+  if (!pts.length) return '';
+  var ys = pts.map(function(p){ return p.y; }), mn = Math.min.apply(null, ys), mx = Math.max.apply(null, ys);
+  if (mx === mn) { mx += 1; mn = Math.max(0, mn - 1); }
+  var pad = (mx - mn) * .15; mn = Math.max(0, mn - pad); mx += pad;
+  var x0 = pts[0].x, x1 = pts[pts.length - 1].x; if (x1 === x0) { x0 -= 3; x1 += 3; }
+  var X = function(v){ return pl + (v - x0) / (x1 - x0) * cw; }, Y = function(v){ return pt + ch - (v - mn) / (mx - mn) * ch; };
+  var g = '', i;
+  for (i = 0; i <= 3; i++) { var y = pt + ch - ch * i / 3, v = mn + (mx - mn) * i / 3; g += '<line class="wks-grid" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y + '" y2="' + y + '"/><text class="wks-ax" x="' + (pl - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + (Math.round(v * 10) / 10) + '</text>'; }
+  var path = pts.map(function(p, k){ return (k ? 'L' : 'M') + X(p.x).toFixed(1) + ' ' + Y(p.y).toFixed(1); }).join(' ');
+  var area = path + ' L' + X(pts[pts.length - 1].x).toFixed(1) + ' ' + (pt + ch) + ' L' + X(pts[0].x).toFixed(1) + ' ' + (pt + ch) + ' Z';
+  var dots = pts.map(function(p){ return '<g class="wks-d"><circle cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="12" fill="transparent"/><circle class="wks-dot" cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="3.6"/><title>' + wkEsc(p.tip) + '</title></g>'; }).join('');
+  var labs = '', cnt = Math.min(6, pts.length);
+  for (i = 0; i < cnt; i++) { var pp = pts[cnt === 1 ? 0 : Math.round(i * (pts.length - 1) / (cnt - 1))]; labs += '<text class="wks-ax" x="' + X(pp.x).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + wkEsc(pp.label) + '</text>'; }
+  return '<svg class="wks" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Progress chart"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--g)" stop-opacity=".35"/><stop offset="1" stop-color="var(--g)" stop-opacity="0"/></linearGradient></defs>' + g + '<path d="' + area + '" fill="url(#' + id + ')"/><path class="wks-line" d="' + path + '"/>' + dots + labs + '</svg>';
+}
+function wkHeatSVG() {
+  var weeks = 18, end = wkDayNum(today()), dow = (new Date(end * 864e5).getUTCDay() + 6) % 7;   // Monday = 0
+  var start = end - dow - (weeks - 1) * 7;
+  var days = S.dailyData || {}, cell = 14, gap = 3, left = 26, top = 16, W = left + weeks * (cell + gap), H = top + 7 * (cell + gap);
+  var out = '', months = '', lastM = -1;
+  ['M','','W','','F','','S'].forEach(function(l, r){ if (l) out += '<text class="wks-ax" x="0" y="' + (top + r * (cell + gap) + 11) + '">' + l + '</text>'; });
+  for (var w = 0; w < weeks; w++) for (var r = 0; r < 7; r++) {
+    var n = start + w * 7 + r; if (n > end) continue;
+    var key = wkDayStr(n), d = days[key], done = d ? (d.exercises || []).filter(function(e){ return e.done; }).length : 0;
+    var lv = done === 0 ? 0 : done <= 2 ? 1 : done <= 4 ? 2 : done <= 6 ? 3 : 4;
+    var x = left + w * (cell + gap), y = top + r * (cell + gap);
+    out += '<rect class="wk-hm l' + lv + '" x="' + x + '" y="' + y + '" width="' + cell + '" height="' + cell + '" rx="3" onclick="wkHeatClick(\'' + key + '\')"><title>' + wkDateFmt(key, { weekday:'short', day:'numeric', month:'short' }) + ' — ' + (done ? done + ' exercise' + (done > 1 ? 's' : '') + ' done' : 'rest day') + '</title></rect>';
+    if (r === 0) { var mo = new Date(n * 864e5).getUTCMonth(); if (mo !== lastM) { lastM = mo; months += '<text class="wks-ax" x="' + x + '" y="10">' + new Date(n * 864e5).toLocaleDateString('en-GB', { month:'short', timeZone:'UTC' }) + '</text>'; } }
+  }
+  return '<svg class="wks heat" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Activity heatmap">' + months + out + '</svg>';
+}
+function wkHeatClick(d) { dashDateGoto(d); wkSetView('session'); }
+
+// ---------- PROGRESS view ----------
+function wkRenderProgress() {
+  var host = document.getElementById('wkProgBody'); if (!host) return;
+  ['7','30','90','365','all'].forEach(function(r){ var b = document.getElementById('wkr-' + r); if (b) b.classList.toggle('on', r === wkRange); });
+  var B = wkBounds(wkRange), A = wkAgg(B.start, B.end), T = A.t, len = B.end - B.start + 1;
+  var P = wkRange === 'all' ? null : wkAgg(B.start - len, B.start - 1).t;
+  var empty = !Object.keys(A.days).length;
+  var dl = function(k){ return P ? wkDelta(T[k], P[k]) : '<i>all time</i>'; };
+  var kpi = function(ic, l, v, sub, cls){ return '<div class="wk-kpi ' + (cls || '') + '"><div class="k-ic">' + ic + '</div><div class="k-l">' + l + '</div><div class="k-v">' + v + '</div><div class="k-s">' + sub + '</div></div>'; };
+  var h = '<div class="wk-kpis">' +
+    kpi('◉', 'SESSIONS', T.sessions, dl('sessions')) +
+    kpi('✓', 'EXERCISES DONE', T.ex, dl('ex')) +
+    kpi('⛓', 'VOLUME', wkFmt(T.vol) + '<small> kg</small>', dl('vol'), 'hot') +
+    kpi('▦', 'SETS', T.sets, dl('sets')) +
+    kpi('♥', 'CARDIO', wkHM(T.cardio) + (T.km ? '<small> · ' + (Math.round(T.km * 10) / 10) + ' km</small>' : ''), dl('cardio')) +
+    kpi('🔥', 'STREAK', wkStreak() + '<small> days</small>', '<i>in a row</i>') + '</div>';
+  // consistency heatmap
+  h += '<div class="wk-panel"><div class="wk-ph"><span>CONSISTENCY</span><em>last 18 weeks · tap a day to open it</em></div>' + wkHeatSVG() + '<div class="wk-legend"><span>less</span><i class="wk-hm l0"></i><i class="wk-hm l1"></i><i class="wk-hm l2"></i><i class="wk-hm l3"></i><i class="wk-hm l4"></i><span>more</span></div></div>';
+  if (empty) { host.innerHTML = h + '<div class="wk-empty"><div class="wk-empty-ic">📈</div><div class="wk-empty-t">No workouts in this period yet</div><div class="wk-empty-s">Log and tick off exercises in the Session tab and your progress will appear here.</div></div>'; return; }
+  // trend
+  var span = B.end - B.start + 1, mode = span <= 45 ? 'day' : span <= 190 ? 'week' : 'month', buckets = [], map = {};
+  var bucketKey = function(n){ if (mode === 'day') return n; if (mode === 'week') return n - ((new Date(n * 864e5).getUTCDay() + 6) % 7); var d = new Date(n * 864e5); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) / 864e5; };
+  var addBucket = function(k){ if (!map[k]) { map[k] = { k:k, v:0 }; buckets.push(map[k]); } return map[k]; };
+  if (mode === 'day') for (var n = B.start; n <= B.end; n++) addBucket(n);
+  else for (var n2 = B.start; n2 <= B.end; n2++) addBucket(bucketKey(n2));
+  Object.keys(A.days).forEach(function(d){ var a = A.days[d]; addBucket(bucketKey(a.n)).v += wkMetricVal(a, wkMetric); });
+  buckets.sort(function(a, b){ return a.k - b.k; });
+  var M = WK_METRICS[wkMetric];
+  var items = buckets.map(function(b){
+    var lab = mode === 'month' ? wkDateFmt(wkDayStr(b.k), { month:'short', year:'2-digit' }) : wkDateFmt(wkDayStr(b.k), { day:'numeric', month:'short' });
+    return { v:b.v, label:lab, tip:(mode === 'week' ? 'Week of ' : '') + lab + ' — ' + wkFmt(b.v) + ' ' + M.u };
+  });
+  var chips = Object.keys(WK_METRICS).map(function(k){ return '<button class="wk-chip' + (k === wkMetric ? ' on' : '') + '" onclick="wkSetMetric(\'' + k + '\')">' + WK_METRICS[k].l + '</button>'; }).join('');
+  h += '<div class="wk-panel"><div class="wk-ph"><span>TREND</span><em>per ' + mode + '</em></div><div class="wk-chips">' + chips + '</div>' + wkBarSVG(items, M.u, 'wkgb') + '</div>';
+  // muscle focus + type split
+  var mus = Object.keys(A.muscle).map(function(k){ return { k:k, v:A.muscle[k] }; }).sort(function(a, b){ return b.v - a.v; }).slice(0, 10), mmax = mus.length ? mus[0].v : 1;
+  var mh = mus.map(function(m){ return '<div class="wk-bar"><span class="n">' + wkEsc(m.k) + '</span><span class="t"><span class="f" style="width:' + Math.max(4, m.v / mmax * 100) + '%"></span></span><span class="v">' + m.v + '</span></div>'; }).join('');
+  var tot = 0; Object.keys(A.types).forEach(function(k){ tot += A.types[k]; });
+  var seg = WK_TYPE_ORDER.filter(function(k){ return A.types[k]; }).map(function(k){ return '<span class="seg t-' + k + '" style="flex:' + A.types[k] + '" title="' + WK_TYPES[k].label + ': ' + A.types[k] + '"></span>'; }).join('');
+  var leg = WK_TYPE_ORDER.filter(function(k){ return A.types[k]; }).map(function(k){ return '<span class="lg t-' + k + '"><i></i>' + WK_TYPES[k].label + ' <b>' + A.types[k] + '</b> <em>' + Math.round(A.types[k] / tot * 100) + '%</em></span>'; }).join('');
+  h += '<div class="wk-two"><div class="wk-panel"><div class="wk-ph"><span>BODY-PART FOCUS</span><em>sets per muscle</em></div>' + (mh || '<div class="wk-none">—</div>') + '</div>' +
+       '<div class="wk-panel"><div class="wk-ph"><span>TRAINING MIX</span><em>exercises by type</em></div><div class="wk-split">' + seg + '</div><div class="wk-leg">' + leg + '</div>' +
+       '<div class="wk-mini"><div><b>' + (T.sessions ? Math.round(T.ex / T.sessions * 10) / 10 : 0) + '</b><span>exercises / session</span></div><div><b>' + (T.sessions ? wkFmt(T.vol / T.sessions) : 0) + '</b><span>kg volume / session</span></div><div><b>' + (T.flex ? wkHM(T.flex) : '0m') + '</b><span>stretching</span></div></div></div></div>';
+  // personal records + progression
+  var prs = wkPRs(), names = wkLoggedNames();
+  if (!wkProgEx || names.indexOf(wkProgEx) < 0) wkProgEx = prs.length ? prs[0].name : (names[0] || '');
+  var prh = prs.slice(0, 8).map(function(p, i){ return '<div class="wk-pr" onclick="wkPickEx(\'' + wkEsc(p.name).replace(/'/g, '\\\'') + '\')" title="Show progress"><span class="rk">' + (i + 1) + '</span><span class="nm">' + wkEsc(p.name) + '<em>' + wkDateFmt(p.date, { day:'numeric', month:'short', year:'2-digit' }) + '</em></span><span class="bs">' + p.w + ' kg × ' + (Math.round(p.r * 10) / 10) + '</span><span class="e1">' + Math.round(p.est) + '<small> kg e1RM</small></span></div>'; }).join('');
+  h += '<div class="wk-two"><div class="wk-panel"><div class="wk-ph"><span>PERSONAL RECORDS</span><em>all time · est. 1-rep max</em></div>' + (prh || '<div class="wk-none">Log weighted exercises to see your records.</div>') + '</div>' +
+       '<div class="wk-panel"><div class="wk-ph"><span>EXERCISE PROGRESS</span><em id="wkPEu"></em></div><select class="inp" id="wkPE" onchange="wkPickEx(this.value)">' + names.map(function(n){ return '<option' + (n === wkProgEx ? ' selected' : '') + ' value="' + wkEsc(n) + '">' + wkEsc(n) + '</option>'; }).join('') + '</select><div id="wkPEchart"></div></div></div>';
+  host.innerHTML = h;
+  wkDrawProgEx();
+}
+function wkLoggedNames() {
+  var c = {}; Object.keys(S.dailyData || {}).forEach(function(d){ wkEx(d).forEach(function(e){ if (e.done) c[e.name] = (c[e.name] || 0) + 1; }); });
+  return Object.keys(c).sort(function(a, b){ return c[b] - c[a] || a.localeCompare(b); });
+}
+function wkPRs() {
+  var best = {};
+  Object.keys(S.dailyData || {}).forEach(function(d){ wkEx(d).forEach(function(e){
+    if (!e.done || (e.type !== 'strength' && e.type !== 'bodyweight')) return;
+    var w = wkNum(e.weight); if (w <= 0) return; var r = wkRepsAvg(e.reps) || 1, est = w * (1 + r / 30), k = e.name.toLowerCase();
+    if (!best[k] || est > best[k].est) best[k] = { name:e.name, w:w, r:r, est:est, date:d };
+  }); });
+  return Object.keys(best).map(function(k){ return best[k]; }).sort(function(a, b){ return b.est - a.est; });
+}
+function wkPickEx(n) { wkProgEx = n; wkRenderProgress(); }
+function wkDrawProgEx() {
+  var host = document.getElementById('wkPEchart'); if (!host || !wkProgEx) { if (host) host.innerHTML = '<div class="wk-none">No data yet.</div>'; return; }
+  var B = wkBounds(wkRange), byDate = {}, unit = '', kind = '';
+  Object.keys(S.dailyData || {}).forEach(function(d){
+    var n = wkDayNum(d); if (isNaN(n) || n < B.start || n > B.end) return;
+    wkEx(d).forEach(function(e){
+      if (!e.done || e.name !== wkProgEx) return;
+      var v = 0;
+      switch (e.type) {
+        case 'strength': v = wkNum(e.weight) > 0 ? wkNum(e.weight) : wkRepsAvg(e.reps); unit = wkNum(e.weight) > 0 ? 'kg' : 'reps'; break;
+        case 'bodyweight': v = wkNum(e.weight) > 0 ? wkNum(e.weight) : wkRepsAvg(e.reps); unit = wkNum(e.weight) > 0 ? 'kg added' : 'reps'; break;
+        case 'cardio': v = wkNum(e.dist) > 0 ? wkNum(e.dist) : wkNum(e.dur); unit = wkNum(e.dist) > 0 ? 'km' : 'min'; break;
+        case 'timed': v = wkNum(e.hold); unit = 'sec hold'; break;
+        case 'interval': v = wkNum(e.sets); unit = 'rounds'; break;
+        default: v = wkNum(e.dur); unit = 'min';
+      }
+      if (!byDate[d] || v > byDate[d]) byDate[d] = v;
+    });
+  });
+  var pts = Object.keys(byDate).sort().map(function(d){ return { x:wkDayNum(d), y:byDate[d], label:wkDateFmt(d, { day:'numeric', month:'short' }), tip:wkDateFmt(d, { weekday:'short', day:'numeric', month:'short', year:'numeric' }) + ' — ' + byDate[d] + ' ' + unit }; });
+  var u = document.getElementById('wkPEu'); if (u) u.textContent = unit ? 'best per day · ' + unit : '';
+  if (!pts.length) { host.innerHTML = '<div class="wk-none">No completed sets of this exercise in the selected period.</div>'; return; }
+  var first = pts[0].y, last = pts[pts.length - 1].y, d = Math.round((last - first) * 10) / 10;
+  host.innerHTML = wkLineSVG(pts, unit, 'wkgl') + '<div class="wk-pe-sum"><span>' + pts.length + ' sessions</span><span>first <b>' + first + '</b></span><span>latest <b>' + last + '</b></span><span class="' + (d > 0 ? 'up' : d < 0 ? 'dn' : '') + '">' + (d > 0 ? '▲ +' : d < 0 ? '▼ ' : '＝ ') + d + ' ' + unit.split(' ')[0] + '</span></div>';
+}
+
+// ---------- HISTORY view ----------
+var wkH = { range:'30', from:'', to:'', q:'', part:'', shown:12 };
+function wkHSet(k, v) { wkH[k] = v; wkH.shown = 12; if (k === 'range' && v === 'custom' && !wkH.from) { var e = wkDayNum(today()); wkH.from = wkDayStr(e - 29); wkH.to = wkDayStr(e); } wkRenderHistory(); }
+function wkHMore() { wkH.shown += 12; wkRenderHistory(); }
+function wkOpenDay(d) { dashDateGoto(d); wkSetView('session'); }
+function wkRenderHistory() {
+  var host = document.getElementById('wkHistBody'); if (!host) return;
+  ['7','30','90','365','all','custom'].forEach(function(r){ var b = document.getElementById('wkh-' + r); if (b) b.classList.toggle('on', r === wkH.range); });
+  var cu = document.getElementById('wkHCustom'); if (cu) cu.style.display = wkH.range === 'custom' ? '' : 'none';
+  var f = document.getElementById('wkHFrom'), t = document.getElementById('wkHTo'); if (f && wkH.range === 'custom') { f.value = wkH.from; t.value = wkH.to; }
+  var ps = document.getElementById('wkHPart'); if (ps && !ps.options.length) ps.innerHTML = '<option value="">All body parts</option>' + WK_PARTS.map(function(p){ return '<option>' + p + '</option>'; }).join('');
+  var B; if (wkH.range === 'custom') { B = { start: wkDayNum(wkH.from), end: wkDayNum(wkH.to) }; if (isNaN(B.start) || isNaN(B.end)) B = wkBounds('30'); if (B.start > B.end) B = { start:B.end, end:B.start }; } else B = wkBounds(wkH.range);
+  var q = wkH.q.trim().toLowerCase(), part = wkH.part, rows = [];
+  Object.keys(S.dailyData || {}).forEach(function(d){
+    var n = wkDayNum(d); if (isNaN(n) || n < B.start || n > B.end) return;
+    var all = wkEx(d); if (!all.length) return;
+    var shown = all.filter(function(e){ return (!q || e.name.toLowerCase().indexOf(q) >= 0 || e.muscles.join(' ').toLowerCase().indexOf(q) >= 0) && (!part || e.muscles.indexOf(part) >= 0); });
+    if (!shown.length) return;
+    rows.push({ d:d, n:n, all:all, shown:shown });
+  });
+  rows.sort(function(a, b){ return b.n - a.n; });
+  var nd = 0, ne = 0, vol = 0; rows.forEach(function(r){ var done = r.all.filter(function(e){ return e.done; }).length; if (done) nd++; ne += r.shown.length; r.all.forEach(function(e){ vol += wkVol(e); }); });
+  var sm = document.getElementById('wkHSum'); if (sm) sm.innerHTML = '<b>' + rows.length + '</b> day' + (rows.length === 1 ? '' : 's') + ' · <b>' + ne + '</b> entries · <b>' + nd + '</b> completed sessions · <b>' + wkFmt(vol) + '</b> kg volume';
+  if (!rows.length) { host.innerHTML = '<div class="wk-empty"><div class="wk-empty-ic">🗂️</div><div class="wk-empty-t">Nothing found</div><div class="wk-empty-s">Try a wider date range or clear the filters.</div></div>'; return; }
+  var show = rows.slice(0, wkH.shown);
+  host.innerHTML = show.map(function(r){
+    var done = r.all.filter(function(e){ return e.done; }).length, v = 0, s = 0, c = 0;
+    r.all.forEach(function(e){ v += wkVol(e); s += wkHasSets(e.type) ? wkSetsEff(e) : 0; if (e.done && e.type === 'cardio') c += wkNum(e.dur); });
+    var pct = Math.round(done / r.all.length * 100);
+    return '<div class="wk-day"><div class="wk-day-h"><div class="wk-day-d"><b>' + wkDateFmt(r.d, { day:'numeric', month:'short' }) + '</b><span>' + wkDateFmt(r.d, { weekday:'long', year:'numeric' }) + (r.d === S.today ? ' · today' : '') + '</span></div>' +
+      '<div class="wk-day-s"><span><b>' + done + '/' + r.all.length + '</b> done</span>' + (v ? '<span><b>' + wkFmt(v) + '</b> kg</span>' : '') + (s ? '<span><b>' + s + '</b> sets</span>' : '') + (c ? '<span><b>' + Math.round(c) + '</b> min cardio</span>' : '') + '</div>' +
+      '<div class="wk-day-b"><button class="wk-btn sm" onclick="wkOpenDay(\'' + r.d + '\')">OPEN ▸</button><button class="wk-btn sm" onclick="wkOpenBuilder({date:\'' + r.d + '\'})">＋</button></div></div>' +
+      '<div class="wk-day-bar"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="wk-day-l">' + r.shown.map(function(e, i){ return wkCardHTML(e, i, r.d, true); }).join('') + '</div></div>';
+  }).join('') + (rows.length > show.length ? '<div class="wk-more-w"><button class="wk-btn" onclick="wkHMore()">SHOW MORE · ' + (rows.length - show.length) + ' DAYS LEFT</button></div>' : '');
 }
 
 // ===================== HABITS =====================
@@ -8232,6 +9231,31 @@ var GEMINI_TOOLS = [{
       }
     },
     {
+      name: 'logExercise',
+      description: 'Add an exercise to the user\'s workout for a date (defaults to today). Use type "strength" (sets/reps/weight), "bodyweight", "cardio" (duration/distance, no sets), "interval" (rounds of work/rest), "timed" (hold seconds) or "flex" (stretching minutes). An exercise can work several body parts.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          date:        { type: 'STRING', description: 'YYYY-MM-DD. Omit for today.' },
+          name:        { type: 'STRING', description: 'Exercise name, e.g. Bench Press, Running, Plank' },
+          type:        { type: 'STRING', description: 'One of: strength, bodyweight, cardio, interval, timed, flex' },
+          muscles:     { type: 'ARRAY', description: 'Body parts worked, from: Chest, Back, Shoulders, Biceps, Triceps, Forearms, Core, Glutes, Quads, Hamstrings, Calves, Full Body, Cardio, Mobility', items: { type: 'STRING' } },
+          sets:        { type: 'NUMBER', description: 'Sets (or rounds for interval)' },
+          reps:        { type: 'STRING', description: 'Reps, e.g. 10 or 8-12' },
+          weight:      { type: 'NUMBER', description: 'Weight in kg' },
+          restSec:     { type: 'NUMBER', description: 'Rest between sets in seconds' },
+          durationMin: { type: 'NUMBER', description: 'Duration in minutes (cardio / stretching)' },
+          distanceKm:  { type: 'NUMBER', description: 'Distance in km (cardio)' },
+          intensity:   { type: 'STRING', description: 'Low, Moderate, High or Max (cardio)' },
+          holdSec:     { type: 'NUMBER', description: 'Hold time per set in seconds (timed)' },
+          workSec:     { type: 'NUMBER', description: 'Work seconds per round (interval)' },
+          done:        { type: 'BOOLEAN', description: 'true if the user already completed it' },
+          notes:       { type: 'STRING' }
+        },
+        required: ['name']
+      }
+    },
+    {
       name: 'getHistory',
       description: 'Look up historical data for a range of dates — water intake, meals logged, exercises done, and habit status. Always call this BEFORE acting on past dates, e.g. to find which dates a habit was marked done so you can then update those exact dates with logWater, addMeal, updateHabit or saveMeasurements.',
       parameters: {
@@ -8416,6 +9440,25 @@ function aiExecuteTool(name, args) {
       if(entry.waist)  parts.push('Waist: '+entry.waist+'cm');
       if(entry.chest)  parts.push('Chest: '+entry.chest+'cm');
       return '📏 Measurements saved'+(targetDate!==S.today?' for '+targetDate:'')+' — '+parts.join(' | ');
+    }
+
+    if (name === 'logExercise') {
+      var xd = aiResolveDate(args);
+      var xt = ['strength','bodyweight','cardio','interval','timed','flex'].indexOf(args.type) >= 0 ? args.type : 'strength';
+      var xm = Array.isArray(args.muscles) ? args.muscles.filter(function(m){ return typeof m === 'string' && m; }) : [];
+      if (!xm.length) xm = [xt === 'cardio' ? 'Cardio' : xt === 'flex' ? 'Mobility' : 'Full Body'];
+      var xe = { id: wkId(), name: String(args.name || '').trim().slice(0, 80), type: xt, muscles: xm, muscle: xm[0], notes: String(args.notes || '').slice(0, 160), done: !!args.done, setsDone: 0 };
+      if (!xe.name) return '⚠ Exercise name is required.';
+      var xn = function(v, d){ var n = parseFloat(v); return isFinite(n) && n >= 0 ? n : d; };
+      if (xt === 'cardio') { xe.dur = xn(args.durationMin, 0); xe.dist = xn(args.distanceKm, 0); xe.intens = ['Low','Moderate','High','Max'].indexOf(args.intensity) >= 0 ? args.intensity : 'Moderate'; xe.kcal = 0; xe.sets = 1; }
+      else if (xt === 'flex') { xe.dur = xn(args.durationMin, 10); xe.sets = 1; }
+      else if (xt === 'interval') { xe.sets = Math.max(1, Math.round(xn(args.sets, 8))); xe.work = xn(args.workSec, 30); xe.rest = xn(args.restSec, 30); }
+      else if (xt === 'timed') { xe.sets = Math.max(1, Math.round(xn(args.sets, 3))); xe.hold = xn(args.holdSec, 30); xe.rest = xn(args.restSec, 45); }
+      else { xe.sets = Math.max(1, Math.round(xn(args.sets, 3))); xe.reps = String(args.reps || '10'); xe.weight = args.weight != null ? String(args.weight) : (xt === 'bodyweight' ? 'BW' : ''); xe.rest = xn(args.restSec, 60); }
+      if (xe.done) xe.setsDone = xe.sets;
+      wkEx(xd).push(xe); save();
+      try { renderWorkout(); renderDashboard(); updateSidebarBadges(); } catch(e) {}
+      return '💪 Added "' + xe.name + '" (' + xt + ', ' + xm.join('/') + ')' + (xd !== S.today ? ' for ' + xd : '') + ' — ' + wkSummary(xe);
     }
 
     if (name === 'getHistory') {
@@ -8706,7 +9749,7 @@ async function writeAuditLog(action, targetType, targetId, before, after) {
 }
 
 // ===================== ADMIN — SECTION NAV =====================
-var ADMIN_SECTIONS = ['dashboard','users','content','payments','ingredients','appconfig','flags','plans','analytics','audit','system'];
+var ADMIN_SECTIONS = ['dashboard','users','content','payments','ingredients','workouts','appconfig','flags','plans','analytics','audit','system'];
 function adminNav(section) {
   ADMIN_SECTIONS.forEach(function(s){
     var sec = document.getElementById('admin-sec-'+s);
@@ -8717,6 +9760,7 @@ function adminNav(section) {
   if (section === 'users') renderAdminUsersTable();
   if (section === 'content') loadAdminContent(false);
   if (section === 'ingredients') loadAdminIngredients(false);
+  if (section === 'workouts') loadAdminWorkouts(false);
   if (section === 'payments') loadAdminPayments(false);
   if (section === 'appconfig') loadAdminAppConfig(false);
   if (section === 'flags') loadAdminFeatureFlags(false);
@@ -9547,6 +10591,97 @@ async function adminIngImportMine() {
   ADMIN_ING_CACHE = ADMIN_ING_CACHE.concat(add);
   if (await adminIngPersist('INGREDIENT_IMPORTED', 'bulk', { count: before }, { count: ADMIN_ING_CACHE.length })) toast('✅ Imported ' + add.length + ' ingredients');
   else { ADMIN_ING_CACHE = ADMIN_ING_CACHE.slice(0, before); renderAdminIngredients(); }
+}
+
+
+// ===================== WORKOUT LIBRARY — shared templates (Firestore global/workoutLibrary) =====================
+// The built-in 140 templates ship inside the app. The owner can add more here; every signed-in user then sees them
+// (marked MAIN) in Fitness → Workout → Templates. Read-only for users, writable only by the owner (existing `global` rule).
+async function loadGlobalWorkouts() {
+  try {
+    var snap = await window._fsGetDoc(window._fsDoc(window._db, 'global', 'workoutLibrary'));
+    GLOBAL_WK = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items.filter(function(i){ return i && i.n; }) : [];
+  } catch (e) { console.warn('Shared workout library unavailable:', e && e.message); GLOBAL_WK = []; }
+  try { if (document.getElementById('wkTplRes')) wkTplRender(); } catch(e) {}
+}
+var ADMIN_WK_CACHE = null;
+var ADMIN_WK_LABELS = {
+  strength:['Sets','Reps','Rest (s)'], bodyweight:['Sets','Reps','Rest (s)'], timed:['Sets','Hold (s)','Rest (s)'],
+  interval:['Rounds','Work (s)','Rest (s)'], cardio:['Minutes','Intensity (Low/Moderate/High/Max)',''], flex:['Minutes','','']
+};
+async function loadAdminWorkouts(force) {
+  if (ADMIN_WK_CACHE && !force) { renderAdminWorkouts(); return; }
+  try {
+    var snap = await window._fsGetDoc(window._fsDoc(window._db, 'global', 'workoutLibrary'));
+    ADMIN_WK_CACHE = (snap.exists() && Array.isArray(snap.data().items)) ? snap.data().items.filter(function(i){ return i && i.n; }) : [];
+    renderAdminWorkouts();
+  } catch (e) {
+    console.error(e);
+    var b = document.getElementById('adminWkBody');
+    if (b) b.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:10px">Failed to load. Check that the Firestore rules for <code>global/workoutLibrary</code> are published.</div>';
+  }
+}
+function adminWkInit() {
+  var g = document.getElementById('awk-group'); if (g && !g.options.length) g.innerHTML = WK_PARTS.map(function(p){ return '<option>' + p + '</option>'; }).join('');
+  var t = document.getElementById('awk-type'); if (t && !t.options.length) t.innerHTML = WK_TYPE_ORDER.map(function(k){ return '<option value="' + k + '">' + WK_TYPES[k].label + '</option>'; }).join('');
+  var m = document.getElementById('awk-muscles'); if (m && !m.children.length) m.innerHTML = WK_PARTS.map(function(p){ return '<label class="admin-chk"><input type="checkbox" value="' + p + '"/> ' + p + '</label>'; }).join('');
+  adminWkTypeChanged();
+}
+function adminWkTypeChanged() {
+  var t = (document.getElementById('awk-type') || {}).value || 'strength', L = ADMIN_WK_LABELS[t] || [];
+  [1, 2, 3].forEach(function(n){ var el = document.getElementById('awk-p' + n); if (!el) return; el.placeholder = L[n - 1] || '—'; el.disabled = !L[n - 1]; if (!L[n - 1]) el.value = ''; });
+}
+function renderAdminWorkouts() {
+  adminWkInit();
+  var body = document.getElementById('adminWkBody'); if (!body || !ADMIN_WK_CACHE) return;
+  var q = ((document.getElementById('awk-search') || {}).value || '').trim().toLowerCase();
+  var list = q ? ADMIN_WK_CACHE.filter(function(i){ return i.n.toLowerCase().indexOf(q) >= 0; }) : ADMIN_WK_CACHE;
+  var t = document.getElementById('adminWkTitle'); if (t) t.textContent = 'Shared templates (' + ADMIN_WK_CACHE.length + ')';
+  if (!list.length) { body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:8px 0">' + (ADMIN_WK_CACHE.length ? 'No match.' : 'Nothing added yet. The 140 built-in templates are already available to every user; add extras here.') + '</div>'; return; }
+  body.innerHTML = list.map(function(i){
+    return '<div class="admin-content-list-item"><span><b>' + _esc(i.n) + '</b> <span style="color:var(--t2);font-size:11px">' + _esc((WK_TYPES[i.t] || {}).label || i.t) + ' · ' + _esc((i.m || []).join(', ')) + (i.d ? ' · ' + _esc(i.d.slice(0, 70)) + (i.d.length > 70 ? '…' : '') : '') + '</span></span>'
+      + '<span><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminWkDelete(\'' + _esc(i.id) + '\')">✕</button></span></div>';
+  }).join('');
+}
+async function adminWkPersist(action, targetId, before, after) {
+  try {
+    var ref = window._fsDoc(window._db, 'global', 'workoutLibrary');
+    await window._fsSetDoc(ref, { items: ADMIN_WK_CACHE, updatedAt: new Date().toISOString(), updatedBy: (window._auth && window._auth.currentUser && window._auth.currentUser.email) || 'admin' });
+    GLOBAL_WK = ADMIN_WK_CACHE.slice();
+    renderAdminWorkouts();
+    writeAuditLog(action, 'workoutLibrary', targetId, before, after);
+    return true;
+  } catch (e) { console.error(e); toast('Failed to save (check Firestore rules for global/)'); return false; }
+}
+async function adminWkAdd() {
+  if (!ADMIN_WK_CACHE) { await loadAdminWorkouts(true); if (!ADMIN_WK_CACHE) return; }
+  var g = function(id){ return (document.getElementById(id) || {}).value; };
+  var n = String(g('awk-name') || '').trim().slice(0, 80);
+  if (!n) { toast('Enter an exercise name'); return; }
+  if (WK_LIB.concat(ADMIN_WK_CACHE.map(function(x){ return { n:x.n }; })).some(function(x){ return x.n.toLowerCase() === n.toLowerCase(); })) { toast('An exercise with this name already exists'); return; }
+  var t = g('awk-type') || 'strength';
+  var muscles = Array.prototype.map.call(document.querySelectorAll('#awk-muscles input:checked'), function(c){ return c.value; });
+  var grp = g('awk-group') || muscles[0] || 'Full Body'; if (!muscles.length) muscles = [grp];
+  var num = function(v, d){ var x = parseFloat(v); return isFinite(x) && x >= 0 ? x : d; };
+  var p1 = g('awk-p1'), p2 = g('awk-p2'), p3 = g('awk-p3'), p;
+  if (t === 'strength' || t === 'bodyweight') p = [Math.round(num(p1, 3)), String(p2 || '10'), num(p3, 60)];
+  else if (t === 'timed' || t === 'interval') p = [Math.round(num(p1, 3)), num(p2, 30), num(p3, 30)];
+  else if (t === 'cardio') p = [num(p1, 20), WK_INTENSITY.indexOf(p2) >= 0 ? p2 : 'Moderate'];
+  else p = [num(p1, 10)];
+  var item = { id: 'wk' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), g: grp, n: n, t: t, m: muscles, p: p, d: String(g('awk-desc') || '').trim().slice(0, 220) };
+  ADMIN_WK_CACHE.push(item);
+  if (await adminWkPersist('WORKOUT_TEMPLATE_CREATED', item.id, null, item)) {
+    ['awk-name', 'awk-p1', 'awk-p2', 'awk-p3', 'awk-desc'].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ''; });
+    Array.prototype.forEach.call(document.querySelectorAll('#awk-muscles input'), function(c){ c.checked = false; });
+    toast('✅ "' + item.n + '" added to the shared library');
+  } else { ADMIN_WK_CACHE.pop(); renderAdminWorkouts(); }
+}
+async function adminWkDelete(id) {
+  var idx = ADMIN_WK_CACHE.findIndex(function(i){ return i.id === id; }); if (idx < 0) return;
+  var item = ADMIN_WK_CACHE[idx];
+  if (!confirm('Remove "' + item.n + '" from the shared library?')) return;
+  ADMIN_WK_CACHE.splice(idx, 1);
+  if (await adminWkPersist('WORKOUT_TEMPLATE_DELETED', id, item, null)) toast('Removed'); else { ADMIN_WK_CACHE.splice(idx, 0, item); renderAdminWorkouts(); }
 }
 
 // ===================== ADMIN — APP CONFIGURATION =====================

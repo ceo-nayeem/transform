@@ -34,7 +34,7 @@
       <a href="contact.html">Contact</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Launch app</a>
+      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Open App</a>
       <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic>Go Pro</a>
       <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
@@ -145,7 +145,13 @@
       </div>
     </div>
     <div class="devices rv">
-      <div class="laptop"><img src="assets/img/shots/d-dashboard.webp" alt="FIT//OS on desktop" loading="lazy" width="1440" height="900"/></div>
+      <div class="laptop" role="img" aria-label="FIT//OS dashboard on a laptop"><div class="lap-rig">
+        <div class="lap-lid">
+          <div class="lap-screen"><img src="assets/img/shots/d-dashboard.webp" alt="FIT//OS on desktop" loading="lazy" width="1440" height="900"/><i class="lap-cam"></i><span class="glare"></span></div>
+          <div class="lap-back"><b></b></div><i class="lap-e lap-et"></i><i class="lap-e lap-el"></i><i class="lap-e lap-er"></i>
+        </div>
+        <div class="lap-base"><i class="lap-sh"></i><div class="lap-deck"><div class="lap-keys"></div><div class="lap-pad"></div></div><i class="lap-bf"></i><i class="lap-bl"></i><i class="lap-br"></i></div>
+      </div></div>
       <div class="phone phone-small"><div class="screen"><img class="on" src="assets/img/shots/m-habits.webp" alt="FIT//OS habit calendar on phone" loading="lazy" width="780" height="1688" style="opacity:1"/></div></div>
     </div>
   </div>
@@ -156,6 +162,7 @@
   <div class="wrap">
     <div class="sec-head center"><span class="eyebrow">Pricing</span><h2 class="h-lg split">Simple plans. <span class="grad">Serious results.</span></h2><p class="lead rv">Start free. Upgrade to Pro for unlimited tracking and the AI Agent. Pay with bKash or Nagad — Pro unlocks the moment you submit.</p></div>
     <div class="price-grid" id="price-grid"></div>
+    <div class="free-row rv"><span>Not ready to pay? No problem.</span><a class="btn btn-ghost" href="app/" data-appurl data-magnetic>Continue Free <span class="arr">→</span></a><small>Sign in with Google and start tracking — no payment needed.</small></div>
     <div class="glass compare rv"><table><thead><tr><th>What you get</th><th>Free</th><th class="pro-col" style="color:var(--g)">Pro</th></tr></thead><tbody id="compare-body"></tbody></table></div>
     <div class="pay-note rv"><span>We accept</span><span class="pay-pill"><i style="background:#e2136e"></i>bKash</span><span class="pay-pill"><i style="background:#f7941d"></i>Nagad</span><span>· Send Money, paste your TrxID, done.</span></div>
   </div>
@@ -203,6 +210,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/hero3d.js" defer></script>
+<script src="assets/js/device3d.js" defer></script>
 <script src="assets/js/site.js" defer></script>
 </body>
 </html>

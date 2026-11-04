@@ -1105,6 +1105,185 @@ svg.wks{width:100%;height:auto;display:block;overflow:visible}
 }
 @media (prefers-reduced-motion:reduce){.wk-sheet,.wk-modal.open{animation:none}.wk-prog-f,.wk-card,.wk-btn{transition:none}}
 .admin-chk{display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:var(--t)}
+
+/* ===================== HEALTH 2.0 (Vitals + Measurements) ===================== */
+#page-health .wk-tabs{margin-bottom:16px}
+.hx-view{animation:hxIn .3s ease}
+@keyframes hxIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hx-ov{display:grid;grid-template-columns:minmax(0,500px) minmax(0,1fr);gap:16px;align-items:start}
+.hx-stage{position:relative;border-radius:22px;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,#0c2128 0%,#050b0e 62%);border:1px solid rgba(0,229,255,.28);box-shadow:0 0 0 1px rgba(0,255,136,.05) inset,0 0 60px rgba(0,229,255,.07) inset,0 14px 44px rgba(0,0,0,.45)}
+.hx-stage::before,.hx-stage::after{content:"";position:absolute;width:22px;height:22px;border:2px solid #00e5ff;opacity:.55;pointer-events:none;z-index:2}
+.hx-stage::before{top:10px;left:10px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
+.hx-stage::after{bottom:10px;right:10px;border-left:0;border-top:0;border-radius:0 0 6px 0}
+.hx-hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:8px;padding:14px 18px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:#7fc9d6;pointer-events:none;z-index:2;text-transform:uppercase}
+.hx-hud b{color:#00ff88;font-weight:700}
+.hx-hud i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#00ff88;margin-right:7px;box-shadow:0 0 10px #00ff88;animation:hxBlink 1.4s ease-in-out infinite;vertical-align:middle}
+@keyframes hxBlink{50%{opacity:.25}}
+.hx-svg{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);margin:0 auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.hx-svg text{font-family:var(--font-num),var(--raj),sans-serif}
+.hx-hot{cursor:pointer;outline:none}
+.hx-lab-bg{fill:rgba(7,15,19,.8);stroke:var(--c);stroke-opacity:.36;stroke-width:1;transition:stroke-opacity .2s,fill .2s,filter .2s}
+.hx-lab-bar{fill:var(--c);opacity:.9}
+.hx-lab-n{font:600 10.5px var(--mono);fill:#86a6ad;letter-spacing:1.5px}
+.hx-lab-v{font:700 25px var(--font-num);fill:#f1fbff;letter-spacing:.3px}
+.hx-lab-u{font:600 11px var(--mono);fill:#86a6ad;letter-spacing:0}
+.hx-lab-d{font:700 10.5px var(--mono);fill:#86a6ad}.hx-lab-d.up{fill:#ffaa44}.hx-lab-d.dn{fill:#00e5ff}
+.hx-lab.nodata .hx-lab-v{fill:#4a6168}.hx-lab.nodata{opacity:.75}
+.hx-lead{stroke:var(--c);stroke-opacity:.45;stroke-width:1;stroke-dasharray:3 3;transition:stroke-opacity .2s,stroke-width .2s}
+.hx-dot{fill:var(--c)}
+.hx-dotp{fill:none;stroke:var(--c);stroke-width:1.2;transform-box:fill-box;transform-origin:center;animation:hxDotP 2.4s ease-out infinite}
+@keyframes hxDotP{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.4);opacity:0}}
+.hx-lab:hover .hx-lab-bg,.hx-lab:focus-visible .hx-lab-bg,.hx-lab.sel .hx-lab-bg,.hx-lab.hov .hx-lab-bg{stroke-opacity:1;fill:rgba(9,26,31,.95);filter:drop-shadow(0 0 7px var(--c))}
+.hx-hot.sel .hx-lead,.hx-hot.hov .hx-lead{stroke-opacity:1;stroke-width:1.7;stroke-dasharray:none}
+.hx-hot.sel .org,.hx-hot.hov .org{stroke-width:3.2;stroke-opacity:1}
+.hx-heart.sel .org,.hx-heart.hov .org,.hx-brain.sel .org,.hx-brain.hov .org{filter:url(#hxGlow2) brightness(1.25)}
+.hx-fat.sel .org,.hx-fat.hov .org{fill-opacity:.5;stroke-opacity:1}
+.hx-scale.sel .org,.hx-scale.hov .org{stroke-opacity:1;stroke-width:2}
+.hx-lcd{font:700 21px var(--font-num);fill:#00ff88;letter-spacing:2px}
+.hx-lcd-u{font:700 9px var(--mono);fill:#00ff88;opacity:.7;letter-spacing:1px}
+.hx-beat{transform-box:fill-box;transform-origin:50% 62%;animation:hxBeat var(--bpm,.9s) ease-in-out infinite}
+@keyframes hxBeat{0%,100%{transform:scale(1)}10%{transform:scale(1.14)}22%{transform:scale(.99)}34%{transform:scale(1.07)}50%{transform:scale(1)}}
+.hx-pulse{transform-box:fill-box;transform-origin:center;animation:hxPulse var(--bpm,.9s) ease-out infinite}
+@keyframes hxPulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(3);opacity:0}}
+.hx-lungs{transform-box:fill-box;transform-origin:50% 40%;animation:hxBreath 4.8s ease-in-out infinite}
+@keyframes hxBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+.hx-brain .org{animation:hxBrain 3.4s ease-in-out infinite}
+@keyframes hxBrain{0%,100%{fill-opacity:.7}50%{fill-opacity:1}}
+.hx-scan{animation:hxScan 6.5s linear infinite}
+@keyframes hxScan{0%{transform:translateY(0);opacity:0}8%{opacity:1}92%{opacity:1}100%{transform:translateY(760px);opacity:0}}
+.hx-orbit{transform-origin:380px 330px;animation:hxSpin 90s linear infinite}
+@keyframes hxSpin{to{transform:rotate(360deg)}}
+.hx-flow{animation:hxFlow 2.2s linear infinite;pointer-events:none}
+@keyframes hxFlow{to{stroke-dashoffset:-72}}
+.hx-ring .org{transition:stroke-width .2s}
+/* side panel */
+.hx-side{position:sticky;top:12px;min-width:0}
+.hx-acc{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1)}
+.hx-side.open .hx-acc{grid-template-rows:1fr}
+.hx-acc-in{overflow:hidden;min-height:0}
+.hx-hint{border:1px dashed color-mix(in srgb,var(--c2) 45%,var(--border));border-radius:16px;padding:26px 18px;text-align:center;color:var(--t2);font-size:13px;letter-spacing:.3px;line-height:1.6}
+.hx-hint b{display:block;color:var(--c2);font-family:var(--mono);font-size:11px;letter-spacing:2.4px;margin-bottom:6px}
+.hx-side.open .hx-hint{display:none}
+.hx-panel{--c:var(--g);background:linear-gradient(165deg,color-mix(in srgb,var(--c) 7%,var(--card2)),var(--card));border:1px solid color-mix(in srgb,var(--c) 40%,var(--border));border-radius:18px;padding:16px;position:relative;box-shadow:0 0 30px color-mix(in srgb,var(--c) 12%,transparent);overflow:hidden}
+.hx-panel::before{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;background:radial-gradient(circle,color-mix(in srgb,var(--c) 22%,transparent),transparent 70%);pointer-events:none}
+.hx-ph{display:flex;align-items:center;gap:10px;position:relative}
+.hx-pic{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:18px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.hx-pn{flex:1;min-width:0}.hx-pn b{display:block;font-family:var(--raj);font-size:19px;letter-spacing:.4px;line-height:1.15}.hx-pn small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1.8px;color:var(--t2)}
+.hx-x{flex:none;width:32px;height:32px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--t2);font-size:14px;cursor:pointer;transition:all .15s}
+.hx-x:hover{color:var(--red);border-color:var(--red)}
+.hx-big{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;margin:12px 0 2px;position:relative}
+.hx-big b{font-family:var(--font-num);font-size:56px;font-weight:800;line-height:1;color:var(--c);text-shadow:0 0 24px color-mix(in srgb,var(--c) 45%,transparent);letter-spacing:.5px}
+.hx-big small{font-size:14px;color:var(--t2);font-weight:600}
+.hx-big .status-badge{margin:0 0 0 auto}
+.hx-sub{font-size:12.5px;color:var(--t2);margin-bottom:12px;position:relative}
+.hx-sub .up{color:var(--o2)}.hx-sub .dn{color:var(--c2)}
+.hx-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px;position:relative}
+.hx-mini div{background:color-mix(in srgb,var(--card) 80%,transparent);border:1px solid var(--border);border-radius:11px;padding:8px 9px;min-width:0}
+.hx-mini span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--t2)}
+.hx-mini b{display:block;font-family:var(--raj);font-size:17px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hx-note{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.hx-note span{font-size:12px;color:var(--t2);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:4px 9px}.hx-note b{color:var(--t)}
+.hx-bmi{position:relative;height:10px;border-radius:99px;margin:4px 2px 22px;background:linear-gradient(90deg,#5ad1ff 0 14%,#00ff88 14% 40%,#ffdd00 40% 60%,#ff3355 60%)}
+.hx-bmi i{position:absolute;top:-5px;width:4px;height:20px;border-radius:3px;background:#fff;box-shadow:0 0 10px #fff;transform:translateX(-50%)}
+.hx-bmi span{position:absolute;top:14px;font-size:9.5px;color:var(--t2);font-family:var(--mono);transform:translateX(-50%)}
+.hx-ranges{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px;position:relative}
+.hx-chip{font:inherit;font-size:12px;font-weight:700;letter-spacing:1px;padding:5px 11px;border-radius:99px;border:1.5px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer;transition:all .15s}
+.hx-chip:hover{color:var(--t);border-color:var(--c,var(--g))}
+.hx-chip.on{color:var(--c,var(--g));border-color:var(--c,var(--g));background:color-mix(in srgb,var(--c,var(--g)) 14%,var(--card2))}
+.hx-act{display:flex;gap:8px;margin-top:12px;position:relative}.hx-act .wk-btn{flex:1}
+.hx-panel .wk-btn.primary{background:linear-gradient(135deg,#00ff88,#00e5ff);color:#04140e}
+.hx-chip:not([style]){--c:var(--g)}
+/* charts */
+.hx-chart{position:relative;min-width:0}
+.hx-cs{display:block;width:100%;overflow:visible;touch-action:pan-y}
+.hx-ax{font:10px var(--mono);fill:var(--t2)}
+.hx-gl{stroke:var(--border);stroke-width:1}
+.hx-line{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hx-draw{stroke-dasharray:1;stroke-dashoffset:1;animation:hxDraw 1.1s cubic-bezier(.3,.7,.2,1) forwards}
+@keyframes hxDraw{to{stroke-dashoffset:0}}
+.hx-area{animation:hxFade .9s ease both}@keyframes hxFade{from{opacity:0}to{opacity:1}}
+.hx-bar{transform-box:fill-box;transform-origin:50% 100%;animation:hxGrow .6s cubic-bezier(.3,.8,.2,1) both}@keyframes hxGrow{from{transform:scaleY(0)}}
+.hx-cur{stroke:var(--t2);stroke-dasharray:3 3;stroke-width:1}
+.hx-tip{position:absolute;top:0;left:0;pointer-events:none;z-index:4;background:rgba(7,14,18,.95);border:1px solid var(--c,var(--g));border-radius:10px;padding:7px 11px;font-size:12px;color:#eaf6f8;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s;transform:translate(-50%,-110%)}
+.hx-tip.on{opacity:1}.hx-tip b{font-family:var(--raj);font-size:17px;color:var(--c,var(--g))}.hx-tip small{display:block;color:#86a6ad;font-size:10.5px;letter-spacing:.8px}
+.hx-empty{padding:34px 12px;text-align:center;color:var(--t2);font-size:13px;border:1px dashed var(--border);border-radius:14px}
+/* trends */
+.hx-mchips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:8px;scrollbar-width:thin}
+.hx-mchips .hx-chip{flex:none;--c:var(--g)}
+.hx-mchips .sep{flex:none;width:1px;background:var(--border);margin:2px 4px}
+.hx-custom{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:0 0 12px}
+.hx-custom label{font-family:var(--mono);font-size:10px;letter-spacing:1.6px;color:var(--t2);display:flex;flex-direction:column;gap:4px}
+.hx-custom input{font:inherit;font-size:13px;background:var(--card2);color:var(--t);border:1px solid var(--border);border-radius:9px;padding:7px 9px}
+.hx-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:0 0 12px}
+.hx-kpi{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:13px;padding:10px 12px;min-width:0;position:relative;overflow:hidden}
+.hx-kpi.hot{border-color:color-mix(in srgb,var(--c) 50%,var(--border));box-shadow:0 0 20px color-mix(in srgb,var(--c) 14%,transparent)}
+.hx-kpi span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:1.6px;color:var(--t2)}
+.hx-kpi b{display:block;font-family:var(--raj);font-size:21px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hx-kpi i{font-style:normal;font-size:11px;color:var(--t2)}.hx-kpi .up{color:var(--o2)}.hx-kpi .dn{color:var(--c2)}
+.hx-bigchart{--c:var(--g);background:linear-gradient(165deg,var(--card2),var(--card));border:1px solid color-mix(in srgb,var(--c) 30%,var(--border));border-radius:18px;padding:14px 14px 10px;box-shadow:0 0 34px color-mix(in srgb,var(--c) 9%,transparent)}
+.hx-ct{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.hx-ct b{font-family:var(--raj);font-size:19px;color:var(--c)}.hx-ct span{font-size:11px;color:var(--t2);font-family:var(--mono);letter-spacing:1.4px}
+.hx-legend{display:flex;gap:12px;font-size:11.5px;color:var(--t2)}.hx-legend i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.hx-foot{font-size:11.5px;color:var(--t2);margin-top:6px;text-align:center}
+/* log form */
+.hx-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px}
+.hx-card{background:linear-gradient(165deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:18px;padding:16px;min-width:0}
+.hx-card h4{font-family:var(--mono);font-size:11px;letter-spacing:2.2px;color:var(--c2);margin:0 0 12px;font-weight:700;display:flex;align-items:center;gap:8px}
+.hx-card h4::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.hx-fg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hx-fg label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--t2);margin-bottom:5px}
+.hx-fg label em{font-style:normal;color:var(--g);letter-spacing:0;margin-left:4px}
+.hx-fg .inp{width:100%}
+.hx-fg .wide{grid-column:1/-1}
+.hx-datebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.hx-datebar label{font-family:var(--mono);font-size:10px;letter-spacing:1.8px;color:var(--t2)}
+.hx-datebar .inp{width:auto}
+/* history */
+.hx-hkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}
+.hx-filters{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:12px}
+.hx-filters .grp{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.hx-search{flex:1;min-width:150px;font:inherit;font-size:13px;background:var(--card2);color:var(--t);border:1px solid var(--border);border-radius:99px;padding:7px 14px}
+.hx-month{display:flex;justify-content:space-between;gap:8px;margin:18px 2px 8px;font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--c2)}
+.hx-month em{font-style:normal;color:var(--t2);letter-spacing:1px}
+.hx-row{--c:var(--g);display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 6%,var(--card)),var(--card));border:1px solid var(--border);border-left:3px solid var(--c);border-radius:14px;padding:10px 12px;margin-bottom:8px;transition:border-color .2s,box-shadow .2s}
+.hx-row:hover{box-shadow:0 0 20px color-mix(in srgb,var(--c) 14%,transparent);border-color:color-mix(in srgb,var(--c) 45%,var(--border))}
+.hx-row.v{--c:#ff3355}.hx-row.m{--c:var(--g)}
+.hx-rd{text-align:center;line-height:1.1}.hx-rd b{display:block;font-family:var(--raj);font-size:20px}.hx-rd span{font-size:10.5px;color:var(--t2);font-family:var(--mono);letter-spacing:.8px}
+.hx-rb{min-width:0}
+.hx-kind{display:inline-block;font-size:9.5px;letter-spacing:1.6px;font-weight:700;font-family:var(--mono);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 40%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent);border-radius:99px;padding:1px 8px;margin-bottom:6px}
+.hx-vals{display:flex;flex-wrap:wrap;gap:5px}
+.hx-v{font-size:12px;color:var(--t2);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:3px 8px;white-space:nowrap}.hx-v b{color:var(--t);font-weight:700}
+.hx-v::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--vc,var(--g));margin-right:6px}
+.hx-rn{font-size:12.5px;color:var(--t2);margin-top:6px;font-style:italic}
+.hx-ra{display:flex;gap:6px}
+.hx-ra button{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer;font-size:14px;transition:all .15s}
+.hx-ra button:hover{color:var(--g);border-color:var(--g)}.hx-ra button.d:hover{color:var(--red);border-color:var(--red)}
+.hx-more{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
+html.alpha .hx-stage{border-color:rgba(0,150,180,.4)}
+html.alpha .hx-chip.on{color:var(--g2)}
+@media (max-width:1060px){
+  .hx-ov{grid-template-columns:1fr}
+  .hx-stage{max-width:520px;margin:0 auto;width:100%}
+  .hx-side{position:static}
+  .hx-hint{display:none}
+}
+@media (max-width:760px){
+  .hx-kpis{grid-template-columns:repeat(3,1fr)}
+  .hx-form{grid-template-columns:1fr}
+  .hx-hkpis{grid-template-columns:repeat(2,1fr)}
+  .hx-big b{font-size:48px}
+  .hx-svg{max-height:none}
+}
+@media (max-width:520px){
+  #page-health .wk-tab{font-size:11.5px;letter-spacing:.8px;padding:10px 2px}
+  .hx-mini{grid-template-columns:repeat(2,1fr)}
+  .hx-fg{grid-template-columns:1fr 1fr}
+  .hx-row{grid-template-columns:50px minmax(0,1fr);gap:8px 10px}
+  .hx-ra{grid-column:1/-1;justify-content:flex-end}
+  .hx-rd b{font-size:18px}
+  .hx-kpi b{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){.hx-beat,.hx-pulse,.hx-lungs,.hx-brain .org,.hx-scan,.hx-orbit,.hx-flow,.hx-dotp,.hx-draw,.hx-bar,.hx-view{animation:none!important}.hx-draw{stroke-dashoffset:0}}
 @media (max-width:640px){
   .wh-row{grid-template-columns:64px 1fr auto 28px;row-gap:2px}
   .wh-ex{grid-column:1 / -2;grid-row:2;white-space:normal}
@@ -2543,8 +2722,7 @@ setTimeout(endBootSplash, 15000);
       <div class="quick-add-item" onclick="quickAddGoWorkout()"><span class="quick-add-icon">💪</span><span>Log Exercise</span></div>
       <div class="quick-add-item" onclick="quickAddGo('habits')"><span class="quick-add-icon">✅</span><span>Mark Habit</span></div>
       <div class="quick-add-item" onclick="quickAddWater()"><span class="quick-add-icon">💧</span><span>Log Water</span></div>
-      <div class="quick-add-item" onclick="quickAddGo('vitals')"><span class="quick-add-icon">❤️</span><span>Vitals</span></div>
-      <div class="quick-add-item" onclick="quickAddGo('measurements')"><span class="quick-add-icon">📏</span><span>Measure</span></div>
+      <div class="quick-add-item" onclick="quickAddGoHealth()"><span class="quick-add-icon">❤️</span><span>Log Health</span></div>
     </div>
   </div>
 </div>
@@ -3305,90 +3483,26 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
 .timer-big{letter-spacing:1px !important;}
 </style>
 
-<!-- ============ HEALTH (VITALS + MEASUREMENTS) ============ -->
+<!-- ============ HEALTH (VITALS + MEASUREMENTS — one place) ============ -->
 <div class="page" id="page-health">
-  <div style="display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);overflow:hidden">
-    <button class="timer-tab active" id="health-tab-vitals" onclick="switchHealthTab('vitals')">♡ Vitals</button>
-    <button class="timer-tab" id="health-tab-measurements" onclick="switchHealthTab('measurements')">◫ Measurements</button>
+  <div class="wk-tabs" role="tablist" aria-label="Health sections">
+    <button class="wk-tab active" id="hxt-overview" role="tab" aria-selected="true" onclick="switchHealthTab('overview')">◎ OVERVIEW</button>
+    <button class="wk-tab" id="hxt-trends" role="tab" aria-selected="false" onclick="switchHealthTab('trends')">▤ TRENDS</button>
+    <button class="wk-tab" id="hxt-log" role="tab" aria-selected="false" onclick="switchHealthTab('log')">＋ LOG</button>
+    <button class="wk-tab" id="hxt-history" role="tab" aria-selected="false" onclick="switchHealthTab('history')">☰ HISTORY</button>
   </div>
-
-  <!-- ── VITALS ── -->
-  <div id="page-vitals">
-  <div class="g2" style="margin-bottom:12px">
-    <div class="vital-card">
-      <div class="card-label">LATEST HEART RATE</div>
-      <div class="vital-big" style="color:var(--red)" id="v-hr">--</div>
-      <div class="vital-sub">BPM · RESTING</div>
-      <div id="v-hr-badge" class="status-badge s-ok" style="display:none">NORMAL</div>
-    </div>
-    <div class="vital-card">
-      <div class="card-label">BLOOD PRESSURE</div>
-      <div class="vital-big" style="color:var(--p)" id="v-bp">--/--</div>
-      <div class="vital-sub">mmHg · LATEST</div>
-      <div id="v-bp-badge" class="status-badge s-ok" style="display:none">NORMAL</div>
+  <div class="hx-view" id="hx-v-overview">
+    <div class="hx-ov">
+      <div class="hx-stage" id="hxStage"></div>
+      <div class="hx-side" id="hxSide">
+        <div class="hx-hint"><b>TAP A GLOWING POINT</b>Select any organ, tape ring or reading on the body to expand its live data, trend and history.</div>
+        <div class="hx-acc"><div class="hx-acc-in" id="hxPanel"></div></div>
+      </div>
     </div>
   </div>
-  <div class="vital-card" style="margin-bottom:12px">
-    <div class="card-label">SLEEP LAST NIGHT</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px">
-      <div><div class="card-label">DURATION</div><div style="font-family:var(--raj);font-size:16px;font-weight:700;color:var(--p)" id="v-sleep-dur">--</div><div style="font-size:13px;color:var(--t2)">hours</div></div>
-      <div><div class="card-label">QUALITY</div><div style="font-family:var(--raj);font-size:16px;font-weight:700;color:var(--g)" id="v-sleep-q">--</div><div style="font-size:13px;color:var(--t2)">/10</div></div>
-      <div><div class="card-label">BED TIME</div><div style="font-family:var(--raj);font-size:16px;font-weight:700;color:var(--c2)" id="v-sleep-bed">--</div></div>
-      <div><div class="card-label">WAKE TIME</div><div style="font-family:var(--raj);font-size:16px;font-weight:700;color:var(--c2)" id="v-sleep-wake">--</div></div>
-    </div>
-  </div>
-  <div class="sec-head">LOG VITALS</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div class="inp-row" style="margin-bottom:8px">
-      <div class="inp-group" style="flex:1"><div class="inp-label">HEART RATE (bpm)</div><input class="inp" id="vt-hr" type="number" placeholder="68"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">SYSTOLIC (mmHg)</div><input class="inp" id="vt-sys" type="number" placeholder="120"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">DIASTOLIC (mmHg)</div><input class="inp" id="vt-dia" type="number" placeholder="80"/></div>
-    </div>
-    <div class="inp-row" style="margin-bottom:10px">
-      <div class="inp-group" style="flex:1"><div class="inp-label">SLEEP (hours)</div><input class="inp" id="vt-sleep" type="number" placeholder="7.5" step="0.5"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">QUALITY (1-10)</div><input class="inp" id="vt-q" type="number" placeholder="8" min="1" max="10"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">BED TIME</div><input class="inp" id="vt-bed" type="time"/></div>
-      <div class="inp-group" style="flex:1"><div class="inp-label">WAKE TIME</div><input class="inp" id="vt-wake" type="time"/></div>
-    </div>
-    <div class="inp-group" style="margin-bottom:10px"><div class="inp-label">NOTES</div><input class="inp" id="vt-notes" type="text" placeholder="How are you feeling today?"/></div>
-    <button class="btn full" onclick="logVitals()">[ + LOG VITALS ]</button>
-  </div>
-  <div class="sec-head">VITALS HISTORY</div>
-  <div id="vitalHistory"><div style="font-size:13px;color:var(--t2);padding:10px">No vitals logged yet.</div></div>
-  </div>
-
-  <!-- ── MEASUREMENTS ── -->
-  <div id="page-measurements" style="display:none">
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px" id="measGrid">
-    <div class="meas-card"><div class="meas-val" id="m-weight">--</div><div class="meas-label">WEIGHT (kg)</div><div class="meas-ch t-neu" id="m-weight-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-bf">--%</div><div class="meas-label">BODY FAT</div><div class="meas-ch t-neu" id="m-bf-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-bmi">--</div><div class="meas-label">BMI</div><div class="meas-ch t-neu" id="m-bmi-lbl">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-chest">-- cm</div><div class="meas-label">CHEST</div><div class="meas-ch t-neu" id="m-chest-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-waist">-- cm</div><div class="meas-label">WAIST</div><div class="meas-ch t-neu" id="m-waist-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-hips">-- cm</div><div class="meas-label">HIPS</div><div class="meas-ch t-neu" id="m-hips-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-arm">-- cm</div><div class="meas-label">ARM</div><div class="meas-ch t-neu" id="m-arm-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-thigh">-- cm</div><div class="meas-label">THIGH</div><div class="meas-ch t-neu" id="m-thigh-ch">—</div></div>
-    <div class="meas-card"><div class="meas-val" id="m-calf">-- cm</div><div class="meas-label">CALF</div><div class="meas-ch t-neu" id="m-calf-ch">—</div></div>
-  </div>
-  <div class="sec-head">LOG MEASUREMENTS</div>
-  <div style="background:var(--card);border:1px solid var(--border);padding:14px">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-      <div class="inp-group"><div class="inp-label">WEIGHT (kg)</div><input class="inp" id="ml-weight" type="number" step="0.1" placeholder="78.0"/></div>
-      <div class="inp-group"><div class="inp-label">BODY FAT (%)</div><input class="inp" id="ml-bf" type="number" step="0.1" placeholder="18.0"/></div>
-      <div class="inp-group"><div class="inp-label">HEIGHT (cm)</div><input class="inp" id="ml-height" type="number" placeholder="175"/></div>
-      <div class="inp-group"><div class="inp-label">CHEST (cm)</div><input class="inp" id="ml-chest" type="number" step="0.5" placeholder="88"/></div>
-      <div class="inp-group"><div class="inp-label">WAIST (cm)</div><input class="inp" id="ml-waist" type="number" step="0.5" placeholder="82"/></div>
-      <div class="inp-group"><div class="inp-label">HIPS (cm)</div><input class="inp" id="ml-hips" type="number" step="0.5" placeholder="96"/></div>
-      <div class="inp-group"><div class="inp-label">ARM (cm)</div><input class="inp" id="ml-arm" type="number" step="0.5" placeholder="38"/></div>
-      <div class="inp-group"><div class="inp-label">THIGH (cm)</div><input class="inp" id="ml-thigh" type="number" step="0.5" placeholder="56"/></div>
-      <div class="inp-group"><div class="inp-label">CALF (cm)</div><input class="inp" id="ml-calf" type="number" step="0.5" placeholder="36"/></div>
-    </div>
-    <button class="btn full" onclick="logMeasurements()">[ + SAVE MEASUREMENTS ]</button>
-  </div>
-  <div class="sec-head" style="display:flex;justify-content:space-between;gap:10px"><span>MEASUREMENT HISTORY</span><span id="measHistCount" style="color:var(--t2);font-size:11px;letter-spacing:1.5px"></span></div>
-  <div id="measHistory"><div style="font-size:13px;color:var(--t2);padding:10px">No measurements logged yet.</div></div>
-  </div>
-
+  <div class="hx-view" id="hx-v-trends" style="display:none"></div>
+  <div class="hx-view" id="hx-v-log" style="display:none"></div>
+  <div class="hx-view" id="hx-v-history" style="display:none"></div>
 </div><!-- end page-health -->
 
 
@@ -3748,13 +3862,9 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
         <span class="mob-sheet-icon">✅</span>
         <span class="mob-sheet-lbl">Habits</span>
       </div>
-      <div class="mob-sheet-btn" onclick="mobSheetNav('vitals')">
+      <div class="mob-sheet-btn" onclick="mobSheetHealth()">
         <span class="mob-sheet-icon">❤️</span>
-        <span class="mob-sheet-lbl">Vitals</span>
-      </div>
-      <div class="mob-sheet-btn" onclick="mobSheetNav('measurements')">
-        <span class="mob-sheet-icon">📏</span>
-        <span class="mob-sheet-lbl">Measure</span>
+        <span class="mob-sheet-lbl">Health</span>
       </div>
     </div>
   </div>
@@ -5059,7 +5169,7 @@ async function checkRemoteChanges() {
       calcStreak();
       var pg = document.querySelector('.page.active');
       var id = pg ? pg.id.replace('page-', '') : 'dashboard';
-      if (id === 'health') id = healthActiveTab; else if (id === 'track') id = trackActiveTab; else if (id === 'library') id = libraryActiveTab;
+      if (id === 'track') id = trackActiveTab; else if (id === 'library') id = libraryActiveTab;
       nav(null, id);
       toast('Updated from another device');
     }
@@ -5085,7 +5195,7 @@ var pageTitles = {
 // 'library' merges the meal library + ingredient library.
 var SUBPAGE_PARENT = { vitals:'health', measurements:'health', habits:'track', goals:'track', meallibrary:'library', ingredientlibrary:'library' };
 // healthActiveTab / trackActiveTab track which sub-tab is showing inside the merged pages.
-var healthActiveTab = 'vitals';
+var healthActiveTab = 'overview';
 // ===================== REMEMBER LAST VIEW (survives reload) =====================
 // Stores which page / sub-tab the user was on (this device only, nothing goes to the database)
 // so a reload brings them back to the same place instead of the Dashboard.
@@ -5110,7 +5220,7 @@ function restoreLastView() {
   _restoringView = true;
   try {
     var arg = v.page;
-    if (v.page === 'health') arg = v.health === 'measurements' ? 'measurements' : 'vitals';
+    if (v.page === 'health') { arg = 'health'; if (HX_TABS.indexOf(v.health) >= 0) healthActiveTab = v.health; }
     else if (v.page === 'track') arg = v.track === 'goals' ? 'goals' : 'habits';
     else if (v.page === 'library') arg = v.library === 'ingredientlibrary' ? 'ingredientlibrary' : 'meallibrary';
     else if (v.page === 'fitness') fitActiveTab = v.fitness === 'workout' ? 'workout' : 'diet';
@@ -5127,27 +5237,6 @@ function restoreLastView() {
   setTimeout(function(){ _restoringView = false; _saveView(); }, 200);
 }
 
-function switchHealthTab(tab) {
-  healthActiveTab = tab; _saveView();
-  var vitalsSec = document.getElementById('page-vitals');
-  var measSec = document.getElementById('page-measurements');
-  var tabV = document.getElementById('health-tab-vitals');
-  var tabM = document.getElementById('health-tab-measurements');
-  if (!vitalsSec || !measSec) return;
-  if (tab === 'measurements') {
-    vitalsSec.style.display = 'none';
-    measSec.style.display = '';
-    if (tabM) tabM.classList.add('active');
-    if (tabV) tabV.classList.remove('active');
-    renderMeasurements();
-  } else {
-    vitalsSec.style.display = '';
-    measSec.style.display = 'none';
-    if (tabV) tabV.classList.add('active');
-    if (tabM) tabM.classList.remove('active');
-    renderVitals();
-  }
-}
 var trackActiveTab = 'habits';
 function switchTrackTab(tab) {
   trackActiveTab = tab; _saveView();
@@ -5234,7 +5323,7 @@ function nav(btn, id) {
   if (topPath) topPath.textContent = '/ ' + (pageTitles[id] || (id.charAt(0).toUpperCase()+id.slice(1)));
   _curPage = (id === 'water') ? 'fitness' : id; _saveView();
   if (id === 'water') { switchFitnessTab('diet'); setTimeout(function(){ switchNtrTab('water'); }, 0); return; }
-  if (id === 'health') { setTimeout(function(){ switchHealthTab(origId === 'measurements' ? 'measurements' : 'vitals'); }, 0); }
+  if (id === 'health') { setTimeout(function(){ switchHealthTab((origId === 'vitals' || origId === 'measurements') ? 'log' : healthActiveTab); }, 0); }
   if (id === 'track') { setTimeout(function(){ switchTrackTab(origId === 'goals' ? 'goals' : 'habits'); }, 0); }
   if (id === 'library') { setTimeout(function(){ switchLibraryTab(origId === 'ingredientlibrary' ? 'ingredientlibrary' : 'meallibrary'); }, 0); }
   if (id === 'profile') loadProfile();
@@ -5271,6 +5360,11 @@ function quickAddGoWorkout() {
   closeQuickAdd();
   nav(document.querySelector('.sb-item[onclick*="fitness"]'), 'fitness');
   setTimeout(function(){ switchFitnessTab('workout'); try { wkSetView('session'); wkOpenBuilder(); } catch(e) {} }, 50);
+}
+function quickAddGoHealth() {
+  closeQuickAdd();
+  nav(document.querySelector('.sb-item[onclick*="health"]'), 'health');
+  setTimeout(function(){ switchHealthTab('log'); }, 50);
 }
 function quickAddWater() {
   closeQuickAdd();
@@ -5415,7 +5509,7 @@ function renderDashboard() {
   document.getElementById('ov-water').textContent = waterL + ' / ' + goalL + ' L';
   document.getElementById('ov-habits').textContent = habDone + ' / ' + S.habits.length;
   document.getElementById('ov-ex').textContent = exDone + ' / ' + d.exercises.length;
-  var lastM = S.measurements.length ? S.measurements[S.measurements.length-1] : null;
+  var lastM = null; for (var _mi = S.measurements.length - 1; _mi >= 0; _mi--) { if (parseFloat(S.measurements[_mi].weight) > 0) { lastM = S.measurements[_mi]; break; } }
   document.getElementById('ov-weight').textContent = lastM ? lastM.weight + ' kg' : '-- kg';
   document.getElementById('dc-cal').textContent = totCal;
   document.getElementById('dc-cal-sub').textContent = 'of ' + S.cfg.calGoal + ' kcal goal';
@@ -7662,107 +7756,647 @@ function subCustomWaterL(){
 }
 function setWaterGoal(){var inp=document.getElementById('w-goal-inp');var g=inp?(parseInt(inp.value)||12):(S.cfg.waterGoal||12);S.cfg.waterGoal=g;save();renderNutrition();toast('Water goal updated!');}
 
-// ===================== VITALS =====================
-function renderVitals(){
-  var last=S.vitals.length?S.vitals[S.vitals.length-1]:null;
-  if(last){
-    document.getElementById('v-hr').textContent=last.hr||'--';
-    document.getElementById('v-bp').textContent=(last.sys&&last.dia)?last.sys+'/'+last.dia:'--/--';
-    document.getElementById('v-sleep-dur').textContent=last.sleep||'--';
-    document.getElementById('v-sleep-q').textContent=last.quality||'--';
-    document.getElementById('v-sleep-bed').textContent=last.bed||'--';
-    document.getElementById('v-sleep-wake').textContent=last.wake||'--';
-    if(last.hr){var badge=document.getElementById('v-hr-badge');badge.style.display='inline-block';if(last.hr<60){badge.textContent='ATHLETE';badge.className='status-badge s-ok';}else if(last.hr<=100){badge.textContent='NORMAL';badge.className='status-badge s-ok';}else{badge.textContent='ELEVATED';badge.className='status-badge s-warn';}}
-    if(last.sys&&last.dia){var bpb=document.getElementById('v-bp-badge');bpb.style.display='inline-block';if(last.sys<120&&last.dia<80){bpb.textContent='OPTIMAL';bpb.className='status-badge s-ok';}else if(last.sys<140&&last.dia<90){bpb.textContent='NORMAL';bpb.className='status-badge s-ok';}else{bpb.textContent='HIGH';bpb.className='status-badge s-bad';}}
-  }
-  var hist=document.getElementById('vitalHistory');
-  if(!S.vitals.length){hist.innerHTML='<div style="font-size:13px;color:var(--t2);padding:10px">No vitals logged yet.</div>';return;}
-  hist.innerHTML=S.vitals.slice().reverse().slice(0,10).map((v,i)=>{var realIdx=S.vitals.length-1-i;return`<div style="background:var(--card);border:1px solid var(--border);padding:12px;margin-bottom:6px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;color:var(--t2);margin-bottom:4px">${v.date}</div><div style="font-size:13.5px">HR: ${v.hr||'--'} bpm · BP: ${v.sys||'--'}/${v.dia||'--'} · Sleep: ${v.sleep||'--'}h · Q: ${v.quality||'--'}/10</div>${v.notes?`<div style="font-size:13px;color:var(--t2);margin-top:3px">${v.notes}</div>`:''}</div><button class="del-btn" onclick="delVital(${realIdx})">✕</button></div></div>`;}).join('');
-}
-function logVitals(){
-  var hr=parseInt(document.getElementById('vt-hr').value)||0;var sys=parseInt(document.getElementById('vt-sys').value)||0;var dia=parseInt(document.getElementById('vt-dia').value)||0;var sleep=parseFloat(document.getElementById('vt-sleep').value)||0;
-  if(!hr&&!sys&&!sleep){toast('Enter at least one value');return;}
-  S.vitals.push({date:S.today,hr,sys,dia,sleep,quality:parseInt(document.getElementById('vt-q').value)||0,bed:document.getElementById('vt-bed').value,wake:document.getElementById('vt-wake').value,notes:document.getElementById('vt-notes').value.trim()});
-  ['vt-hr','vt-sys','vt-dia','vt-sleep','vt-q','vt-bed','vt-wake','vt-notes'].forEach(id=>document.getElementById(id).value='');
-  save();renderVitals();toast('Vitals logged!');
-}
-function delVital(i){S.vitals.splice(i,1);save();renderVitals();toast('Entry removed');}
+/* Builds the holographic anatomy figure (SVG string). d = { id: {txt,unit,delta,c,empty} }, extra = {bpm, bf, wtTxt, bmiTxt} */
+function hxBodySVG(L, X) {
+  var o = [], i;
+  var sil = 'M0,28 C-20,28 -31,44 -31,66 C-31,84 -26,100 -18,108 C-14,113 -11,116 -10,120 C-10,124 -11,128 -13,131 C-17,138 -42,139 -62,147 C-80,152 -89,166 -89,184 C-91,216 -96,246 -98,270 C-100,300 -107,336 -113,372 C-117,386 -119,402 -113,412 C-108,421 -99,418 -97,408 C-95,392 -91,372 -89,356 C-85,326 -79,298 -75,272 C-71,250 -66,226 -57,200 C-55,224 -46,248 -44,272 C-43,296 -54,318 -56,342 C-57,364 -58,386 -56,412 C-54,450 -50,480 -48,502 C-48,526 -52,548 -50,568 C-48,588 -42,604 -41,622 C-40,636 -47,644 -62,650 C-52,658 -30,658 -25,652 C-22,640 -23,628 -24,616 C-22,596 -18,572 -18,548 C-18,526 -15,508 -14,488 C-12,458 -6,420 0,372 Z';
+  var skull = 'M0,34 C-19,34 -27,52 -25,70 C-24,82 -18,90 -14,96 L-11,106 L11,106 L14,96 C18,90 24,82 25,70 C27,52 19,34 0,34 Z';
+  o.push('<defs>'
+   + '<linearGradient id="hxSilG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00e5ff" stop-opacity=".22"/><stop offset=".55" stop-color="#00ff88" stop-opacity=".09"/><stop offset="1" stop-color="#00e5ff" stop-opacity=".16"/></linearGradient>'
+   + '<linearGradient id="hxEdgeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7df3ff"/><stop offset=".5" stop-color="#00ff88"/><stop offset="1" stop-color="#00e5ff"/></linearGradient>'
+   + '<linearGradient id="hxScanG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00ffd0" stop-opacity="0"/><stop offset=".85" stop-color="#00ffd0" stop-opacity=".28"/><stop offset="1" stop-color="#b9fff0" stop-opacity=".9"/></linearGradient>'
+   + '<radialGradient id="hxFloorG"><stop offset="0" stop-color="#00ff88" stop-opacity=".5"/><stop offset=".55" stop-color="#00e5ff" stop-opacity=".12"/><stop offset="1" stop-color="#00e5ff" stop-opacity="0"/></radialGradient>'
+   + '<radialGradient id="hxHeartG" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#ff8a9c"/><stop offset=".55" stop-color="#ff3355"/><stop offset="1" stop-color="#8a0f25"/></radialGradient>'
+   + '<radialGradient id="hxBrainG" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#e2c8ff"/><stop offset=".6" stop-color="#aa77ff"/><stop offset="1" stop-color="#5a2fb0"/></radialGradient>'
+   + '<linearGradient id="hxLungG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7df3ff" stop-opacity=".55"/><stop offset="1" stop-color="#00a9c9" stop-opacity=".25"/></linearGradient>'
+   + '<linearGradient id="hxLCD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#04120d"/><stop offset="1" stop-color="#010806"/></linearGradient>'
+   + '<linearGradient id="hxGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".26"/><stop offset=".4" stop-color="#9fe9ff" stop-opacity=".07"/><stop offset="1" stop-color="#ffffff" stop-opacity=".16"/></linearGradient>'
+   + '<linearGradient id="hxSlab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a42"/><stop offset="1" stop-color="#0a1217"/></linearGradient>'
+   + '<filter id="hxGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+   + '<filter id="hxGlow2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+   + '<pattern id="hxHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#ffaa44" stroke-width="2"/></pattern>'
+   + '<pattern id="hxHex" width="28" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1)"><path d="M14 0 L28 8 L28 24.2 L14 32.3 L0 24.2 L0 8 Z M14 32.3 L14 48.5 M0 24.2 L-0 40 M28 24.2 L28 40" fill="none" stroke="#00e5ff" stroke-opacity=".07" stroke-width="1"/></pattern>'
+   + '<path id="hxHalf" d="' + sil + '"/>'
+   + '<clipPath id="hxClip"><use href="#hxHalf"/><use href="#hxHalf" transform="scale(-1,1)"/></clipPath>'
+   + '</defs>');
 
-// ===================== MEASUREMENTS =====================
-function renderMeasurements(){
-  var last=S.measurements.length?S.measurements[S.measurements.length-1]:null;
-  var prev=S.measurements.length>1?S.measurements[S.measurements.length-2]:null;
-  var ch=(key)=>{if(!last||!last[key])return'—';var v=parseFloat(last[key]);if(!prev||!prev[key])return'—';var diff=(v-parseFloat(prev[key])).toFixed(1);return diff>0?`<span class="t-up">+${diff}</span>`:diff<0?`<span class="t-dn">${diff}</span>`:'<span class="t-neu">—</span>';};
-  if(last){
-    document.getElementById('m-weight').textContent=last.weight||'--';
-    document.getElementById('m-bf').textContent=(last.bf||'--')+'%';
-    ['chest','waist','hips','arm','thigh','calf'].forEach(f=>{var el=document.getElementById('m-'+f);if(el)el.textContent=(last[f]||'--')+' cm';});
-    if(last.weight&&last.height){var h=last.height/100;var bmi=(last.weight/(h*h)).toFixed(1);document.getElementById('m-bmi').textContent=bmi;document.getElementById('m-bmi-lbl').textContent=bmi<18.5?'Underweight':bmi<25?'Normal':bmi<30?'Overweight':'Obese';}
+  // ---- HUD backdrop ----
+  o.push('<g class="hx-hud">'
+   + '<rect x="130" y="-34" width="500" height="794" fill="url(#hxHex)"/>'
+   + '<circle cx="380" cy="330" r="268" fill="none" stroke="#00e5ff" stroke-opacity=".10" stroke-dasharray="2 7"/>'
+   + '<circle class="hx-orbit" cx="380" cy="330" r="236" fill="none" stroke="#00ff88" stroke-opacity=".16" stroke-dasharray="40 18 6 18"/>'
+   + '<ellipse cx="380" cy="700" rx="200" ry="30" fill="url(#hxFloorG)"/>'
+   + '</g>');
+
+  // ---- body ----
+  o.push('<g transform="translate(380,0)" class="hx-body">');
+  // silhouette
+  o.push('<g class="hx-sil"><use href="#hxHalf" fill="url(#hxSilG)"/><use href="#hxHalf" transform="scale(-1,1)" fill="url(#hxSilG)"/>'
+   + '<use href="#hxHalf" fill="none" stroke="url(#hxEdgeG)" stroke-width="1.6" filter="url(#hxGlow)"/><use href="#hxHalf" transform="scale(-1,1)" fill="none" stroke="url(#hxEdgeG)" stroke-width="1.6" filter="url(#hxGlow)"/></g>');
+
+  // inner layers are clipped to the silhouette
+  o.push('<g clip-path="url(#hxClip)">');
+  // muscle fibre hint (faint contour lines)
+  var mus = '';
+  for (i = 0; i < 20; i++) { var yy = 150 + i * 10; mus += '<path d="M-60,' + yy + ' C-30,' + (yy - 6) + ' 30,' + (yy - 6) + ' 60,' + yy + '" />'; }
+  o.push('<g class="hx-fibre" fill="none" stroke="#00e5ff" stroke-opacity=".05">' + mus + '</g>');
+
+  // skeleton (faint)
+  var bones = '<g class="hx-bones" fill="none" stroke="#b6f6ff" stroke-opacity=".42" stroke-linecap="round" stroke-linejoin="round">';
+  bones += '<path d="' + skull + '" stroke-width="1.4"/><ellipse cx="-9" cy="72" rx="5" ry="4.2"/><ellipse cx="9" cy="72" rx="5" ry="4.2"/><path d="M0,80 L-2,87 L2,87 Z"/><path d="M-9,100 L9,100 M-6,103 L6,103" stroke-width="1"/>';
+  for (i = 0; i < 24; i++) { var vy = 118 + i * 10, vw = 4 + Math.min(i, 17) * .38 + (i > 17 ? (i - 17) * 1.4 : 0); bones += '<rect x="' + (-vw).toFixed(1) + '" y="' + vy + '" width="' + (vw * 2).toFixed(1) + '" height="7" rx="2.5" stroke-width="1"/>'; }
+  var half = '<g id="hxBH">'
+    + '<path d="M-3,148 C-20,143 -44,146 -64,154" stroke-width="2.2"/>'
+    + '<path d="M-3,150 L-14,156" stroke-width="1"/>';
+  for (i = 0; i < 7; i++) { var ry = 158 + i * 12.5, rw = 40 - Math.abs(i - 2.5) * 3.2 - (i > 4 ? (i - 4) * 5 : 0); half += '<path d="M-4,' + ry.toFixed(1) + ' C-' + (rw * .8).toFixed(1) + ',' + (ry - 4).toFixed(1) + ' -' + (rw + 6).toFixed(1) + ',' + (ry + 12).toFixed(1) + ' -' + (rw - 2).toFixed(1) + ',' + (ry + 30).toFixed(1) + ' C-' + (rw * .5).toFixed(1) + ',' + (ry + 34).toFixed(1) + ' -12,' + (ry + 28).toFixed(1) + ' -4,' + (ry + 24).toFixed(1) + '" stroke-width="1.2"/>'; }
+  half += '<path d="M-6,332 C-34,318 -56,330 -54,352 C-53,368 -44,376 -30,380 L-10,384 C-5,372 -4,352 -4,332 Z" stroke-width="1.4"/><path d="M-12,352 C-22,350 -30,356 -30,364" stroke-width="1"/>'
+    + '<path d="M-70,160 L-92,268" stroke-width="5"/><circle cx="-70" cy="160" r="6" stroke-width="1.2"/><circle cx="-92" cy="270" r="4.5" stroke-width="1"/>'
+    + '<path d="M-92,274 L-101,366 M-97,272 L-109,364" stroke-width="2.6"/>'
+    + '<path d="M-104,372 L-111,402 M-107,372 L-106,406 M-103,372 L-99,404 M-110,370 L-117,392" stroke-width="1.6"/>'
+    + '<circle cx="-33" cy="366" r="7" stroke-width="1.2"/><path d="M-32,372 C-34,420 -30,462 -30,490" stroke-width="6"/>'
+    + '<circle cx="-29" cy="494" r="6.5" stroke-width="1.2"/><path d="M-29,500 L-31,620 M-39,500 C-40,540 -39,580 -38,614" stroke-width="3.2"/>'
+    + '<path d="M-36,622 C-44,632 -54,642 -58,650 M-34,624 L-40,650 M-30,624 L-28,650" stroke-width="1.6"/></g>';
+  bones += half + '<use href="#hxBH" transform="scale(-1,1)"/>';
+  bones += '<path d="M0,150 L0,216 M-6,212 L0,222 L6,212" stroke-width="2"/></g>';
+  o.push(bones);
+
+  // body-fat layer (torso core)
+  var bfo = L.bf.num ? Math.min(.55, .16 + L.bf.num / 70) : .12;
+  o.push('<g class="hx-hot hx-fat" data-m="bf" style="--c:' + L.bf.c + '"><path class="org" d="M-52,236 L52,236 L58,340 L-58,340 Z" fill="url(#hxHatch)" fill-opacity="' + bfo.toFixed(2) + '" stroke="#ffaa44" stroke-opacity=".4" stroke-dasharray="3 4"/></g>');
+
+  // organs
+  o.push('<g class="hx-organs">');
+  // lungs + trachea + bronchi
+  o.push('<g class="hx-lungs"><path d="M0,120 L0,158 M0,158 C-8,162 -14,168 -20,176 M0,158 C8,162 14,168 20,176" fill="none" stroke="#7df3ff" stroke-opacity=".7" stroke-width="2.2"/>'
+    + '<path d="M-6,158 C-22,150 -42,160 -48,184 C-52,206 -48,230 -35,238 C-22,244 -10,238 -6,226 C-9,206 -8,180 -6,158 Z" fill="url(#hxLungG)" stroke="#7df3ff" stroke-opacity=".8" stroke-width="1.2"/>'
+    + '<path d="M6,158 C20,152 36,160 42,182 C46,200 44,218 32,228 C28,232 22,232 18,230 C28,214 18,190 6,158 Z" fill="url(#hxLungG)" stroke="#7df3ff" stroke-opacity=".8" stroke-width="1.2"/>'
+    + '<path d="M-20,176 C-30,186 -36,204 -34,226 M-20,176 C-28,180 -40,186 -42,198 M20,176 C28,186 32,198 30,214 M20,176 C28,178 36,184 38,196" fill="none" stroke="#bff7ff" stroke-opacity=".5" stroke-width="1"/></g>');
+  // liver / stomach / intestines / kidneys
+  o.push('<path d="M-46,240 C-30,234 -6,238 0,248 C-4,264 -22,272 -38,264 C-48,258 -50,248 -46,240 Z" fill="#c2583a" fill-opacity=".4" stroke="#ff9a6b" stroke-opacity=".75" stroke-width="1.2"/>');
+  o.push('<path d="M8,242 C24,236 38,244 34,258 C30,270 14,272 8,264 C4,256 3,248 8,242 Z" fill="#d98a8a" fill-opacity=".34" stroke="#ffb3b3" stroke-opacity=".7" stroke-width="1.2"/>');
+  o.push('<path d="M-30,288 L30,288 L30,332 L-30,332 Z" fill="none" stroke="#ffd27a" stroke-opacity=".38" stroke-width="2.4" stroke-linejoin="round"/>'
+    + '<path d="M-22,296 C-10,292 -8,304 4,300 C16,296 20,308 8,312 C-6,316 -20,310 -22,320 C-24,328 -6,326 6,324 C18,322 24,316 22,326" fill="none" stroke="#ffd27a" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>');
+  o.push('<ellipse cx="-17" cy="262" rx="5" ry="9" fill="#a05a7a" fill-opacity=".5" stroke="#f5a3c7" stroke-opacity=".6" stroke-width="1"/><ellipse cx="17" cy="262" rx="5" ry="9" fill="#a05a7a" fill-opacity=".5" stroke="#f5a3c7" stroke-opacity=".6" stroke-width="1"/>');
+  o.push('</g>'); // organs
+
+  // vascular (blood pressure)
+  var art = 'M20,196 C18,176 8,168 -2,172 C-9,176 -10,186 -10,200 L-9,330 C-12,350 -20,372 -26,420 M-9,330 C-4,352 2,372 6,420 M2,172 C8,152 8,134 5,118 C3,110 2,102 0,98 M-2,172 C-10,152 -12,134 -8,118 C-6,110 -4,102 -2,98 M-4,168 C-30,162 -58,160 -72,170 C-82,190 -88,230 -93,268 M-93,268 L-103,364 M-6,330 C-24,334 -30,350 -32,372 C-34,420 -32,470 -30,500 L-33,612';
+  o.push('<g class="hx-hot hx-vas" data-m="bp" style="--c:' + L.bp.c + '"><path class="org" d="' + art + '" fill="none" stroke="#ff7a45" stroke-opacity=".75" stroke-width="1.8" stroke-linecap="round" filter="url(#hxGlow)"/><path class="hit" d="' + art + '" fill="none" stroke="transparent" stroke-width="14"/><path class="hx-flow" d="' + art + '" fill="none" stroke="#ffe3c2" stroke-width="1.6" stroke-dasharray="2 16" stroke-linecap="round"/></g>');
+
+  // brain
+  o.push('<g class="hx-hot hx-brain" data-m="sleep" style="--c:' + L.sleep.c + '"><path class="org" d="M0,44 C-8,38 -20,42 -22,54 C-27,58 -26,70 -20,74 C-21,82 -14,90 -6,88 C-3,91 3,91 6,88 C14,90 21,82 20,74 C26,70 27,58 22,54 C20,42 8,38 0,44 Z" fill="url(#hxBrainG)" fill-opacity=".85" stroke="#e9d9ff" stroke-width="1.2" filter="url(#hxGlow)"/>'
+    + '<path d="M0,46 L0,86 M-14,52 C-8,56 -8,62 -14,66 M-18,70 C-12,72 -10,78 -14,84 M14,52 C8,56 8,62 14,66 M18,70 C12,72 10,78 14,84 M-8,48 C-12,48 -16,50 -18,54 M8,48 C12,48 16,50 18,54" fill="none" stroke="#f3e8ff" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/>'
+    + '<path class="hit" d="M-27,36 L27,36 L27,106 L-27,106 Z" fill="transparent"/></g>');
+
+  // heart
+  o.push('<g class="hx-hot hx-heart" data-m="hr" style="--c:' + L.hr.c + '"><g class="hx-beat">'
+    + '<path class="org" d="M14,196 C9,187 -3,189 -1,202 C1,214 14,226 26,242 C36,228 46,216 44,203 C42,190 28,187 22,197 C19,201 16,200 14,196 Z" fill="url(#hxHeartG)" stroke="#ffc2cc" stroke-width="1.2" filter="url(#hxGlow2)"/>'
+    + '<path d="M12,200 C10,210 18,222 26,232 M28,198 C34,198 38,204 38,210" fill="none" stroke="#ffd9df" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/></g>'
+    + '<circle class="hx-pulse" cx="22" cy="214" r="10" fill="none" stroke="#ff3355" stroke-width="1.6"/>'
+    + '<path class="hit" d="M-4,184 L48,184 L48,246 L-4,246 Z" fill="transparent"/></g>');
+
+  // tape rings
+  function ring(id, cx, cy, rx, ry, rot, col) {
+    var t = rot ? ' transform="rotate(' + rot + ' ' + cx + ' ' + cy + ')"' : '';
+    return '<g class="hx-hot hx-ring" data-m="' + id + '" style="--c:' + col + '"' + t + '><ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="none" stroke="' + col + '" stroke-opacity=".28" stroke-dasharray="3 3"/>'
+      + '<path class="org" d="M' + (cx - rx) + ',' + cy + ' A' + rx + ',' + ry + ' 0 0 0 ' + (cx + rx) + ',' + cy + '" fill="none" stroke="' + col + '" stroke-width="2" filter="url(#hxGlow)"/>'
+      + '<ellipse class="hit" cx="' + cx + '" cy="' + cy + '" rx="' + (rx + 4) + '" ry="' + (ry + 8) + '" fill="transparent"/></g>';
   }
-  ['weight','bf','chest','waist','hips','arm','thigh','calf'].forEach(f=>{var el=document.getElementById('m-'+f+'-ch');if(el)el.innerHTML=ch(f);});
-  renderMeasHistory();
+  o.push(ring('chest', 0, 186, 56, 8, 0, L.chest.c));
+  o.push(ring('waist', 0, 272, 46, 7, 0, L.waist.c));
+  o.push(ring('hips', 0, 340, 58, 8, 0, L.hips.c));
+  o.push(ring('arm', 82, 214, 15, 4.5, -12, L.arm.c));
+  o.push(ring('thigh', -31, 432, 25, 6, 0, L.thigh.c));
+  o.push(ring('calf', 34, 548, 19, 5, 0, L.calf.c));
+  o.push('</g>'); // clip group
+
+  // scanner beam
+  o.push('<g clip-path="url(#hxClip)"><rect class="hx-scan" x="-120" y="-60" width="240" height="60" fill="url(#hxScanG)"/></g>');
+  o.push('</g>'); // body
+
+  // ---- weight scale ----
+  o.push('<g class="hx-hot hx-scale" data-m="weight" style="--c:' + L.weight.c + '">'
+   + '<ellipse cx="380" cy="736" rx="150" ry="9" fill="#00ff88" fill-opacity=".18" filter="url(#hxGlow2)"/>'
+   + '<path d="M286,690 L474,690 L490,722 C490,728 484,732 476,732 L284,732 C276,732 270,728 270,722 Z" fill="url(#hxSlab)" stroke="#5b7580" stroke-opacity=".7"/>'
+   + '<path d="M302,636 L458,636 C468,636 474,642 478,652 L492,688 C494,693 490,696 484,696 L276,696 C270,696 266,693 268,688 L282,652 C286,642 292,636 302,636 Z" fill="#101c22" stroke="#7fa7b5" stroke-opacity=".6"/>'
+   + '<path d="M306,640 L454,640 C462,640 466,645 469,653 L480,684 L280,684 L291,653 C294,645 298,640 306,640 Z" fill="url(#hxGlass)" stroke="#bff7ff" stroke-opacity=".3"/>'
+   + '<ellipse cx="344" cy="660" rx="22" ry="5" fill="#00e5ff" fill-opacity=".1"/><ellipse cx="416" cy="660" rx="22" ry="5" fill="#00e5ff" fill-opacity=".1"/>'
+   + '<rect class="org" x="316" y="702" width="128" height="24" rx="5" fill="url(#hxLCD)" stroke="#00ff88" stroke-opacity=".55"/>'
+   + '<text class="hx-lcd" x="380" y="720" text-anchor="middle" filter="url(#hxGlow)">' + X.wtTxt + '</text>'
+   + '<text class="hx-lcd-u" x="436" y="720" text-anchor="end">KG</text>'
+   + '<rect class="hit" x="268" y="636" width="224" height="98" fill="transparent"/></g>');
+
+  // ---- callouts ----
+  var LX = 140, LW = 128, RX = 492, LH = 50;
+  function label(id, side, y, ax, ay, nameTxt) {
+    var d = L[id], x = side === 'l' ? LX : RX, ex = side === 'l' ? LX + LW : RX, my = y + LH / 2, mx = side === 'l' ? ex + 20 : ex - 20;
+    var a = '<g class="hx-hot hx-lab' + (d.empty ? ' nodata' : '') + '" data-m="' + id + '" style="--c:' + d.c + '" tabindex="0" role="button" aria-label="' + nameTxt + ' ' + (d.empty ? 'no data' : d.txt + ' ' + d.unit) + '">'
+      + '<path class="hx-lead" d="M' + ax + ',' + ay + ' L' + mx + ',' + my + ' L' + ex + ',' + my + '" fill="none"/>'
+      + '<circle class="hx-dotp" cx="' + ax + '" cy="' + ay + '" r="3"/><circle class="hx-dot" cx="' + ax + '" cy="' + ay + '" r="3"/>'
+      + '<rect class="hx-lab-bg" x="' + x + '" y="' + y + '" width="' + LW + '" height="' + LH + '" rx="9"/>'
+      + '<rect class="hx-lab-bar" x="' + (side === 'l' ? x : x + LW - 3) + '" y="' + (y + 8) + '" width="3" height="' + (LH - 16) + '" rx="1.5"/>'
+      + '<text class="hx-lab-n" x="' + (x + 12) + '" y="' + (y + 16) + '">' + nameTxt + '</text>'
+      + '<text class="hx-lab-v" x="' + (x + 12) + '" y="' + (y + 40) + '">' + d.txt + '<tspan class="hx-lab-u" dx="3">' + d.unit + '</tspan></text>'
+      + (d.delta ? '<text class="hx-lab-d ' + d.dcls + '" x="' + (x + LW - 10) + '" y="' + (y + 16) + '" text-anchor="end">' + d.delta + '</text>' : '')
+      + '</g>';
+    return a;
+  }
+  o.push('<g class="hx-labels">');
+  o.push(label('sleep', 'l', 26, 359, 66, 'SLEEP'));
+  o.push(label('bp', 'l', 98, 374, 146, 'BLOOD PRESSURE'));
+  o.push(label('chest', 'l', 170, 324, 190, 'CHEST'));
+  o.push(label('waist', 'l', 244, 334, 276, 'WAIST'));
+  o.push(label('thigh', 'l', 396, 355, 434, 'THIGH'));
+  o.push(label('bmi', 'l', 586, 288, 662, 'BMI'));
+  o.push(label('hr', 'r', 96, 410, 216, 'HEART RATE'));
+  o.push(label('arm', 'r', 168, 477, 216, 'ARM'));
+  o.push(label('bf', 'r', 242, 428, 292, 'BODY FAT'));
+  o.push(label('hips', 'r', 326, 438, 344, 'HIPS'));
+  o.push(label('calf', 'r', 480, 433, 551, 'CALF'));
+  o.push(label('weight', 'r', 586, 476, 662, 'WEIGHT'));
+  o.push('</g>');
+  return o.join('');
 }
-// Full measurement history — no cap. Newest first, grouped by month, loaded 30 rows at a time.
-var measHistShown = 30;
-function measHistMore(all){ measHistShown = all ? 1e9 : measHistShown + 30; renderMeasHistory(); }
-function renderMeasHistory(){
-  var hist = document.getElementById('measHistory'); if (!hist) return;
-  var list = (S.measurements || []).map(function(m, i){ return { m: m, i: i, day: wtDay(m.date) }; });
-  var cnt = document.getElementById('measHistCount'); if (cnt) cnt.textContent = list.length ? list.length + ' ENTRIES' : '';
-  if (!list.length) { hist.innerHTML = '<div style="font-size:13px;color:var(--t2);padding:10px">No measurements logged yet.</div>'; return; }
-  list.sort(function(a,b){ return (isNaN(a.day)?0:a.day) - (isNaN(b.day)?0:b.day) || a.i - b.i; });
-  // change vs the previous entry that had a weight
-  var lastW = null;
-  list.forEach(function(r){ var w = parseFloat(r.m.weight); r.w = w || null; r.delta = (w && lastW !== null) ? w - lastW : null; if (w) lastW = w; });
-  var ws = list.filter(function(r){ return r.w; });
-  var summary = '';
-  if (ws.length) {
-    var sum = ws.reduce(function(a,r){ return a + r.w; }, 0), avgAll = sum / ws.length;
-    var lo = Math.min.apply(null, ws.map(function(r){return r.w;})), hi = Math.max.apply(null, ws.map(function(r){return r.w;}));
-    var tot = ws[ws.length-1].w - ws[0].w;
-    summary = '<div class="wh-sum">'
-      + '<div><span>FIRST LOG</span><b>' + ws[0].w.toFixed(1) + '<small> kg</small></b></div>'
-      + '<div><span>LATEST</span><b>' + ws[ws.length-1].w.toFixed(1) + '<small> kg</small></b></div>'
-      + '<div><span>ALL-TIME AVG</span><b>' + avgAll.toFixed(1) + '<small> kg</small></b></div>'
-      + '<div><span>TOTAL CHANGE</span><b class="' + (tot > 0.04 ? 't-up' : tot < -0.04 ? 't-dn' : 't-neu') + '">' + wtSigned(tot) + '<small> kg</small></b></div>'
-      + '<div><span>LOWEST / HIGHEST</span><b>' + lo.toFixed(1) + ' / ' + hi.toFixed(1) + '</b></div>'
-      + '</div>';
+
+// ===================== HEALTH 2.0 (Vitals + Measurements in one place) =====================
+// Data is unchanged: S.vitals[] and S.measurements[] (synced per-entry by the existing storage layer).
+// Every entry is kept forever (unlimited history). Charts use daily averages, bucketed weekly/monthly on long ranges.
+var HX_TABS = ['overview','trends','log','history'];
+var HX_M = {
+  weight: { n:'Weight',        u:'kg',   src:'m', k:'weight', d:1, c:'#00ff88', ic:'⚖' },
+  bf:     { n:'Body Fat',      u:'%',    src:'m', k:'bf',     d:1, c:'#ffaa44', ic:'◐' },
+  bmi:    { n:'BMI',           u:'',     src:'m', calc:1,      d:1, c:'#5ad1ff', ic:'◎' },
+  chest:  { n:'Chest',         u:'cm',   src:'m', k:'chest',  d:1, c:'#00e5ff', ic:'◍' },
+  waist:  { n:'Waist',         u:'cm',   src:'m', k:'waist',  d:1, c:'#ffdd00', ic:'◍' },
+  hips:   { n:'Hips',          u:'cm',   src:'m', k:'hips',   d:1, c:'#ff6bd6', ic:'◍' },
+  arm:    { n:'Arm',           u:'cm',   src:'m', k:'arm',    d:1, c:'#4da3ff', ic:'◍' },
+  thigh:  { n:'Thigh',         u:'cm',   src:'m', k:'thigh',  d:1, c:'#2de2c4', ic:'◍' },
+  calf:   { n:'Calf',          u:'cm',   src:'m', k:'calf',   d:1, c:'#a3ff5a', ic:'◍' },
+  hr:     { n:'Heart Rate',    u:'bpm',  src:'v', k:'hr',     d:0, c:'#ff3355', ic:'♥', band:[60,100] },
+  bp:     { n:'Blood Pressure',u:'mmHg', src:'v', k:'sys', k2:'dia', d:0, c:'#ff7a45', ic:'♡', band:[90,120] },
+  sleep:  { n:'Sleep',         u:'h',    src:'v', k:'sleep',  d:1, c:'#aa77ff', ic:'☾', band:[7,9], bars:1 },
+  quality:{ n:'Sleep Quality', u:'/10',  src:'v', k:'quality',d:1, c:'#c9a6ff', ic:'✦', bars:1 }
+};
+var HX_ORDER = ['weight','bf','bmi','chest','waist','hips','arm','thigh','calf','hr','bp','sleep','quality'];
+var HX_FIELDS = {
+  m: [['weight','Weight','kg',20,500,'0.1'],['bf','Body fat','%',2,75,'0.1'],['height','Height','cm',50,260,'0.1'],['chest','Chest','cm',30,250,'0.5'],['waist','Waist','cm',30,250,'0.5'],['hips','Hips','cm',30,250,'0.5'],['arm','Arm','cm',10,100,'0.5'],['thigh','Thigh','cm',20,120,'0.5'],['calf','Calf','cm',15,80,'0.5']],
+  v: [['hr','Heart rate','bpm',25,250,'1'],['sys','Systolic','mmHg',60,280,'1'],['dia','Diastolic','mmHg',30,180,'1'],['sleep','Sleep','hours',0.5,24,'0.5'],['quality','Quality','1–10',1,10,'1']]
+};
+var hx = { sel:'weight', tm:'weight', range:'30', from:'', to:'', pr:'90', hType:'all', hRange:'all', hFrom:'', hTo:'', hQ:'', hSort:'new', hShown:40, ch:{}, logBuilt:false, wired:false };
+try { var _hu = JSON.parse(localStorage.getItem('fitos_hx_ui') || 'null'); if (_hu) ['tm','range','pr','hType','hRange'].forEach(function(k){ if (_hu[k]) hx[k] = _hu[k]; }); } catch(e) {}
+if (!HX_M[hx.tm]) hx.tm = 'weight';
+function hxSaveUI() { try { localStorage.setItem('fitos_hx_ui', JSON.stringify({ tm:hx.tm, range:hx.range, pr:hx.pr, hType:hx.hType, hRange:hx.hRange })); } catch(e) {} }
+function hxEl(id) { return document.getElementById(id); }
+function hxNum(x) { var v = parseFloat(x); return (isFinite(v) && v > 0) ? v : null; }
+function hxId() { return 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function hxArr(kind) { if (kind === 'v') { if (!S.vitals) S.vitals = []; return S.vitals; } if (!S.measurements) S.measurements = []; return S.measurements; }
+function hxIsWide() { return window.innerWidth > 1060; }
+
+// ---------- data access ----------
+function hxRaw(id) {
+  var M = HX_M[id], arr = hxArr(M.src), h = null, out = [];
+  arr.map(function(e, i){ return { e:e, i:i, day:wtDay(e.date) }; })
+     .filter(function(r){ return !isNaN(r.day); })
+     .sort(function(a, b){ return a.day - b.day || a.i - b.i; })
+     .forEach(function(r){
+       var e = r.e, v, v2 = null;
+       if (id === 'bmi') { var hh = hxNum(e.height); if (hh) h = hh; var w = hxNum(e.weight); if (!w || !h) return; v = w / Math.pow(h / 100, 2); }
+       else if (id === 'bp') { v = hxNum(e.sys); v2 = hxNum(e.dia); if (!v || !v2) return; }
+       else { v = hxNum(e[M.k]); if (v === null) return; }
+       out.push({ day:r.day, date:String(e.date).slice(0, 10), v:v, v2:v2, i:r.i });
+     });
+  return out;
+}
+function hxLatest(id) { var r = hxRaw(id); return { last:r[r.length - 1] || null, prev:r[r.length - 2] || null, all:r }; }
+function hxDaily(id, raw) {
+  raw = raw || hxRaw(id); var m = {}, ks = [];
+  raw.forEach(function(r){ var o = m[r.day]; if (!o) { o = m[r.day] = { day:r.day, date:r.date, s:0, s2:0, n:0 }; ks.push(r.day); } o.s += r.v; o.s2 += (r.v2 || 0); o.n++; });
+  return ks.sort(function(a, b){ return a - b; }).map(function(k){ var o = m[k]; return { day:o.day, date:o.date, v:o.s / o.n, v2:id === 'bp' ? o.s2 / o.n : null, n:o.n }; });
+}
+function hxWin(key, from, to, daily) {
+  var end = wtDay(today()), start;
+  if (key === 'all') { start = daily.length ? daily[0].day : end - 29; if (daily.length) end = Math.max(end, daily[daily.length - 1].day); }
+  else if (key === 'custom') { var f = wtDay(from), t = wtDay(to); if (!isNaN(f) && !isNaN(t)) { start = Math.min(f, t); end = Math.max(f, t); } else start = end - 29; }
+  else start = end - (parseInt(key, 10) - 1);
+  if (end <= start) end = start + 1;
+  return [start, end];
+}
+function hxBucket(daily, w, id) {
+  var inW = daily.filter(function(p){ return p.day >= w[0] && p.day <= w[1]; }), n = inW.length, g = n > 600 ? 30 : (n > 150 ? 7 : 1);
+  if (g === 1) return { pts:inW, g:1, inW:inW };
+  var m = {};
+  inW.forEach(function(p){ var k = Math.floor((p.day - w[0]) / g), o = m[k] || (m[k] = { s:0, s2:0, n:0, d:0, c:0 }); o.s += p.v; o.s2 += (p.v2 || 0); o.n++; o.d += p.day; o.c += p.n; });
+  var pts = Object.keys(m).map(Number).sort(function(a, b){ return a - b; }).map(function(k){ var o = m[k]; return { day:o.d / o.n, v:o.s / o.n, v2:id === 'bp' ? o.s2 / o.n : null, n:o.c, agg:g, from:w[0] + k * g, to:Math.min(w[1], w[0] + k * g + g - 1) }; });
+  return { pts:pts, g:g, inW:inW };
+}
+function hxStats(inW) {
+  if (!inW.length) return null;
+  var vs = inW.map(function(p){ return p.v; }), sum = vs.reduce(function(a, b){ return a + b; }, 0), s2 = 0, n2 = 0, ent = 0;
+  inW.forEach(function(p){ if (p.v2) { s2 += p.v2; n2++; } ent += p.n; });
+  var f = inW[0], l = inW[inW.length - 1];
+  return { n:inW.length, ent:ent, avg:sum / vs.length, avg2:n2 ? s2 / n2 : null, min:Math.min.apply(null, vs), max:Math.max.apply(null, vs), first:f, last:l, chg:l.v - f.v };
+}
+function hxTxt(id, v, v2) { if (v === null || v === undefined || isNaN(v)) return '—'; if (id === 'bp') return v2 ? Math.round(v) + '/' + Math.round(v2) : String(Math.round(v)); return (+v).toFixed(HX_M[id].d); }
+function hxStatus(id, l) {
+  if (!l) return null; var v = l.v;
+  if (id === 'hr') return v < 60 ? { t:'ATHLETE', k:'ok' } : v <= 100 ? { t:'NORMAL', k:'ok' } : { t:'ELEVATED', k:'warn' };
+  if (id === 'bp') return (v < 120 && l.v2 < 80) ? { t:'OPTIMAL', k:'ok' } : (v < 140 && l.v2 < 90) ? { t:'NORMAL', k:'ok' } : { t:'HIGH', k:'bad' };
+  if (id === 'bmi') return v < 18.5 ? { t:'UNDERWEIGHT', k:'warn' } : v < 25 ? { t:'NORMAL', k:'ok' } : v < 30 ? { t:'OVERWEIGHT', k:'warn' } : { t:'OBESE', k:'bad' };
+  if (id === 'sleep') return v < 6 ? { t:'SHORT', k:'bad' } : v < 7 ? { t:'LOW', k:'warn' } : v <= 9 ? { t:'OPTIMAL', k:'ok' } : { t:'LONG', k:'warn' };
+  if (id === 'quality') return v >= 8 ? { t:'GREAT', k:'ok' } : v >= 6 ? { t:'OK', k:'warn' } : { t:'POOR', k:'bad' };
+  return null;
+}
+function hxAgo(day) {
+  var d = wtDay(today()) - day; if (d <= 0) return 'today'; if (d === 1) return 'yesterday'; if (d < 31) return d + ' days ago'; if (d < 365) return Math.round(d / 30) + ' months ago'; return (d / 365).toFixed(1) + ' years ago';
+}
+function hxDelta(id, l, p) {
+  if (!l || !p || id === 'bp') return null; var M = HX_M[id], dv = l.v - p.v;
+  if (Math.abs(dv) < Math.pow(10, -M.d) / 2) return null;
+  return { t:(dv > 0 ? '▲ ' : '▼ ') + Math.abs(dv).toFixed(M.d), cls:dv > 0 ? 'up' : 'dn', v:dv };
+}
+
+// ---------- SVG chart (line / area / bars, hover crosshair, daily or bucketed points) ----------
+function hxNice(lo, hi, n) {
+  var span = hi - lo || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw))), r = raw / mag, step = (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * mag;
+  var a = Math.floor(lo / step) * step, b = Math.ceil(hi / step) * step, t = []; for (var v = a; v <= b + step * .001; v += step) t.push(+v.toFixed(6));
+  return { a:a, b:b, ticks:t, step:step };
+}
+function hxMono(P) { // monotone cubic path through [x,y] points
+  var n = P.length; if (n < 2) return ''; if (n === 2) return 'M' + P[0][0].toFixed(1) + ',' + P[0][1].toFixed(1) + 'L' + P[1][0].toFixed(1) + ',' + P[1][1].toFixed(1);
+  var dx = [], m = [], t = [], i;
+  for (i = 0; i < n - 1; i++) { dx[i] = P[i + 1][0] - P[i][0] || 1e-6; m[i] = (P[i + 1][1] - P[i][1]) / dx[i]; }
+  t[0] = m[0]; t[n - 1] = m[n - 2];
+  for (i = 1; i < n - 1; i++) t[i] = (m[i - 1] * m[i] <= 0) ? 0 : (m[i - 1] + m[i]) / 2;
+  for (i = 0; i < n - 1; i++) { if (m[i] === 0) { t[i] = 0; t[i + 1] = 0; } else { var a = t[i] / m[i], b = t[i + 1] / m[i], s = a * a + b * b; if (s > 9) { var k = 3 / Math.sqrt(s); t[i] = k * a * m[i]; t[i + 1] = k * b * m[i]; } } }
+  var d = 'M' + P[0][0].toFixed(1) + ',' + P[0][1].toFixed(1);
+  for (i = 0; i < n - 1; i++) { var h = dx[i] / 3; d += 'C' + (P[i][0] + h).toFixed(1) + ',' + (P[i][1] + t[i] * h).toFixed(1) + ' ' + (P[i + 1][0] - h).toFixed(1) + ',' + (P[i + 1][1] - t[i + 1] * h).toFixed(1) + ' ' + P[i + 1][0].toFixed(1) + ',' + P[i + 1][1].toFixed(1); }
+  return d;
+}
+function hxDateLbl(day, long) { return wtFmt(Math.round(day), long ? { day:'numeric', month:'short', year:'2-digit' } : { day:'numeric', month:'short' }); }
+// boxId: container element id, id: metric id, B: bucketed {pts,g}, w: [start,end] window, o: {h, compact}
+function hxChart(boxId, id, B, w, o) {
+  var box = hxEl(boxId); if (!box) return; o = o || {};
+  var M = HX_M[id], pts = B.pts, H = o.h || 260, W = Math.max(260, Math.round(box.clientWidth || 640));
+  if (!pts.length) { box.innerHTML = '<div class="hx-empty">No ' + M.n.toLowerCase() + ' data in this period.<br>Log an entry or pick a wider range.</div>'; hx.ch[boxId] = null; return; }
+  var uid = boxId, c = M.c, c2 = '#5ad1ff', two = id === 'bp';
+  var pl = o.compact ? 34 : 42, pr = 14, pt = 14, pb = 26, pw = W - pl - pr, ph = H - pt - pb;
+  var lo = Infinity, hi = -Infinity;
+  pts.forEach(function(p){ lo = Math.min(lo, p.v); hi = Math.max(hi, p.v); if (two) { lo = Math.min(lo, p.v2); hi = Math.max(hi, p.v2); } });
+  var bars = M.bars && pts.length <= 45;
+  if (M.band && !o.compact) { /* keep band partially visible */ lo = Math.min(lo, M.band[0]); hi = Math.max(hi, M.band[1]); }
+  if (bars) lo = Math.min(lo, 0);
+  var pad = (hi - lo) * .14 || Math.max(1, hi * .05); if (!bars) lo -= pad; hi += pad; if (!bars && lo < 0 && Math.min.apply(null, pts.map(function(p){ return p.v; })) >= 0) lo = 0;
+  var nz = hxNice(lo, hi, o.compact ? 3 : 4); lo = nz.a; hi = nz.b;
+  var x0 = w[0], x1 = w[1]; if (bars) { x0 -= .6; x1 += .6; }
+  var X = function(d){ return pl + (d - x0) / ((x1 - x0) || 1) * pw; }, Y = function(v){ return pt + (1 - (v - lo) / ((hi - lo) || 1)) * ph; };
+  var s = '<svg class="hx-cs" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" style="--c:' + c + '">';
+  s += '<defs><linearGradient id="hxa-' + uid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c + '" stop-opacity=".38"/><stop offset="1" stop-color="' + c + '" stop-opacity="0"/></linearGradient>'
+     + '<linearGradient id="hxb-' + uid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c + '"/><stop offset="1" stop-color="' + c + '" stop-opacity=".25"/></linearGradient>'
+     + '<filter id="hxg-' + uid + '" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+  nz.ticks.forEach(function(t){ var y = Y(t); s += '<line class="hx-gl" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/><text class="hx-ax" x="' + (pl - 6) + '" y="' + (y + 3.5).toFixed(1) + '" text-anchor="end">' + (Math.abs(t) >= 100 || nz.step >= 1 ? Math.round(t) : t.toFixed(1)) + '</text>'; });
+  var span = x1 - x0, nT = o.compact ? 3 : (W < 480 ? 3 : 5);
+  for (var i = 0; i < nT; i++) { var dd = x0 + span * (nT === 1 ? 0 : i / (nT - 1)), xx = X(dd); s += '<text class="hx-ax" x="' + xx.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="' + (i === 0 ? 'start' : i === nT - 1 ? 'end' : 'middle') + '">' + hxDateLbl(dd, span > 300) + '</text>'; }
+  if (M.band && !two) { var yb1 = Y(M.band[1]), yb0 = Y(M.band[0]); s += '<rect x="' + pl + '" y="' + Math.max(pt, yb1).toFixed(1) + '" width="' + pw + '" height="' + Math.max(0, Math.min(pt + ph, yb0) - Math.max(pt, yb1)).toFixed(1) + '" fill="' + c + '" opacity=".07"/>'; }
+  if (two) { var s1 = Y(120), s0 = Y(90), d1 = Y(80), d0 = Y(60); s += '<rect x="' + pl + '" y="' + Math.max(pt, s1).toFixed(1) + '" width="' + pw + '" height="' + Math.max(0, Math.min(pt + ph, s0) - Math.max(pt, s1)).toFixed(1) + '" fill="' + c + '" opacity=".06"/><rect x="' + pl + '" y="' + Math.max(pt, d1).toFixed(1) + '" width="' + pw + '" height="' + Math.max(0, Math.min(pt + ph, d0) - Math.max(pt, d1)).toFixed(1) + '" fill="' + c2 + '" opacity=".06"/>'; }
+  // average line
+  var tot = 0; pts.forEach(function(p){ tot += p.v; }); var avg = tot / pts.length;
+  if (!o.compact && pts.length > 1) s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(avg).toFixed(1) + '" y2="' + Y(avg).toFixed(1) + '" stroke="' + c + '" stroke-opacity=".5" stroke-dasharray="5 5"/><text class="hx-ax" x="' + (W - pr - 2) + '" y="' + (Y(avg) - 5).toFixed(1) + '" text-anchor="end" fill="' + c + '">AVG ' + (two ? Math.round(avg) : avg.toFixed(M.d)) + '</text>';
+  var P1 = pts.map(function(p){ return [X(p.day), Y(p.v)]; });
+  if (bars) {
+    var bw = Math.max(3, Math.min(30, pw / Math.max(pts.length, 1) * .62));
+    pts.forEach(function(p, k){ var x = P1[k][0] - bw / 2, y = P1[k][1], h = Math.max(1.5, pt + ph - y); s += '<rect class="hx-bar" style="animation-delay:' + Math.min(k * 14, 500) + 'ms" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="' + Math.min(5, bw / 2).toFixed(1) + '" fill="url(#hxb-' + uid + ')"/>'; });
+  } else {
+    var line = hxMono(P1);
+    if (pts.length > 1) s += '<path class="hx-area" d="' + line + 'L' + P1[P1.length - 1][0].toFixed(1) + ',' + (pt + ph) + 'L' + P1[0][0].toFixed(1) + ',' + (pt + ph) + 'Z" fill="url(#hxa-' + uid + ')"/>';
+    if (two) { var P2 = pts.map(function(p){ return [X(p.day), Y(p.v2)]; }); if (pts.length > 1) s += '<path class="hx-line hx-draw" pathLength="1" d="' + hxMono(P2) + '" stroke="' + c2 + '" filter="url(#hxg-' + uid + ')"/>'; P2.forEach(function(p){ if (pts.length <= 70) s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.6" fill="var(--card)" stroke="' + c2 + '" stroke-width="1.6"/>'; }); }
+    if (pts.length > 1) s += '<path class="hx-line hx-draw" pathLength="1" d="' + line + '" stroke="' + c + '" filter="url(#hxg-' + uid + ')"/>';
+    if (pts.length <= 70) P1.forEach(function(p){ s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3" fill="var(--card)" stroke="' + c + '" stroke-width="1.8"/>'; });
+    var lp = P1[P1.length - 1]; s += '<circle cx="' + lp[0].toFixed(1) + '" cy="' + lp[1].toFixed(1) + '" r="5.5" fill="' + c + '" filter="url(#hxg-' + uid + ')"/>';
   }
-  var rows = list.slice().reverse();
-  var shown = rows.slice(0, measHistShown);
-  var out = summary, curMonth = '';
-  // monthly averages for the month headers
-  var mAgg = {};
-  list.forEach(function(r){ if (!r.w || isNaN(r.day)) return; var k = String(r.m.date).slice(0,7); (mAgg[k] = mAgg[k] || []).push(r.w); });
-  shown.forEach(function(r){
-    var mk = isNaN(r.day) ? '' : String(r.m.date).slice(0,7);
-    if (mk !== curMonth) {
-      curMonth = mk;
-      var arr = mAgg[mk] || [], av = arr.length ? (arr.reduce(function(a,b){return a+b;},0) / arr.length) : null;
-      out += '<div class="wh-month"><span>' + (mk ? wtFmt(r.day, { month:'long', year:'numeric' }).toUpperCase() : 'UNDATED') + '</span>' + (av !== null ? '<em>AVG ' + av.toFixed(1) + ' kg · ' + arr.length + ' logs</em>' : '') + '</div>';
+  if (!o.compact && pts.length > 2) { // min / max markers
+    var mi = 0, ma = 0; pts.forEach(function(p, k){ if (p.v < pts[mi].v) mi = k; if (p.v > pts[ma].v) ma = k; });
+    [[ma, 'MAX', -9], [mi, 'MIN', 16]].forEach(function(q){ var p = P1[q[0]]; if (mi === ma && q[1] === 'MIN') return; s += '<text class="hx-ax" x="' + Math.min(W - pr - 14, Math.max(pl + 14, p[0])).toFixed(1) + '" y="' + (p[1] + q[2]).toFixed(1) + '" text-anchor="middle" fill="' + c + '" opacity=".85">' + q[1] + ' ' + hxTxt(id, pts[q[0]].v, pts[q[0]].v2) + '</text>'; });
+  }
+  s += '<line class="hx-cur" x1="0" x2="0" y1="' + pt + '" y2="' + (pt + ph) + '" opacity="0"/><circle class="hx-cd" r="6" fill="' + c + '" stroke="#fff" stroke-width="1.5" opacity="0"/>' + (two ? '<circle class="hx-cd2" r="5" fill="' + c2 + '" stroke="#fff" stroke-width="1.5" opacity="0"/>' : '')
+     + '<rect class="hx-hit" x="' + pl + '" y="0" width="' + pw + '" height="' + H + '" fill="transparent"/></svg><div class="hx-tip" style="--c:' + c + '"></div>';
+  box.innerHTML = s;
+  hx.ch[boxId] = { id:id, pts:pts, P1:P1, Y:Y, X:X, g:B.g, two:two };
+  var svg = box.querySelector('svg'), tip = box.querySelector('.hx-tip'), cur = svg.querySelector('.hx-cur'), cd = svg.querySelector('.hx-cd'), cd2 = svg.querySelector('.hx-cd2');
+  function hide() { tip.classList.remove('on'); cur.setAttribute('opacity', 0); cd.setAttribute('opacity', 0); if (cd2) cd2.setAttribute('opacity', 0); }
+  function move(e) {
+    var r = svg.getBoundingClientRect(), mx = (e.clientX - r.left) * (W / r.width), k = 0, best = 1e9;
+    P1.forEach(function(p, j){ var dd = Math.abs(p[0] - mx); if (dd < best) { best = dd; k = j; } });
+    var p = pts[k], px = P1[k][0], py = P1[k][1];
+    cur.setAttribute('x1', px); cur.setAttribute('x2', px); cur.setAttribute('opacity', .7); cd.setAttribute('cx', px); cd.setAttribute('cy', py); cd.setAttribute('opacity', 1);
+    if (cd2) { cd2.setAttribute('cx', px); cd2.setAttribute('cy', Y(p.v2)); cd2.setAttribute('opacity', 1); }
+    var when = p.agg ? hxDateLbl(p.from, true) + ' → ' + hxDateLbl(p.to, true) : wtFmt(Math.round(p.day), { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+    tip.innerHTML = '<small>' + when.toUpperCase() + '</small><b>' + hxTxt(id, p.v, p.v2) + '</b> <span style="color:#86a6ad">' + M.u + '</span><small>' + (p.agg ? 'AVERAGE · ' + p.n + ' ENTRIES' : (p.n > 1 ? 'AVERAGE OF ' + p.n + ' ENTRIES' : (id === 'bmi' ? hxStatus(id, p).t : ''))) + '</small>';
+    var bw = box.clientWidth, tx = px * (bw / W); tip.style.left = Math.max(70, Math.min(bw - 70, tx)) + 'px'; tip.style.top = Math.max(28, py * (bw / W)) + 'px'; tip.classList.add('on');
+  }
+  var hit = svg.querySelector('.hx-hit');
+  hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+  hit.addEventListener('pointerleave', function(e){ if (!e.pointerType || e.pointerType === 'mouse') hide(); });
+  if (!box._hxOut) { box._hxOut = 1; document.addEventListener('pointerdown', function(e){ if (!box.contains(e.target)) { var t = box.querySelector('.hx-tip'); if (t) t.classList.remove('on'); var cc = box.querySelector('.hx-cur'); if (cc) cc.setAttribute('opacity', 0); var d1 = box.querySelector('.hx-cd'); if (d1) d1.setAttribute('opacity', 0); var d2 = box.querySelector('.hx-cd2'); if (d2) d2.setAttribute('opacity', 0); } }, true); }
+}
+
+// ---------- body map (organogram) ----------
+function hxLabData(id) {
+  var M = HX_M[id], L = hxLatest(id), l = L.last, dl = hxDelta(id, l, L.prev);
+  return { c:M.c, unit:id === 'bp' ? '' : (M.u === '/10' ? '/10' : M.u), empty:!l, txt:l ? hxTxt(id, l.v, l.v2) : '—', delta:dl ? dl.t : '', dcls:dl ? dl.cls : '', num:l ? l.v : null };
+}
+function hxRenderBody() {
+  var st = hxEl('hxStage'); if (!st) return;
+  var L = {}; HX_ORDER.forEach(function(id){ L[id] = hxLabData(id); });
+  var hr = hxLatest('hr').last, dur = hr ? Math.max(.34, Math.min(1.5, 60 / hr.v)) : .95;
+  var wt = hxLatest('weight').last, total = hxArr('m').length + hxArr('v').length, lastDay = 0;
+  hxArr('m').concat(hxArr('v')).forEach(function(e){ var d = wtDay(e.date); if (!isNaN(d) && d > lastDay) lastDay = d; });
+  st.innerHTML = '<div class="hx-hud"><span><i></i><b>BIO-SCAN</b> · LIVE</span><span>' + (total ? total + ' ENTRIES · ' + hxAgo(lastDay).toUpperCase() : 'NO DATA YET') + '</span></div>'
+    + '<svg class="hx-svg" viewBox="130 -34 500 794" role="group" aria-label="Interactive human body health map" style="--bpm:' + dur.toFixed(2) + 's">'
+    + hxBodySVG(L, { wtTxt:wt ? hxTxt('weight', wt.v) : '--.-' }) + '</svg>';
+  hxMarkSel();
+  if (!hx.wired) {
+    hx.wired = true;
+    st.addEventListener('click', function(e){ var t = e.target.closest && e.target.closest('[data-m]'); if (t) hxSelect(t.getAttribute('data-m'), true); });
+    st.addEventListener('keydown', function(e){ if (e.key !== 'Enter' && e.key !== ' ') return; var t = e.target.closest && e.target.closest('[data-m]'); if (t) { e.preventDefault(); hxSelect(t.getAttribute('data-m'), true); } });
+    st.addEventListener('pointerover', function(e){ var t = e.target.closest && e.target.closest('[data-m]'); hxHover(t ? t.getAttribute('data-m') : null); });
+    st.addEventListener('pointerleave', function(){ hxHover(null); });
+  }
+}
+function hxHover(m) { var st = hxEl('hxStage'); if (!st) return; st.querySelectorAll('.hov').forEach(function(n){ n.classList.remove('hov'); }); if (m) st.querySelectorAll('[data-m="' + m + '"]').forEach(function(n){ n.classList.add('hov'); }); }
+function hxMarkSel() {
+  var st = hxEl('hxStage'); if (!st) return;
+  st.querySelectorAll('.sel').forEach(function(n){ n.classList.remove('sel'); });
+  if (hx.sel) st.querySelectorAll('[data-m="' + hx.sel + '"]').forEach(function(n){ n.classList.add('sel'); });
+}
+function hxSelect(m, toggle) {
+  if (m === null || m === undefined) { hx.sel = null; hxMarkSel(); hxRenderPanel(); return; }
+  if (!HX_M[m]) return;
+  if (toggle && hx.sel === m) hx.sel = null; else hx.sel = m;
+  hxMarkSel(); hxRenderPanel();
+  if (hx.sel && !hxIsWide()) { var sd = hxEl('hxSide'); if (sd) setTimeout(function(){ var r = sd.getBoundingClientRect(); if (r.top > window.innerHeight * .62 || r.top < 60) { try { sd.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e) {} } }, 120); }
+}
+function hxPanelRange(r) { hx.pr = r; hxSaveUI(); hxRenderPanel(); }
+function hxRenderPanel() {
+  var sd = hxEl('hxSide'), body = hxEl('hxPanel'); if (!sd || !body) return;
+  var id = hx.sel;
+  if (!id) { sd.classList.remove('open'); return; }
+  var M = HX_M[id], L = hxLatest(id), l = L.last, daily = hxDaily(id, L.all), w = hxWin(hx.pr, '', '', daily), B = hxBucket(daily, w, id), S_ = hxStats(B.inW);
+  var dl = hxDelta(id, l, L.prev), stt = hxStatus(id, l);
+  var h = '<div class="hx-panel" style="--c:' + M.c + '">'
+    + '<div class="hx-ph"><div class="hx-pic">' + M.ic + '</div><div class="hx-pn"><b>' + M.n + '</b><small>' + (M.src === 'v' ? 'VITALS' : 'BODY') + ' · ' + (l ? 'LAST ' + hxAgo(l.day).toUpperCase() : 'NO DATA') + '</small></div><button class="hx-x" onclick="hxSelect(null)" aria-label="Collapse">✕</button></div>';
+  if (l) {
+    h += '<div class="hx-big"><b>' + hxTxt(id, l.v, l.v2) + '</b><small>' + (M.u || '') + '</small>' + (stt ? '<span class="status-badge s-' + stt.k + '">' + stt.t + '</span>' : '') + '</div>'
+      + '<div class="hx-sub">' + (dl ? '<span class="' + dl.cls + '">' + dl.t + ' ' + (M.u === '/10' ? '' : M.u) + '</span> since previous entry' : 'Latest reading · ' + wtFmt(l.day, { day:'numeric', month:'short', year:'numeric' })) + '</div>';
+    if (S_) h += '<div class="hx-mini"><div><span>AVG · ' + hx.pr.toUpperCase().replace('365', '1Y') + '</span><b>' + hxTxt(id, S_.avg, S_.avg2) + '</b></div><div><span>LOWEST</span><b>' + hxTxt(id, S_.min) + '</b></div><div><span>HIGHEST</span><b>' + hxTxt(id, S_.max) + '</b></div><div><span>ENTRIES</span><b>' + S_.ent + '</b></div></div>';
+    if (id === 'sleep' || id === 'quality') {
+      var sv = null, vv = hxArr('v'); for (var q = vv.length - 1; q >= 0; q--) if (vv[q].bed || vv[q].wake) { sv = vv[q]; break; }
+      var sq = hxLatest('quality').last, sd2 = hxLatest('sleep').last;
+      h += '<div class="hx-note">' + (id === 'sleep' && sq ? '<span>Quality <b>' + sq.v + '/10</b></span>' : '') + (id === 'quality' && sd2 ? '<span>Duration <b>' + sd2.v.toFixed(1) + ' h</b></span>' : '') + (sv && sv.bed ? '<span>Bed <b>' + sv.bed + '</b></span>' : '') + (sv && sv.wake ? '<span>Wake <b>' + sv.wake + '</b></span>' : '') + '</div>';
     }
-    var m = r.m, extra = [];
-    if (m.bf) extra.push('BF ' + m.bf + '%'); if (m.chest) extra.push('Chest ' + m.chest); if (m.waist) extra.push('Waist ' + m.waist);
-    if (m.hips) extra.push('Hips ' + m.hips); if (m.arm) extra.push('Arm ' + m.arm); if (m.thigh) extra.push('Thigh ' + m.thigh); if (m.calf) extra.push('Calf ' + m.calf);
-    var dl = r.delta === null ? '<span class="wh-d t-neu">—</span>' : '<span class="wh-d ' + (r.delta > 0.04 ? 't-up' : r.delta < -0.04 ? 't-dn' : 't-neu') + '">' + (r.delta > 0.04 ? '▲ ' : r.delta < -0.04 ? '▼ ' : '● ') + wtSigned(r.delta) + '</span>';
-    out += '<div class="wh-row"><div class="wh-date"><b>' + (isNaN(r.day) ? m.date : wtFmt(r.day, { day:'numeric', month:'short' })) + '</b><span>' + (isNaN(r.day) ? '' : wtFmt(r.day, { weekday:'short', year:'numeric' })) + '</span></div>'
-      + '<div class="wh-w">' + (r.w ? r.w.toFixed(1) + '<small> kg</small>' : '—') + '</div>' + dl
-      + '<div class="wh-ex">' + (extra.length ? extra.join(' · ') + (m.chest||m.waist||m.hips||m.arm||m.thigh||m.calf ? ' cm' : '') : '') + '</div>'
-      + '<button class="del-btn" onclick="delMeas(' + r.i + ')" title="Delete">✕</button></div>';
-  });
-  if (rows.length > shown.length) {
-    out += '<div class="wh-more"><button class="btn" onclick="measHistMore(false)">[ SHOW 30 MORE · ' + (rows.length - shown.length) + ' LEFT ]</button><button class="btn" onclick="measHistMore(true)">[ SHOW ALL ]</button></div>';
+    if (id === 'bmi') {
+      var hh = null, mm = hxArr('m'); for (var z = mm.length - 1; z >= 0; z--) if (hxNum(mm[z].height)) { hh = hxNum(mm[z].height); break; }
+      var pos = Math.max(0, Math.min(100, (l.v - 15) / 25 * 100));
+      h += '<div class="hx-bmi"><i style="left:' + pos + '%"></i><span style="left:14%">18.5</span><span style="left:40%">25</span><span style="left:60%">30</span></div>' + (hh ? '<div class="hx-note"><span>Height <b>' + hh + ' cm</b></span></div>' : '');
+    }
+    if (id === 'hr') h += '<div class="hx-note"><span>The heart on the model beats at <b>' + Math.round(l.v) + ' bpm</b></span></div>';
+    if (id === 'weight') { var b2 = hxLatest('bmi').last; if (b2) h += '<div class="hx-note"><span>BMI <b>' + b2.v.toFixed(1) + '</b></span></div>'; }
+  } else {
+    h += '<div class="hx-empty" style="margin:14px 0">No ' + M.n.toLowerCase() + ' logged yet.<br>Add your first entry to light this up.</div>';
   }
-  hist.innerHTML = out;
+  h += '<div class="hx-ranges">' + [['30', '30D'], ['90', '90D'], ['365', '1Y'], ['all', 'ALL']].map(function(r){ return '<button class="hx-chip' + (hx.pr === r[0] ? ' on' : '') + '" style="--c:' + M.c + '" onclick="hxPanelRange(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join('') + '</div>'
+    + '<div class="hx-chart" id="hxPChart"></div>'
+    + '<div class="hx-act"><button class="wk-btn" onclick="hxGoTrends(\'' + id + '\')">▤ FULL TRENDS</button><button class="wk-btn primary" onclick="hxGoLog(\'' + id + '\')">＋ LOG</button></div></div>';
+  body.innerHTML = h; sd.classList.add('open');
+  if (l) hxChart('hxPChart', id, B, w, { h:176, compact:true });
 }
-function logMeasurements(){
-  var w=document.getElementById('ml-weight').value; if(!w){toast('Enter at least weight');return;}
-  var entry={date:S.today};['weight','bf','height','chest','waist','hips','arm','thigh','calf'].forEach(f=>{var v=document.getElementById('ml-'+f).value;if(v)entry[f]=parseFloat(v);});
-  S.measurements.push(entry);
-  document.querySelectorAll('[id^="ml-"]').forEach(el=>{if(el.tagName==='INPUT')el.value='';});
-  save();renderMeasurements();toast('Measurements saved!');
+function hxGoTrends(id) { if (id && HX_M[id]) { hx.tm = id; hxSaveUI(); } switchHealthTab('trends'); window.scrollTo({ top:0, behavior:'smooth' }); }
+function hxGoLog(id) {
+  switchHealthTab('log'); window.scrollTo({ top:0, behavior:'smooth' });
+  var map = { weight:'ml-weight', bf:'ml-bf', bmi:'ml-height', chest:'ml-chest', waist:'ml-waist', hips:'ml-hips', arm:'ml-arm', thigh:'ml-thigh', calf:'ml-calf', hr:'vt-hr', bp:'vt-sys', sleep:'vt-sleep', quality:'vt-q' };
+  setTimeout(function(){ var e = hxEl(map[id]); if (e) try { e.focus({ preventScroll:true }); } catch(x) {} }, 120);
 }
-function delMeas(i){S.measurements.splice(i,1);save();renderMeasurements();toast('Entry removed');}
+
+// ---------- trends ----------
+function hxRangeBtns(cur, fn, withCustom) {
+  var rs = [['7', '7D'], ['30', '30D'], ['90', '90D'], ['365', '1Y'], ['all', 'ALL']]; if (withCustom) rs.push(['custom', 'CUSTOM']);
+  return rs.map(function(r){ return '<button class="hx-chip' + (cur === r[0] ? ' on' : '') + '" onclick="' + fn + '(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join('');
+}
+function hxTMetric(id) { hx.tm = id; hxSaveUI(); hxRenderTrends(); }
+function hxTRange(r) {
+  hx.range = r;
+  if (r === 'custom' && (!hx.from || !hx.to)) { var e = wtDay(today()); hx.to = wtDayStr(e); hx.from = wtDayStr(e - 29); }
+  hxSaveUI(); hxRenderTrends();
+}
+function hxTCustom() { var f = hxEl('hxFrom').value, t = hxEl('hxTo').value; if (f && t) { hx.from = f; hx.to = t; hxRenderTrends(true); } }
+function hxRenderTrends(keepInputs) {
+  var root = hxEl('hx-v-trends'); if (!root) return;
+  var id = hx.tm, M = HX_M[id], L = hxLatest(id), daily = hxDaily(id, L.all), w = hxWin(hx.range, hx.from, hx.to, daily), B = hxBucket(daily, w, id), st = hxStats(B.inW), l = L.last;
+  var chips = '', grp = 'b';
+  HX_ORDER.forEach(function(k){ var g = HX_M[k].src; if (g !== grp) { chips += '<span class="sep"></span>'; grp = g; } chips += '<button class="hx-chip' + (hx.tm === k ? ' on' : '') + '" style="--c:' + HX_M[k].c + '" onclick="hxTMetric(\'' + k + '\')">' + HX_M[k].n.toUpperCase() + '</button>'; });
+  var u = M.u ? ' ' + M.u : '', chg = st ? st.chg : null, pct = st && st.first.v ? chg / st.first.v * 100 : null;
+  var kp = function(lbl, val, sub, hot){ return '<div class="hx-kpi' + (hot ? ' hot' : '') + '" style="--c:' + M.c + '"><span>' + lbl + '</span><b>' + val + '</b><i>' + (sub || '&nbsp;') + '</i></div>'; };
+  var html = '<div class="hx-mchips">' + chips + '</div>'
+    + '<div class="hx-ranges">' + hxRangeBtns(hx.range, 'hxTRange', true) + '</div>'
+    + (hx.range === 'custom' ? '<div class="hx-custom"><label>FROM<input type="date" id="hxFrom" value="' + hx.from + '" onchange="hxTCustom()"/></label><label>TO<input type="date" id="hxTo" value="' + hx.to + '" max="' + today() + '" onchange="hxTCustom()"/></label></div>' : '')
+    + '<div class="hx-kpis">'
+    + kp('LATEST', l ? hxTxt(id, l.v, l.v2) : '—', l ? wtFmt(l.day, { day:'numeric', month:'short', year:'2-digit' }) : 'no data', 1)
+    + kp('AVERAGE', st ? hxTxt(id, st.avg, st.avg2) : '—', 'this period')
+    + kp('LOWEST', st ? hxTxt(id, st.min) : '—', st ? hxDateLbl(B.inW.filter(function(p){ return p.v === st.min; })[0].day, true) : '')
+    + kp('HIGHEST', st ? hxTxt(id, st.max) : '—', st ? hxDateLbl(B.inW.filter(function(p){ return p.v === st.max; })[0].day, true) : '')
+    + kp('CHANGE', chg === null || id === 'bp' ? (id === 'bp' && st ? Math.round(st.last.v - st.first.v) : '—') : ((chg > 0 ? '+' : '') + chg.toFixed(M.d)), pct !== null && id !== 'bp' ? '<span class="' + (chg > 0 ? 'up' : chg < 0 ? 'dn' : '') + '">' + (pct > 0 ? '+' : '') + pct.toFixed(1) + '%</span>' : '')
+    + kp('ENTRIES', st ? st.ent : 0, st ? st.n + ' days' : '')
+    + '</div>'
+    + '<div class="hx-bigchart" style="--c:' + M.c + '"><div class="hx-ct"><b>' + M.n + (M.u ? ' <small style="font-size:13px;color:var(--t2)">(' + M.u + ')</small>' : '') + '</b>'
+    + (id === 'bp' ? '<span class="hx-legend"><span><i style="background:' + M.c + '"></i>SYSTOLIC</span><span><i style="background:#5ad1ff"></i>DIASTOLIC</span></span>' : '<span>' + hxRangeLabel(w, B.g) + '</span>') + '</div>'
+    + '<div class="hx-chart" id="hxTChart"></div>'
+    + '<div class="hx-foot">' + (B.g > 1 ? 'Showing ' + (B.g === 7 ? 'weekly' : 'monthly') + ' averages for this long range · ' : 'Daily averages · ') + 'hover or tap the chart for exact values</div></div>';
+  if (keepInputs && hxEl('hxTChart')) { /* only chart + stats need refresh */ }
+  root.innerHTML = html;
+  hxChart('hxTChart', id, B, w, { h:window.innerWidth < 560 ? 230 : 320 });
+}
+function hxRangeLabel(w, g) { return (hxDateLbl(w[0], true) + ' → ' + hxDateLbl(w[1], true)).toUpperCase() + (g > 1 ? ' · ' + (g === 7 ? 'WEEKLY' : 'MONTHLY') : ''); }
+
+// ---------- log (one form for body + vitals) ----------
+function hxFieldId(kind, k) { return kind === 'm' ? 'ml-' + k : (k === 'quality' ? 'vt-q' : 'vt-' + k); }
+function hxFormHTML(kind, idFn, vals, hint) {
+  vals = vals || {}; var o = '<div class="hx-fg">';
+  HX_FIELDS[kind].forEach(function(f){
+    var v = vals[f[0]], hv = hint && hint[f[0]];
+    o += '<div><label for="' + idFn(f[0]) + '">' + f[1].toUpperCase() + ' <span style="opacity:.7">' + f[2] + '</span>' + (hv ? '<em id="' + idFn(f[0]) + '-h">last ' + hv + '</em>' : '<em id="' + idFn(f[0]) + '-h"></em>') + '</label><input class="inp" id="' + idFn(f[0]) + '" type="number" inputmode="decimal" step="' + f[5] + '" min="' + f[3] + '" max="' + f[4] + '"' + (v !== undefined && v !== null ? ' value="' + v + '"' : '') + '/></div>';
+  });
+  if (kind === 'v') {
+    o += '<div><label for="' + idFn('bed') + '">BED TIME</label><input class="inp" id="' + idFn('bed') + '" type="time" value="' + (vals.bed || '') + '"/></div><div><label for="' + idFn('wake') + '">WAKE TIME</label><input class="inp" id="' + idFn('wake') + '" type="time" value="' + (vals.wake || '') + '"/></div>'
+      + '<div class="wide"><label for="' + idFn('notes') + '">NOTES</label><input class="inp" id="' + idFn('notes') + '" type="text" maxlength="200" placeholder="How are you feeling?" value="' + wkEsc(vals.notes || '') + '"/></div>';
+  }
+  return o + '</div>';
+}
+function hxRenderLog() {
+  var root = hxEl('hx-v-log'); if (!root) return;
+  if (!hx.logBuilt) {
+    hx.logBuilt = true;
+    root.innerHTML = '<div class="hx-datebar"><label for="hx-date">ENTRY DATE</label><input class="inp" type="date" id="hx-date" max="' + today() + '" value="' + today() + '"/><button class="hx-chip" onclick="hxEl(\'hx-date\').value=today()">TODAY</button></div>'
+      + '<div class="hx-form"><div class="hx-card"><h4>⚖ BODY &amp; MEASUREMENTS</h4>' + hxFormHTML('m', function(k){ return hxFieldId('m', k); }) + '</div>'
+      + '<div class="hx-card"><h4>♥ VITALS &amp; SLEEP</h4>' + hxFormHTML('v', function(k){ return hxFieldId('v', k); }) + '</div></div>'
+      + '<button class="wk-btn primary" style="width:100%;padding:14px" onclick="hxSaveEntry()">SAVE ENTRY</button>'
+      + '<div class="hx-foot" style="margin-top:10px">Fill only what you measured — body and vitals are saved to your history separately. Every entry is kept forever.</div>';
+  }
+  var dt = hxEl('hx-date'); if (dt) dt.max = today();
+  var hint = { weight:'weight', bf:'bf', height:null, chest:'chest', waist:'waist', hips:'hips', arm:'arm', thigh:'thigh', calf:'calf' };
+  Object.keys(hint).forEach(function(k){ var e = hxEl('ml-' + k + '-h'); if (!e) return; var arr = hxArr('m'), v = null; for (var i = arr.length - 1; i >= 0; i--) if (hxNum(arr[i][k])) { v = arr[i][k]; break; } e.textContent = v ? 'last ' + v : ''; });
+  ['hr','sys','dia','sleep','quality'].forEach(function(k){ var e = hxEl(hxFieldId('v', k) + '-h'); if (!e) return; var arr = hxArr('v'), v = null; for (var i = arr.length - 1; i >= 0; i--) if (hxNum(arr[i][k])) { v = arr[i][k]; break; } e.textContent = v ? 'last ' + v : ''; });
+}
+// Reads + validates one form. Returns { ok, data, err }.
+function hxReadForm(kind, idFn) {
+  var data = {}, err = null;
+  HX_FIELDS[kind].forEach(function(f){
+    var el = hxEl(idFn(f[0])); if (!el || el.value === '') return;
+    var v = parseFloat(el.value); if (isNaN(v) || v < f[3] || v > f[4]) { err = err || (f[1] + ' must be between ' + f[3] + ' and ' + f[4]); return; }
+    data[f[0]] = (kind === 'v' && f[5] === '1') ? Math.round(v) : v;
+  });
+  if (kind === 'v') {
+    var bed = hxEl(idFn('bed')), wake = hxEl(idFn('wake')), notes = hxEl(idFn('notes'));
+    if (bed && bed.value) data.bed = bed.value; if (wake && wake.value) data.wake = wake.value; if (notes && notes.value.trim()) data.notes = notes.value.trim().slice(0, 200);
+    if ((data.sys && !data.dia) || (data.dia && !data.sys)) err = err || 'Enter both systolic and diastolic';
+    if (data.sys && data.dia && data.dia >= data.sys) err = err || 'Systolic must be higher than diastolic';
+  }
+  var has = kind === 'm' ? Object.keys(data).length > 0 : !!(data.hr || data.sys || data.sleep || data.quality || (data.bed && data.wake));
+  return { ok:!err, data:data, err:err, has:has };
+}
+function hxInsert(arr, e) { var d = wtDay(e.date), i = arr.length; while (i > 0) { var pd = wtDay(arr[i - 1].date); if (!isNaN(pd) && pd > d) i--; else break; } arr.splice(i, 0, e); return i; }
+function hxSaveEntry() {
+  var date = (hxEl('hx-date').value || today()).slice(0, 10);
+  if (isNaN(wtDay(date))) { toast('Pick a valid date'); return; }
+  if (wtDay(date) > wtDay(today())) { toast('Date cannot be in the future'); return; }
+  var m = hxReadForm('m', function(k){ return hxFieldId('m', k); }), v = hxReadForm('v', function(k){ return hxFieldId('v', k); });
+  if (!m.ok) { toast(m.err); return; } if (!v.ok) { toast(v.err); return; }
+  if (!m.has && !v.has) { toast('Enter at least one value'); return; }
+  if (m.has) hxInsert(hxArr('m'), Object.assign({ id:hxId(), date:date }, m.data));
+  if (v.has) hxInsert(hxArr('v'), Object.assign({ id:hxId(), date:date }, v.data));
+  HX_FIELDS.m.forEach(function(f){ var e = hxEl(hxFieldId('m', f[0])); if (e) e.value = ''; });
+  HX_FIELDS.v.forEach(function(f){ var e = hxEl(hxFieldId('v', f[0])); if (e) e.value = ''; });
+  ['vt-bed','vt-wake','vt-notes'].forEach(function(i){ var e = hxEl(i); if (e) e.value = ''; });
+  save(); hxAfterChange(); toast((m.has && v.has ? 'Body + vitals' : m.has ? 'Measurements' : 'Vitals') + ' saved to history');
+  hxRenderLog();
+}
+// kept for older callers
+function logVitals() { hxSaveEntry(); }
+function logMeasurements() { hxSaveEntry(); }
+
+// ---------- history (unlimited) ----------
+function hxHType(t) { hx.hType = t; hx.hShown = 40; hxSaveUI(); hxRenderHistory(); }
+function hxHRange(r) { hx.hRange = r; hx.hShown = 40; if (r === 'custom' && (!hx.hFrom || !hx.hTo)) { var e = wtDay(today()); hx.hTo = wtDayStr(e); hx.hFrom = wtDayStr(e - 29); } hxSaveUI(); hxRenderHistory(); }
+function hxHCustom() { var f = hxEl('hxHFrom').value, t = hxEl('hxHTo').value; if (f && t) { hx.hFrom = f; hx.hTo = t; hx.hShown = 40; hxRenderHistory(); } }
+function hxHSearch(q) { hx.hQ = q; hx.hShown = 40; hxHistList(); }
+function hxHSort() { hx.hSort = hx.hSort === 'new' ? 'old' : 'new'; hxRenderHistory(); }
+function hxHMore(all) { hx.hShown = all ? 1e9 : hx.hShown + 40; hxHistList(); }
+function hxChips(kind, e) {
+  var o = [], add = function(l, v, c){ o.push('<span class="hx-v" style="--vc:' + c + '">' + l + ' <b>' + v + '</b></span>'); };
+  if (kind === 'm') { HX_FIELDS.m.forEach(function(f){ if (hxNum(e[f[0]])) add(f[1], e[f[0]] + (f[2] === '%' ? '%' : ' ' + f[2]), (HX_M[f[0]] || HX_M.weight).c); }); }
+  else {
+    if (hxNum(e.hr)) add('HR', e.hr + ' bpm', HX_M.hr.c); if (hxNum(e.sys)) add('BP', e.sys + '/' + (e.dia || '–'), HX_M.bp.c);
+    if (hxNum(e.sleep)) add('Sleep', e.sleep + ' h', HX_M.sleep.c); if (hxNum(e.quality)) add('Quality', e.quality + '/10', HX_M.quality.c);
+    if (e.bed || e.wake) add('Bed / Wake', (e.bed || '–') + ' → ' + (e.wake || '–'), '#8aa');
+  }
+  return o.join('');
+}
+function hxHistItems() {
+  var w = null; if (hx.hRange !== 'all') w = hxWin(hx.hRange, hx.hFrom, hx.hTo, []);
+  var q = hx.hQ.trim().toLowerCase(), out = [];
+  [['m', 'hMeas'], ['v', 'hVit']].forEach(function(k){
+    if (hx.hType === 'body' && k[0] !== 'm') return; if (hx.hType === 'vitals' && k[0] !== 'v') return;
+    hxArr(k[0]).forEach(function(e, i){
+      var d = wtDay(e.date); if (w && (isNaN(d) || d < w[0] || d > w[1])) return;
+      if (q) { var hay = (String(e.date) + ' ' + (e.notes || '') + ' ' + hxChips(k[0], e).replace(/<[^>]+>/g, ' ')).toLowerCase(); if (hay.indexOf(q) < 0) return; }
+      out.push({ kind:k[0], i:i, day:isNaN(d) ? 0 : d, e:e });
+    });
+  });
+  out.sort(function(a, b){ return hx.hSort === 'new' ? (b.day - a.day || b.i - a.i) : (a.day - b.day || a.i - b.i); });
+  return out;
+}
+function hxRenderHistory() {
+  var root = hxEl('hx-v-history'); if (!root) return;
+  var all = hxArr('m').map(function(e){ return wtDay(e.date); }).concat(hxArr('v').map(function(e){ return wtDay(e.date); })).filter(function(d){ return !isNaN(d); });
+  var uniq = {}; all.forEach(function(d){ uniq[d] = 1; });
+  var first = all.length ? Math.min.apply(null, all) : null, last = all.length ? Math.max.apply(null, all) : null;
+  var kp = function(l, v, s){ return '<div class="hx-kpi" style="--c:var(--g)"><span>' + l + '</span><b>' + v + '</b><i>' + (s || '&nbsp;') + '</i></div>'; };
+  var tb = function(k, l){ return '<button class="hx-chip' + (hx.hType === k ? ' on' : '') + '" onclick="hxHType(\'' + k + '\')">' + l + '</button>'; };
+  root.innerHTML = '<div class="hx-hkpis">' + kp('TOTAL ENTRIES', all.length, hxArr('m').length + ' body · ' + hxArr('v').length + ' vitals') + kp('DAYS TRACKED', Object.keys(uniq).length, '') + kp('FIRST LOG', first !== null ? wtFmt(first, { day:'numeric', month:'short', year:'numeric' }) : '—', '') + kp('LATEST', last !== null ? hxAgo(last) : '—', last !== null ? wtFmt(last, { day:'numeric', month:'short', year:'numeric' }) : '') + '</div>'
+    + '<div class="hx-filters"><div class="grp">' + tb('all', 'ALL TYPES') + tb('body', 'BODY') + tb('vitals', 'VITALS') + '</div><div class="grp">' + hxRangeBtns(hx.hRange, 'hxHRange', true) + '</div>'
+    + '<input class="hx-search" id="hxHQ" type="search" placeholder="Search notes or date…" value="' + wkEsc(hx.hQ) + '" oninput="hxHSearch(this.value)"/><button class="hx-chip" onclick="hxHSort()">' + (hx.hSort === 'new' ? '↓ NEWEST' : '↑ OLDEST') + '</button></div>'
+    + (hx.hRange === 'custom' ? '<div class="hx-custom"><label>FROM<input type="date" id="hxHFrom" value="' + hx.hFrom + '" onchange="hxHCustom()"/></label><label>TO<input type="date" id="hxHTo" value="' + hx.hTo + '" max="' + today() + '" onchange="hxHCustom()"/></label></div>' : '')
+    + '<div id="hxHList"></div>';
+  hxHistList();
+}
+function hxHistList() {
+  var box = hxEl('hxHList'); if (!box) return;
+  var items = hxHistItems();
+  if (!items.length) { box.innerHTML = '<div class="hx-empty">' + (hxArr('m').length + hxArr('v').length ? 'No entries match these filters.' : 'No entries yet — open the LOG tab to add your first one.') + '</div>'; return; }
+  var shown = items.slice(0, hx.hShown), out = '', cur = '', cnt = {};
+  items.forEach(function(it){ var k = it.day ? wtDayStr(it.day).slice(0, 7) : '0'; cnt[k] = (cnt[k] || 0) + 1; });
+  out += '<div class="hx-foot" style="text-align:left;margin:0 2px 4px">' + items.length + ' ' + (items.length === 1 ? 'entry' : 'entries') + '</div>';
+  shown.forEach(function(it){
+    var mk = it.day ? wtDayStr(it.day).slice(0, 7) : '0';
+    if (mk !== cur) { cur = mk; out += '<div class="hx-month"><span>' + (it.day ? wtFmt(it.day, { month:'long', year:'numeric' }).toUpperCase() : 'UNDATED') + '</span><em>' + cnt[mk] + ' ENTRIES</em></div>'; }
+    var e = it.e;
+    out += '<div class="hx-row ' + it.kind + '"><div class="hx-rd"><b>' + (it.day ? wtFmt(it.day, { day:'numeric', month:'short' }) : '—') + '</b><span>' + (it.day ? wtFmt(it.day, { weekday:'short', year:'numeric' }).toUpperCase() : '') + '</span></div>'
+      + '<div class="hx-rb"><span class="hx-kind">' + (it.kind === 'm' ? 'BODY' : 'VITALS') + '</span><div class="hx-vals">' + (hxChips(it.kind, e) || '<span class="hx-v">No values</span>') + '</div>' + (e.notes ? '<div class="hx-rn">“' + wkEsc(e.notes) + '”</div>' : '') + '</div>'
+      + '<div class="hx-ra"><button onclick="hxEdit(\'' + it.kind + '\',' + it.i + ')" title="Edit" aria-label="Edit entry">✎</button><button class="d" onclick="hxDel(\'' + it.kind + '\',' + it.i + ')" title="Delete" aria-label="Delete entry">✕</button></div></div>';
+  });
+  if (items.length > shown.length) out += '<div class="hx-more"><button class="wk-btn" onclick="hxHMore(false)">SHOW 40 MORE · ' + (items.length - shown.length) + ' LEFT</button><button class="wk-btn" onclick="hxHMore(true)">SHOW ALL</button></div>';
+  box.innerHTML = out;
+}
+function hxDel(kind, i) {
+  var arr = hxArr(kind), e = arr[i]; if (!e) return;
+  arr.splice(i, 1); save(); hxAfterChange();
+  wkSnack('Entry removed', function(){ arr.splice(Math.min(i, arr.length), 0, e); save(); hxAfterChange(); toast('Restored'); });
+}
+var hxEditing = null;
+function hxEdit(kind, i) {
+  var e = hxArr(kind)[i]; if (!e) return; hxEditing = { kind:kind, i:i };
+  var idFn = function(k){ return 'he-' + k; };
+  wkOpenModal((kind === 'm' ? '⚖ Edit body entry' : '♥ Edit vitals entry'),
+    '<div class="hx-datebar"><label for="he-date">DATE</label><input class="inp" type="date" id="he-date" max="' + today() + '" value="' + String(e.date).slice(0, 10) + '"/></div>' + hxFormHTML(kind, idFn, e),
+    '<button class="wk-btn" onclick="wkCloseModal()">CANCEL</button><button class="wk-btn primary" onclick="hxSaveEdit()">SAVE CHANGES</button>', 'builder');
+}
+function hxSaveEdit() {
+  if (!hxEditing) return; var kind = hxEditing.kind, arr = hxArr(kind), e = arr[hxEditing.i]; if (!e) { wkCloseModal(); return; }
+  var date = (hxEl('he-date').value || '').slice(0, 10); if (isNaN(wtDay(date)) || wtDay(date) > wtDay(today())) { toast('Pick a valid date (not in the future)'); return; }
+  var r = hxReadForm(kind, function(k){ return 'he-' + k; });
+  if (!r.ok) { toast(r.err); return; } if (!r.has) { toast('An entry needs at least one value'); return; }
+  var keep = {}; if (e.id !== undefined) keep.id = e.id; if (e._id !== undefined) keep._id = e._id;
+  var ne = Object.assign(keep, { date:date }, r.data);
+  var oldDay = wtDay(e.date);
+  if (wtDay(date) === oldDay) { arr[hxEditing.i] = ne; } else { arr.splice(hxEditing.i, 1); hxInsert(arr, ne); }
+  wkCloseModal(); save(); hxAfterChange(); toast('Entry updated');
+}
+
+// ---------- shell ----------
+function hxAfterChange() {
+  hxRender();
+  try { renderDashboard(); } catch(e) {}
+}
+function hxRender() {
+  var pg = hxEl('page-health'); if (!pg) return;
+  var tab = HX_TABS.indexOf(healthActiveTab) >= 0 ? healthActiveTab : 'overview';
+  if (tab === 'overview') { hxRenderBody(); hxRenderPanel(); }
+  else if (tab === 'trends') hxRenderTrends();
+  else if (tab === 'log') hxRenderLog();
+  else hxRenderHistory();
+}
+function switchHealthTab(tab) {
+  if (HX_TABS.indexOf(tab) < 0) tab = 'overview';
+  healthActiveTab = tab; _saveView();
+  HX_TABS.forEach(function(t){ var v = hxEl('hx-v-' + t), b = hxEl('hxt-' + t); if (v) v.style.display = t === tab ? '' : 'none'; if (b) { b.classList.toggle('active', t === tab); b.setAttribute('aria-selected', t === tab ? 'true' : 'false'); } });
+  if (tab === 'overview' && !hx.firstDone) { hx.firstDone = true; if (!hxIsWide()) hx.sel = null; }
+  hxRender();
+}
+// the old function names stay so every existing caller (AI agent, remote refresh, restore) keeps working
+function renderVitals() { hxRender(); }
+function renderMeasurements() { hxRender(); }
+function renderMeasHistory() { hxRender(); }
+function delVital(i) { hxDel('v', i); }
+function delMeas(i) { hxDel('m', i); }
+(function(){ var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(function(){ var pg = hxEl('page-health'); if (pg && pg.classList.contains('active')) hxRender(); }, 180); }); })();
 
 // ===================== GOALS =====================
 function renderGoals(){
@@ -8797,6 +9431,11 @@ function mobSheetNav(pageId) {
   document.getElementById('mobSheet').classList.remove('open');
   mobNavTo(pageId, document.getElementById('mn-' + pageId) || null);
 }
+function mobSheetHealth() {
+  document.getElementById('mobSheet').classList.remove('open');
+  nav(document.querySelector('.sb-item[onclick*="health"]'), 'health');
+  setTimeout(function(){ switchHealthTab('log'); }, 50);
+}
 function mobSheetWater() {
   document.getElementById('mobSheet').classList.remove('open');
   if (!wtrDate) wtrDate = S.today;
@@ -9231,6 +9870,24 @@ var GEMINI_TOOLS = [{
       }
     },
     {
+      name: 'saveVitals',
+      description: 'Save health vitals (heart rate, blood pressure, sleep) for a given date (defaults to today). Provide only the fields the user mentions.',
+      parameters: {
+        type: 'OBJECT',
+        properties: {
+          date:    { type: 'STRING', description: 'Date for this entry, YYYY-MM-DD. Omit to default to today.' },
+          hr:      { type: 'NUMBER', description: 'Heart rate in beats per minute' },
+          sys:     { type: 'NUMBER', description: 'Systolic blood pressure in mmHg' },
+          dia:     { type: 'NUMBER', description: 'Diastolic blood pressure in mmHg' },
+          sleep:   { type: 'NUMBER', description: 'Hours slept' },
+          quality: { type: 'NUMBER', description: 'Sleep quality from 1 to 10' },
+          bed:     { type: 'STRING', description: 'Bed time as HH:MM (24h)' },
+          wake:    { type: 'STRING', description: 'Wake time as HH:MM (24h)' },
+          notes:   { type: 'STRING', description: 'Optional short note' }
+        }
+      }
+    },
+    {
       name: 'logExercise',
       description: 'Add an exercise to the user\'s workout for a date (defaults to today). Use type "strength" (sets/reps/weight), "bodyweight", "cardio" (duration/distance, no sets), "interval" (rounds of work/rest), "timed" (hold seconds) or "flex" (stretching minutes). An exercise can work several body parts.',
       parameters: {
@@ -9318,6 +9975,7 @@ ${libSummary}
 
 === LATEST MEASUREMENTS ===
 ${lastMeas ? 'Weight: '+(lastMeas.weight||'--')+'kg | Body Fat: '+(lastMeas.bf||'--')+'% | Waist: '+(lastMeas.waist||'--')+'cm' : 'No measurements yet'}
+${(function(){ var lv = S.vitals && S.vitals.length ? S.vitals[S.vitals.length-1] : null; return lv ? 'Latest vitals ('+lv.date+'): HR '+(lv.hr||'--')+' bpm | BP '+(lv.sys||'--')+'/'+(lv.dia||'--')+' | Sleep '+(lv.sleep||'--')+'h' : 'No vitals yet'; })()}
 
 === INSTRUCTIONS ===
 1. MACRO CALCULATION: When a user describes a mix (e.g. "50g of a mix of 100g almond + 100g cashew"), calculate macros for the full 200g mix using standard nutrition data, then scale to the consumed weight. Save the mix to the library first with saveMealToLibrary, then log the consumed portion with addMeal.
@@ -9440,6 +10098,31 @@ function aiExecuteTool(name, args) {
       if(entry.waist)  parts.push('Waist: '+entry.waist+'cm');
       if(entry.chest)  parts.push('Chest: '+entry.chest+'cm');
       return '📏 Measurements saved'+(targetDate!==S.today?' for '+targetDate:'')+' — '+parts.join(' | ');
+    }
+
+    if (name === 'saveVitals') {
+      var vDate = aiResolveDate(args);
+      var vEntry = { id: hxId(), date: vDate };
+      var vLim = { hr:[25,250], sys:[60,280], dia:[30,180], sleep:[0.5,24], quality:[1,10] };
+      for (var vk in vLim) {
+        if (args[vk] === undefined || args[vk] === null || args[vk] === '') continue;
+        var vv = parseFloat(args[vk]);
+        if (isNaN(vv) || vv < vLim[vk][0] || vv > vLim[vk][1]) return '⚠ '+vk+' must be between '+vLim[vk][0]+' and '+vLim[vk][1]+'.';
+        vEntry[vk] = vv;
+      }
+      if (args.bed && /^\d{1,2}:\d{2}$/.test(args.bed)) vEntry.bed = args.bed;
+      if (args.wake && /^\d{1,2}:\d{2}$/.test(args.wake)) vEntry.wake = args.wake;
+      if (args.notes) vEntry.notes = String(args.notes).slice(0, 200);
+      if ((vEntry.sys && !vEntry.dia) || (vEntry.dia && !vEntry.sys)) return '⚠ Blood pressure needs both systolic and diastolic.';
+      if (!(vEntry.hr || vEntry.sys || vEntry.sleep || vEntry.quality)) return '⚠ No vitals data provided.';
+      hxInsert(S.vitals, vEntry);
+      save(); try { hxAfterChange(); } catch(e) {}
+      var vParts = [];
+      if (vEntry.hr) vParts.push('HR: '+vEntry.hr+' bpm');
+      if (vEntry.sys) vParts.push('BP: '+vEntry.sys+'/'+vEntry.dia);
+      if (vEntry.sleep) vParts.push('Sleep: '+vEntry.sleep+'h');
+      if (vEntry.quality) vParts.push('Quality: '+vEntry.quality+'/10');
+      return '✅ Vitals saved for '+(vDate===S.today?'today':vDate)+(vParts.length?' — '+vParts.join(', '):'');
     }
 
     if (name === 'logExercise') {

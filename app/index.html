@@ -1290,17 +1290,35 @@ html.alpha .hx-chip.on{color:var(--g2)}
 body.pg-health .content{max-width:1340px !important;padding-left:56px !important;padding-right:56px !important}
 @media (max-width:1100px){body.pg-health .content{padding-left:40px !important;padding-right:40px !important}}
 @media (max-width:768px){body.pg-health .content{padding-left:20px !important;padding-right:20px !important;max-width:100% !important}}
-/* body map cards (SVG units: the stage is ~580px wide on laptops, so 1 unit ≈ 1.07px) */
-.hx-lab-n{font:600 11.5px var(--mono);letter-spacing:.9px}
-.hx-lab-v{font:700 29px var(--font-num)}
-.hx-lab-u{font:600 12.5px var(--mono)}
-.hx-lab-d{font:700 12.5px var(--mono)}
-.hx-lcd{font:700 22px var(--font-num)}.hx-lcd-u{font:700 11.5px var(--mono)}
-.hx-hud{font-size:11.5px;letter-spacing:1.6px}
+/* body map cards: laid out in real screen px (the SVG viewBox is 1:1 with the stage), so these ARE the on-screen sizes */
+.hx-lab-n{font:600 11px var(--mono);letter-spacing:.3px}
+.hx-lab-v{font:700 18px var(--font-num);letter-spacing:.2px}
+.hx-lab-u{font:600 11px var(--mono)}
+.hx-lab-d{font:700 11px var(--mono)}
+.hx-svg.m .hx-lab-n{font-size:10px;letter-spacing:.1px}.hx-svg.m .hx-lab-v{font-size:15px}.hx-svg.m .hx-lab-u,.hx-svg.m .hx-lab-d{font-size:10px}
+.hx-lcd{font-weight:700;font-family:var(--font-num);letter-spacing:1px}.hx-lcd-u{font-weight:700;font-family:var(--mono);letter-spacing:.5px}
+.hx-hud{font-size:11px;letter-spacing:1.4px}
+/* ONE-SCREEN overview: the stage height follows the window, so head-to-toe + every card is visible without scrolling */
+.hx-ov{--hx-h:clamp(440px,calc(100vh - 136px),790px)}
+@supports (height:100dvh){.hx-ov{--hx-h:clamp(440px,calc(100dvh - 136px),790px)}}
+.hx-stage{height:var(--hx-h)}
+.hx-svg{position:absolute;left:0;top:0;width:100%;height:100%;max-height:none}
+@media (min-width:1061px){
+  .hx-ov{grid-template-columns:minmax(0,calc(var(--hx-h)*.334 + 380px)) minmax(0,1fr)}
+  .hx-side{max-height:var(--hx-h)}
+  .hx-acc-in{overflow-x:hidden;overflow-y:auto;max-height:var(--hx-h);scrollbar-width:thin}
+}
+@media (min-width:769px){
+  body.pg-health .content{padding-top:66px !important;padding-bottom:28px !important}
+  #page-health .wk-tabs{margin-bottom:10px;padding:3px}
+  #page-health .wk-tab{padding:8px 6px}
+  #hx-v-overview{margin-bottom:-16px}
+}
 /* side panel */
-.hx-pn small{font-size:11.5px}.hx-pn b{font-size:21px}
-.hx-big small{font-size:16px}.hx-sub{font-size:14px}
-.hx-mini span{font-size:11px;letter-spacing:1.2px}.hx-mini b{font-size:20px}
+.hx-pn small{font-size:11px}.hx-pn b{font-size:19px}
+.hx-big small{font-size:14px}.hx-sub{font-size:13px}
+.hx-mini span{font-size:11px;letter-spacing:1.1px}.hx-mini b{font-size:17px}
+.hx-big b{font-size:44px}.hx-panel{padding:14px}.hx-big{margin:8px 0 0}.hx-sub{margin-bottom:8px}.hx-mini{margin-bottom:8px}.hx-ranges{margin-bottom:4px}.hx-act{margin-top:8px}
 .hx-note span{font-size:13px}
 .hx-bmi span{font-size:11px}
 .hx-chip{font-size:12.5px}
@@ -1334,7 +1352,6 @@ body.pg-health .content{max-width:1340px !important;padding-left:56px !important
 .wk-pr .e1 small{font-size:11px}
 #wkRestName{font-size:11.5px}
 .wk-mini span,.wk-mini div>span{font-size:11.5px !important}
-@media (max-width:760px){.hx-lab-n{font-size:13px;letter-spacing:.3px}.hx-lab-u,.hx-lab-d{font-size:13.5px}.hx-lcd-u{font-size:14px}}
 @media (max-width:640px){
   .wh-row{grid-template-columns:64px 1fr auto 28px;row-gap:2px}
   .wh-ex{grid-column:1 / -2;grid-row:2;white-space:normal}
@@ -7810,7 +7827,7 @@ function subCustomWaterL(){
 function setWaterGoal(){var inp=document.getElementById('w-goal-inp');var g=inp?(parseInt(inp.value)||12):(S.cfg.waterGoal||12);S.cfg.waterGoal=g;save();renderNutrition();toast('Water goal updated!');}
 
 /* Builds the holographic anatomy figure (SVG string). d = { id: {txt,unit,delta,c,empty} }, extra = {bpm, bf, wtTxt, bmiTxt} */
-function hxBodySVG(L, X) {
+function hxBodySVG(L, X, G) {
   var o = [], i;
   var sil = 'M0,28 C-20,28 -31,44 -31,66 C-31,84 -26,100 -18,108 C-14,113 -11,116 -10,120 C-10,124 -11,128 -13,131 C-17,138 -42,139 -62,147 C-80,152 -89,166 -89,184 C-91,216 -96,246 -98,270 C-100,300 -107,336 -113,372 C-117,386 -119,402 -113,412 C-108,421 -99,418 -97,408 C-95,392 -91,372 -89,356 C-85,326 -79,298 -75,272 C-71,250 -66,226 -57,200 C-55,224 -46,248 -44,272 C-43,296 -54,318 -56,342 C-57,364 -58,386 -56,412 C-54,450 -50,480 -48,502 C-48,526 -52,548 -50,568 C-48,588 -42,604 -41,622 C-40,636 -47,644 -62,650 C-52,658 -30,658 -25,652 C-22,640 -23,628 -24,616 C-22,596 -18,572 -18,548 C-18,526 -15,508 -14,488 C-12,458 -6,420 0,372 Z';
   var skull = 'M0,34 C-19,34 -27,52 -25,70 C-24,82 -18,90 -14,96 L-11,106 L11,106 L14,96 C18,90 24,82 25,70 C27,52 19,34 0,34 Z';
@@ -7833,9 +7850,10 @@ function hxBodySVG(L, X) {
    + '<clipPath id="hxClip"><use href="#hxHalf"/><use href="#hxHalf" transform="scale(-1,1)"/></clipPath>'
    + '</defs>');
 
-  // ---- HUD backdrop ----
+  // ---- HUD backdrop (grid in screen px, artwork in a scaled group so text elsewhere stays one fixed size) ----
+  o.push('<rect width="' + G.W + '" height="' + G.H + '" fill="url(#hxHex)"/>');
+  o.push('<g transform="translate(' + G.ox.toFixed(2) + ',' + G.oy.toFixed(2) + ') scale(' + G.s.toFixed(4) + ')">');
   o.push('<g class="hx-hud">'
-   + '<rect x="110" y="-34" width="540" height="794" fill="url(#hxHex)"/>'
    + '<circle cx="380" cy="330" r="268" fill="none" stroke="#00e5ff" stroke-opacity=".10" stroke-dasharray="2 7"/>'
    + '<circle class="hx-orbit" cx="380" cy="330" r="236" fill="none" stroke="#00ff88" stroke-opacity=".16" stroke-dasharray="40 18 6 18"/>'
    + '<ellipse cx="380" cy="700" rx="200" ry="30" fill="url(#hxFloorG)"/>'
@@ -7934,40 +7952,41 @@ function hxBodySVG(L, X) {
    + '<path d="M302,636 L458,636 C468,636 474,642 478,652 L492,688 C494,693 490,696 484,696 L276,696 C270,696 266,693 268,688 L282,652 C286,642 292,636 302,636 Z" fill="#101c22" stroke="#7fa7b5" stroke-opacity=".6"/>'
    + '<path d="M306,640 L454,640 C462,640 466,645 469,653 L480,684 L280,684 L291,653 C294,645 298,640 306,640 Z" fill="url(#hxGlass)" stroke="#bff7ff" stroke-opacity=".3"/>'
    + '<ellipse cx="344" cy="660" rx="22" ry="5" fill="#00e5ff" fill-opacity=".1"/><ellipse cx="416" cy="660" rx="22" ry="5" fill="#00e5ff" fill-opacity=".1"/>'
-   + '<rect class="org" x="316" y="702" width="128" height="24" rx="5" fill="url(#hxLCD)" stroke="#00ff88" stroke-opacity=".55"/>'
-   + '<text class="hx-lcd" x="380" y="720" text-anchor="middle" filter="url(#hxGlow)">' + X.wtTxt + '</text>'
-   + '<text class="hx-lcd-u" x="436" y="720" text-anchor="end">KG</text>'
+   + '<rect class="org" x="312" y="699" width="136" height="30" rx="6" fill="url(#hxLCD)" stroke="#00ff88" stroke-opacity=".55"/>'
+   + '<text class="hx-lcd" x="374" y="' + (714 + .35 * X.lcdFs).toFixed(1) + '" text-anchor="middle" filter="url(#hxGlow)" style="font-size:' + X.lcdFs.toFixed(1) + 'px">' + X.wtTxt + '</text>'
+   + '<text class="hx-lcd-u" x="440" y="' + (714 + .35 * X.lcdUs).toFixed(1) + '" text-anchor="end" style="font-size:' + X.lcdUs.toFixed(1) + 'px">KG</text>'
    + '<rect class="hit" x="268" y="636" width="224" height="98" fill="transparent"/></g>');
 
-  // ---- callouts ----
-  var LX = 112, LW = 146, RX = 502, LH = 56;
-  function label(id, side, y, ax, ay, nameTxt) {
-    var d = L[id], x = side === 'l' ? LX : RX, ex = side === 'l' ? LX + LW : RX, my = y + LH / 2, mx = side === 'l' ? ex + 22 : ex - 22;
-    var a = '<g class="hx-hot hx-lab' + (d.empty ? ' nodata' : '') + '" data-m="' + id + '" style="--c:' + d.c + '" tabindex="0" role="button" aria-label="' + nameTxt + ' ' + (d.empty ? 'no data' : d.txt + ' ' + d.unit) + '">'
-      + '<path class="hx-lead" d="M' + ax + ',' + ay + ' L' + mx + ',' + my + ' L' + ex + ',' + my + '" fill="none"/>'
-      + '<circle class="hx-dotp" cx="' + ax + '" cy="' + ay + '" r="3"/><circle class="hx-dot" cx="' + ax + '" cy="' + ay + '" r="3"/>'
-      + '<rect class="hx-lab-bg" x="' + x + '" y="' + y + '" width="' + LW + '" height="' + LH + '" rx="9"/>'
-      + '<rect class="hx-lab-bar" x="' + (side === 'l' ? x : x + LW - 3) + '" y="' + (y + 9) + '" width="3" height="' + (LH - 18) + '" rx="1.5"/>'
-      + '<text class="hx-lab-n" x="' + (x + 13) + '" y="' + (y + 19) + '">' + nameTxt + '</text>'
-      + '<text class="hx-lab-v" x="' + (x + 13) + '" y="' + (y + 46) + '">' + d.txt + '<tspan class="hx-lab-u" dx="3">' + d.unit + '</tspan></text>'
-      + (d.delta ? '<text class="hx-lab-d ' + d.dcls + '" x="' + (x + LW - 10) + '" y="' + (y + 19) + '" text-anchor="end">' + d.delta + '</text>' : '')
+  o.push('</g>'); // end scaled artwork
+
+  // ---- callouts: laid out in screen px, so the text is always the same readable size ----
+  var CW = G.cw, CH = G.ch, FN = G.fn, LSN = G.ls;
+  function P(ax, ay) { return [G.ox + ax * G.s, G.oy + ay * G.s]; }
+  var spec = [
+    ['sleep', 'l', 359, 66, 'SLEEP'], ['bp', 'l', 374, 146, 'BLOOD PRESSURE'], ['chest', 'l', 324, 190, 'CHEST'], ['waist', 'l', 334, 276, 'WAIST'], ['thigh', 'l', 355, 434, 'THIGH'], ['bmi', 'l', 288, 662, 'BMI'],
+    ['hr', 'r', 410, 216, 'HEART RATE'], ['arm', 'r', 477, 216, 'ARM'], ['bf', 'r', 428, 292, 'BODY FAT'], ['hips', 'r', 438, 344, 'HIPS'], ['calf', 'r', 433, 551, 'CALF'], ['weight', 'r', 476, 662, 'WEIGHT']
+  ].map(function(a){ var p = P(a[2], a[3]); return { id:a[0], side:a[1], ax:p[0], ay:p[1], name:a[4] }; });
+  ['l', 'r'].forEach(function(sd) {
+    var it = spec.filter(function(q){ return q.side === sd; }), gap = G.gap, top = G.top, bot = G.H - G.bot - CH, k;
+    it.forEach(function(q){ q.y = q.ay - CH / 2; });
+    for (k = 0; k < it.length; k++) { var mn = k ? it[k - 1].y + CH + gap : top; if (it[k].y < mn) it[k].y = mn; }
+    for (k = it.length - 1; k >= 0; k--) { var mx = k < it.length - 1 ? it[k + 1].y - CH - gap : bot; if (it[k].y > mx) it[k].y = mx; }
+    for (k = 0; k < it.length; k++) { var mn2 = k ? it[k - 1].y + CH + 2 : top; if (it[k].y < mn2) it[k].y = mn2; }
+  });
+  function label(q) {
+    var d = L[q.id], left = q.side === 'l', x = left ? G.padx : G.W - G.padx - CW, y = q.y, ex = left ? x + CW : x, my = y + CH / 2, mx = left ? ex + 16 : ex - 16;
+    var showD = d.delta && (q.name.length * (FN * .6 + LSN) + String(d.delta).length * (FN * .62) + 30 <= CW);
+    return '<g class="hx-hot hx-lab' + (d.empty ? ' nodata' : '') + '" data-m="' + q.id + '" style="--c:' + d.c + '" tabindex="0" role="button" aria-label="' + q.name + ' ' + (d.empty ? 'no data' : d.txt + ' ' + d.unit) + '">'
+      + '<path class="hx-lead" d="M' + q.ax.toFixed(1) + ',' + q.ay.toFixed(1) + ' L' + mx.toFixed(1) + ',' + my.toFixed(1) + ' L' + ex.toFixed(1) + ',' + my.toFixed(1) + '" fill="none"/>'
+      + '<circle class="hx-dotp" cx="' + q.ax.toFixed(1) + '" cy="' + q.ay.toFixed(1) + '" r="3"/><circle class="hx-dot" cx="' + q.ax.toFixed(1) + '" cy="' + q.ay.toFixed(1) + '" r="3"/>'
+      + '<rect class="hx-lab-bg" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + CW + '" height="' + CH + '" rx="8"/>'
+      + '<rect class="hx-lab-bar" x="' + (left ? x : x + CW - 3).toFixed(1) + '" y="' + (y + 8).toFixed(1) + '" width="3" height="' + (CH - 16) + '" rx="1.5"/>'
+      + '<text class="hx-lab-n" x="' + (x + 11).toFixed(1) + '" y="' + (y + G.ny).toFixed(1) + '">' + q.name + '</text>'
+      + '<text class="hx-lab-v" x="' + (x + 11).toFixed(1) + '" y="' + (y + G.vy).toFixed(1) + '">' + d.txt + '<tspan class="hx-lab-u" dx="3">' + d.unit + '</tspan></text>'
+      + (showD ? '<text class="hx-lab-d ' + d.dcls + '" x="' + (x + CW - (left ? 9 : 12)).toFixed(1) + '" y="' + (y + G.ny).toFixed(1) + '" text-anchor="end">' + d.delta + '</text>' : '')
       + '</g>';
-    return a;
   }
-  o.push('<g class="hx-labels">');
-  o.push(label('sleep', 'l', 24, 359, 66, 'SLEEP'));
-  o.push(label('bp', 'l', 98, 374, 146, 'BLOOD PRESSURE'));
-  o.push(label('chest', 'l', 170, 324, 190, 'CHEST'));
-  o.push(label('waist', 'l', 244, 334, 276, 'WAIST'));
-  o.push(label('thigh', 'l', 396, 355, 434, 'THIGH'));
-  o.push(label('bmi', 'l', 586, 288, 662, 'BMI'));
-  o.push(label('hr', 'r', 92, 410, 216, 'HEART RATE'));
-  o.push(label('arm', 'r', 170, 477, 216, 'ARM'));
-  o.push(label('bf', 'r', 242, 428, 292, 'BODY FAT'));
-  o.push(label('hips', 'r', 326, 438, 344, 'HIPS'));
-  o.push(label('calf', 'r', 480, 433, 551, 'CALF'));
-  o.push(label('weight', 'r', 586, 476, 662, 'WEIGHT'));
-  o.push('</g>');
+  o.push('<g class="hx-labels">' + spec.map(label).join('') + '</g>');
   return o.join('');
 }
 
@@ -8157,15 +8176,32 @@ function hxLabData(id) {
   var M = HX_M[id], L = hxLatest(id), l = L.last, dl = hxDelta(id, l, L.prev);
   return { c:M.c, unit:id === 'bp' ? '' : (M.u === '/10' ? '/10' : M.u), empty:!l, txt:l ? hxTxt(id, l.v, l.v2) : '—', delta:dl ? dl.t : '', dcls:dl ? dl.cls : '', num:l ? l.v : null };
 }
+// Geometry of the body map. Artwork is scaled to the stage height; the callout cards are laid out in real screen px,
+// so their text stays one readable size on every screen while the whole figure fits in a single screen.
+function hxGeom(st) {
+  var W = st.clientWidth || 560, m = W < 480, TOP = 40, BOT = 14, BH = 718, H;
+  var G = { W:W, m:m, top:34, bot:10, gap:m ? 5 : 7 };
+  G.cw = m ? Math.max(104, Math.min(108, Math.round(W * .3))) : 156; G.ch = m ? 42 : 48; G.padx = m ? 6 : 14;
+  G.fn = m ? 10 : 11; G.ls = m ? .1 : .3; G.ny = m ? 15 : 18; G.vy = m ? 35 : 40;
+  var sW = (W - 2 * G.cw - 2 * G.padx - (m ? 6 : 24)) / (m ? 190 : 224);
+  if (m) { G.s = Math.max(.4, Math.min(sW, .9)); H = Math.round(TOP + BH * G.s + BOT); st.style.height = H + 'px'; }
+  else { st.style.height = ''; H = st.clientHeight || 560; G.s = Math.max(.35, Math.min((H - TOP - BOT) / BH, sW, 1.1)); }
+  G.H = H;
+  G.ox = W / 2 - 380 * G.s;
+  G.oy = TOP + (H - TOP - BOT - BH * G.s) / 2 - 26 * G.s;
+  G.lcdFs = Math.max(22, Math.min(30, 13.5 / G.s)); G.lcdUs = Math.max(12, Math.min(20, 11.5 / G.s));
+  return G;
+}
 function hxRenderBody() {
   var st = hxEl('hxStage'); if (!st) return;
+  var G = hxGeom(st); hx.dim = [st.clientWidth, st.clientHeight];
   var L = {}; HX_ORDER.forEach(function(id){ L[id] = hxLabData(id); });
   var hr = hxLatest('hr').last, dur = hr ? Math.max(.34, Math.min(1.5, 60 / hr.v)) : .95;
   var wt = hxLatest('weight').last, total = hxArr('m').length + hxArr('v').length, lastDay = 0;
   hxArr('m').concat(hxArr('v')).forEach(function(e){ var d = wtDay(e.date); if (!isNaN(d) && d > lastDay) lastDay = d; });
   st.innerHTML = '<div class="hx-hud"><span><i></i><b>BIO-SCAN</b> · LIVE</span><span>' + (total ? total + ' ENTRIES · ' + hxAgo(lastDay).toUpperCase() : 'NO DATA YET') + '</span></div>'
-    + '<svg class="hx-svg" viewBox="110 -34 540 794" role="group" aria-label="Interactive human body health map" style="--bpm:' + dur.toFixed(2) + 's">'
-    + hxBodySVG(L, { wtTxt:wt ? hxTxt('weight', wt.v) : '--.-' }) + '</svg>';
+    + '<svg class="hx-svg' + (G.m ? ' m' : '') + '" viewBox="0 0 ' + G.W + ' ' + G.H + '" role="group" aria-label="Interactive human body health map" style="--bpm:' + dur.toFixed(2) + 's">'
+    + hxBodySVG(L, { wtTxt:wt ? hxTxt('weight', wt.v) : '--.-', lcdFs:G.lcdFs, lcdUs:G.lcdUs }, G) + '</svg>';
   hxMarkSel();
   if (!hx.wired) {
     hx.wired = true;
@@ -8173,6 +8209,14 @@ function hxRenderBody() {
     st.addEventListener('keydown', function(e){ if (e.key !== 'Enter' && e.key !== ' ') return; var t = e.target.closest && e.target.closest('[data-m]'); if (t) { e.preventDefault(); hxSelect(t.getAttribute('data-m'), true); } });
     st.addEventListener('pointerover', function(e){ var t = e.target.closest && e.target.closest('[data-m]'); hxHover(t ? t.getAttribute('data-m') : null); });
     st.addEventListener('pointerleave', function(){ hxHover(null); });
+  }
+  if (window.ResizeObserver && !hx.ro) {
+    hx.ro = new ResizeObserver(function(){
+      var s2 = hxEl('hxStage'); if (!s2 || !s2.clientWidth) return;
+      var d = hx.dim || [0, 0], W = s2.clientWidth, H = s2.clientHeight;
+      if (Math.abs(W - d[0]) > 1 || (W >= 480 && Math.abs(H - d[1]) > 1)) { cancelAnimationFrame(hx.rf); hx.rf = requestAnimationFrame(function(){ var pg = hxEl('page-health'); if (pg && pg.classList.contains('active')) hxRenderBody(); }); }
+    });
+    hx.ro.observe(st);
   }
 }
 function hxHover(m) { var st = hxEl('hxStage'); if (!st) return; st.querySelectorAll('.hov').forEach(function(n){ n.classList.remove('hov'); }); if (m) st.querySelectorAll('[data-m="' + m + '"]').forEach(function(n){ n.classList.add('hov'); }); }
@@ -8220,7 +8264,8 @@ function hxRenderPanel() {
     + '<div class="hx-chart" id="hxPChart"></div>'
     + '<div class="hx-act"><button class="wk-btn" onclick="hxGoTrends(\'' + id + '\')">▤ FULL TRENDS</button><button class="wk-btn primary" onclick="hxGoLog(\'' + id + '\')">＋ LOG</button></div></div>';
   body.innerHTML = h; sd.classList.add('open');
-  if (l) hxChart('hxPChart', id, B, w, { h:176, compact:true });
+  var stH = hxEl('hxStage') ? hxEl('hxStage').clientHeight : 520, chH = hxIsWide() ? Math.max(110, Math.min(240, stH - 372)) : 176;
+  if (l) hxChart('hxPChart', id, B, w, { h:chH, compact:true });
 }
 function hxGoTrends(id) { if (id && HX_M[id]) { hx.tm = id; hxSaveUI(); } switchHealthTab('trends'); window.scrollTo({ top:0, behavior:'smooth' }); }
 function hxGoLog(id) {

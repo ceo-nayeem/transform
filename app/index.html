@@ -1111,36 +1111,36 @@ svg.wks{width:100%;height:auto;display:block;overflow:visible}
 .hx-view{animation:hxIn .3s ease}
 @keyframes hxIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .hx-ov{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:18px;align-items:start}
-.hx-stage{position:relative;border-radius:22px;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,#0c2128 0%,#050b0e 62%);border:1px solid rgba(0,229,255,.28);box-shadow:0 0 0 1px rgba(0,255,136,.05) inset,0 0 60px rgba(0,229,255,.07) inset,0 14px 44px rgba(0,0,0,.45)}
-.hx-stage::before,.hx-stage::after{content:"";position:absolute;width:22px;height:22px;border:2px solid #00e5ff;opacity:.55;pointer-events:none;z-index:2}
+.hx-stage{position:relative;border-radius:22px;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,var(--hs-top) 0%,var(--hs-bot) 62%);border:1px solid color-mix(in srgb,var(--c) 30%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--g) 6%,transparent) inset,0 0 60px color-mix(in srgb,var(--c) 7%,transparent) inset,0 14px 44px rgba(0,0,0,.45)}
+.hx-stage::before,.hx-stage::after{content:"";position:absolute;width:22px;height:22px;border:2px solid var(--c);opacity:.55;pointer-events:none;z-index:2}
 .hx-stage::before{top:10px;left:10px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
 .hx-stage::after{bottom:10px;right:10px;border-left:0;border-top:0;border-radius:0 0 6px 0}
-.hx-hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:8px;padding:14px 18px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:#7fc9d6;pointer-events:none;z-index:2;text-transform:uppercase}
-.hx-hud b{color:#00ff88;font-weight:700}
-.hx-hud i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#00ff88;margin-right:7px;box-shadow:0 0 10px #00ff88;animation:hxBlink 1.4s ease-in-out infinite;vertical-align:middle}
+.hx-hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:8px;padding:14px 18px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--hs-hud);pointer-events:none;z-index:2;text-transform:uppercase}
+.hx-hud b{color:var(--g);font-weight:700}
+.hx-hud i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--g);margin-right:7px;box-shadow:0 0 10px var(--g);animation:hxBlink 1.4s ease-in-out infinite;vertical-align:middle}
 @keyframes hxBlink{50%{opacity:.25}}
 .hx-svg{display:block;width:100%;height:auto;max-height:none;margin:0 auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .hx-svg text{font-family:var(--font-num),var(--raj),sans-serif}
 .hx-hot{cursor:pointer;outline:none}
-.hx-lab-bg{fill:rgba(7,15,19,.8);stroke:var(--c);stroke-opacity:.36;stroke-width:1;transition:stroke-opacity .2s,fill .2s,filter .2s}
+.hx-lab-bg{fill:var(--hs-card);stroke:var(--c);stroke-opacity:.36;stroke-width:1;transition:stroke-opacity .2s,fill .2s,filter .2s}
 .hx-lab-bar{fill:var(--c);opacity:.9}
-.hx-lab-n{font:600 10.5px var(--mono);fill:#86a6ad;letter-spacing:1.5px}
-.hx-lab-v{font:700 25px var(--font-num);fill:#f1fbff;letter-spacing:.3px}
-.hx-lab-u{font:600 11px var(--mono);fill:#86a6ad;letter-spacing:0}
-.hx-lab-d{font:700 10.5px var(--mono);fill:#86a6ad}.hx-lab-d.up{fill:#ffaa44}.hx-lab-d.dn{fill:#00e5ff}
-.hx-lab.nodata .hx-lab-v{fill:#4a6168}.hx-lab.nodata{opacity:.75}
+.hx-lab-n{font:600 10.5px var(--mono);fill:var(--hs-ink2);letter-spacing:1.5px}
+.hx-lab-v{font:700 25px var(--font-num);fill:var(--hs-ink);letter-spacing:.3px}
+.hx-lab-u{font:600 11px var(--mono);fill:var(--hs-ink2);letter-spacing:0}
+.hx-lab-d{font:700 10.5px var(--mono);fill:var(--hs-ink2)}.hx-lab-d.up{fill:var(--hx-bf)}.hx-lab-d.dn{fill:var(--tc)}
+.hx-lab.nodata .hx-lab-v{fill:var(--hs-nodata)}.hx-lab.nodata{opacity:.75}
 .hx-lead{stroke:var(--c);stroke-opacity:.45;stroke-width:1;stroke-dasharray:3 3;transition:stroke-opacity .2s,stroke-width .2s}
 .hx-dot{fill:var(--c)}
 .hx-dotp{fill:none;stroke:var(--c);stroke-width:1.2;transform-box:fill-box;transform-origin:center;animation:hxDotP 2.4s ease-out infinite}
 @keyframes hxDotP{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.4);opacity:0}}
-.hx-lab:hover .hx-lab-bg,.hx-lab:focus-visible .hx-lab-bg,.hx-lab.sel .hx-lab-bg,.hx-lab.hov .hx-lab-bg{stroke-opacity:1;fill:rgba(9,26,31,.95);filter:drop-shadow(0 0 7px var(--c))}
+.hx-lab:hover .hx-lab-bg,.hx-lab:focus-visible .hx-lab-bg,.hx-lab.sel .hx-lab-bg,.hx-lab.hov .hx-lab-bg{stroke-opacity:1;fill:var(--hs-card-hi);filter:drop-shadow(0 0 7px var(--c))}
 .hx-hot.sel .hx-lead,.hx-hot.hov .hx-lead{stroke-opacity:1;stroke-width:1.7;stroke-dasharray:none}
 .hx-hot.sel .org,.hx-hot.hov .org{stroke-width:3.2;stroke-opacity:1}
 .hx-heart.sel .org,.hx-heart.hov .org,.hx-brain.sel .org,.hx-brain.hov .org{filter:url(#hxGlow2) brightness(1.25)}
 .hx-fat.sel .org,.hx-fat.hov .org{fill-opacity:.5;stroke-opacity:1}
 .hx-scale.sel .org,.hx-scale.hov .org{stroke-opacity:1;stroke-width:2}
-.hx-lcd{font:700 21px var(--font-num);fill:#00ff88;letter-spacing:2px}
-.hx-lcd-u{font:700 9px var(--mono);fill:#00ff88;opacity:.7;letter-spacing:1px}
+.hx-lcd{font:700 21px var(--font-num);fill:var(--g);letter-spacing:2px}
+.hx-lcd-u{font:700 9px var(--mono);fill:var(--g);opacity:.7;letter-spacing:1px}
 .hx-beat{transform-box:fill-box;transform-origin:50% 62%;animation:hxBeat var(--bpm,.9s) ease-in-out infinite}
 @keyframes hxBeat{0%,100%{transform:scale(1)}10%{transform:scale(1.14)}22%{transform:scale(.99)}34%{transform:scale(1.07)}50%{transform:scale(1)}}
 .hx-pulse{transform-box:fill-box;transform-origin:center;animation:hxPulse var(--bpm,.9s) ease-out infinite}
@@ -1191,7 +1191,7 @@ svg.wks{width:100%;height:auto;display:block;overflow:visible}
 .hx-chip:hover{color:var(--t);border-color:var(--c,var(--g))}
 .hx-chip.on{color:var(--c,var(--g));border-color:var(--c,var(--g));background:color-mix(in srgb,var(--c,var(--g)) 14%,var(--card2))}
 .hx-act{display:flex;gap:8px;margin-top:12px;position:relative}.hx-act .wk-btn{flex:1}
-.hx-panel .wk-btn.primary{background:linear-gradient(135deg,#00ff88,#00e5ff);color:#04140e}
+.hx-panel .wk-btn.primary{--c:var(--tc)}
 .hx-chip:not([style]){--c:var(--g)}
 /* charts */
 .hx-chart{position:relative;min-width:0}
@@ -1204,8 +1204,8 @@ svg.wks{width:100%;height:auto;display:block;overflow:visible}
 .hx-area{animation:hxFade .9s ease both}@keyframes hxFade{from{opacity:0}to{opacity:1}}
 .hx-bar{transform-box:fill-box;transform-origin:50% 100%;animation:hxGrow .6s cubic-bezier(.3,.8,.2,1) both}@keyframes hxGrow{from{transform:scaleY(0)}}
 .hx-cur{stroke:var(--t2);stroke-dasharray:3 3;stroke-width:1}
-.hx-tip{position:absolute;top:0;left:0;pointer-events:none;z-index:4;background:rgba(7,14,18,.95);border:1px solid var(--c,var(--g));border-radius:10px;padding:7px 11px;font-size:12px;color:#eaf6f8;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.45);opacity:0;transition:opacity .12s;transform:translate(-50%,-110%)}
-.hx-tip.on{opacity:1}.hx-tip b{font-family:var(--raj);font-size:17px;color:var(--c,var(--g))}.hx-tip small{display:block;color:#86a6ad;font-size:10.5px;letter-spacing:.8px}
+.hx-tip{position:absolute;top:0;left:0;pointer-events:none;z-index:4;background:color-mix(in srgb,var(--card) 97%,transparent);border:1px solid var(--c,var(--g));border-radius:10px;padding:7px 11px;font-size:12px;color:var(--t);white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .12s;transform:translate(-50%,-110%)}
+.hx-tip.on{opacity:1}.hx-tip b{font-family:var(--raj);font-size:17px;color:var(--c,var(--g))}.hx-tip small{display:block;color:var(--t2);font-size:10.5px;letter-spacing:.8px}
 .hx-empty{padding:34px 12px;text-align:center;color:var(--t2);font-size:13px;border:1px dashed var(--border);border-radius:14px}
 /* trends */
 .hx-mchips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:8px;scrollbar-width:thin}
@@ -1259,7 +1259,6 @@ svg.wks{width:100%;height:auto;display:block;overflow:visible}
 .hx-ra button{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer;font-size:14px;transition:all .15s}
 .hx-ra button:hover{color:var(--g);border-color:var(--g)}.hx-ra button.d:hover{color:var(--red);border-color:var(--red)}
 .hx-more{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
-html.alpha .hx-stage{border-color:rgba(0,150,180,.4)}
 html.alpha .hx-chip.on{color:var(--g2)}
 @media (max-width:1060px){
   .hx-ov{grid-template-columns:1fr}
@@ -1285,6 +1284,34 @@ html.alpha .hx-chip.on{color:var(--g2)}
 }
 @media (prefers-reduced-motion:reduce){.hx-beat,.hx-pulse,.hx-lungs,.hx-brain .org,.hx-scan,.hx-orbit,.hx-flow,.hx-dotp,.hx-draw,.hx-bar,.hx-view{animation:none!important}.hx-draw{stroke-dashoffset:0}}
 
+/* ===================== THEME TOKENS — Health follows light/dark + the chosen accent ===================== */
+html{--tc:var(--c)}
+/* data colours: fixed hues for what has a meaning (heart red, brain blue, …) but a readable shade in each mode */
+:root{--hx-bf:#ffaa44;--hx-bmi:#5ad1ff;--hx-waist:#ffdd00;--hx-hips:#ff6bd6;--hx-arm:#4da3ff;--hx-thigh:#2de2c4;--hx-calf:#a3ff5a;--hx-hr:#ff3355;--hx-bp:#ff7a45;--hx-sleep:#8c9bff;--hx-quality:#b8c0ff;--hx-dia:#5ad1ff;
+  --hx-lung:#7df3ff;--hx-lung2:#bff7ff;--hx-gut:#ffd27a;--hx-kid:#f5a3c7;--hx-liver:#ff9a6b;--hx-stom:#ffb3b3;--hx-bone:#b6f6ff;--hx-flow:#ffe3c2;--hx-heart-s:#ffc2cc;--hx-brain-s:#dfe6ff;--hx-brain-d:#eef1ff;
+  --hx-scale-top:#101c22;--hx-scale-edge:#7fa7b5;--hx-slab-edge:#5b7580}
+html.alpha{--hx-bf:#e07b00;--hx-bmi:#0b8fd6;--hx-waist:#b98a00;--hx-hips:#d12f9c;--hx-arm:#2a6fe0;--hx-thigh:#009b82;--hx-calf:#4f9d00;--hx-hr:#dc2140;--hx-bp:#e0551a;--hx-sleep:#4f5fe0;--hx-quality:#6f7be8;--hx-dia:#0b8fd6;
+  --hx-lung:#1a8fbd;--hx-lung2:#59b9d9;--hx-gut:#c99a12;--hx-kid:#c4558c;--hx-liver:#c9552a;--hx-stom:#d06a6a;--hx-bone:#587583;--hx-flow:#ff3d00;--hx-heart-s:#c5203c;--hx-brain-s:#4452d0;--hx-brain-d:#3441b0;
+  --hx-scale-top:#f4f7f9;--hx-scale-edge:#9fb1bc;--hx-slab-edge:#8fa1ac}
+/* the body-map stage */
+.hx-stage{--hs-top:color-mix(in srgb,var(--c) 13%,#070a0d);--hs-bot:#04070a;--hs-ink:#f1f6f8;--hs-ink2:#8fa3ab;--hs-card:rgba(8,13,17,.8);--hs-card-hi:rgba(10,20,25,.96);--hs-nodata:#52666d;--hs-hud:color-mix(in srgb,var(--c) 45%,#9fb4bb)}
+html.alpha .hx-stage{--hs-top:color-mix(in srgb,var(--g) 12%,#ffffff);--hs-bot:color-mix(in srgb,var(--c) 9%,#e6ecf2);--hs-ink:var(--t);--hs-ink2:var(--t2);--hs-card:rgba(255,255,255,.88);--hs-card-hi:#ffffff;--hs-nodata:#9aa6b2;--hs-hud:var(--t2);
+  border-color:color-mix(in srgb,var(--c) 30%,var(--border));box-shadow:0 0 0 1px rgba(255,255,255,.75) inset,0 14px 40px rgba(25,45,80,.13)}
+html.alpha .hx-lab-bg{stroke-opacity:.5;filter:drop-shadow(0 2px 5px rgba(25,45,80,.12))}
+html.alpha .hx-lab:hover .hx-lab-bg,html.alpha .hx-lab:focus-visible .hx-lab-bg,html.alpha .hx-lab.sel .hx-lab-bg,html.alpha .hx-lab.hov .hx-lab-bg{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--c) 55%,transparent))}
+html.alpha .hx-hud i{box-shadow:0 0 6px var(--g)}
+/* artwork that needs a different treatment on a light stage */
+html.alpha #hxSilG stop:nth-child(1){stop-opacity:.34}html.alpha #hxSilG stop:nth-child(2){stop-opacity:.15}html.alpha #hxSilG stop:nth-child(3){stop-opacity:.26}
+html.alpha #hxEdgeG stop:first-child{stop-color:var(--tc)}
+html.alpha #hxScanG stop:last-child{stop-color:var(--g)}
+html.alpha #hxHex path{stroke-opacity:.14}
+html.alpha .hx-fibre{stroke-opacity:.1}
+html.alpha .hx-bones{stroke-opacity:.62}
+html.alpha .hx-orbit,html.alpha .hx-hud circle{stroke-opacity:.3}
+html.alpha #hxLCD stop:nth-child(1){stop-color:color-mix(in srgb,var(--g) 20%,#f3f8f5)}html.alpha #hxLCD stop:nth-child(2){stop-color:color-mix(in srgb,var(--g) 32%,#e4eee8)}
+html.alpha .hx-lcd{fill:color-mix(in srgb,var(--g2) 85%,#000);filter:none}html.alpha .hx-lcd-u{fill:color-mix(in srgb,var(--g2) 85%,#000);opacity:.85}
+html.alpha #hxSlab stop:nth-child(1){stop-color:#dfe6eb}html.alpha #hxSlab stop:nth-child(2){stop-color:#aab8c2}
+html.alpha #hxGlass stop:nth-child(1){stop-opacity:.9}html.alpha #hxGlass stop:nth-child(2){stop-color:var(--tc);stop-opacity:.1}html.alpha #hxGlass stop:nth-child(3){stop-opacity:.5}
 /* ===================== READABILITY FLOOR — no text under 11px, roomier on laptops ===================== */
 #page-health .wk-tabs{position:static}
 body.pg-health .content{max-width:1340px !important;padding-left:56px !important;padding-right:56px !important}
@@ -7832,20 +7859,20 @@ function hxBodySVG(L, X, G) {
   var sil = 'M0,28 C-20,28 -31,44 -31,66 C-31,84 -26,100 -18,108 C-14,113 -11,116 -10,120 C-10,124 -11,128 -13,131 C-17,138 -42,139 -62,147 C-80,152 -89,166 -89,184 C-91,216 -96,246 -98,270 C-100,300 -107,336 -113,372 C-117,386 -119,402 -113,412 C-108,421 -99,418 -97,408 C-95,392 -91,372 -89,356 C-85,326 -79,298 -75,272 C-71,250 -66,226 -57,200 C-55,224 -46,248 -44,272 C-43,296 -54,318 -56,342 C-57,364 -58,386 -56,412 C-54,450 -50,480 -48,502 C-48,526 -52,548 -50,568 C-48,588 -42,604 -41,622 C-40,636 -47,644 -62,650 C-52,658 -30,658 -25,652 C-22,640 -23,628 -24,616 C-22,596 -18,572 -18,548 C-18,526 -15,508 -14,488 C-12,458 -6,420 0,372 Z';
   var skull = 'M0,34 C-19,34 -27,52 -25,70 C-24,82 -18,90 -14,96 L-11,106 L11,106 L14,96 C18,90 24,82 25,70 C27,52 19,34 0,34 Z';
   o.push('<defs>'
-   + '<linearGradient id="hxSilG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00e5ff" stop-opacity=".22"/><stop offset=".55" stop-color="#00ff88" stop-opacity=".09"/><stop offset="1" stop-color="#00e5ff" stop-opacity=".16"/></linearGradient>'
-   + '<linearGradient id="hxEdgeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7df3ff"/><stop offset=".5" stop-color="#00ff88"/><stop offset="1" stop-color="#00e5ff"/></linearGradient>'
-   + '<linearGradient id="hxScanG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00ffd0" stop-opacity="0"/><stop offset=".85" stop-color="#00ffd0" stop-opacity=".28"/><stop offset="1" stop-color="#b9fff0" stop-opacity=".9"/></linearGradient>'
-   + '<radialGradient id="hxFloorG"><stop offset="0" stop-color="#00ff88" stop-opacity=".5"/><stop offset=".55" stop-color="#00e5ff" stop-opacity=".12"/><stop offset="1" stop-color="#00e5ff" stop-opacity="0"/></radialGradient>'
-   + '<radialGradient id="hxHeartG" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#ff8a9c"/><stop offset=".55" stop-color="#ff3355"/><stop offset="1" stop-color="#8a0f25"/></radialGradient>'
-   + '<radialGradient id="hxBrainG" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#e2c8ff"/><stop offset=".6" stop-color="#aa77ff"/><stop offset="1" stop-color="#5a2fb0"/></radialGradient>'
-   + '<linearGradient id="hxLungG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7df3ff" stop-opacity=".55"/><stop offset="1" stop-color="#00a9c9" stop-opacity=".25"/></linearGradient>'
+   + '<linearGradient id="hxSilG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--tc)" stop-opacity=".22"/><stop offset=".55" stop-color="var(--g)" stop-opacity=".09"/><stop offset="1" stop-color="var(--tc)" stop-opacity=".16"/></linearGradient>'
+   + '<linearGradient id="hxEdgeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="color-mix(in srgb,var(--tc) 55%,#fff)"/><stop offset=".5" stop-color="var(--g)"/><stop offset="1" stop-color="var(--tc)"/></linearGradient>'
+   + '<linearGradient id="hxScanG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--g)" stop-opacity="0"/><stop offset=".85" stop-color="var(--g)" stop-opacity=".28"/><stop offset="1" stop-color="color-mix(in srgb,var(--g) 30%,#fff)" stop-opacity=".9"/></linearGradient>'
+   + '<radialGradient id="hxFloorG"><stop offset="0" stop-color="var(--g)" stop-opacity=".5"/><stop offset=".55" stop-color="var(--tc)" stop-opacity=".12"/><stop offset="1" stop-color="var(--tc)" stop-opacity="0"/></radialGradient>'
+   + '<radialGradient id="hxHeartG" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#ff8a9c"/><stop offset=".55" stop-color="var(--hx-hr)"/><stop offset="1" stop-color="#8a0f25"/></radialGradient>'
+   + '<radialGradient id="hxBrainG" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#d3ddff"/><stop offset=".6" stop-color="#7289ff"/><stop offset="1" stop-color="#2a3aa6"/></radialGradient>'
+   + '<linearGradient id="hxLungG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--hx-lung)" stop-opacity=".55"/><stop offset="1" stop-color="#00a9c9" stop-opacity=".25"/></linearGradient>'
    + '<linearGradient id="hxLCD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#04120d"/><stop offset="1" stop-color="#010806"/></linearGradient>'
    + '<linearGradient id="hxGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".26"/><stop offset=".4" stop-color="#9fe9ff" stop-opacity=".07"/><stop offset="1" stop-color="#ffffff" stop-opacity=".16"/></linearGradient>'
    + '<linearGradient id="hxSlab" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a42"/><stop offset="1" stop-color="#0a1217"/></linearGradient>'
    + '<filter id="hxGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
    + '<filter id="hxGlow2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
-   + '<pattern id="hxHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#ffaa44" stroke-width="2"/></pattern>'
-   + '<pattern id="hxHex" width="28" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1)"><path d="M14 0 L28 8 L28 24.2 L14 32.3 L0 24.2 L0 8 Z M14 32.3 L14 48.5 M0 24.2 L-0 40 M28 24.2 L28 40" fill="none" stroke="#00e5ff" stroke-opacity=".07" stroke-width="1"/></pattern>'
+   + '<pattern id="hxHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="var(--hx-bf)" stroke-width="2"/></pattern>'
+   + '<pattern id="hxHex" width="28" height="48.5" patternUnits="userSpaceOnUse" patternTransform="scale(1)"><path d="M14 0 L28 8 L28 24.2 L14 32.3 L0 24.2 L0 8 Z M14 32.3 L14 48.5 M0 24.2 L-0 40 M28 24.2 L28 40" fill="none" stroke="var(--tc)" stroke-opacity=".07" stroke-width="1"/></pattern>'
    + '<path id="hxHalf" d="' + sil + '"/>'
    + '<clipPath id="hxClip"><use href="#hxHalf"/><use href="#hxHalf" transform="scale(-1,1)"/></clipPath>'
    + '</defs>');
@@ -7854,8 +7881,8 @@ function hxBodySVG(L, X, G) {
   o.push('<rect width="' + G.W + '" height="' + G.H + '" fill="url(#hxHex)"/>');
   o.push('<g transform="translate(' + G.ox.toFixed(2) + ',' + G.oy.toFixed(2) + ') scale(' + G.s.toFixed(4) + ')">');
   o.push('<g class="hx-hud">'
-   + '<circle cx="380" cy="330" r="268" fill="none" stroke="#00e5ff" stroke-opacity=".10" stroke-dasharray="2 7"/>'
-   + '<circle class="hx-orbit" cx="380" cy="330" r="236" fill="none" stroke="#00ff88" stroke-opacity=".16" stroke-dasharray="40 18 6 18"/>'
+   + '<circle cx="380" cy="330" r="268" fill="none" stroke="var(--tc)" stroke-opacity=".10" stroke-dasharray="2 7"/>'
+   + '<circle class="hx-orbit" cx="380" cy="330" r="236" fill="none" stroke="var(--g)" stroke-opacity=".16" stroke-dasharray="40 18 6 18"/>'
    + '<ellipse cx="380" cy="700" rx="200" ry="30" fill="url(#hxFloorG)"/>'
    + '</g>');
 
@@ -7870,10 +7897,10 @@ function hxBodySVG(L, X, G) {
   // muscle fibre hint (faint contour lines)
   var mus = '';
   for (i = 0; i < 20; i++) { var yy = 150 + i * 10; mus += '<path d="M-60,' + yy + ' C-30,' + (yy - 6) + ' 30,' + (yy - 6) + ' 60,' + yy + '" />'; }
-  o.push('<g class="hx-fibre" fill="none" stroke="#00e5ff" stroke-opacity=".05">' + mus + '</g>');
+  o.push('<g class="hx-fibre" fill="none" stroke="var(--tc)" stroke-opacity=".05">' + mus + '</g>');
 
   // skeleton (faint)
-  var bones = '<g class="hx-bones" fill="none" stroke="#b6f6ff" stroke-opacity=".42" stroke-linecap="round" stroke-linejoin="round">';
+  var bones = '<g class="hx-bones" fill="none" stroke="var(--hx-bone)" stroke-opacity=".42" stroke-linecap="round" stroke-linejoin="round">';
   bones += '<path d="' + skull + '" stroke-width="1.4"/><ellipse cx="-9" cy="72" rx="5" ry="4.2"/><ellipse cx="9" cy="72" rx="5" ry="4.2"/><path d="M0,80 L-2,87 L2,87 Z"/><path d="M-9,100 L9,100 M-6,103 L6,103" stroke-width="1"/>';
   for (i = 0; i < 24; i++) { var vy = 118 + i * 10, vw = 4 + Math.min(i, 17) * .38 + (i > 17 ? (i - 17) * 1.4 : 0); bones += '<rect x="' + (-vw).toFixed(1) + '" y="' + vy + '" width="' + (vw * 2).toFixed(1) + '" height="7" rx="2.5" stroke-width="1"/>'; }
   var half = '<g id="hxBH">'
@@ -7893,37 +7920,37 @@ function hxBodySVG(L, X, G) {
 
   // body-fat layer (torso core)
   var bfo = L.bf.num ? Math.min(.55, .16 + L.bf.num / 70) : .12;
-  o.push('<g class="hx-hot hx-fat" data-m="bf" style="--c:' + L.bf.c + '"><path class="org" d="M-52,236 L52,236 L58,340 L-58,340 Z" fill="url(#hxHatch)" fill-opacity="' + bfo.toFixed(2) + '" stroke="#ffaa44" stroke-opacity=".4" stroke-dasharray="3 4"/></g>');
+  o.push('<g class="hx-hot hx-fat" data-m="bf" style="--c:' + L.bf.c + '"><path class="org" d="M-52,236 L52,236 L58,340 L-58,340 Z" fill="url(#hxHatch)" fill-opacity="' + bfo.toFixed(2) + '" stroke="var(--hx-bf)" stroke-opacity=".4" stroke-dasharray="3 4"/></g>');
 
   // organs
   o.push('<g class="hx-organs">');
   // lungs + trachea + bronchi
-  o.push('<g class="hx-lungs"><path d="M0,120 L0,158 M0,158 C-8,162 -14,168 -20,176 M0,158 C8,162 14,168 20,176" fill="none" stroke="#7df3ff" stroke-opacity=".7" stroke-width="2.2"/>'
-    + '<path d="M-6,158 C-22,150 -42,160 -48,184 C-52,206 -48,230 -35,238 C-22,244 -10,238 -6,226 C-9,206 -8,180 -6,158 Z" fill="url(#hxLungG)" stroke="#7df3ff" stroke-opacity=".8" stroke-width="1.2"/>'
-    + '<path d="M6,158 C20,152 36,160 42,182 C46,200 44,218 32,228 C28,232 22,232 18,230 C28,214 18,190 6,158 Z" fill="url(#hxLungG)" stroke="#7df3ff" stroke-opacity=".8" stroke-width="1.2"/>'
-    + '<path d="M-20,176 C-30,186 -36,204 -34,226 M-20,176 C-28,180 -40,186 -42,198 M20,176 C28,186 32,198 30,214 M20,176 C28,178 36,184 38,196" fill="none" stroke="#bff7ff" stroke-opacity=".5" stroke-width="1"/></g>');
+  o.push('<g class="hx-lungs"><path d="M0,120 L0,158 M0,158 C-8,162 -14,168 -20,176 M0,158 C8,162 14,168 20,176" fill="none" stroke="var(--hx-lung)" stroke-opacity=".7" stroke-width="2.2"/>'
+    + '<path d="M-6,158 C-22,150 -42,160 -48,184 C-52,206 -48,230 -35,238 C-22,244 -10,238 -6,226 C-9,206 -8,180 -6,158 Z" fill="url(#hxLungG)" stroke="var(--hx-lung)" stroke-opacity=".8" stroke-width="1.2"/>'
+    + '<path d="M6,158 C20,152 36,160 42,182 C46,200 44,218 32,228 C28,232 22,232 18,230 C28,214 18,190 6,158 Z" fill="url(#hxLungG)" stroke="var(--hx-lung)" stroke-opacity=".8" stroke-width="1.2"/>'
+    + '<path d="M-20,176 C-30,186 -36,204 -34,226 M-20,176 C-28,180 -40,186 -42,198 M20,176 C28,186 32,198 30,214 M20,176 C28,178 36,184 38,196" fill="none" stroke="var(--hx-lung2)" stroke-opacity=".5" stroke-width="1"/></g>');
   // liver / stomach / intestines / kidneys
-  o.push('<path d="M-46,240 C-30,234 -6,238 0,248 C-4,264 -22,272 -38,264 C-48,258 -50,248 -46,240 Z" fill="#c2583a" fill-opacity=".4" stroke="#ff9a6b" stroke-opacity=".75" stroke-width="1.2"/>');
-  o.push('<path d="M8,242 C24,236 38,244 34,258 C30,270 14,272 8,264 C4,256 3,248 8,242 Z" fill="#d98a8a" fill-opacity=".34" stroke="#ffb3b3" stroke-opacity=".7" stroke-width="1.2"/>');
-  o.push('<path d="M-30,288 L30,288 L30,332 L-30,332 Z" fill="none" stroke="#ffd27a" stroke-opacity=".38" stroke-width="2.4" stroke-linejoin="round"/>'
-    + '<path d="M-22,296 C-10,292 -8,304 4,300 C16,296 20,308 8,312 C-6,316 -20,310 -22,320 C-24,328 -6,326 6,324 C18,322 24,316 22,326" fill="none" stroke="#ffd27a" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>');
-  o.push('<ellipse cx="-17" cy="262" rx="5" ry="9" fill="#a05a7a" fill-opacity=".5" stroke="#f5a3c7" stroke-opacity=".6" stroke-width="1"/><ellipse cx="17" cy="262" rx="5" ry="9" fill="#a05a7a" fill-opacity=".5" stroke="#f5a3c7" stroke-opacity=".6" stroke-width="1"/>');
+  o.push('<path d="M-46,240 C-30,234 -6,238 0,248 C-4,264 -22,272 -38,264 C-48,258 -50,248 -46,240 Z" fill="#c2583a" fill-opacity=".4" stroke="var(--hx-liver)" stroke-opacity=".75" stroke-width="1.2"/>');
+  o.push('<path d="M8,242 C24,236 38,244 34,258 C30,270 14,272 8,264 C4,256 3,248 8,242 Z" fill="#d98a8a" fill-opacity=".34" stroke="var(--hx-stom)" stroke-opacity=".7" stroke-width="1.2"/>');
+  o.push('<path d="M-30,288 L30,288 L30,332 L-30,332 Z" fill="none" stroke="var(--hx-gut)" stroke-opacity=".38" stroke-width="2.4" stroke-linejoin="round"/>'
+    + '<path d="M-22,296 C-10,292 -8,304 4,300 C16,296 20,308 8,312 C-6,316 -20,310 -22,320 C-24,328 -6,326 6,324 C18,322 24,316 22,326" fill="none" stroke="var(--hx-gut)" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>');
+  o.push('<ellipse cx="-17" cy="262" rx="5" ry="9" fill="#a05a7a" fill-opacity=".5" stroke="var(--hx-kid)" stroke-opacity=".6" stroke-width="1"/><ellipse cx="17" cy="262" rx="5" ry="9" fill="#a05a7a" fill-opacity=".5" stroke="var(--hx-kid)" stroke-opacity=".6" stroke-width="1"/>');
   o.push('</g>'); // organs
 
   // vascular (blood pressure)
   var art = 'M20,196 C18,176 8,168 -2,172 C-9,176 -10,186 -10,200 L-9,330 C-12,350 -20,372 -26,420 M-9,330 C-4,352 2,372 6,420 M2,172 C8,152 8,134 5,118 C3,110 2,102 0,98 M-2,172 C-10,152 -12,134 -8,118 C-6,110 -4,102 -2,98 M-4,168 C-30,162 -58,160 -72,170 C-82,190 -88,230 -93,268 M-93,268 L-103,364 M-6,330 C-24,334 -30,350 -32,372 C-34,420 -32,470 -30,500 L-33,612';
-  o.push('<g class="hx-hot hx-vas" data-m="bp" style="--c:' + L.bp.c + '"><path class="org" d="' + art + '" fill="none" stroke="#ff7a45" stroke-opacity=".75" stroke-width="1.8" stroke-linecap="round" filter="url(#hxGlow)"/><path class="hit" d="' + art + '" fill="none" stroke="transparent" stroke-width="14"/><path class="hx-flow" d="' + art + '" fill="none" stroke="#ffe3c2" stroke-width="1.6" stroke-dasharray="2 16" stroke-linecap="round"/></g>');
+  o.push('<g class="hx-hot hx-vas" data-m="bp" style="--c:' + L.bp.c + '"><path class="org" d="' + art + '" fill="none" stroke="var(--hx-bp)" stroke-opacity=".75" stroke-width="1.8" stroke-linecap="round" filter="url(#hxGlow)"/><path class="hit" d="' + art + '" fill="none" stroke="transparent" stroke-width="14"/><path class="hx-flow" d="' + art + '" fill="none" stroke="var(--hx-flow)" stroke-width="1.6" stroke-dasharray="2 16" stroke-linecap="round"/></g>');
 
   // brain
-  o.push('<g class="hx-hot hx-brain" data-m="sleep" style="--c:' + L.sleep.c + '"><path class="org" d="M0,44 C-8,38 -20,42 -22,54 C-27,58 -26,70 -20,74 C-21,82 -14,90 -6,88 C-3,91 3,91 6,88 C14,90 21,82 20,74 C26,70 27,58 22,54 C20,42 8,38 0,44 Z" fill="url(#hxBrainG)" fill-opacity=".85" stroke="#e9d9ff" stroke-width="1.2" filter="url(#hxGlow)"/>'
-    + '<path d="M0,46 L0,86 M-14,52 C-8,56 -8,62 -14,66 M-18,70 C-12,72 -10,78 -14,84 M14,52 C8,56 8,62 14,66 M18,70 C12,72 10,78 14,84 M-8,48 C-12,48 -16,50 -18,54 M8,48 C12,48 16,50 18,54" fill="none" stroke="#f3e8ff" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/>'
+  o.push('<g class="hx-hot hx-brain" data-m="sleep" style="--c:' + L.sleep.c + '"><path class="org" d="M0,44 C-8,38 -20,42 -22,54 C-27,58 -26,70 -20,74 C-21,82 -14,90 -6,88 C-3,91 3,91 6,88 C14,90 21,82 20,74 C26,70 27,58 22,54 C20,42 8,38 0,44 Z" fill="url(#hxBrainG)" fill-opacity=".85" stroke="var(--hx-brain-s)" stroke-width="1.2" filter="url(#hxGlow)"/>'
+    + '<path d="M0,46 L0,86 M-14,52 C-8,56 -8,62 -14,66 M-18,70 C-12,72 -10,78 -14,84 M14,52 C8,56 8,62 14,66 M18,70 C12,72 10,78 14,84 M-8,48 C-12,48 -16,50 -18,54 M8,48 C12,48 16,50 18,54" fill="none" stroke="var(--hx-brain-d)" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/>'
     + '<path class="hit" d="M-27,36 L27,36 L27,106 L-27,106 Z" fill="transparent"/></g>');
 
   // heart
   o.push('<g class="hx-hot hx-heart" data-m="hr" style="--c:' + L.hr.c + '"><g class="hx-beat">'
-    + '<path class="org" d="M14,196 C9,187 -3,189 -1,202 C1,214 14,226 26,242 C36,228 46,216 44,203 C42,190 28,187 22,197 C19,201 16,200 14,196 Z" fill="url(#hxHeartG)" stroke="#ffc2cc" stroke-width="1.2" filter="url(#hxGlow2)"/>'
+    + '<path class="org" d="M14,196 C9,187 -3,189 -1,202 C1,214 14,226 26,242 C36,228 46,216 44,203 C42,190 28,187 22,197 C19,201 16,200 14,196 Z" fill="url(#hxHeartG)" stroke="var(--hx-heart-s)" stroke-width="1.2" filter="url(#hxGlow2)"/>'
     + '<path d="M12,200 C10,210 18,222 26,232 M28,198 C34,198 38,204 38,210" fill="none" stroke="#ffd9df" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/></g>'
-    + '<circle class="hx-pulse" cx="22" cy="214" r="10" fill="none" stroke="#ff3355" stroke-width="1.6"/>'
+    + '<circle class="hx-pulse" cx="22" cy="214" r="10" fill="none" stroke="var(--hx-hr)" stroke-width="1.6"/>'
     + '<path class="hit" d="M-4,184 L48,184 L48,246 L-4,246 Z" fill="transparent"/></g>');
 
   // tape rings
@@ -7947,12 +7974,12 @@ function hxBodySVG(L, X, G) {
 
   // ---- weight scale ----
   o.push('<g class="hx-hot hx-scale" data-m="weight" style="--c:' + L.weight.c + '">'
-   + '<ellipse cx="380" cy="736" rx="150" ry="9" fill="#00ff88" fill-opacity=".18" filter="url(#hxGlow2)"/>'
-   + '<path d="M286,690 L474,690 L490,722 C490,728 484,732 476,732 L284,732 C276,732 270,728 270,722 Z" fill="url(#hxSlab)" stroke="#5b7580" stroke-opacity=".7"/>'
-   + '<path d="M302,636 L458,636 C468,636 474,642 478,652 L492,688 C494,693 490,696 484,696 L276,696 C270,696 266,693 268,688 L282,652 C286,642 292,636 302,636 Z" fill="#101c22" stroke="#7fa7b5" stroke-opacity=".6"/>'
-   + '<path d="M306,640 L454,640 C462,640 466,645 469,653 L480,684 L280,684 L291,653 C294,645 298,640 306,640 Z" fill="url(#hxGlass)" stroke="#bff7ff" stroke-opacity=".3"/>'
-   + '<ellipse cx="344" cy="660" rx="22" ry="5" fill="#00e5ff" fill-opacity=".1"/><ellipse cx="416" cy="660" rx="22" ry="5" fill="#00e5ff" fill-opacity=".1"/>'
-   + '<rect class="org" x="312" y="699" width="136" height="30" rx="6" fill="url(#hxLCD)" stroke="#00ff88" stroke-opacity=".55"/>'
+   + '<ellipse cx="380" cy="736" rx="150" ry="9" fill="var(--g)" fill-opacity=".18" filter="url(#hxGlow2)"/>'
+   + '<path d="M286,690 L474,690 L490,722 C490,728 484,732 476,732 L284,732 C276,732 270,728 270,722 Z" fill="url(#hxSlab)" stroke="var(--hx-slab-edge)" stroke-opacity=".7"/>'
+   + '<path d="M302,636 L458,636 C468,636 474,642 478,652 L492,688 C494,693 490,696 484,696 L276,696 C270,696 266,693 268,688 L282,652 C286,642 292,636 302,636 Z" fill="var(--hx-scale-top)" stroke="var(--hx-scale-edge)" stroke-opacity=".6"/>'
+   + '<path d="M306,640 L454,640 C462,640 466,645 469,653 L480,684 L280,684 L291,653 C294,645 298,640 306,640 Z" fill="url(#hxGlass)" stroke="var(--hx-lung2)" stroke-opacity=".3"/>'
+   + '<ellipse cx="344" cy="660" rx="22" ry="5" fill="var(--tc)" fill-opacity=".1"/><ellipse cx="416" cy="660" rx="22" ry="5" fill="var(--tc)" fill-opacity=".1"/>'
+   + '<rect class="org" x="312" y="699" width="136" height="30" rx="6" fill="url(#hxLCD)" stroke="var(--g)" stroke-opacity=".55"/>'
    + '<text class="hx-lcd" x="374" y="' + (714 + .35 * X.lcdFs).toFixed(1) + '" text-anchor="middle" filter="url(#hxGlow)" style="font-size:' + X.lcdFs.toFixed(1) + 'px">' + X.wtTxt + '</text>'
    + '<text class="hx-lcd-u" x="440" y="' + (714 + .35 * X.lcdUs).toFixed(1) + '" text-anchor="end" style="font-size:' + X.lcdUs.toFixed(1) + 'px">KG</text>'
    + '<rect class="hit" x="268" y="636" width="224" height="98" fill="transparent"/></g>');
@@ -7995,19 +8022,19 @@ function hxBodySVG(L, X, G) {
 // Every entry is kept forever (unlimited history). Charts use daily averages, bucketed weekly/monthly on long ranges.
 var HX_TABS = ['overview','trends','log','history'];
 var HX_M = {
-  weight: { n:'Weight',        u:'kg',   src:'m', k:'weight', d:1, c:'#00ff88', ic:'⚖' },
-  bf:     { n:'Body Fat',      u:'%',    src:'m', k:'bf',     d:1, c:'#ffaa44', ic:'◐' },
-  bmi:    { n:'BMI',           u:'',     src:'m', calc:1,      d:1, c:'#5ad1ff', ic:'◎' },
-  chest:  { n:'Chest',         u:'cm',   src:'m', k:'chest',  d:1, c:'#00e5ff', ic:'◍' },
-  waist:  { n:'Waist',         u:'cm',   src:'m', k:'waist',  d:1, c:'#ffdd00', ic:'◍' },
-  hips:   { n:'Hips',          u:'cm',   src:'m', k:'hips',   d:1, c:'#ff6bd6', ic:'◍' },
-  arm:    { n:'Arm',           u:'cm',   src:'m', k:'arm',    d:1, c:'#4da3ff', ic:'◍' },
-  thigh:  { n:'Thigh',         u:'cm',   src:'m', k:'thigh',  d:1, c:'#2de2c4', ic:'◍' },
-  calf:   { n:'Calf',          u:'cm',   src:'m', k:'calf',   d:1, c:'#a3ff5a', ic:'◍' },
-  hr:     { n:'Heart Rate',    u:'bpm',  src:'v', k:'hr',     d:0, c:'#ff3355', ic:'♥', band:[60,100] },
-  bp:     { n:'Blood Pressure',u:'mmHg', src:'v', k:'sys', k2:'dia', d:0, c:'#ff7a45', ic:'♡', band:[90,120] },
-  sleep:  { n:'Sleep',         u:'h',    src:'v', k:'sleep',  d:1, c:'#aa77ff', ic:'☾', band:[7,9], bars:1 },
-  quality:{ n:'Sleep Quality', u:'/10',  src:'v', k:'quality',d:1, c:'#c9a6ff', ic:'✦', bars:1 }
+  weight: { n:'Weight',        u:'kg',   src:'m', k:'weight', d:1, c:'var(--g)', ic:'⚖' },
+  bf:     { n:'Body Fat',      u:'%',    src:'m', k:'bf',     d:1, c:'var(--hx-bf)', ic:'◐' },
+  bmi:    { n:'BMI',           u:'',     src:'m', calc:1,      d:1, c:'var(--hx-bmi)', ic:'◎' },
+  chest:  { n:'Chest',         u:'cm',   src:'m', k:'chest',  d:1, c:'var(--tc)', ic:'◍' },
+  waist:  { n:'Waist',         u:'cm',   src:'m', k:'waist',  d:1, c:'var(--hx-waist)', ic:'◍' },
+  hips:   { n:'Hips',          u:'cm',   src:'m', k:'hips',   d:1, c:'var(--hx-hips)', ic:'◍' },
+  arm:    { n:'Arm',           u:'cm',   src:'m', k:'arm',    d:1, c:'var(--hx-arm)', ic:'◍' },
+  thigh:  { n:'Thigh',         u:'cm',   src:'m', k:'thigh',  d:1, c:'var(--hx-thigh)', ic:'◍' },
+  calf:   { n:'Calf',          u:'cm',   src:'m', k:'calf',   d:1, c:'var(--hx-calf)', ic:'◍' },
+  hr:     { n:'Heart Rate',    u:'bpm',  src:'v', k:'hr',     d:0, c:'var(--hx-hr)', ic:'♥', band:[60,100] },
+  bp:     { n:'Blood Pressure',u:'mmHg', src:'v', k:'sys', k2:'dia', d:0, c:'var(--hx-bp)', ic:'♡', band:[90,120] },
+  sleep:  { n:'Sleep',         u:'h',    src:'v', k:'sleep',  d:1, c:'var(--hx-sleep)', ic:'☾', band:[7,9], bars:1 },
+  quality:{ n:'Sleep Quality', u:'/10',  src:'v', k:'quality',d:1, c:'var(--hx-quality)', ic:'✦', bars:1 }
 };
 var HX_ORDER = ['weight','bf','bmi','chest','waist','hips','arm','thigh','calf','hr','bp','sleep','quality'];
 var HX_FIELDS = {
@@ -8019,6 +8046,7 @@ try { var _hu = JSON.parse(localStorage.getItem('fitos_hx_ui') || 'null'); if (_
 if (!HX_M[hx.tm]) hx.tm = 'weight';
 function hxSaveUI() { try { localStorage.setItem('fitos_hx_ui', JSON.stringify({ tm:hx.tm, range:hx.range, pr:hx.pr, hType:hx.hType, hRange:hx.hRange })); } catch(e) {} }
 function hxEl(id) { return document.getElementById(id); }
+function hxCC(id) { var M = HX_M[id]; return M && M.src === 'm' ? 'var(--g)' : (M ? M.c : 'var(--g)'); }   // analytics colour: body measurements follow the theme accent, vitals keep their own hue
 function hxNum(x) { var v = parseFloat(x); return (isFinite(v) && v > 0) ? v : null; }
 function hxId() { return 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function hxArr(kind) { if (kind === 'v') { if (!S.vitals) S.vitals = []; return S.vitals; } if (!S.measurements) S.measurements = []; return S.measurements; }
@@ -8110,7 +8138,7 @@ function hxChart(boxId, id, B, w, o) {
   var box = hxEl(boxId); if (!box) return; o = o || {};
   var M = HX_M[id], pts = B.pts, H = o.h || 260, W = Math.max(260, Math.round(box.clientWidth || 640));
   if (!pts.length) { box.innerHTML = '<div class="hx-empty">No ' + M.n.toLowerCase() + ' data in this period.<br>Log an entry or pick a wider range.</div>'; hx.ch[boxId] = null; return; }
-  var uid = boxId, c = M.c, c2 = '#5ad1ff', two = id === 'bp';
+  var uid = boxId, c = (o && o.col) || M.c, c2 = 'var(--hx-dia)', two = id === 'bp';
   var pl = o.compact ? 34 : 42, pr = 14, pt = 14, pb = 26, pw = W - pl - pr, ph = H - pt - pb;
   var lo = Infinity, hi = -Infinity;
   pts.forEach(function(p){ lo = Math.min(lo, p.v); hi = Math.max(hi, p.v); if (two) { lo = Math.min(lo, p.v2); hi = Math.max(hi, p.v2); } });
@@ -8149,7 +8177,7 @@ function hxChart(boxId, id, B, w, o) {
     var mi = 0, ma = 0; pts.forEach(function(p, k){ if (p.v < pts[mi].v) mi = k; if (p.v > pts[ma].v) ma = k; });
     [[ma, 'MAX', -9], [mi, 'MIN', 16]].forEach(function(q){ var p = P1[q[0]]; if (mi === ma && q[1] === 'MIN') return; s += '<text class="hx-ax" x="' + Math.min(W - pr - 14, Math.max(pl + 14, p[0])).toFixed(1) + '" y="' + (p[1] + q[2]).toFixed(1) + '" text-anchor="middle" fill="' + c + '" opacity=".85">' + q[1] + ' ' + hxTxt(id, pts[q[0]].v, pts[q[0]].v2) + '</text>'; });
   }
-  s += '<line class="hx-cur" x1="0" x2="0" y1="' + pt + '" y2="' + (pt + ph) + '" opacity="0"/><circle class="hx-cd" r="6" fill="' + c + '" stroke="#fff" stroke-width="1.5" opacity="0"/>' + (two ? '<circle class="hx-cd2" r="5" fill="' + c2 + '" stroke="#fff" stroke-width="1.5" opacity="0"/>' : '')
+  s += '<line class="hx-cur" x1="0" x2="0" y1="' + pt + '" y2="' + (pt + ph) + '" opacity="0"/><circle class="hx-cd" r="6" fill="' + c + '" stroke="var(--card)" stroke-width="1.5" opacity="0"/>' + (two ? '<circle class="hx-cd2" r="5" fill="' + c2 + '" stroke="#fff" stroke-width="1.5" opacity="0"/>' : '')
      + '<rect class="hx-hit" x="' + pl + '" y="0" width="' + pw + '" height="' + H + '" fill="transparent"/></svg><div class="hx-tip" style="--c:' + c + '"></div>';
   box.innerHTML = s;
   hx.ch[boxId] = { id:id, pts:pts, P1:P1, Y:Y, X:X, g:B.g, two:two };
@@ -8162,7 +8190,7 @@ function hxChart(boxId, id, B, w, o) {
     cur.setAttribute('x1', px); cur.setAttribute('x2', px); cur.setAttribute('opacity', .7); cd.setAttribute('cx', px); cd.setAttribute('cy', py); cd.setAttribute('opacity', 1);
     if (cd2) { cd2.setAttribute('cx', px); cd2.setAttribute('cy', Y(p.v2)); cd2.setAttribute('opacity', 1); }
     var when = p.agg ? hxDateLbl(p.from, true) + ' → ' + hxDateLbl(p.to, true) : wtFmt(Math.round(p.day), { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-    tip.innerHTML = '<small>' + when.toUpperCase() + '</small><b>' + hxTxt(id, p.v, p.v2) + '</b> <span style="color:#86a6ad">' + M.u + '</span><small>' + (p.agg ? 'AVERAGE · ' + p.n + ' ENTRIES' : (p.n > 1 ? 'AVERAGE OF ' + p.n + ' ENTRIES' : (id === 'bmi' ? hxStatus(id, p).t : ''))) + '</small>';
+    tip.innerHTML = '<small>' + when.toUpperCase() + '</small><b>' + hxTxt(id, p.v, p.v2) + '</b> <span style="color:var(--t2)">' + M.u + '</span><small>' + (p.agg ? 'AVERAGE · ' + p.n + ' ENTRIES' : (p.n > 1 ? 'AVERAGE OF ' + p.n + ' ENTRIES' : (id === 'bmi' ? hxStatus(id, p).t : ''))) + '</small>';
     var bw = box.clientWidth, tx = px * (bw / W); tip.style.left = Math.max(70, Math.min(bw - 70, tx)) + 'px'; tip.style.top = Math.max(28, py * (bw / W)) + 'px'; tip.classList.add('on');
   }
   var hit = svg.querySelector('.hx-hit');
@@ -8290,9 +8318,9 @@ function hxRenderTrends(keepInputs) {
   var root = hxEl('hx-v-trends'); if (!root) return;
   var id = hx.tm, M = HX_M[id], L = hxLatest(id), daily = hxDaily(id, L.all), w = hxWin(hx.range, hx.from, hx.to, daily), B = hxBucket(daily, w, id), st = hxStats(B.inW), l = L.last;
   var chips = '', grp = 'b';
-  HX_ORDER.forEach(function(k){ var g = HX_M[k].src; if (g !== grp) { chips += '<span class="sep"></span>'; grp = g; } chips += '<button class="hx-chip' + (hx.tm === k ? ' on' : '') + '" style="--c:' + HX_M[k].c + '" onclick="hxTMetric(\'' + k + '\')">' + HX_M[k].n.toUpperCase() + '</button>'; });
+  HX_ORDER.forEach(function(k){ var g = HX_M[k].src; if (g !== grp) { chips += '<span class="sep"></span>'; grp = g; } chips += '<button class="hx-chip' + (hx.tm === k ? ' on' : '') + '" style="--c:' + hxCC(k) + '" onclick="hxTMetric(\'' + k + '\')">' + HX_M[k].n.toUpperCase() + '</button>'; });
   var u = M.u ? ' ' + M.u : '', chg = st ? st.chg : null, pct = st && st.first.v ? chg / st.first.v * 100 : null;
-  var kp = function(lbl, val, sub, hot){ return '<div class="hx-kpi' + (hot ? ' hot' : '') + '" style="--c:' + M.c + '"><span>' + lbl + '</span><b>' + val + '</b><i>' + (sub || '&nbsp;') + '</i></div>'; };
+  var kp = function(lbl, val, sub, hot){ return '<div class="hx-kpi' + (hot ? ' hot' : '') + '" style="--c:' + hxCC(id) + '"><span>' + lbl + '</span><b>' + val + '</b><i>' + (sub || '&nbsp;') + '</i></div>'; };
   var html = '<div class="hx-mchips">' + chips + '</div>'
     + '<div class="hx-ranges">' + hxRangeBtns(hx.range, 'hxTRange', true) + '</div>'
     + (hx.range === 'custom' ? '<div class="hx-custom"><label>FROM<input type="date" id="hxFrom" value="' + hx.from + '" onchange="hxTCustom()"/></label><label>TO<input type="date" id="hxTo" value="' + hx.to + '" max="' + today() + '" onchange="hxTCustom()"/></label></div>' : '')
@@ -8304,13 +8332,13 @@ function hxRenderTrends(keepInputs) {
     + kp('CHANGE', chg === null || id === 'bp' ? (id === 'bp' && st ? Math.round(st.last.v - st.first.v) : '—') : ((chg > 0 ? '+' : '') + chg.toFixed(M.d)), pct !== null && id !== 'bp' ? '<span class="' + (chg > 0 ? 'up' : chg < 0 ? 'dn' : '') + '">' + (pct > 0 ? '+' : '') + pct.toFixed(1) + '%</span>' : '')
     + kp('ENTRIES', st ? st.ent : 0, st ? st.n + ' days' : '')
     + '</div>'
-    + '<div class="hx-bigchart" style="--c:' + M.c + '"><div class="hx-ct"><b>' + M.n + (M.u ? ' <small style="font-size:13px;color:var(--t2)">(' + M.u + ')</small>' : '') + '</b>'
-    + (id === 'bp' ? '<span class="hx-legend"><span><i style="background:' + M.c + '"></i>SYSTOLIC</span><span><i style="background:#5ad1ff"></i>DIASTOLIC</span></span>' : '<span>' + hxRangeLabel(w, B.g) + '</span>') + '</div>'
+    + '<div class="hx-bigchart" style="--c:' + hxCC(id) + '"><div class="hx-ct"><b>' + M.n + (M.u ? ' <small style="font-size:13px;color:var(--t2)">(' + M.u + ')</small>' : '') + '</b>'
+    + (id === 'bp' ? '<span class="hx-legend"><span><i style="background:' + hxCC(id) + '"></i>SYSTOLIC</span><span><i style="background:var(--hx-dia)"></i>DIASTOLIC</span></span>' : '<span>' + hxRangeLabel(w, B.g) + '</span>') + '</div>'
     + '<div class="hx-chart" id="hxTChart"></div>'
     + '<div class="hx-foot">' + (B.g > 1 ? 'Showing ' + (B.g === 7 ? 'weekly' : 'monthly') + ' averages for this long range · ' : 'Daily averages · ') + 'hover or tap the chart for exact values</div></div>';
   if (keepInputs && hxEl('hxTChart')) { /* only chart + stats need refresh */ }
   root.innerHTML = html;
-  hxChart('hxTChart', id, B, w, { h:window.innerWidth < 560 ? 230 : 320 });
+  hxChart('hxTChart', id, B, w, { h:window.innerWidth < 560 ? 230 : 320, col:hxCC(id) });
 }
 function hxRangeLabel(w, g) { return (hxDateLbl(w[0], true) + ' → ' + hxDateLbl(w[1], true)).toUpperCase() + (g > 1 ? ' · ' + (g === 7 ? 'WEEKLY' : 'MONTHLY') : ''); }
 

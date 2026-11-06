@@ -1284,6 +1284,120 @@ html.alpha .hx-chip.on{color:var(--g2)}
 }
 @media (prefers-reduced-motion:reduce){.hx-beat,.hx-pulse,.hx-lungs,.hx-brain .org,.hx-scan,.hx-orbit,.hx-flow,.hx-dotp,.hx-draw,.hx-bar,.hx-view{animation:none!important}.hx-draw{stroke-dashoffset:0}}
 
+/* ===================== HYDRATION CORE — water intake ===================== */
+.hy{--hw1:#8fe3ff;--hw2:#2aa8ff;--hw3:#0a58d8;--hy-edge:rgba(196,235,255,.8);--hy-glass:rgba(160,215,255,.08);--hy-line:rgba(255,255,255,.1);
+  container-type:inline-size;position:relative;margin-bottom:12px;padding:16px;border-radius:20px;overflow:hidden;
+  background:radial-gradient(120% 80% at 12% 0%,color-mix(in srgb,var(--hw2) 15%,#070b10) 0%,#05080c 68%);
+  border:1px solid color-mix(in srgb,var(--hw2) 32%,transparent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--hw1) 5%,transparent) inset,0 0 50px color-mix(in srgb,var(--hw2) 8%,transparent) inset,0 12px 36px rgba(0,0,0,.4)}
+html.alpha .hy{--hw1:#7fd6fb;--hw2:#2a9bec;--hw3:#0b62cc;--hy-edge:rgba(36,98,160,.65);--hy-glass:rgba(70,150,215,.1);--hy-line:rgba(20,60,110,.12);
+  background:linear-gradient(165deg,#ffffff 0%,color-mix(in srgb,var(--hw2) 10%,#f1f7fc) 100%);border-color:color-mix(in srgb,var(--hw2) 30%,var(--border));
+  box-shadow:0 1px 0 #fff inset,0 12px 34px rgba(25,70,120,.12)}
+.hy::before,.hy::after{content:"";position:absolute;width:20px;height:20px;border:2px solid var(--hw2);opacity:.5;pointer-events:none}
+.hy::before{top:9px;left:9px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
+.hy::after{bottom:9px;right:9px;border-left:0;border-top:0;border-radius:0 0 6px 0}
+.hy-hud{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 6px 10px 8px;font-family:var(--mono);font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase}
+.hy-hud b{color:var(--hw1);font-weight:700}
+html.alpha .hy-hud b{color:var(--hw3)}
+.hy-state{color:var(--t2);font-size:11px;letter-spacing:1.4px;padding:3px 9px;border-radius:99px;border:1px solid color-mix(in srgb,var(--hw2) 35%,transparent);background:color-mix(in srgb,var(--hw2) 10%,transparent);white-space:nowrap}
+.hy.done .hy-state{color:var(--hw1);border-color:var(--hw1)}html.alpha .hy.done .hy-state{color:var(--hw3);border-color:var(--hw3)}
+.hy.over .hy-state{color:#fff;background:linear-gradient(90deg,var(--hw2),var(--hw3));border-color:transparent;animation:hyPulse 1.6s ease-in-out infinite}
+@keyframes hyPulse{50%{box-shadow:0 0 14px color-mix(in srgb,var(--hw2) 65%,transparent)}}
+.hy-main{display:grid;grid-template-columns:128px minmax(0,1fr);grid-template-areas:"g t" "g s" "g st" "sg sg" "v v" "c c" "f f";gap:10px 14px;align-items:start}
+.hy-panel{display:contents}
+.hy-glasswrap{grid-area:g;align-self:center;position:relative;width:100%;aspect-ratio:200/358}
+.hy-total{grid-area:t}.hy-sub{grid-area:s}.hy-stats{grid-area:st;grid-template-columns:1fr!important;gap:6px!important}.hy-seg{grid-area:sg;margin-top:2px}.hy-vessels{grid-area:v}.hy-custom{grid-area:c}.hy-foot{grid-area:f}
+.hy-stats div{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:6px 10px!important}.hy-stats b{margin-top:0!important}
+.hy-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.hy-tk{position:absolute;transform:translateY(-50%);font:600 11px var(--mono);color:var(--t2);pointer-events:none;white-space:nowrap}
+.hy-tk.goal{color:var(--hw1);font-weight:700;letter-spacing:.5px}html.alpha .hy-tk.goal{color:var(--hw3)}
+.hy-fly{position:absolute;left:50%;font:800 17px var(--font-num);color:var(--hw1);text-shadow:0 0 12px color-mix(in srgb,var(--hw2) 70%,transparent);pointer-events:none;animation:hyFly 1.4s ease-out forwards;white-space:nowrap}
+html.alpha .hy-fly{color:var(--hw3);text-shadow:none}
+@keyframes hyFly{0%{opacity:0;transform:translate(-50%,0) scale(.7)}18%{opacity:1;transform:translate(-50%,-10px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-56px) scale(1)}}
+/* glass + water */
+.hy-water{transition:transform 1.25s cubic-bezier(.2,.9,.25,1)}
+.hy-w1{animation:hyWave 3.6s linear infinite}.hy-w2{animation:hyWave2 5.4s linear infinite}
+@keyframes hyWave{to{transform:translateX(-100px)}}@keyframes hyWave2{from{transform:translateX(-100px)}to{transform:translateX(0)}}
+.hy-agit{transform-origin:0 0;transform:scaleY(1)}
+.hy-agit.go{animation:hyAgit 1.6s ease-out}
+@keyframes hyAgit{0%{transform:scaleY(1)}22%{transform:scaleY(3.1)}55%{transform:scaleY(1.7)}100%{transform:scaleY(1)}}
+.hy-bub{animation:hyRise 4.6s ease-in infinite;opacity:0}
+@keyframes hyRise{0%{transform:translateY(calc(var(--d,120)*1px));opacity:0}12%{opacity:.75}85%{opacity:.5}100%{transform:translateY(0);opacity:0}}
+.hy-splash{opacity:0}.hy-splash.go{animation:hySplash 1s ease-out}
+@keyframes hySplash{0%{opacity:0;transform:scale(.4)}25%{opacity:1}100%{opacity:0;transform:scale(1.5)}}
+.hy-drop{transform-box:fill-box;transform-origin:center;opacity:0}
+.go .hy-drop{animation:hyDropUp .9s ease-out}
+@keyframes hyDropUp{0%{opacity:0;transform:translate(0,0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx,0),var(--dy,-24px))}}
+.hy-stream{opacity:0;stroke-dasharray:9 5}.hy-stream.go{animation:hyStream 1.25s linear}
+@keyframes hyStream{0%{opacity:0;stroke-dashoffset:0}25%{opacity:1}75%{opacity:1;stroke-dashoffset:-60}100%{opacity:0;stroke-dashoffset:-84}}
+.hy-pourer{opacity:0;transform-origin:0 0}.hy-pourer.go{animation:hyPourer 1.3s cubic-bezier(.3,.8,.3,1)}
+@keyframes hyPourer{0%{opacity:0;transform:translate(46px,-26px) rotate(0)}22%{opacity:1;transform:translate(10px,-6px) rotate(-70deg)}38%{opacity:1;transform:translate(0,0) rotate(-122deg)}78%{opacity:1;transform:translate(0,0) rotate(-126deg)}100%{opacity:0;transform:translate(46px,-26px) rotate(-30deg)}}
+/* overflow */
+.hy-ovr{opacity:0;transition:opacity .5s}.hy.over .hy-ovr{opacity:1}
+.hy-sheet-bg{fill:none;stroke:var(--hw2);stroke-width:5;stroke-linecap:round;opacity:.38}
+.hy-sheet{fill:none;stroke:var(--hw1);stroke-width:3.4;stroke-linecap:round;stroke-dasharray:15 9;animation:hySheet .9s linear infinite;opacity:.9}
+@keyframes hySheet{to{stroke-dashoffset:-48}}
+.hy-drip{transform-box:fill-box;transform-origin:center;animation:hyDrip 1.25s ease-in infinite;opacity:0}
+@keyframes hyDrip{0%{opacity:0;transform:translateY(0) scale(.6)}18%{opacity:1}100%{opacity:0;transform:translateY(30px) scale(1)}}
+.hy-pud{transform-box:fill-box;transform-origin:center;transform:scaleX(calc(.6 + var(--pud,0)*.7));transition:transform 1s ease}
+.hy-rip{transform-box:fill-box;transform-origin:center;animation:hyRip 2.2s ease-out infinite;fill:none;stroke:var(--hw1);stroke-width:1.2}
+@keyframes hyRip{0%{opacity:.8;transform:scale(.35)}100%{opacity:0;transform:scale(1.25)}}
+.hy-spl{transform-box:fill-box;transform-origin:center;opacity:0}
+.hy.spill .hy-spl{animation:hySpl 1.3s ease-out}
+@keyframes hySpl{0%{opacity:0;transform:translate(0,0)}12%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy))}}
+/* panel */
+.hy-panel{width:100%;min-width:0;flex-direction:column;gap:11px}
+.hy-total{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;line-height:1}
+.hy-total b{font:800 40px var(--font-num);letter-spacing:.5px;color:var(--hw1);text-shadow:0 0 22px color-mix(in srgb,var(--hw2) 45%,transparent)}
+html.alpha .hy-total b{color:var(--hw3);text-shadow:none}
+.hy-total small{font:700 17px var(--font-num);color:var(--t2)}
+.hy-pct{margin-left:auto;font:700 13px var(--mono);letter-spacing:1px;padding:4px 10px;border-radius:99px;color:var(--hw1);background:color-mix(in srgb,var(--hw2) 14%,transparent);border:1px solid color-mix(in srgb,var(--hw2) 40%,transparent)}
+html.alpha .hy-pct{color:var(--hw3)}
+.hy-sub{font-size:13px;color:var(--t2);margin-top:-4px}
+.hy-seg{display:flex;gap:3px;height:12px}
+.hy-seg i{flex:1;min-width:0;border-radius:3px;background:var(--hy-line);position:relative;overflow:hidden}
+.hy-seg i::after{content:"";position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--f,0));background:linear-gradient(90deg,var(--hw1),var(--hw2));transition:transform .9s cubic-bezier(.2,.9,.25,1)}
+.hy.over .hy-seg i::after{background:linear-gradient(90deg,var(--hw2),var(--hw3));box-shadow:0 0 8px var(--hw2)}
+.hy-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hy-stats div{background:color-mix(in srgb,var(--card) 70%,transparent);border:1px solid var(--border);border-radius:11px;padding:8px 10px;min-width:0}
+.hy-stats span{display:block;font:600 11px var(--mono);letter-spacing:1.2px;color:var(--t2)}
+.hy-stats b{display:block;font:700 16px var(--raj);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hy.over #hyLeft{color:var(--hw1)}html.alpha .hy.over #hyLeft{color:var(--hw3)}
+.hy-vessels{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.hy-v{font:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 7px;min-height:44px;border-radius:14px;cursor:pointer;color:var(--t);
+  background:linear-gradient(170deg,color-mix(in srgb,var(--hw2) 11%,var(--card2)),var(--card));border:1px solid color-mix(in srgb,var(--hw2) 26%,var(--border));transition:transform .15s,border-color .15s,box-shadow .15s}
+.hy-v:hover{transform:translateY(-2px);border-color:var(--hw2);box-shadow:0 6px 18px color-mix(in srgb,var(--hw2) 28%,transparent)}
+.hy-v:active{transform:scale(.94)}
+.hy-v:focus-visible,.hy-btn:focus-visible,.hy-unit button:focus-visible{outline:2px solid var(--hw2);outline-offset:2px}
+.hy-vi{width:100%;max-width:46px;height:auto;aspect-ratio:64/80;overflow:visible}
+.hy-v:hover .hy-vwater{animation:hySlosh .9s ease-in-out}
+@keyframes hySlosh{0%,100%{transform:translateY(0)}35%{transform:translateY(-3px)}70%{transform:translateY(2px)}}
+.hy-v b{font:800 17px var(--font-num);line-height:1.05}
+.hy-v small{font:600 11px var(--mono);letter-spacing:1px;color:var(--t2)}
+.hy-custom{display:flex;gap:7px;align-items:center;flex-wrap:nowrap}
+.hy-custom .inp{flex:1 1 70px;min-width:56px;font-size:14px;padding-left:10px;padding-right:8px}
+.hy-unit{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card2)}
+.hy-unit button{font:700 12px var(--mono);letter-spacing:1px;padding:9px 11px;min-height:38px;border:0;background:none;color:var(--t2);cursor:pointer}
+.hy-unit button.on{background:color-mix(in srgb,var(--hw2) 22%,transparent);color:var(--hw1)}html.alpha .hy-unit button.on{color:var(--hw3)}
+.hy-btn{font:700 12.5px var(--mono);letter-spacing:1.1px;min-height:38px;padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--t);cursor:pointer;transition:all .15s}
+.hy-btn:hover:not(:disabled){border-color:var(--hw2)}
+.hy-btn{white-space:nowrap}
+.hy-btn.add{background:linear-gradient(135deg,var(--hw2),var(--hw3));border-color:transparent;color:#fff}
+.hy-btn.add:hover{filter:brightness(1.1)}
+.hy-btn.sub{padding:8px 13px;font-size:16px}.hy-btn.sub:hover{border-color:var(--red);color:var(--red)}
+.hy-foot{display:flex;gap:8px}
+.hy-btn.ghost{flex:1;background:transparent}.hy-btn.ghost.danger:hover{border-color:var(--red);color:var(--red)}
+.hy-btn:disabled{opacity:.4;cursor:default}
+/* responsive: the card measures itself, so it works in any column width on any device */
+@container (max-width:299px){.hy-stats div{flex-direction:column;align-items:flex-start;gap:0;padding:5px 9px!important}.hy-stats span{letter-spacing:.8px;font-size:10px}.hy-stats b{font-size:15px}}
+@container (min-width:400px){.hy-main{grid-template-columns:minmax(120px,150px) minmax(0,1fr);grid-template-areas:none;align-items:center;gap:14px}.hy-panel{display:flex}.hy-glasswrap{grid-area:auto}.hy-stats{grid-template-columns:repeat(3,1fr)!important;gap:8px!important}.hy-stats div{display:block;padding:8px 10px!important}.hy-stats b{margin-top:2px!important}.hy-vessels{grid-template-columns:repeat(2,1fr)}.hy-total b{font-size:40px}}
+@container (min-width:560px){.hy-main{grid-template-columns:minmax(160px,200px) minmax(0,1fr);gap:20px}.hy-vessels{grid-template-columns:repeat(4,1fr)}.hy-total b{font-size:50px}}
+@container (min-width:760px){.hy-main{grid-template-columns:minmax(190px,230px) minmax(0,1fr);gap:28px}}
+@container (max-width:259px){.hy-vessels{grid-template-columns:repeat(2,1fr)}.hy-custom{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){.hy *{animation:none!important;transition-duration:.01s!important}}
+.hy-floor{fill:rgba(0,0,0,.45)}html.alpha .hy-floor{fill:rgba(25,70,120,.2)}
+.hy-goalline{stroke:var(--hw1);stroke-width:1.1;stroke-dasharray:3 4;opacity:.75}html.alpha .hy-goalline{stroke:var(--hw3)}
+
 /* ===================== THEME TOKENS — Health follows light/dark + the chosen accent ===================== */
 html{--tc:var(--c)}
 /* data colours: fixed hues for what has a meaning (heart red, brain blue, …) but a readable shade in each mode */
@@ -2937,22 +3051,34 @@ setTimeout(endBootSplash, 15000);
       </div><!-- end ntr-stat-panel -->
     </div>
     <div class="ntr-col-right">
-    <!-- ── COMPACT LOG WATER WIDGET ── -->
-    <div id="logWaterWidget" style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--c2);padding:10px 12px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-        <div class="inp-label" style="color:var(--c2);letter-spacing:1.5px;margin:0">◈ LOG WATER</div>
-        <div style="font-size:13px;font-family:var(--mono);color:var(--t2)" id="lw-summary">0.0 / 0.0 L</div>
+    <!-- ── HYDRATION CORE (water intake) ── -->
+    <section class="hy" id="logWaterWidget" aria-label="Water intake">
+      <div class="hy-hud"><b>◈ HYDRATION CORE</b><span class="hy-state" id="hyState" aria-live="polite">READY</span></div>
+      <div class="hy-main">
+        <div class="hy-glasswrap" id="hyGlass"></div>
+        <div class="hy-panel">
+          <div class="hy-total"><b id="hyTotal">0.00</b><small>L</small><span class="hy-pct" id="hyPct">0%</span></div>
+          <div class="hy-sub" id="hySub">of 0.00 L daily goal</div>
+          <div class="hy-seg" id="hySeg" aria-hidden="true"></div>
+          <div class="hy-stats">
+            <div><span id="hyLeftL">LEFT</span><b id="hyLeft">0.00 L</b></div>
+            <div><span>GLASSES</span><b id="hyGl">0 / 12</b></div>
+            <div><span>GOAL</span><b id="hyGoal">0.00 L</b></div>
+          </div>
+          <div class="hy-vessels" id="hyVessels"></div>
+          <div class="hy-custom">
+            <input class="inp" id="hyCustom" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 330" aria-label="Custom water amount"/>
+            <div class="hy-unit" role="group" aria-label="Unit"><button type="button" id="hyU-ml" class="on" onclick="hySetUnit('ml')">ML</button><button type="button" id="hyU-l" onclick="hySetUnit('l')">L</button></div>
+            <button class="hy-btn add" onclick="hyCustomGo(1)" title="Add">＋ ADD</button>
+            <button class="hy-btn sub" onclick="hyCustomGo(-1)" title="Remove" aria-label="Remove amount">−</button>
+          </div>
+          <div class="hy-foot">
+            <button class="hy-btn ghost" id="hyUndo" onclick="hyUndo()" disabled>↶ UNDO</button>
+            <button class="hy-btn ghost danger" onclick="resetWater()" title="Reset this day's water">RESET</button>
+          </div>
+        </div>
       </div>
-      <div class="water-visual compact" id="lwGlasses" style="margin-bottom:8px"></div>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-        <button class="btn sm" onclick="addGlass()" title="+250ml">[ + GLASS ]</button>
-        <button class="btn sm danger" onclick="removeGlass()" title="-250ml">[ − ]</button>
-        <input class="inp" id="lw-custom-l" type="number" placeholder="Liters" min="0" step="0.1" style="width:64px;font-size:13px"/>
-        <button class="btn sm" onclick="addCustomWaterL()" title="Add custom liters">[ + L ]</button>
-        <button class="btn sm danger" onclick="subCustomWaterL()" title="Subtract custom liters">[ − L ]</button>
-        <button class="btn sm danger" onclick="resetWater()" title="Reset today's water" style="margin-left:auto">[ RESET ]</button>
-      </div>
-    </div>
+    </section>
     <div id="ntr-add-section">
     <div class="sec-head" style="margin-top:0">ADD MEAL</div>
     <div style="background:var(--card);border:1px solid var(--border);padding:14px">
@@ -7805,6 +7931,130 @@ function renderWater(){
   // Legacy alias — everything now renders through renderNutrition()/renderWaterWidget().
   renderNutrition();
 }
+// ---- HYDRATION CORE: animated glass + vessels. Data is unchanged: day.glasses (250 ml each) + day.customMl ----
+var hy = { built:false, ml:null, goal:0, date:'', segN:0, unit:'ml', hist:{}, nextV:null, tw:0, t1:0, t2:0 };
+var HY_V = [
+  { k:'cup',    ml:150,  b:'150', u:'ML',    px:12, py:22, top:34, shape:'M12,22 L48,22 L44,64 Q43.5,68 39,68 L21,68 Q16.5,68 16,64 Z', extra:'<path d="M48,30 C60,30 60,50 45.5,50" fill="none" stroke="var(--hy-edge)" stroke-width="2.2" stroke-linecap="round"/>' },
+  { k:'glass',  ml:250,  b:'250', u:'ML',    px:14, py:14, top:30, shape:'M14,14 L50,14 L45.5,66 Q45,70 41,70 L23,70 Q19,70 18.5,66 Z', extra:'' },
+  { k:'bottle', ml:500,  b:'500', u:'ML',    px:32, py:3,  top:36, shape:'M27,5 h10 v9 c0,5 9,9 9,20 v38 c0,4.5 -3.5,7 -7,7 h-14 c-3.5,0 -7,-2.5 -7,-7 v-38 c0,-11 9,-15 9,-20 z', extra:'<rect x="26" y="1" width="12" height="6" rx="2" fill="var(--hw2)" stroke="var(--hy-edge)" stroke-width="1.2"/>' },
+  { k:'jug',    ml:1000, b:'1',   u:'LITRE', px:32, py:4,  top:38, shape:'M24,6 h16 v7 c0,4 11,8 11,20 v36 c0,5 -4,8 -8,8 h-22 c-4,0 -8,-3 -8,-8 v-36 c0,-12 11,-16 11,-20 z', extra:'<rect x="22" y="1.5" width="20" height="6" rx="2" fill="var(--hw2)" stroke="var(--hy-edge)" stroke-width="1.2"/><path d="M18,44 h5 M18,54 h5 M18,64 h5" stroke="var(--hy-edge)" stroke-width="1.4" stroke-linecap="round"/>' }
+];
+function hyEl(id) { return document.getElementById(id); }
+function hyIcon(v, pre) {
+  var id = pre + v.k, t = v.top;
+  return '<defs><clipPath id="hc' + id + '"><path d="' + v.shape + '"/></clipPath><linearGradient id="hg' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--hw1)"/><stop offset="1" stop-color="var(--hw3)"/></linearGradient></defs>'
+    + '<path d="' + v.shape + '" fill="var(--hy-glass)"/>'
+    + '<g clip-path="url(#hc' + id + ')"><g class="hy-vwater"><path d="M0,' + t + ' Q16,' + (t - 4) + ' 32,' + t + ' T64,' + t + ' V84 H0 Z" fill="url(#hg' + id + ')" opacity=".95"/></g></g>'
+    + '<path d="' + v.shape + '" fill="none" stroke="var(--hy-edge)" stroke-width="1.8" stroke-linejoin="round"/>' + v.extra
+    + '<path d="M' + (v.px + 6) + ',' + (v.py + 14) + ' L' + (v.px + 8) + ',' + (v.py + 40) + '" stroke="#fff" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round" fill="none"/>';
+}
+function hyWave(amp, ph) { var p = 'M-100,0', x; for (x = -100; x <= 300; x += 4) p += ' L' + x + ',' + (amp * Math.sin(2 * Math.PI * x / 100 + ph)).toFixed(2); return p + ' L300,320 L-100,320 Z'; }
+function hyGlassSVG() {
+  var INNER = 'M40,40 L58,252 Q59,254 62,254 L138,254 Q141,254 142,252 L160,40 Z', OUTER = 'M34,40 L53,258 Q54,268 66,268 L134,268 Q146,268 147,258 L166,40';
+  var bub = '', i, bx = [68, 80, 92, 104, 116, 128, 74, 98, 122];
+  for (i = 0; i < bx.length; i++) bub += '<circle class="hy-bub" cx="' + bx[i] + '" cy="0" r="' + (1.3 + (i % 3) * .9).toFixed(1) + '" fill="#fff" fill-opacity=".8" style="animation-delay:' + (i * .55).toFixed(2) + 's;animation-duration:' + (3.8 + (i % 4) * .7).toFixed(1) + 's"/>';
+  var drops = [[-16, -30], [-7, -38], [4, -42], [14, -36], [22, -28], [-22, -20]].map(function(d, j){ return '<circle class="hy-drop" cx="' + (92 + j * 3) + '" cy="-2" r="' + (1.8 + (j % 2)) + '" fill="var(--hw1)" style="--dx:' + d[0] + 'px;--dy:' + d[1] + 'px"/>'; }).join('');
+  var spl = [[-34, 70], [-22, 96], [-46, 42], [34, 70], [22, 96], [46, 42]].map(function(d, j){ var l = j < 3; return '<circle class="hy-spl" cx="' + (l ? 34 : 166) + '" cy="40" r="' + (2.4 + (j % 3) * .5) + '" fill="var(--hw1)" style="--dx:' + d[0] + 'px;--dy:' + d[1] + 'px;animation-delay:' + (j % 3) * .06 + 's"/>'; }).join('');
+  var drip = [[56, 0], [64, .45], [138, .2], [146, .7], [100, .9]].map(function(d){ return '<circle class="hy-drip" cx="' + d[0] + '" cy="272" r="2.6" fill="var(--hw1)" style="animation-delay:' + d[1] + 's"/>'; }).join('');
+  return '<svg class="hy-svg" viewBox="0 0 200 358" aria-hidden="true" focusable="false"><defs>'
+    + '<linearGradient id="hyWg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="215"><stop offset="0" stop-color="var(--hw1)" stop-opacity=".95"/><stop offset=".4" stop-color="var(--hw2)" stop-opacity=".93"/><stop offset="1" stop-color="var(--hw3)" stop-opacity=".97"/></linearGradient>'
+    + '<linearGradient id="hyBack" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>'
+    + '<radialGradient id="hyPud"><stop offset="0" stop-color="var(--hw1)" stop-opacity=".75"/><stop offset="1" stop-color="var(--hw2)" stop-opacity=".25"/></radialGradient>'
+    + '<clipPath id="hyClip"><path d="' + INNER + '"/></clipPath></defs>'
+    + '<g transform="translate(0,48)">'
+    + '<ellipse class="hy-floor" cx="100" cy="284" rx="76" ry="8"/>'
+    + '<g class="hy-ovr"><ellipse class="hy-pud" id="hyPud" cx="100" cy="291" rx="62" ry="7.5" fill="url(#hyPud)"/><ellipse class="hy-rip" cx="100" cy="291" rx="62" ry="7.5"/><ellipse class="hy-rip" cx="100" cy="291" rx="62" ry="7.5" style="animation-delay:1.1s"/></g>'
+    + '<path d="' + INNER + '" fill="url(#hyBack)"/>'
+    + '<g clip-path="url(#hyClip)"><g class="hy-water" id="hyWater" style="transform:translateY(262px)">'
+    + '<g class="hy-w2"><g class="hy-agit"><path d="' + hyWave(3.2, 1.7) + '" fill="var(--hw2)" fill-opacity=".5"/></g></g>'
+    + '<g class="hy-w1"><g class="hy-agit"><path d="' + hyWave(4.5, 0) + '" fill="url(#hyWg)"/></g></g>'
+    + bub + '<g class="hy-splash" id="hySplash"><ellipse cx="100" cy="0" rx="24" ry="4" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.4"/>' + drops + '</g></g></g>'
+    + '<path d="' + INNER + '" fill="var(--hy-glass)"/>'
+    + '<path d="M56,254 Q57,262 66,262 L134,262 Q143,262 144,254" fill="rgba(190,235,255,.12)" stroke="var(--hy-edge)" stroke-opacity=".55" stroke-width="1.2"/>'
+    + '<path d="' + OUTER + '" fill="none" stroke="var(--hy-edge)" stroke-width="2" stroke-linejoin="round"/>'
+    + '<ellipse cx="100" cy="40" rx="66" ry="9" fill="none" stroke="var(--hy-edge)" stroke-width="1.8"/><ellipse cx="100" cy="40" rx="60" ry="7.2" fill="none" stroke="var(--hy-edge)" stroke-opacity=".45" stroke-width="1.1"/>'
+    + '<path d="M45,56 L59,222" stroke="#fff" stroke-opacity=".42" stroke-width="4.5" stroke-linecap="round" fill="none"/><path d="M52,60 L64,170" stroke="#fff" stroke-opacity=".2" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M155,66 L148,150" stroke="#fff" stroke-opacity=".22" stroke-width="2.6" stroke-linecap="round" fill="none"/>'
+    + '<g id="hyTicks"></g><line class="hy-goalline" x1="41" x2="159" y1="46" y2="46"/>'
+    + '<g class="hy-ovr"><path d="M41,41 Q100,19 159,41 Z" fill="var(--hw1)" fill-opacity=".85"/><path d="M48,36 Q100,24 152,36" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5" stroke-linecap="round"/>'
+    + '<path class="hy-sheet-bg" d="M31,42 L50,258 Q51,266 56,270"/><path class="hy-sheet-bg" d="M169,42 L150,258 Q149,266 144,270"/><ellipse cx="33" cy="42" rx="6" ry="4.5" fill="var(--hw1)" fill-opacity=".9"/><ellipse cx="167" cy="42" rx="6" ry="4.5" fill="var(--hw1)" fill-opacity=".9"/>'
+    + '<path class="hy-sheet" d="M31,42 L50,258 Q51,266 56,270"/><path class="hy-sheet" style="animation-delay:.3s" d="M169,42 L150,258 Q149,266 144,270"/>' + drip + spl + '</g>'
+    + '<line class="hy-stream" id="hyStream" x1="100" y1="12" x2="100" y2="120" stroke="var(--hw1)" stroke-width="6" stroke-linecap="round"/>'
+    + '<g transform="translate(100,6)"><g class="hy-pourer" id="hyPourer"><g id="hyPourIcon"></g></g></g>'
+    + '</g></svg>';
+}
+function hyBuild() {
+  var g = hyEl('hyGlass'), v = hyEl('hyVessels'); if (!g || !v) return false;
+  g.setAttribute('role', 'img');
+  g.innerHTML = hyGlassSVG() + '<div id="hyTkL"></div>';
+  v.innerHTML = HY_V.map(function(x){ return '<button type="button" class="hy-v" onclick="hyAdd(' + x.ml + ',\'' + x.k + '\')" aria-label="Add ' + x.ml + ' millilitres"><svg class="hy-vi" viewBox="0 0 64 80" aria-hidden="true">' + hyIcon(x, 'v') + '</svg><b>' + x.b + '</b><small>' + x.u + '</small></button>'; }).join('');
+  hy.built = true; hy.ml = null; hy.goal = 0; hy.segN = 0; return true;
+}
+function hyTicks(goalMl) {
+  var step = goalMl <= 1500 ? 250 : goalMl <= 4000 ? 500 : 1000, sv = '', lb = '', m;
+  for (m = step / 2; m < goalMl * .985; m += step / 2) {
+    var major = Math.abs(m % step) < 1, y = 254 - 208 * m / goalMl, xw = 160 - (y - 40) * .0842, xo = 166 - (y - 40) * .0833;
+    sv += '<line x1="' + (xw - (major ? 10 : 5)).toFixed(1) + '" x2="' + xw.toFixed(1) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="var(--hy-edge)" stroke-opacity="' + (major ? .85 : .5) + '" stroke-width="1.3"/>';
+    if (major) lb += '<span class="hy-tk" style="top:' + ((48 + y) / 358 * 100).toFixed(2) + '%;left:' + ((xo + 7) / 200 * 100).toFixed(2) + '%">' + (m / 1000).toFixed(m % 1000 ? 1 : 0) + '</span>';
+  }
+  var gx = 166 - (46 - 40) * .0833;
+  lb += '<span class="hy-tk goal" style="top:' + ((48 + 46) / 358 * 100).toFixed(2) + '%;left:' + ((gx + 7) / 200 * 100).toFixed(2) + '%">▸ ' + (goalMl / 1000).toFixed(goalMl % 1000 ? 1 : 0) + 'L</span>';
+  hyEl('hyTicks').innerHTML = sv; hyEl('hyTkL').innerHTML = lb;
+}
+function hyTween(id, from, to, fmt) {
+  var el = hyEl(id); if (!el) return; cancelAnimationFrame(hy.tw);
+  if (from === to || (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches)) { el.textContent = fmt(to); return; }
+  var t0 = performance.now(), dur = 900;
+  (function step(t) { var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (to - from) * e); if (k < 1) hy.tw = requestAnimationFrame(step); })(t0);
+}
+function hyRestart(el) { if (!el) return; el.classList.remove('go'); void el.getBoundingClientRect(); el.classList.add('go'); }
+function hyPour(k, delta, Y) {
+  var v = HY_V.filter(function(x){ return x.k === k; })[0] || HY_V[delta >= 1000 ? 3 : delta >= 500 ? 2 : delta >= 250 ? 1 : 0];
+  var ic = hyEl('hyPourIcon'), st = hyEl('hyStream'), w = hyEl('hyGlass'); if (!ic || !st || !w) return;
+  ic.setAttribute('transform', 'scale(1.15) translate(' + (-v.px) + ',' + (-v.py) + ')');
+  ic.innerHTML = hyIcon(v, 'p');
+  st.setAttribute('y2', Math.max(24, Y + 2));
+  hyRestart(hyEl('hyPourer')); hyRestart(st); hyRestart(hyEl('hySplash'));
+  w.querySelectorAll('.hy-agit').forEach(hyRestart);
+  var f = document.createElement('div'); f.className = 'hy-fly'; f.style.top = '34%'; f.style.left = '24%'; f.textContent = '+' + delta + ' ml'; w.appendChild(f);
+  setTimeout(function(){ if (f.parentNode) f.parentNode.removeChild(f); }, 1500);
+}
+function hyUpdate(ml, goalMl) {
+  var root = hyEl('logWaterWidget'); if (!root) return;
+  if (!hy.built && !hyBuild()) return;
+  var first = hy.ml === null, same = hy.date === ntrDate, prev = hy.ml === null ? 0 : hy.ml;
+  var over = ml > goalMl, lvl = Math.min(1, ml / goalMl), Y = ml <= 0 ? 262 : over ? 42 : 254 - 208 * lvl;
+  if (hy.goal !== goalMl) { hyTicks(goalMl); hy.goal = goalMl; }
+  var wt = hyEl('hyWater');
+  if (first) { wt.style.transform = 'translateY(262px)'; void wt.getBoundingClientRect(); }
+  wt.style.setProperty('--d', Math.max(0, 254 - Y).toFixed(0));
+  wt.style.transform = 'translateY(' + Y.toFixed(1) + 'px)';
+  // segments (one per glass of the goal, max 24)
+  var n = Math.max(1, Math.min(24, Math.round(goalMl / 250))), seg = hyEl('hySeg');
+  if (hy.segN !== n) { var h = ''; for (var i = 0; i < n; i++) h += '<i></i>'; seg.innerHTML = h; hy.segN = n; }
+  var segs = seg.children;
+  for (var j = 0; j < segs.length; j++) segs[j].style.setProperty('--f', Math.max(0, Math.min(1, ml / goalMl * n - j)).toFixed(3));
+  // numbers + status
+  var pct = ml / goalMl, L = ml / 1000, exc = (ml - goalMl) / 1000;
+  hyTween('hyTotal', first ? 0 : prev / 1000, L, function(v){ return v.toFixed(2); });
+  hyEl('hyPct').textContent = Math.round(pct * 100) + '%';
+  hyEl('hySub').textContent = 'of ' + (goalMl / 1000).toFixed(2) + ' L daily goal' + (ntrDate !== S.today ? ' · ' + ntrDate : '');
+  hyEl('hyLeftL').textContent = over ? 'OVER' : 'LEFT';
+  hyEl('hyLeft').textContent = over ? '+' + exc.toFixed(2) + ' L' : ((goalMl - ml) / 1000).toFixed(2) + ' L';
+  hyEl('hyGl').textContent = (ml / 250).toFixed(ml % 250 ? 1 : 0) + ' / ' + (goalMl / 250).toFixed(goalMl % 250 ? 1 : 0);
+  hyEl('hyGoal').textContent = (goalMl / 1000).toFixed(2) + ' L';
+  var msg = ml <= 0 ? 'READY TO HYDRATE' : over ? 'OVERFLOW +' + exc.toFixed(2) + ' L' : pct >= 1 ? 'GOAL REACHED' : pct >= .75 ? 'ALMOST THERE' : pct >= .5 ? 'HALFWAY THERE' : pct >= .25 ? 'KEEP SIPPING' : 'GOOD START';
+  hyEl('hyState').textContent = msg;
+  root.classList.toggle('over', over); root.classList.toggle('done', !over && pct >= 1);
+  var pd = hyEl('hyPud'); if (pd) pd.style.setProperty('--pud', Math.min(1, Math.max(0, exc / (goalMl / 1000)) * 2).toFixed(2));
+  hyEl('hyGlass').setAttribute('aria-label', 'Water intake ' + L.toFixed(2) + ' litres of ' + (goalMl / 1000).toFixed(2) + ' litre goal');
+  var u = hyEl('hyUndo'); if (u) u.disabled = !((hy.hist[ntrDate] || []).length);
+  // animations on an increase (also when the AI agent logs water)
+  if (same && !first && ml > prev) {
+    hyPour(hy.nextV, ml - prev, Y);
+    if (over) { root.classList.remove('spill'); void root.offsetWidth; root.classList.add('spill'); clearTimeout(hy.t2); hy.t2 = setTimeout(function(){ root.classList.remove('spill'); }, 1500); }
+  }
+  hy.nextV = null; hy.ml = ml; hy.date = ntrDate;
+}
 function renderWaterWidget(){
   if (!ntrDate) ntrDate = S.today;
   wtrDate = ntrDate;
@@ -7813,27 +8063,42 @@ function renderWaterWidget(){
   var L = (mlTotal/1000);
   var goalL = (S.cfg.waterGoal*250/1000);
   updateMacroRing('n-water', L, goalL, 'L');
-  var summary = document.getElementById('lw-summary');
-  if (summary) summary.textContent = L.toFixed(1)+' / '+goalL.toFixed(1)+' L';
-  var vis = document.getElementById('lwGlasses');
-  if (vis) {
-    vis.innerHTML='';
-    var isToday = ntrDate === S.today;
-    for (var i=0;i<S.cfg.waterGoal;i++){
-      var g=document.createElement('div');
-      g.className='glass '+(i<d.glasses?'full':'empty');
-      g.innerHTML='<div class="glass-fill" style="height:'+(i<d.glasses?100:0)+'%"></div>';
-      if (isToday) g.onclick=(function(idx){return function(){setGlasses(idx+1);};})(i);
-      vis.appendChild(g);
-    }
-  }
+  hyUpdate(mlTotal, Math.max(250, (S.cfg.waterGoal || 12) * 250));
+}
+function hyPush(d) { var a = hy.hist[ntrDate] = hy.hist[ntrDate] || []; a.push({ g:d.glasses, c:d.customMl || 0 }); if (a.length > 40) a.shift(); }
+function hyAdd(ml, k) {
+  if (!(ml > 0)) return;
+  var d = getDay(ntrDate); hyPush(d); hy.nextV = k || null;
+  if (ml % 250 === 0) d.glasses += ml / 250; else d.customMl = (d.customMl || 0) + ml;
+  save(); renderNutrition(); toast('+' + ml + ' ml logged');
+}
+function hySubtract(ml) {
+  if (!(ml > 0)) return;
+  var d = getDay(ntrDate), tot = d.glasses * 250 + (d.customMl || 0); if (tot <= 0) { toast('Nothing to remove'); return; }
+  hyPush(d); ml = Math.min(ml, tot);
+  var c = d.customMl || 0, take = Math.min(c, ml); d.customMl = c - take; ml -= take;
+  if (ml > 0) { var g = Math.min(d.glasses, Math.ceil(ml / 250)); d.glasses -= g; d.customMl += g * 250 - ml; }
+  save(); renderNutrition(); toast('Removed');
+}
+function hyUndo() {
+  var a = hy.hist[ntrDate]; if (!a || !a.length) return;
+  var s = a.pop(), d = getDay(ntrDate); d.glasses = s.g; d.customMl = s.c; save(); renderNutrition(); toast('Undone');
+}
+function hySetUnit(u) { hy.unit = u; ['ml', 'l'].forEach(function(x){ var b = hyEl('hyU-' + x); if (b) b.classList.toggle('on', x === u); }); var i = hyEl('hyCustom'); if (i) i.placeholder = u === 'l' ? 'e.g. 0.5' : 'e.g. 330'; }
+function hyCustomGo(sign) {
+  var i = hyEl('hyCustom'), v = parseFloat(i && i.value);
+  if (!(v > 0)) { toast('Enter an amount'); if (i) i.focus(); return; }
+  var ml = Math.round(v * (hy.unit === 'l' ? 1000 : 1));
+  if (ml > 10000) { toast('That is a lot of water — max 10 L at a time'); return; }
+  i.value = ''; if (sign > 0) hyAdd(ml, null); else hySubtract(ml);
 }
 function setGlasses(n){var d=getDay(ntrDate);d.glasses=(d.glasses===n&&n>0)?n-1:n;save();renderNutrition();}
 function addGlass(n){getDay(ntrDate).glasses=getDay(ntrDate).glasses+(n||1);save();renderNutrition();toast('+250ml logged!');}
 function removeGlass(){var d=getDay(ntrDate);if(d.glasses>0){d.glasses--;save();renderNutrition();}}
-function resetWater(){var d=getDay(ntrDate);d.glasses=0;d.customMl=0;save();renderNutrition();toast('Water reset');}
+function resetWater(){var d=getDay(ntrDate);hyPush(d);d.glasses=0;d.customMl=0;save();renderNutrition();toast('Water reset');}
 function addCustomWater(){var ml=parseInt(document.getElementById('w-custom')?document.getElementById('w-custom').value:0)||0;if(ml<=0){toast('Enter amount');return;}var d=getDay(ntrDate);d.customMl=(d.customMl||0)+ml;save();renderNutrition();toast('+'+ml+'ml logged!');}
 function addCustomWaterL(){
+  if(!document.getElementById('lw-custom-l'))return;   // legacy control — replaced by the Hydration Core
   var l=parseFloat(document.getElementById('lw-custom-l').value)||0;
   if(l<=0){toast('Enter liters');return;}
   var ml=Math.round(l*1000);
@@ -7843,6 +8108,7 @@ function addCustomWaterL(){
   save();renderNutrition();toast('+'+l+'L logged!');
 }
 function subCustomWaterL(){
+  if(!document.getElementById('lw-custom-l'))return;   // legacy control — replaced by the Hydration Core
   var l=parseFloat(document.getElementById('lw-custom-l').value)||0;
   if(l<=0){toast('Enter liters');return;}
   var ml=Math.round(l*1000);

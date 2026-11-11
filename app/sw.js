@@ -7,7 +7,7 @@
  * - Bump CACHE_VERSION on a release if you want installed apps to show the "update available" banner
  *   immediately (the page also detects index.html changes on its own — see the PWA block in index.html).
  */
-const CACHE_VERSION = 'fitos-v1';
+const CACHE_VERSION = 'fitos-v2';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const NAV_TIMEOUT = 5000;

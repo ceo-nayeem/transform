@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" data-cms-page="contact">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <script>/* Installed app (PWA) must open the software, not the website */
-(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&]site=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
+(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&](site|cmspreview)=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
 <title>Contact — FIT//OS</title>
 <meta name="description" content="Get in touch with the FIT//OS team: payment help, feature requests, bug reports and general questions."/>
 <meta name="theme-color" content="#06080a"/>
@@ -25,77 +25,78 @@
 <div class="bg-glow"></div><div class="bg-grid"></div><div class="noise"></div><div class="scroll-progress"></div>
 <header class="nav" id="top">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
+    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="index.html#features">Features</a>
-      <a href="index.html#how">How it works</a>
-      <a href="index.html#pricing">Pricing</a>
-      <a href="about.html">About</a>
-      <a href="contact.html" class="active">Contact</a>
+      <a href="index.html#features" data-cms="g.features">Features</a>
+      <a href="index.html#how" data-cms="g.how-it-works">How it works</a>
+      <a href="index.html#pricing" data-cms="g.pricing">Pricing</a>
+      <a href="about.html" data-cms="g.about">About</a>
+      <a href="contact.html" class="active" data-cms="g.contact">Contact</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Launch app</a>
-      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic>Go Pro</a>
+      <a class="btn btn-ghost btn-sm" href="app/" data-appurl data-cms="g.open-app">Open App</a>
+      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic data-cms="g.go-pro">Go Pro</a>
       <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
   </div>
 </header>
 <div class="mobile-menu">
-  <a href="index.html#features">Features</a><a href="index.html#how">How it works</a><a href="index.html#pricing">Pricing</a><a href="about.html">About</a><a href="contact.html">Contact</a>
-  <a class="btn btn-primary" href="app/" data-appurl>Launch the app →</a>
+  <a href="index.html#features" data-cms="g.features">Features</a><a href="index.html#how" data-cms="g.how-it-works">How it works</a><a href="index.html#pricing" data-cms="g.pricing">Pricing</a><a href="about.html" data-cms="g.about">About</a><a href="contact.html" data-cms="g.contact">Contact</a>
+  <a class="btn btn-primary" href="app/" data-appurl data-cms="g.launch-the-app">Launch the app →</a>
 </div>
 
 <main>
-<section class="page-hero"><div class="wrap-narrow">
-  <span class="eyebrow">Contact</span>
-  <h1 class="h-xl split" style="margin-top:18px;font-size:clamp(2.4rem,6.4vw,5rem)" data-now>Let’s <span class="grad">talk.</span></h1>
-  <p class="lead rv" data-now data-d=".3">Payment question, feature idea or found a bug? Send us a message — we read everything.</p>
+<section class="page-hero" data-cms-sec="contact.s1"><div class="wrap-narrow">
+  <span class="eyebrow" data-cms="contact.page-hero.1">Contact</span>
+  <h1 class="h-xl split" style="margin-top:18px;font-size:clamp(2.4rem,6.4vw,5rem)" data-now data-cms="contact.page-hero.2">Let’s <span class="grad">talk.</span></h1>
+  <p class="lead rv" data-now data-d=".3" data-cms="contact.page-hero.3">Payment question, feature idea or found a bug? Send us a message — we read everything.</p>
 </div></section>
 
-<section class="sec" style="padding-top:10px"><div class="wrap contact-grid">
+<section class="sec" style="padding-top:10px" data-cms-sec="contact.s2"><div class="wrap contact-grid">
   <div class="contact-list" data-stagger>
     <a class="c-item" data-contact-box data-contact="email" href="#"><span class="ico">✉️</span><span><small>Email</small><b>email</b></span></a>
     <a class="c-item" data-contact-box data-contact="whatsapp" href="#" target="_blank" rel="noopener"><span class="ico">💬</span><span><small>WhatsApp</small><b>whatsapp</b></span></a>
     <a class="c-item" data-contact-box data-contact="facebook" href="#" target="_blank" rel="noopener"><span class="ico">📘</span><span><small>Facebook</small><b>Message our page</b></span></a>
     <a class="c-item" data-contact-box data-contact="phone" href="#"><span class="ico">📞</span><span><small>Phone</small><b>phone</b></span></a>
-    <div class="c-item" style="cursor:default"><span class="ico">⏱️</span><span><small>Typical response time</small><b>Within 24 hours</b></span></div>
-    <div class="glass info-card"><h3 style="font-size:1.05rem">Payment help?</h3><p>Include the <b style="color:var(--t)">email you signed in with</b> and your <b style="color:var(--t)">Transaction ID (TrxID)</b> so we can find it fast.</p></div>
+    <div class="c-item" style="cursor:default"><span class="ico" data-cms="contact.sec.1">⏱️</span><span data-cms="contact.sec.2"><small>Typical response time</small><b>Within 24 hours</b></span></div>
+    <div class="glass info-card"><h3 style="font-size:1.05rem" data-cms="contact.sec.3">Payment help?</h3><p>Include the <b style="color:var(--t)" data-cms="contact.sec.4">email you signed in with</b> and your <b style="color:var(--t)" data-cms="contact.sec.5">Transaction ID (TrxID)</b> so we can find it fast.</p></div>
   </div>
   <form class="glass form" id="contact-form" novalidate>
     <div class="row2">
-      <div class="field"><label for="c-name">Your name</label><input class="inp" id="c-name" autocomplete="name" placeholder="Your name"/></div>
-      <div class="field"><label for="c-email">Your email</label><input class="inp" id="c-email" type="email" autocomplete="email" placeholder="you@gmail.com"/></div>
+      <div class="field"><label for="c-name" data-cms="contact.sec.6">Your name</label><input class="inp" id="c-name" autocomplete="name" placeholder="Your name"/></div>
+      <div class="field"><label for="c-email" data-cms="contact.sec.7">Your email</label><input class="inp" id="c-email" type="email" autocomplete="email" placeholder="you@gmail.com"/></div>
     </div>
-    <div class="field"><label for="c-topic">Topic</label><select class="inp" id="c-topic"><option>Payment help</option><option>Feature request</option><option>Report a bug</option><option>General question</option></select></div>
-    <div class="field"><label for="c-msg">Message</label><textarea class="inp" id="c-msg" placeholder="How can we help?"></textarea></div>
+    <div class="field"><label for="c-topic" data-cms="contact.sec.8">Topic</label><select class="inp" id="c-topic"><option>Payment help</option><option>Feature request</option><option>Report a bug</option><option>General question</option></select></div>
+    <div class="field"><label for="c-msg" data-cms="contact.sec.9">Message</label><textarea class="inp" id="c-msg" placeholder="How can we help?"></textarea></div>
     <div class="err" id="c-err" role="alert"></div>
-    <div class="co-actions"><button class="btn btn-primary" type="submit" data-magnetic>Send via email →</button><button class="btn btn-ghost" type="button" id="c-wa" style="display:none">Send via WhatsApp</button></div>
-    <p class="hint">This opens your email app with the message ready to send — nothing is stored on this website.</p>
+    <div class="co-actions"><button class="btn btn-primary" type="submit" data-magnetic data-cms="contact.sec.10">Send via email →</button><button class="btn btn-ghost" type="button" id="c-wa" style="display:none" data-cms="contact.sec.11">Send via WhatsApp</button></div>
+    <p class="hint" data-cms="contact.sec.12">This opens your email app with the message ready to send — nothing is stored on this website.</p>
   </form>
 </div></section>
 </main>
-<footer class="footer">
+<footer class="footer" data-cms-sec="g.footer">
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
-        <p class="foot-about">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
+        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
+        <p class="foot-about" data-cms="g.your-fitness-nutrition-habit">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
       </div>
-      <div><h4>Product</h4><ul><li><a href="index.html#features">Features</a></li><li><a href="index.html#how">How it works</a></li><li><a href="index.html#pricing">Pricing</a></li><li><a href="app/" data-appurl>Launch app</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="index.html#faq">FAQ</a></li></ul></div>
-      <div><h4>Get in touch</h4><ul>
+      <div><h4 data-cms="g.product">Product</h4><ul><li><a href="index.html#features" data-cms="g.features">Features</a></li><li><a href="index.html#how" data-cms="g.how-it-works">How it works</a></li><li><a href="index.html#pricing" data-cms="g.pricing">Pricing</a></li><li><a href="app/" data-appurl data-cms="g.launch-app">Launch app</a></li></ul></div>
+      <div><h4 data-cms="g.company">Company</h4><ul><li><a href="about.html" data-cms="g.about">About</a></li><li><a href="contact.html" data-cms="g.contact">Contact</a></li><li><a href="index.html#faq" data-cms="g.faq">FAQ</a></li></ul></div>
+      <div><h4 data-cms="g.get-in-touch">Get in touch</h4><ul>
         <li data-contact-box><a data-contact="email" href="#">Email</a></li>
         <li data-contact-box><a data-contact="whatsapp" href="#">WhatsApp</a></li>
         <li data-contact-box><a data-contact="facebook" href="#">Facebook</a></li>
       </ul></div>
     </div>
-    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span>Pay securely with bKash &amp; Nagad</span></div>
+    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span data-cms="g.pay-securely-with-bkash-naga">Pay securely with bKash &amp; Nagad</span></div>
   </div>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
 <script src="assets/js/config.js"></script>
+<script src="assets/js/cms.js"></script>
 <script src="assets/js/site.js" defer></script>
 <script>
 (function(){

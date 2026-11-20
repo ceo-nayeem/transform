@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" data-cms-page="e404">
 <head>
 <base href="/"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <script>/* Installed app (PWA) must open the software, not the website */
-(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&]site=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
+(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&](site|cmspreview)=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
 <title>Page not found — FIT//OS</title>
 <meta name="description" content="This page could not be found."/>
 <meta name="theme-color" content="#06080a"/>
@@ -26,51 +26,52 @@
 <div class="bg-glow"></div><div class="bg-grid"></div><div class="noise"></div><div class="scroll-progress"></div>
 <header class="nav" id="top">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
+    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="index.html#features">Features</a>
-      <a href="index.html#how">How it works</a>
-      <a href="index.html#pricing">Pricing</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
+      <a href="index.html#features" data-cms="g.features">Features</a>
+      <a href="index.html#how" data-cms="g.how-it-works">How it works</a>
+      <a href="index.html#pricing" data-cms="g.pricing">Pricing</a>
+      <a href="about.html" data-cms="g.about">About</a>
+      <a href="contact.html" data-cms="g.contact">Contact</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Launch app</a>
-      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic>Go Pro</a>
+      <a class="btn btn-ghost btn-sm" href="app/" data-appurl data-cms="g.open-app">Open App</a>
+      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic data-cms="g.go-pro">Go Pro</a>
       <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
   </div>
 </header>
 <div class="mobile-menu">
-  <a href="index.html#features">Features</a><a href="index.html#how">How it works</a><a href="index.html#pricing">Pricing</a><a href="about.html">About</a><a href="contact.html">Contact</a>
-  <a class="btn btn-primary" href="app/" data-appurl>Launch the app →</a>
+  <a href="index.html#features" data-cms="g.features">Features</a><a href="index.html#how" data-cms="g.how-it-works">How it works</a><a href="index.html#pricing" data-cms="g.pricing">Pricing</a><a href="about.html" data-cms="g.about">About</a><a href="contact.html" data-cms="g.contact">Contact</a>
+  <a class="btn btn-primary" href="app/" data-appurl data-cms="g.launch-the-app">Launch the app →</a>
 </div>
 
-<main><section class="page-hero" style="min-height:90svh;display:grid;align-content:center"><div class="wrap-narrow">
-  <span class="eyebrow">Error 404</span>
-  <h1 class="h-xl" style="margin-top:18px">Signal <span class="grad">lost.</span></h1>
-  <p class="lead" style="margin-top:18px">That page does not exist (or has moved). Let’s get you back on track.</p>
-  <div class="hero-cta" style="justify-content:center;margin-top:30px"><a class="btn btn-primary" href="index.html">Back to home</a><a class="btn btn-ghost" href="app/" data-appurl>Launch the app</a></div>
+<main><section class="page-hero" style="min-height:90svh;display:grid;align-content:center" data-cms-sec="e404.s1"><div class="wrap-narrow">
+  <span class="eyebrow" data-cms="e404.page-hero.1">Error 404</span>
+  <h1 class="h-xl" style="margin-top:18px" data-cms="e404.page-hero.2">Signal <span class="grad">lost.</span></h1>
+  <p class="lead" style="margin-top:18px" data-cms="e404.page-hero.3">That page does not exist (or has moved). Let’s get you back on track.</p>
+  <div class="hero-cta" style="justify-content:center;margin-top:30px"><a class="btn btn-primary" href="index.html" data-cms="e404.page-hero.4" data-cms-href="e404.page-hero.4">Back to home</a><a class="btn btn-ghost" href="app/" data-appurl data-cms="e404.page-hero.5">Launch the app</a></div>
 </div></section></main>
-<footer class="footer">
+<footer class="footer" data-cms-sec="g.footer">
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
-        <p class="foot-about">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
+        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
+        <p class="foot-about" data-cms="g.your-fitness-nutrition-habit">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
       </div>
-      <div><h4>Product</h4><ul><li><a href="index.html#features">Features</a></li><li><a href="index.html#how">How it works</a></li><li><a href="index.html#pricing">Pricing</a></li><li><a href="app/" data-appurl>Launch app</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="index.html#faq">FAQ</a></li></ul></div>
-      <div><h4>Get in touch</h4><ul>
+      <div><h4 data-cms="g.product">Product</h4><ul><li><a href="index.html#features" data-cms="g.features">Features</a></li><li><a href="index.html#how" data-cms="g.how-it-works">How it works</a></li><li><a href="index.html#pricing" data-cms="g.pricing">Pricing</a></li><li><a href="app/" data-appurl data-cms="g.launch-app">Launch app</a></li></ul></div>
+      <div><h4 data-cms="g.company">Company</h4><ul><li><a href="about.html" data-cms="g.about">About</a></li><li><a href="contact.html" data-cms="g.contact">Contact</a></li><li><a href="index.html#faq" data-cms="g.faq">FAQ</a></li></ul></div>
+      <div><h4 data-cms="g.get-in-touch">Get in touch</h4><ul>
         <li data-contact-box><a data-contact="email" href="#">Email</a></li>
         <li data-contact-box><a data-contact="whatsapp" href="#">WhatsApp</a></li>
         <li data-contact-box><a data-contact="facebook" href="#">Facebook</a></li>
       </ul></div>
     </div>
-    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span>Pay securely with bKash &amp; Nagad</span></div>
+    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span data-cms="g.pay-securely-with-bkash-naga">Pay securely with bKash &amp; Nagad</span></div>
   </div>
 </footer>
 <script src="assets/js/config.js"></script>
+<script src="assets/js/cms.js"></script>
 <script src="assets/js/site.js" defer></script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" data-cms-page="about">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <script>/* Installed app (PWA) must open the software, not the website */
-(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&]site=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
+(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&](site|cmspreview)=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
 <title>About — FIT//OS</title>
 <meta name="description" content="Why we built FIT//OS: one fast, private operating system for your fitness, nutrition, habits and health."/>
 <meta name="theme-color" content="#06080a"/>
@@ -25,97 +25,98 @@
 <div class="bg-glow"></div><div class="bg-grid"></div><div class="noise"></div><div class="scroll-progress"></div>
 <header class="nav" id="top">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
+    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="index.html#features">Features</a>
-      <a href="index.html#how">How it works</a>
-      <a href="index.html#pricing">Pricing</a>
-      <a href="about.html" class="active">About</a>
-      <a href="contact.html">Contact</a>
+      <a href="index.html#features" data-cms="g.features">Features</a>
+      <a href="index.html#how" data-cms="g.how-it-works">How it works</a>
+      <a href="index.html#pricing" data-cms="g.pricing">Pricing</a>
+      <a href="about.html" class="active" data-cms="g.about">About</a>
+      <a href="contact.html" data-cms="g.contact">Contact</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Launch app</a>
-      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic>Go Pro</a>
+      <a class="btn btn-ghost btn-sm" href="app/" data-appurl data-cms="g.open-app">Open App</a>
+      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic data-cms="g.go-pro">Go Pro</a>
       <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
   </div>
 </header>
 <div class="mobile-menu">
-  <a href="index.html#features">Features</a><a href="index.html#how">How it works</a><a href="index.html#pricing">Pricing</a><a href="about.html">About</a><a href="contact.html">Contact</a>
-  <a class="btn btn-primary" href="app/" data-appurl>Launch the app →</a>
+  <a href="index.html#features" data-cms="g.features">Features</a><a href="index.html#how" data-cms="g.how-it-works">How it works</a><a href="index.html#pricing" data-cms="g.pricing">Pricing</a><a href="about.html" data-cms="g.about">About</a><a href="contact.html" data-cms="g.contact">Contact</a>
+  <a class="btn btn-primary" href="app/" data-appurl data-cms="g.launch-the-app">Launch the app →</a>
 </div>
 
 <main>
-<section class="page-hero"><div class="wrap-narrow">
-  <span class="eyebrow">About FIT//OS</span>
-  <h1 class="h-xl split" style="margin-top:18px;font-size:clamp(2.4rem,6.4vw,5rem)" data-now>Health should feel like an <span class="grad">operating system.</span></h1>
-  <p class="lead rv" data-now data-d=".3">Not ten apps, ten logins and ten subscriptions. One calm, fast place where your meals, workouts, habits, vitals and goals finally talk to each other.</p>
+<section class="page-hero" data-cms-sec="about.s1"><div class="wrap-narrow">
+  <span class="eyebrow" data-cms="about.page-hero.1">About FIT//OS</span>
+  <h1 class="h-xl split" style="margin-top:18px;font-size:clamp(2.4rem,6.4vw,5rem)" data-now data-cms="about.page-hero.2">Health should feel like an <span class="grad">operating system.</span></h1>
+  <p class="lead rv" data-now data-d=".3" data-cms="about.page-hero.3">Not ten apps, ten logins and ten subscriptions. One calm, fast place where your meals, workouts, habits, vitals and goals finally talk to each other.</p>
 </div></section>
 
-<section class="sec" style="padding-top:20px"><div class="wrap">
+<section class="sec" style="padding-top:20px" data-cms-sec="about.s2"><div class="wrap">
   <div class="cards-3" data-stagger>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">🎯</div><h3>Our mission</h3><p>Make consistent healthy living effortless — by removing friction from tracking and giving you clear, honest feedback on your own data.</p></div>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">🔭</div><h3>Our vision</h3><p>A single personal health OS that works for everyone, in any language and on any device, from a low-end phone to a desktop.</p></div>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">🇧🇩</div><h3>Built in Bangladesh</h3><p>Designed with local life in mind — local meals, local payment methods (bKash &amp; Nagad) and a price that makes sense.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.1">🎯</div><h3 data-cms="about.sec.2">Our mission</h3><p data-cms="about.sec.3">Make consistent healthy living effortless — by removing friction from tracking and giving you clear, honest feedback on your own data.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.4">🔭</div><h3 data-cms="about.sec.5">Our vision</h3><p data-cms="about.sec.6">A single personal health OS that works for everyone, in any language and on any device, from a low-end phone to a desktop.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.7">🇧🇩</div><h3 data-cms="about.sec.8">Built in Bangladesh</h3><p data-cms="about.sec.9">Designed with local life in mind — local meals, local payment methods (bKash &amp; Nagad) and a price that makes sense.</p></div>
   </div>
 </div></section>
 
-<section class="sec" style="padding-top:0"><div class="wrap">
-  <div class="sec-head"><span class="eyebrow">Principles</span><h2 class="h-lg split">What we will <span class="grad">never compromise on.</span></h2></div>
+<section class="sec" style="padding-top:0" data-cms-sec="about.s3"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow" data-cms="about.sec.10">Principles</span><h2 class="h-lg split" data-cms="about.sec.11">What we will <span class="grad">never compromise on.</span></h2></div>
   <div class="cards-2" data-stagger>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">🔒</div><h3>Private by default</h3><p>Your account is yours alone. Ingredients and entries you add are never shared with other users — only the curated main library is shared, read-only.</p></div>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">⚡</div><h3>Fast by design</h3><p>A single lightweight app that opens instantly, logs in seconds and keeps working offline. No bloat, no waiting.</p></div>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">🧩</div><h3>One connected system</h3><p>Nutrition feeds goals, habits feed streaks, vitals feed trends. Everything shares one source of truth.</p></div>
-    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico">🤝</div><h3>Honest pricing</h3><p>Free to start. Pro is a simple, transparent plan you pay for locally — and you get access the moment you submit.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.12">🔒</div><h3 data-cms="about.sec.13">Private by default</h3><p data-cms="about.sec.14">Your account is yours alone. Ingredients and entries you add are never shared with other users — only the curated main library is shared, read-only.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.15">⚡</div><h3 data-cms="about.sec.16">Fast by design</h3><p data-cms="about.sec.17">A single lightweight app that opens instantly, logs in seconds and keeps working offline. No bloat, no waiting.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.18">🧩</div><h3 data-cms="about.sec.19">One connected system</h3><p data-cms="about.sec.20">Nutrition feeds goals, habits feed streaks, vitals feed trends. Everything shares one source of truth.</p></div>
+    <div class="glass info-card" data-tilt><span class="spot"></span><div class="ico" data-cms="about.sec.21">🤝</div><h3 data-cms="about.sec.22">Honest pricing</h3><p data-cms="about.sec.23">Free to start. Pro is a simple, transparent plan you pay for locally — and you get access the moment you submit.</p></div>
   </div>
 </div></section>
 
-<section class="sec" style="padding-top:0"><div class="wrap-narrow">
-  <div class="sec-head"><span class="eyebrow">Journey</span><h2 class="h-lg split">From a personal tracker to a <span class="grad">full platform.</span></h2></div>
+<section class="sec" style="padding-top:0" data-cms-sec="about.s4"><div class="wrap-narrow">
+  <div class="sec-head"><span class="eyebrow" data-cms="about.sec.24">Journey</span><h2 class="h-lg split" data-cms="about.sec.25">From a personal tracker to a <span class="grad">full platform.</span></h2></div>
   <div class="timeline" data-stagger>
-    <div class="tl-item"><span class="when">Foundation</span><h3>The core tracker</h3><p>Nutrition, workouts, habits, goals, vitals and measurements in a single fast web app with cloud sync.</p></div>
-    <div class="tl-item"><span class="when">Growth</span><h3>Libraries &amp; intelligence</h3><p>A shared main ingredient library, personal libraries per user, an AI Agent and a full admin console.</p></div>
-    <div class="tl-item"><span class="when">Now</span><h3>Installable, Pro-ready</h3><p>Install as a Progressive Web App, automatic update notices, and Pro subscriptions with bKash and Nagad.</p></div>
-    <div class="tl-item"><span class="when">Next</span><h3>Deeper insight</h3><p>Richer reports, more Pro features and more ways to pay — shaped by what members ask for.</p></div>
+    <div class="tl-item"><span class="when" data-cms="about.sec.26">Foundation</span><h3 data-cms="about.sec.27">The core tracker</h3><p data-cms="about.sec.28">Nutrition, workouts, habits, goals, vitals and measurements in a single fast web app with cloud sync.</p></div>
+    <div class="tl-item"><span class="when" data-cms="about.sec.29">Growth</span><h3 data-cms="about.sec.30">Libraries &amp; intelligence</h3><p data-cms="about.sec.31">A shared main ingredient library, personal libraries per user, an AI Agent and a full admin console.</p></div>
+    <div class="tl-item"><span class="when" data-cms="about.sec.32">Now</span><h3 data-cms="about.sec.33">Installable, Pro-ready</h3><p data-cms="about.sec.34">Install as a Progressive Web App, automatic update notices, and Pro subscriptions with bKash and Nagad.</p></div>
+    <div class="tl-item"><span class="when" data-cms="about.sec.35">Next</span><h3 data-cms="about.sec.36">Deeper insight</h3><p data-cms="about.sec.37">Richer reports, more Pro features and more ways to pay — shaped by what members ask for.</p></div>
   </div>
 </div></section>
 
-<section class="sec" style="padding-top:0"><div class="wrap">
-  <div class="sec-head"><span class="eyebrow">Brand kit</span><h2 class="h-lg split">The look of <span class="grad">FIT//OS.</span></h2><p class="lead rv">Near-black canvas, neon green energy, violet depth. The wordmark’s double slash is our signature — a nod to the command line and to “//” as in “beyond”.</p></div>
+<section class="sec" style="padding-top:0" data-cms-sec="about.s5"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow" data-cms="about.sec.38">Brand kit</span><h2 class="h-lg split" data-cms="about.sec.39">The look of <span class="grad">FIT//OS.</span></h2><p class="lead rv" data-cms="about.sec.40">Near-black canvas, neon green energy, violet depth. The wordmark’s double slash is our signature — a nod to the command line and to “//” as in “beyond”.</p></div>
   <div class="glass" style="padding:30px;display:grid;gap:26px">
-    <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><img src="app/icons/icon-512.png" alt="FIT//OS app icon" width="96" height="96" style="border-radius:22px"/><div class="logo" style="font-size:clamp(1.8rem,5vw,3rem)"><span class="lt">FIT<b>//</b>OS</span></div></div>
-    <div class="swatches"><div class="sw"><i style="background:#06080A"></i><span>Void</span><b>#06080A</b></div><div class="sw"><i style="background:#0F1418"></i><span>Panel</span><b>#0F1418</b></div><div class="sw"><i style="background:#00FF88"></i><span>Neon Green</span><b>#00FF88</b></div><div class="sw"><i style="background:#AA77FF"></i><span>Violet</span><b>#AA77FF</b></div><div class="sw"><i style="background:#38BDF8"></i><span>Sky</span><b>#38BDF8</b></div><div class="sw"><i style="background:#FF9D42"></i><span>Amber</span><b>#FF9D42</b></div></div>
-    <p class="hint">Typography: Plus Jakarta Sans (headlines) · Inter (interface) · JetBrains Mono (labels)</p>
+    <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap"><img src="app/icons/icon-512.png" alt="FIT//OS app icon" width="96" height="96" style="border-radius:22px"/><div class="logo" style="font-size:clamp(1.8rem,5vw,3rem)"><span class="lt" data-cms="about.sec.41">FIT<b>//</b>OS</span></div></div>
+    <div class="swatches"><div class="sw"><i style="background:#06080A"></i><span data-cms="about.sec.42">Void</span><b data-cms="about.sec.43">#06080A</b></div><div class="sw"><i style="background:#0F1418"></i><span data-cms="about.sec.44">Panel</span><b data-cms="about.sec.45">#0F1418</b></div><div class="sw"><i style="background:#00FF88"></i><span data-cms="about.sec.46">Neon Green</span><b data-cms="about.sec.47">#00FF88</b></div><div class="sw"><i style="background:#AA77FF"></i><span data-cms="about.sec.48">Violet</span><b data-cms="about.sec.49">#AA77FF</b></div><div class="sw"><i style="background:#38BDF8"></i><span data-cms="about.sec.50">Sky</span><b data-cms="about.sec.51">#38BDF8</b></div><div class="sw"><i style="background:#FF9D42"></i><span data-cms="about.sec.52">Amber</span><b data-cms="about.sec.53">#FF9D42</b></div></div>
+    <p class="hint" data-cms="about.sec.54">Typography: Plus Jakarta Sans (headlines) · Inter (interface) · JetBrains Mono (labels)</p>
   </div>
 </div></section>
 
-<section style="padding-bottom:20px"><div class="wrap"><div class="cta-band rv">
-  <h2 class="h-lg">Come build the habit <span class="grad">with us.</span></h2>
-  <div class="hero-cta"><a class="btn btn-primary" href="app/" data-appurl data-magnetic>Launch the app <span class="arr">→</span></a><a class="btn btn-ghost" href="contact.html">Talk to us</a></div>
+<section style="padding-bottom:20px" data-cms-sec="about.s6"><div class="wrap"><div class="cta-band rv">
+  <h2 class="h-lg" data-cms="about.sec.55">Come build the habit <span class="grad">with us.</span></h2>
+  <div class="hero-cta"><a class="btn btn-primary" href="app/" data-appurl data-magnetic data-cms="about.sec.56">Launch the app <span class="arr">→</span></a><a class="btn btn-ghost" href="contact.html" data-cms="about.sec.57" data-cms-href="about.sec.57">Talk to us</a></div>
 </div></div></section>
 </main>
-<footer class="footer">
+<footer class="footer" data-cms-sec="g.footer">
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
-        <p class="foot-about">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
+        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
+        <p class="foot-about" data-cms="g.your-fitness-nutrition-habit">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
       </div>
-      <div><h4>Product</h4><ul><li><a href="index.html#features">Features</a></li><li><a href="index.html#how">How it works</a></li><li><a href="index.html#pricing">Pricing</a></li><li><a href="app/" data-appurl>Launch app</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="index.html#faq">FAQ</a></li></ul></div>
-      <div><h4>Get in touch</h4><ul>
+      <div><h4 data-cms="g.product">Product</h4><ul><li><a href="index.html#features" data-cms="g.features">Features</a></li><li><a href="index.html#how" data-cms="g.how-it-works">How it works</a></li><li><a href="index.html#pricing" data-cms="g.pricing">Pricing</a></li><li><a href="app/" data-appurl data-cms="g.launch-app">Launch app</a></li></ul></div>
+      <div><h4 data-cms="g.company">Company</h4><ul><li><a href="about.html" data-cms="g.about">About</a></li><li><a href="contact.html" data-cms="g.contact">Contact</a></li><li><a href="index.html#faq" data-cms="g.faq">FAQ</a></li></ul></div>
+      <div><h4 data-cms="g.get-in-touch">Get in touch</h4><ul>
         <li data-contact-box><a data-contact="email" href="#">Email</a></li>
         <li data-contact-box><a data-contact="whatsapp" href="#">WhatsApp</a></li>
         <li data-contact-box><a data-contact="facebook" href="#">Facebook</a></li>
       </ul></div>
     </div>
-    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span>Pay securely with bKash &amp; Nagad</span></div>
+    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span data-cms="g.pay-securely-with-bkash-naga">Pay securely with bKash &amp; Nagad</span></div>
   </div>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
 <script src="assets/js/config.js"></script>
+<script src="assets/js/cms.js"></script>
 <script src="assets/js/site.js" defer></script>
 </body>
 </html>

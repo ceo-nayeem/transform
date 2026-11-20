@@ -1,0 +1,206 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() == 'ceo.nayeemuhammad@gmail.com';
+    }
+    function ownDocId() {
+      // NOTE: replace() in rules is a LITERAL replace (not regex). Gmail addresses only contain a-z 0-9 . + @ so chain literals.
+      return 'google_' + request.auth.token.email.lower().replace('@', '_').replace('.', '_').replace('+', '_');
+    }
+    function isOwnUserDoc(docId) {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && docId == ownDocId();
+    }
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid && request.auth.token.email_verified == true;
+    }
+    function legacyNotSuspended() {
+      return get(/databases/$(database)/documents/fitos_users/$(ownDocId())).data.get('status', 'active') != 'suspended';
+    }
+    function notSuspended() {
+      return resource.data.get('status', 'active') != 'suspended';
+    }
+    function protectedFieldsUntouched() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return !changed.hasAny(['status', 'plan', 'role', 'authEmail', 'createdAt',
+                              'migratedFrom', 'migratedTo', 'migratedAt', 'statusChangedAt'])
+        && (!changed.hasAny(['authUid'])
+            || (!('authUid' in resource.data) && request.resource.data.authUid == request.auth.uid));
+    }
+    // A payment that carries a coupon must reference an ACTIVE, unexpired, not-used-up public coupon that is valid for the plan,
+    // must not be the buyer's own coupon, must use a discount no larger than the coupon allows, and must create the one-use claim in the same batch.
+    function validCoupon(d) {
+      let pubPath = /databases/$(database)/documents/couponPub/$(d.coupon);
+      let pub = get(pubPath).data;
+      return d.coupon is string && d.coupon.matches('^[A-Z0-9]{3,20}$')
+        && exists(pubPath)
+        && pub.active == true
+        && (pub.expiresAt == 0 || pub.expiresAt > request.time.toMillis())
+        && (pub.maxUses == 0 || pub.used < pub.maxUses)
+        && (pub.plans.size() == 0 || d.plan in pub.plans)
+        && pub.ownerKey != ownDocId()
+        && d.listPrice is number && d.listPrice > 0 && d.listPrice <= 100000
+        && d.discount is number && d.discount > 0 && d.discount < d.listPrice
+        && d.amount == d.listPrice - d.discount
+        && (pub.type == 'percent' ? d.discount * 100 <= d.listPrice * pub.value : d.discount <= pub.value)
+        && (pub.maxDiscount == 0 || d.discount <= pub.maxDiscount)
+        && existsAfter(/databases/$(database)/documents/couponClaims/$(d.coupon + '_' + request.auth.uid));
+    }
+    function validPaymentRequest(reqId) {
+      let d = request.resource.data;
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && d.keys().hasOnly(['uid', 'email', 'name', 'phone', 'plan', 'amount', 'method', 'trxId', 'status', 'createdAt', 'coupon', 'listPrice', 'discount'])
+        && d.keys().hasAll(['uid', 'email', 'name', 'phone', 'plan', 'amount', 'method', 'trxId', 'status', 'createdAt'])
+        && (!d.keys().hasAny(['coupon', 'listPrice', 'discount']) || (d.keys().hasAll(['coupon', 'listPrice', 'discount']) && validCoupon(d)))
+        && d.uid == request.auth.uid
+        && d.email == request.auth.token.email.lower()
+        && d.status == 'pending'
+        && d.method in ['bkash', 'nagad']
+        && d.plan in ['1m', '3m', '6m', '12m']
+        && d.amount is number && d.amount > 0 && d.amount <= 100000
+        && d.name is string && d.name.size() >= 2 && d.name.size() <= 80
+        && d.phone is string && d.phone.matches('^01[3-9][0-9]{8}$')
+        && d.trxId is string && d.trxId.matches('^[A-Z0-9]{8,14}$')
+        && d.createdAt == request.time
+        && reqId == d.method + '_' + d.trxId;
+    }
+    function validProvisionalPro(uid) {
+      let d = request.resource.data;
+      let reqPath = /databases/$(database)/documents/paymentRequests/$(d.requestId);
+      return isSelf(uid)
+        && d.keys().hasOnly(['uid', 'email', 'plan', 'status', 'requestId', 'amount', 'startedAt', 'proUntil', 'updatedAt', 'rejectReason', 'source'])
+        && d.uid == uid
+        && d.email == request.auth.token.email.lower()
+        && d.status == 'pending'
+        && d.source == 'checkout'
+        && d.plan in ['1m', '3m', '6m', '12m']
+        && d.proUntil is timestamp
+        && d.proUntil > request.time
+        && d.proUntil <= request.time + duration.value(5, 'd')
+        && d.startedAt == request.time
+        && d.updatedAt == request.time
+        && existsAfter(reqPath)
+        && getAfter(reqPath).data.uid == uid
+        && getAfter(reqPath).data.plan == d.plan;
+    }
+    match /fitos_users/{docId} {
+      allow read, write: if isOwner();
+      allow get: if isOwnUserDoc(docId);
+      allow create: if isOwnUserDoc(docId)
+        && request.resource.data.authUid == request.auth.uid
+        && request.resource.data.authEmail.lower() == request.auth.token.email.lower()
+        && request.resource.data.get('status', 'active') == 'active'
+        && request.resource.data.get('plan', 'free') == 'free'
+        && !('role' in request.resource.data);
+      allow update: if isOwnUserDoc(docId)
+        && notSuspended()
+        && protectedFieldsUntouched();
+      allow delete: if isOwnUserDoc(docId);
+    }
+    match /users/{uid} {
+      allow read, write: if isOwner();
+      allow get: if isSelf(uid);
+      allow create, update: if isSelf(uid) && legacyNotSuspended()
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly(['uid', 'schemaVersion', 'migration', 'updatedAt', 'lastSyncedAt', 'lastWriter']);
+      allow delete: if isSelf(uid);
+      match /{coll}/{docId} {
+        allow read, write: if isOwner();
+        allow read: if isSelf(uid)
+          && coll in ['profile', 'daily', 'habits', 'goals', 'measurements', 'vitals',
+                      'mealLibrary', 'ingredientLibrary', 'savedTimers'];
+        allow write: if isSelf(uid) && legacyNotSuspended()
+          && coll in ['profile', 'daily', 'habits', 'goals', 'measurements', 'vitals',
+                      'mealLibrary', 'ingredientLibrary', 'savedTimers'];
+      }
+    }
+    match /admin/{docId} {
+      allow read: if signedIn() && docId in ['config', 'appConfig', 'plans', 'content'];
+      allow read, write: if isOwner();
+    }
+    match /admin_features/{flagId} {
+      allow read: if signedIn();
+      allow write: if isOwner();
+    }
+    match /global/{docId} {
+      allow read: if signedIn();
+      allow write: if isOwner();
+    }
+    match /paymentRequests/{reqId} {
+      allow read: if isOwner() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if validPaymentRequest(reqId);
+      allow update, delete: if isOwner();
+    }
+    match /entitlements/{uid} {
+      allow read: if isOwner() || isSelf(uid);
+      allow write: if isOwner();
+      allow create: if validProvisionalPro(uid);
+      allow update: if validProvisionalPro(uid)
+        && (resource.data.status in ['rejected', 'expired'] || resource.data.proUntil <= request.time);
+    }
+    match /admin_auditLogs/{logId} {
+      allow read: if isOwner();
+      allow create: if isOwner() && request.resource.data.adminUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+    match /admin_analytics/{eventId} {
+      allow read: if isOwner();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['event', 'uid', 'meta', 'timestamp'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.event in ['signup', 'login', 'onboarding_complete', 'meal_logged',
+             'water_logged', 'workout_completed', 'habit_completed', 'goal_created',
+             'goal_completed', 'feature_used'];
+      allow update, delete: if false;
+    }
+    // ---------------- Coupons (influencer marketing) ----------------
+    // coupons/{code}: master record. Owner = you. The influencer (ownerKey == his own Gmail doc id) can read only his own coupon + its uses.
+    match /coupons/{code} {
+      allow read, write: if isOwner();
+      allow get: if signedIn() && request.auth.token.email_verified == true && resource.data.ownerKey == ownDocId();
+      match /uses/{useId} {
+        allow read, write: if isOwner();
+        allow read: if signedIn() && request.auth.token.email_verified == true
+          && get(/databases/$(database)/documents/coupons/$(code)).data.ownerKey == ownDocId();
+      }
+    }
+    // couponPub/{code}: public mirror the checkout reads to validate a code (get by exact code only — no listing, no owner e-mail).
+    match /couponPub/{code} {
+      allow get: if signedIn();
+      allow list, write: if isOwner();
+    }
+    // couponOwners/{ownerKey}: one coupon per Gmail owner; lets the owner find his coupon from inside the app.
+    match /couponOwners/{key} {
+      allow read, write: if isOwner();
+      allow get: if isOwnUserDoc(key);
+    }
+    // couponClaims/{CODE_uid}: created by checkout together with the payment request → one use per customer per coupon.
+    match /couponClaims/{claimId} {
+      allow list: if isOwner();
+      allow get: if isOwner() || (signedIn() && claimId.matches('^[A-Z0-9]{3,20}_' + request.auth.uid + '$'));
+      allow create: if isOwner() || (
+        isSelf(request.resource.data.uid)
+        && request.resource.data.keys().hasOnly(['code', 'uid', 'reqId', 'createdAt'])
+        && claimId == request.resource.data.code + '_' + request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && existsAfter(/databases/$(database)/documents/paymentRequests/$(request.resource.data.reqId))
+        && getAfter(/databases/$(database)/documents/paymentRequests/$(request.resource.data.reqId)).data.coupon == request.resource.data.code
+        && getAfter(/databases/$(database)/documents/paymentRequests/$(request.resource.data.reqId)).data.uid == request.auth.uid);
+      allow update, delete: if isOwner();
+    }
+    // Website Studio — the published landing-site content is world-readable (single doc, no listing);
+    // drafts / history are owner-only, and only the owner can ever write.
+    match /site/{docId} {
+      allow get: if docId == 'content';
+      allow read, write: if isOwner();
+    }
+  }
+}

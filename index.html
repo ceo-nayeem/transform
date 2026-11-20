@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" data-cms-page="home">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <script>/* Installed app (PWA) must open the software, not the website */
-(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&]site=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
+(function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&](site|cmspreview)=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
 <title>FIT//OS — Your body. Your data. Your OS.</title>
 <meta name="description" content="FIT//OS is the all-in-one fitness operating system: nutrition, workouts, habits, vitals and goals in one fast, private app that works offline on every device."/>
 <meta name="theme-color" content="#06080a"/>
@@ -25,183 +25,183 @@
 <div class="bg-glow"></div><div class="bg-grid"></div><div class="noise"></div><div class="scroll-progress"></div>
 <header class="nav" id="top">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
+    <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
     <nav class="nav-links" aria-label="Primary">
-      <a href="index.html#features">Features</a>
-      <a href="index.html#how">How it works</a>
-      <a href="index.html#pricing">Pricing</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
+      <a href="index.html#features" data-cms="g.features">Features</a>
+      <a href="index.html#how" data-cms="g.how-it-works">How it works</a>
+      <a href="index.html#pricing" data-cms="g.pricing">Pricing</a>
+      <a href="about.html" data-cms="g.about">About</a>
+      <a href="contact.html" data-cms="g.contact">Contact</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="app/" data-appurl>Open App</a>
-      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic>Go Pro</a>
+      <a class="btn btn-ghost btn-sm" href="app/" data-appurl data-cms="g.open-app">Open App</a>
+      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic data-cms="g.go-pro">Go Pro</a>
       <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
   </div>
 </header>
 <div class="mobile-menu">
-  <a href="index.html#features">Features</a><a href="index.html#how">How it works</a><a href="index.html#pricing">Pricing</a><a href="about.html">About</a><a href="contact.html">Contact</a>
-  <a class="btn btn-primary" href="app/" data-appurl>Launch the app →</a>
+  <a href="index.html#features" data-cms="g.features">Features</a><a href="index.html#how" data-cms="g.how-it-works">How it works</a><a href="index.html#pricing" data-cms="g.pricing">Pricing</a><a href="about.html" data-cms="g.about">About</a><a href="contact.html" data-cms="g.contact">Contact</a>
+  <a class="btn btn-primary" href="app/" data-appurl data-cms="g.launch-the-app">Launch the app →</a>
 </div>
 
 <main>
 <!-- ================= HERO ================= -->
-<section class="hero" id="home">
+<section class="hero" id="home" data-cms-sec="home.home">
   <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <div class="wrap">
     <div class="hero-copy">
-      <div class="hero-badge rv" data-now><i></i><span><b>Pro is live</b> · pay with bKash &amp; Nagad</span></div>
-      <h1 class="h-xl split" data-now>Your body. Your data. <span class="grad">Your OS.</span></h1>
-      <p class="lead rv" data-now data-d=".25">FIT//OS is the all-in-one operating system for your health — meals, macros, workouts, habits, vitals and goals in one beautifully fast app that runs on every device, even offline.</p>
+      <div class="hero-badge rv" data-now><i></i><span data-cms="home.home.1"><b>Pro is live</b> · pay with bKash &amp; Nagad</span></div>
+      <h1 class="h-xl split" data-now data-cms="home.home.2">Your body. Your data. <span class="grad">Your OS.</span></h1>
+      <p class="lead rv" data-now data-d=".25" data-cms="home.home.3">FIT//OS is the all-in-one operating system for your health — meals, macros, workouts, habits, vitals and goals in one beautifully fast app that runs on every device, even offline.</p>
       <div class="hero-cta rv" data-now data-d=".4">
-        <a class="btn btn-primary" href="app/" data-appurl data-magnetic>Launch the app <span class="arr">→</span></a>
-        <a class="btn btn-ghost" href="#pricing" data-magnetic>See Pro plans</a>
+        <a class="btn btn-primary" href="app/" data-appurl data-magnetic data-cms="home.home.4">Launch the app <span class="arr">→</span></a>
+        <a class="btn btn-ghost" href="#pricing" data-magnetic data-cms="home.home.5" data-cms-href="home.home.5">See Pro plans</a>
       </div>
       <div class="hero-meta rv" data-now data-d=".55">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Free to start</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Works offline</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Your data stays yours</span>
+        <span data-cms="home.home.6" data-cms-keep="svg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Free to start</span>
+        <span data-cms="home.home.7" data-cms-keep="svg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Works offline</span>
+        <span data-cms="home.home.8" data-cms-keep="svg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Your data stays yours</span>
       </div>
     </div>
     <div class="hero-stage">
-      <div class="phone"><div class="screen"><img src="assets/img/shots/m-dashboard.webp" alt="FIT//OS dashboard on a phone" class="on" width="780" height="1688" fetchpriority="high"/></div><div class="glare"></div></div>
-      <div class="float-chip fc1"><span class="dot" style="background:rgba(255,157,66,.16)">🔥</span><div><b>21 days</b><small>current streak</small></div></div>
-      <div class="float-chip fc2"><span class="dot" style="background:rgba(0,255,136,.15)">⚡</span><div><b>1,397 kcal</b><small>of 2,400 goal</small></div></div>
-      <div class="float-chip fc3"><span class="dot" style="background:rgba(56,189,248,.16)">💧</span><div><b>2.0 L</b><small>water today</small></div></div>
+      <div class="phone"><div class="screen"><img src="assets/img/shots/m-dashboard.webp" alt="FIT//OS dashboard on a phone" class="on" width="780" height="1688" fetchpriority="high" data-cms-img="home.img.1"/></div><div class="glare"></div></div>
+      <div class="float-chip fc1"><span class="dot" style="background:rgba(255,157,66,.16)" data-cms="home.home.9">🔥</span><div data-cms="home.home.10"><b>21 days</b><small>current streak</small></div></div>
+      <div class="float-chip fc2"><span class="dot" style="background:rgba(var(--g-rgb),.15)" data-cms="home.home.11">⚡</span><div data-cms="home.home.12"><b>1,397 kcal</b><small>of 2,400 goal</small></div></div>
+      <div class="float-chip fc3"><span class="dot" style="background:rgba(var(--c-rgb),.16)" data-cms="home.home.13">💧</span><div data-cms="home.home.14"><b>2.0 L</b><small>water today</small></div></div>
     </div>
   </div>
-  <div class="scroll-cue"><span>Scroll</span><i></i></div>
+  <div class="scroll-cue"><span data-cms="home.home.15">Scroll</span><i></i></div>
 </section>
 
-<div class="marquee" aria-hidden="true"><div class="marquee-track"><span>Nutrition</span><span>Workouts</span><span>Habits</span><span>Vitals</span><span>Goals</span><span>AI Agent</span><span>Ingredient Library</span><span>Timer</span><span>Measurements</span><span>Cloud Sync</span><span>Works Offline</span><span>Installable App</span><span>Nutrition</span><span>Workouts</span><span>Habits</span><span>Vitals</span><span>Goals</span><span>AI Agent</span><span>Ingredient Library</span><span>Timer</span><span>Measurements</span><span>Cloud Sync</span><span>Works Offline</span><span>Installable App</span></div></div>
+<div class="marquee" aria-hidden="true" data-cms-sec="home.marquee"><div class="marquee-track"><span>Nutrition</span><span>Workouts</span><span>Habits</span><span>Vitals</span><span>Goals</span><span>AI Agent</span><span>Ingredient Library</span><span>Timer</span><span>Measurements</span><span>Cloud Sync</span><span>Works Offline</span><span>Installable App</span><span>Nutrition</span><span>Workouts</span><span>Habits</span><span>Vitals</span><span>Goals</span><span>AI Agent</span><span>Ingredient Library</span><span>Timer</span><span>Measurements</span><span>Cloud Sync</span><span>Works Offline</span><span>Installable App</span></div></div>
 
 <!-- ================= MANIFESTO ================= -->
-<section class="manifesto" id="why">
+<section class="manifesto" id="why" data-cms-sec="home.why">
   <div class="wrap-narrow">
-    <p>Most fitness apps just <em>count</em>. FIT//OS <em>understands</em> — meals, workouts, habits, vitals and goals in one place, <em>owned by you</em>, synced everywhere, and fast enough to log in seconds.</p>
+    <p data-cms="home.why.1">Most fitness apps just <em>count</em>. FIT//OS <em>understands</em> — meals, workouts, habits, vitals and goals in one place, <em>owned by you</em>, synced everywhere, and fast enough to log in seconds.</p>
   </div>
 </section>
 
 <!-- ================= SHOWCASE ================= -->
-<section class="showcase" id="features">
+<section class="showcase" id="features" data-cms-sec="home.features">
   <div class="show-pin"><div class="wrap">
     <div class="show-grid">
       <div>
-        <div class="sec-head" style="margin-bottom:28px"><span class="eyebrow">Inside the OS</span><h2 class="h-lg split">Every part of your health, <span class="grad">connected.</span></h2></div>
-        <div class="show-steps"><div class="show-bar"><i></i></div><div class="show-step"><div class="ico">🧭</div><div><h3>Your whole day, one glance</h3><p>Calories, protein, water, habits and workout progress as live rings — plus your weight trend — the moment you open the app.</p></div></div><div class="show-step"><div class="ico">🥗</div><div><h3>Macros without the math</h3><p>Build meals from your ingredient library and watch calories, protein, carbs, fat, fiber and water fill up through the day.</p></div></div><div class="show-step"><div class="ico">🏋️</div><div><h3>Plan it. Lift it. Tick it.</h3><p>Exercises with sets, reps, weight and rest. Mark them done and see total volume and sets for the session.</p></div></div><div class="show-step"><div class="ico">📅</div><div><h3>A calendar that holds you accountable</h3><p>A monthly habit grid, weekly progress rings and streaks. Tap any week for the full per-habit breakdown.</p></div></div><div class="show-step"><div class="ico">🎯</div><div><h3>Targets with progress you can see</h3><p>Weight, strength and cardio goals with start, current and target values — and the date you want to hit them.</p></div></div></div>
+        <div class="sec-head" style="margin-bottom:28px"><span class="eyebrow" data-cms="home.features.1">Inside the OS</span><h2 class="h-lg split" data-cms="home.features.2">Every part of your health, <span class="grad">connected.</span></h2></div>
+        <div class="show-steps"><div class="show-bar"><i></i></div><div class="show-step"><div class="ico" data-cms="home.features.3">🧭</div><div><h3 data-cms="home.features.4">Your whole day, one glance</h3><p data-cms="home.features.5">Calories, protein, water, habits and workout progress as live rings — plus your weight trend — the moment you open the app.</p></div></div><div class="show-step"><div class="ico" data-cms="home.features.6">🥗</div><div><h3 data-cms="home.features.7">Macros without the math</h3><p data-cms="home.features.8">Build meals from your ingredient library and watch calories, protein, carbs, fat, fiber and water fill up through the day.</p></div></div><div class="show-step"><div class="ico" data-cms="home.features.9">🏋️</div><div><h3 data-cms="home.features.10">Plan it. Lift it. Tick it.</h3><p data-cms="home.features.11">Exercises with sets, reps, weight and rest. Mark them done and see total volume and sets for the session.</p></div></div><div class="show-step"><div class="ico" data-cms="home.features.12">📅</div><div><h3 data-cms="home.features.13">A calendar that holds you accountable</h3><p data-cms="home.features.14">A monthly habit grid, weekly progress rings and streaks. Tap any week for the full per-habit breakdown.</p></div></div><div class="show-step"><div class="ico" data-cms="home.features.15">🎯</div><div><h3 data-cms="home.features.16">Targets with progress you can see</h3><p data-cms="home.features.17">Weight, strength and cardio goals with start, current and target values — and the date you want to hit them.</p></div></div></div>
       </div>
       <div class="show-stage">
         <div class="orbit-ring r1"></div><div class="orbit-ring r2"></div>
-        <div class="phone"><div class="screen"><img src="assets/img/shots/m-dashboard.webp" alt="FIT//OS dashboard screen" loading="eager" width="780" height="1688" class="on"/><img src="assets/img/shots/m-nutrition.webp" alt="FIT//OS nutrition screen" loading="lazy" width="780" height="1688"/><img src="assets/img/shots/m-workout.webp" alt="FIT//OS workout screen" loading="lazy" width="780" height="1688"/><img src="assets/img/shots/m-habits.webp" alt="FIT//OS habits screen" loading="lazy" width="780" height="1688"/><img src="assets/img/shots/m-goals.webp" alt="FIT//OS goals screen" loading="lazy" width="780" height="1688"/></div><div class="glare"></div></div>
+        <div class="phone"><div class="screen"><img src="assets/img/shots/m-dashboard.webp" alt="FIT//OS dashboard screen" loading="eager" width="780" height="1688" class="on" data-cms-img="home.img.1"/><img src="assets/img/shots/m-nutrition.webp" alt="FIT//OS nutrition screen" loading="lazy" width="780" height="1688" data-cms-img="home.img.2"/><img src="assets/img/shots/m-workout.webp" alt="FIT//OS workout screen" loading="lazy" width="780" height="1688" data-cms-img="home.img.3"/><img src="assets/img/shots/m-habits.webp" alt="FIT//OS habits screen" loading="lazy" width="780" height="1688" data-cms-img="home.img.4"/><img src="assets/img/shots/m-goals.webp" alt="FIT//OS goals screen" loading="lazy" width="780" height="1688" data-cms-img="home.img.5"/></div><div class="glare"></div></div>
       </div>
     </div>
   </div></div>
 </section>
 
 <!-- ================= HORIZONTAL FEATURES ================= -->
-<section class="hz" id="modules">
+<section class="hz" id="modules" data-cms-sec="home.modules">
   <div class="hz-pin">
-    <div class="wrap sec-head" style="margin-bottom:34px"><span class="eyebrow">Everything included</span><h2 class="h-lg split">Eight modules. <span class="grad">One operating system.</span></h2></div>
-    <div class="hz-track"><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">01 / 08</span><div class="ico">🥗</div><h3>Smart Nutrition</h3><p>Log meals the way you actually eat. Calories, protein, carbs, fat, fiber and water add up live.</p><ul><li>Per-meal ingredient breakdown</li><li>Daily macro rings vs. your goals</li><li>Built-in water tracker</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">02 / 08</span><div class="ico">🧂</div><h3>Ingredient Library</h3><p>A curated main library for everyone — plus your own private ingredients that nobody else ever sees.</p><ul><li>Search while you build a meal</li><li>Add custom ingredients in seconds</li><li>Edit & organise your personal list</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">03 / 08</span><div class="ico">🏋️</div><h3>Workout Tracker</h3><p>Plan your session, tick sets off and watch volume climb. Every day keeps its own history.</p><ul><li>Sets, reps, weight &amp; rest per exercise</li><li>Muscle-group tagging</li><li>Daily volume &amp; completion stats</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">04 / 08</span><div class="ico">📅</div><h3>Habit Calendar</h3><p>A monthly grid that makes consistency visible — with weekly progress rings and streaks.</p><ul><li>Week-by-week progress cards</li><li>Streak tracking per habit</li><li>Tap a week for its full breakdown</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">05 / 08</span><div class="ico">❤️</div><h3>Health &amp; Vitals</h3><p>Heart rate, blood pressure, sleep quality and body measurements with trend charts.</p><ul><li>Weight trend (weekly / monthly)</li><li>Waist, chest, hips, arms &amp; more</li><li>Sleep &amp; recovery log</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">06 / 08</span><div class="ico">🤖</div><h3>AI Agent <span class="mono" style="font-size:.6em;color:var(--g)">PRO</span></h3><p>Describe your meal in plain words and let the AI do the logging. Bring your own Gemini key.</p><ul><li>Natural-language meal logging</li><li>Aware of your goals &amp; library</li><li>Private — runs from your account</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">07 / 08</span><div class="ico">⏱️</div><h3>Timer &amp; Stopwatch</h3><p>Rest timers, interval presets and a stopwatch built right into your workout flow.</p><ul><li>Saved timer presets</li><li>Interval training mode</li><li>Always one tap away</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num">08 / 08</span><div class="ico">☁️</div><h3>Sync · Offline · Install</h3><p>One Google sign-in, every device. Install it like a native app and keep logging with no signal.</p><ul><li>Real-time cloud sync</li><li>Works offline (PWA)</li><li>Auto-update notifications</li></ul></article></div>
+    <div class="wrap sec-head" style="margin-bottom:34px"><span class="eyebrow" data-cms="home.modules.1">Everything included</span><h2 class="h-lg split" data-cms="home.modules.2">Eight modules. <span class="grad">One operating system.</span></h2></div>
+    <div class="hz-track"><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.3">01 / 08</span><div class="ico" data-cms="home.modules.4">🥗</div><h3 data-cms="home.modules.5">Smart Nutrition</h3><p data-cms="home.modules.6">Log meals the way you actually eat. Calories, protein, carbs, fat, fiber and water add up live.</p><ul><li data-cms="home.modules.7">Per-meal ingredient breakdown</li><li data-cms="home.modules.8">Daily macro rings vs. your goals</li><li data-cms="home.modules.9">Built-in water tracker</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.10">02 / 08</span><div class="ico" data-cms="home.modules.11">🧂</div><h3 data-cms="home.modules.12">Ingredient Library</h3><p data-cms="home.modules.13">A curated main library for everyone — plus your own private ingredients that nobody else ever sees.</p><ul><li data-cms="home.modules.14">Search while you build a meal</li><li data-cms="home.modules.15">Add custom ingredients in seconds</li><li data-cms="home.modules.16">Edit & organise your personal list</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.17">03 / 08</span><div class="ico" data-cms="home.modules.18">🏋️</div><h3 data-cms="home.modules.19">Workout Tracker</h3><p data-cms="home.modules.20">Plan your session, tick sets off and watch volume climb. Every day keeps its own history.</p><ul><li data-cms="home.modules.21">Sets, reps, weight &amp; rest per exercise</li><li data-cms="home.modules.22">Muscle-group tagging</li><li data-cms="home.modules.23">Daily volume &amp; completion stats</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.24">04 / 08</span><div class="ico" data-cms="home.modules.25">📅</div><h3 data-cms="home.modules.26">Habit Calendar</h3><p data-cms="home.modules.27">A monthly grid that makes consistency visible — with weekly progress rings and streaks.</p><ul><li data-cms="home.modules.28">Week-by-week progress cards</li><li data-cms="home.modules.29">Streak tracking per habit</li><li data-cms="home.modules.30">Tap a week for its full breakdown</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.31">05 / 08</span><div class="ico" data-cms="home.modules.32">❤️</div><h3 data-cms="home.modules.33">Health &amp; Vitals</h3><p data-cms="home.modules.34">Heart rate, blood pressure, sleep quality and body measurements with trend charts.</p><ul><li data-cms="home.modules.35">Weight trend (weekly / monthly)</li><li data-cms="home.modules.36">Waist, chest, hips, arms &amp; more</li><li data-cms="home.modules.37">Sleep &amp; recovery log</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.38">06 / 08</span><div class="ico" data-cms="home.modules.39">🤖</div><h3>AI Agent <span class="mono" style="font-size:.6em;color:var(--g)" data-cms="home.modules.40">PRO</span></h3><p data-cms="home.modules.41">Describe your meal in plain words and let the AI do the logging. Bring your own Gemini key.</p><ul><li data-cms="home.modules.42">Natural-language meal logging</li><li data-cms="home.modules.43">Aware of your goals &amp; library</li><li data-cms="home.modules.44">Private — runs from your account</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.45">07 / 08</span><div class="ico" data-cms="home.modules.46">⏱️</div><h3 data-cms="home.modules.47">Timer &amp; Stopwatch</h3><p data-cms="home.modules.48">Rest timers, interval presets and a stopwatch built right into your workout flow.</p><ul><li data-cms="home.modules.49">Saved timer presets</li><li data-cms="home.modules.50">Interval training mode</li><li data-cms="home.modules.51">Always one tap away</li></ul></article><article class="glass fcard" data-tilt><span class="spot"></span><span class="num" data-cms="home.modules.52">08 / 08</span><div class="ico" data-cms="home.modules.53">☁️</div><h3 data-cms="home.modules.54">Sync · Offline · Install</h3><p data-cms="home.modules.55">One Google sign-in, every device. Install it like a native app and keep logging with no signal.</p><ul><li data-cms="home.modules.56">Real-time cloud sync</li><li data-cms="home.modules.57">Works offline (PWA)</li><li data-cms="home.modules.58">Auto-update notifications</li></ul></article></div>
     <div class="hz-progress"><i></i></div>
   </div>
 </section>
 
 <!-- ================= HOW IT WORKS ================= -->
-<section class="sec" id="how">
+<section class="sec" id="how" data-cms-sec="home.how">
   <div class="wrap">
-    <div class="sec-head center"><span class="eyebrow">How it works</span><h2 class="h-lg split">From sign-in to Pro in <span class="grad">three steps.</span></h2><p class="lead rv">No downloads, no app-store wait, no card details. Just open it and start.</p></div>
+    <div class="sec-head center"><span class="eyebrow" data-cms="home.how.1">How it works</span><h2 class="h-lg split" data-cms="home.how.2">From sign-in to Pro in <span class="grad">three steps.</span></h2><p class="lead rv" data-cms="home.how.3">No downloads, no app-store wait, no card details. Just open it and start.</p></div>
     <div class="steps">
-      <div class="glass step" data-tilt><span class="spot"></span><div class="n">01</div><h3>Sign in with Google</h3><p>One tap, ten seconds. Your account is created and your data starts syncing across every device you use.</p></div>
-      <div class="glass step" data-tilt><span class="spot"></span><div class="n">02</div><h3>Set goals &amp; log your day</h3><p>Add your calorie and macro targets, build your first meal from the ingredient library and tick your habits.</p></div>
-      <div class="glass step" data-tilt><span class="spot"></span><div class="n">03</div><h3>Go Pro when you are ready</h3><p>Choose a plan, pay with bKash or Nagad and paste your TrxID. Pro unlocks instantly while we verify.</p></div>
+      <div class="glass step" data-tilt><span class="spot"></span><div class="n" data-cms="home.how.4">01</div><h3 data-cms="home.how.5">Sign in with Google</h3><p data-cms="home.how.6">One tap, ten seconds. Your account is created and your data starts syncing across every device you use.</p></div>
+      <div class="glass step" data-tilt><span class="spot"></span><div class="n" data-cms="home.how.7">02</div><h3 data-cms="home.how.8">Set goals &amp; log your day</h3><p data-cms="home.how.9">Add your calorie and macro targets, build your first meal from the ingredient library and tick your habits.</p></div>
+      <div class="glass step" data-tilt><span class="spot"></span><div class="n" data-cms="home.how.10">03</div><h3 data-cms="home.how.11">Go Pro when you are ready</h3><p data-cms="home.how.12">Choose a plan, pay with bKash or Nagad and paste your TrxID. Pro unlocks instantly while we verify.</p></div>
     </div>
   </div>
 </section>
 
 <!-- ================= STATS ================= -->
-<section class="sec" style="padding-top:0">
+<section class="sec" style="padding-top:0" data-cms-sec="home.s7">
   <div class="wrap"><div class="stats rv">
-    <div class="stat"><b data-count="8" data-suffix="+">0</b><span>modules in one app</span></div>
-    <div class="stat"><b data-count="100" data-suffix="%">0</b><span>private to your account</span></div>
-    <div class="stat"><b data-count="2">0</b><span>local payment methods</span></div>
-    <div class="stat"><b data-count="4">0</b><span>flexible Pro plans</span></div>
+    <div class="stat"><b data-count="8" data-suffix="+" data-cms-count="home.stat.1">0</b><span data-cms="home.sec.1">modules in one app</span></div>
+    <div class="stat"><b data-count="100" data-suffix="%" data-cms-count="home.stat.2">0</b><span data-cms="home.sec.2">private to your account</span></div>
+    <div class="stat"><b data-count="2" data-cms-count="home.stat.3">0</b><span data-cms="home.sec.3">local payment methods</span></div>
+    <div class="stat"><b data-count="4" data-cms-count="home.stat.4">0</b><span data-cms="home.sec.4">flexible Pro plans</span></div>
   </div></div>
 </section>
 
 <!-- ================= PLATFORM / PWA ================= -->
-<section class="sec" id="install" style="padding-top:0">
+<section class="sec" id="install" style="padding-top:0" data-cms-sec="home.install">
   <div class="wrap platform">
     <div>
-      <span class="eyebrow">Anywhere</span>
-      <h2 class="h-lg split" style="margin-top:14px">Install it. <span class="grad">Take it everywhere.</span></h2>
-      <p class="lead rv" style="margin-top:18px">FIT//OS is a Progressive Web App — it lives in your browser, installs like a native app and keeps working when your signal does not.</p>
+      <span class="eyebrow" data-cms="home.install.1">Anywhere</span>
+      <h2 class="h-lg split" style="margin-top:14px" data-cms="home.install.2">Install it. <span class="grad">Take it everywhere.</span></h2>
+      <p class="lead rv" style="margin-top:18px" data-cms="home.install.3">FIT//OS is a Progressive Web App — it lives in your browser, installs like a native app and keeps working when your signal does not.</p>
       <div class="plat-list" data-stagger>
-        <div class="plat-item"><div class="ico">⬇️</div><div><h4>One-tap install</h4><p>Open your profile menu → “Install the web app”. On iPhone: Share → Add to Home Screen.</p></div></div>
-        <div class="plat-item"><div class="ico">📴</div><div><h4>Works offline</h4><p>The app opens instantly from your device, even on a train or in the gym basement.</p></div></div>
-        <div class="plat-item"><div class="ico">🔄</div><div><h4>Always up to date</h4><p>New version available? You get a small banner — tap Update and you are on the latest.</p></div></div>
-        <div class="plat-item"><div class="ico">📱</div><div><h4>Every screen size</h4><p>Designed for phones first and scaled up beautifully for tablets and desktops.</p></div></div>
+        <div class="plat-item"><div class="ico" data-cms="home.install.4">⬇️</div><div><h4 data-cms="home.install.5">One-tap install</h4><p data-cms="home.install.6">Open your profile menu → “Install the web app”. On iPhone: Share → Add to Home Screen.</p></div></div>
+        <div class="plat-item"><div class="ico" data-cms="home.install.7">📴</div><div><h4 data-cms="home.install.8">Works offline</h4><p data-cms="home.install.9">The app opens instantly from your device, even on a train or in the gym basement.</p></div></div>
+        <div class="plat-item"><div class="ico" data-cms="home.install.10">🔄</div><div><h4 data-cms="home.install.11">Always up to date</h4><p data-cms="home.install.12">New version available? You get a small banner — tap Update and you are on the latest.</p></div></div>
+        <div class="plat-item"><div class="ico" data-cms="home.install.13">📱</div><div><h4 data-cms="home.install.14">Every screen size</h4><p data-cms="home.install.15">Designed for phones first and scaled up beautifully for tablets and desktops.</p></div></div>
       </div>
     </div>
     <div class="devices rv">
       <div class="laptop" role="img" aria-label="FIT//OS dashboard on a laptop"><div class="lap-rig">
         <div class="lap-lid">
-          <div class="lap-screen"><img src="assets/img/shots/d-dashboard.webp" alt="FIT//OS on desktop" loading="lazy" width="1440" height="900"/><i class="lap-cam"></i><span class="glare"></span></div>
+          <div class="lap-screen"><img src="assets/img/shots/d-dashboard.webp" alt="FIT//OS on desktop" loading="lazy" width="1440" height="900" data-cms-img="home.img.6"/><i class="lap-cam"></i><span class="glare"></span></div>
           <div class="lap-back"><b></b></div><i class="lap-e lap-et"></i><i class="lap-e lap-el"></i><i class="lap-e lap-er"></i>
         </div>
         <div class="lap-base"><i class="lap-sh"></i><div class="lap-deck"><div class="lap-keys"></div><div class="lap-pad"></div></div><i class="lap-bf"></i><i class="lap-bl"></i><i class="lap-br"></i></div>
       </div></div>
-      <div class="phone phone-small"><div class="screen"><img class="on" src="assets/img/shots/m-habits.webp" alt="FIT//OS habit calendar on phone" loading="lazy" width="780" height="1688" style="opacity:1"/></div></div>
+      <div class="phone phone-small"><div class="screen"><img class="on" src="assets/img/shots/m-habits.webp" alt="FIT//OS habit calendar on phone" loading="lazy" width="780" height="1688" style="opacity:1" data-cms-img="home.img.4"/></div></div>
     </div>
   </div>
 </section>
 
 <!-- ================= PRICING ================= -->
-<section class="sec" id="pricing" style="padding-top:0">
+<section class="sec" id="pricing" style="padding-top:0" data-cms-sec="home.pricing">
   <div class="wrap">
-    <div class="sec-head center"><span class="eyebrow">Pricing</span><h2 class="h-lg split">Simple plans. <span class="grad">Serious results.</span></h2><p class="lead rv">Start free. Upgrade to Pro for unlimited tracking and the AI Agent. Pay with bKash or Nagad — Pro unlocks the moment you submit.</p></div>
+    <div class="sec-head center"><span class="eyebrow" data-cms="home.pricing.1">Pricing</span><h2 class="h-lg split" data-cms="home.pricing.2">Simple plans. <span class="grad">Serious results.</span></h2><p class="lead rv" data-cms="home.pricing.3">Start free. Upgrade to Pro for unlimited tracking and the AI Agent. Pay with bKash or Nagad — Pro unlocks the moment you submit.</p></div>
     <div class="price-grid" id="price-grid"></div>
-    <div class="free-row rv"><span>Not ready to pay? No problem.</span><a class="btn btn-ghost" href="app/" data-appurl data-magnetic>Continue Free <span class="arr">→</span></a><small>Sign in with Google and start tracking — no payment needed.</small></div>
-    <div class="glass compare rv"><table><thead><tr><th>What you get</th><th>Free</th><th class="pro-col" style="color:var(--g)">Pro</th></tr></thead><tbody id="compare-body"></tbody></table></div>
-    <div class="pay-note rv"><span>We accept</span><span class="pay-pill"><i style="background:#e2136e"></i>bKash</span><span class="pay-pill"><i style="background:#f7941d"></i>Nagad</span><span>· Send Money, paste your TrxID, done.</span></div>
+    <div class="free-row rv"><span data-cms="home.pricing.4">Not ready to pay? No problem.</span><a class="btn btn-ghost" href="app/" data-appurl data-magnetic data-cms="home.pricing.5">Continue Free <span class="arr">→</span></a><small data-cms="home.pricing.6">Sign in with Google and start tracking — no payment needed.</small></div>
+    <div class="glass compare rv"><table><thead><tr><th data-cms="home.pricing.7">What you get</th><th data-cms="home.pricing.8">Free</th><th class="pro-col" style="color:var(--g)" data-cms="home.pricing.9">Pro</th></tr></thead><tbody id="compare-body"></tbody></table></div>
+    <div class="pay-note rv"><span data-cms="home.pricing.10">We accept</span><span class="pay-pill"><i style="background:#e2136e"></i>bKash</span><span class="pay-pill"><i style="background:#f7941d"></i>Nagad</span><span data-cms="home.pricing.11">· Send Money, paste your TrxID, done.</span></div>
   </div>
 </section>
 
 <!-- ================= FAQ ================= -->
-<section class="sec" id="faq" style="padding-top:0">
+<section class="sec" id="faq" style="padding-top:0" data-cms-sec="home.faq">
   <div class="wrap-narrow">
-    <div class="sec-head center"><span class="eyebrow">FAQ</span><h2 class="h-lg split">Questions, <span class="grad">answered.</span></h2></div>
-    <div class="faq"><div class="qa"><button aria-expanded="false"><span>How does paying for Pro work?</span><i class="pm"></i></button><div class="ans"><p>Pick a plan, sign in with Google, then pay with bKash or Nagad using Send Money to the number shown. Paste the Transaction ID (TrxID) exactly as it appears and submit. That is it — no card needed.</p></div></div><div class="qa"><button aria-expanded="false"><span>Do I get Pro right away?</span><i class="pm"></i></button><div class="ans"><p>Yes. The moment you submit your TrxID you can use Pro in the app. Our team then verifies the payment, and when it is confirmed you get a notification inside the app and Pro for your full plan period.</p></div></div><div class="qa"><button aria-expanded="false"><span>What if I typed the wrong TrxID?</span><i class="pm"></i></button><div class="ans"><p>If we cannot match a transaction, the request is marked as not verified and you will see a message in the app. Just submit a new request with the correct TrxID — copy and paste it exactly from your bKash / Nagad SMS or app.</p></div></div><div class="qa"><button aria-expanded="false"><span>Is my data private?</span><i class="pm"></i></button><div class="ans"><p>Yes. Every account is private to its owner. Ingredients you add yourself stay in your own library — they never appear for other users. The main ingredient library is shared read-only.</p></div></div><div class="qa"><button aria-expanded="false"><span>Does it work on iPhone, Android and desktop?</span><i class="pm"></i></button><div class="ans"><p>Yes — FIT//OS is a Progressive Web App. Open it in your browser and use “Install the web app” in the profile menu (on iPhone: Share → Add to Home Screen). It then works like a native app, even offline.</p></div></div><div class="qa"><button aria-expanded="false"><span>Can I renew or extend my plan?</span><i class="pm"></i></button><div class="ans"><p>Absolutely. Buy another plan any time before it ends — the new period is added after your current one, so you never lose a day.</p></div></div><div class="qa"><button aria-expanded="false"><span>I need help with a payment.</span><i class="pm"></i></button><div class="ans"><p>Open the Contact page and send us your TrxID and the email you signed in with. We will sort it out quickly.</p></div></div></div>
+    <div class="sec-head center"><span class="eyebrow" data-cms="home.faq.1">FAQ</span><h2 class="h-lg split" data-cms="home.faq.2">Questions, <span class="grad">answered.</span></h2></div>
+    <div class="faq"><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.3">How does paying for Pro work?</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.4">Pick a plan, sign in with Google, then pay with bKash or Nagad using Send Money to the number shown. Paste the Transaction ID (TrxID) exactly as it appears and submit. That is it — no card needed.</p></div></div><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.5">Do I get Pro right away?</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.6">Yes. The moment you submit your TrxID you can use Pro in the app. Our team then verifies the payment, and when it is confirmed you get a notification inside the app and Pro for your full plan period.</p></div></div><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.7">What if I typed the wrong TrxID?</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.8">If we cannot match a transaction, the request is marked as not verified and you will see a message in the app. Just submit a new request with the correct TrxID — copy and paste it exactly from your bKash / Nagad SMS or app.</p></div></div><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.9">Is my data private?</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.10">Yes. Every account is private to its owner. Ingredients you add yourself stay in your own library — they never appear for other users. The main ingredient library is shared read-only.</p></div></div><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.11">Does it work on iPhone, Android and desktop?</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.12">Yes — FIT//OS is a Progressive Web App. Open it in your browser and use “Install the web app” in the profile menu (on iPhone: Share → Add to Home Screen). It then works like a native app, even offline.</p></div></div><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.13">Can I renew or extend my plan?</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.14">Absolutely. Buy another plan any time before it ends — the new period is added after your current one, so you never lose a day.</p></div></div><div class="qa"><button aria-expanded="false"><span data-cms="home.faq.15">I need help with a payment.</span><i class="pm"></i></button><div class="ans"><p data-cms="home.faq.16">Open the Contact page and send us your TrxID and the email you signed in with. We will sort it out quickly.</p></div></div></div>
   </div>
 </section>
 
 <!-- ================= CTA ================= -->
-<section style="padding-bottom:20px">
+<section style="padding-bottom:20px" data-cms-sec="home.s11">
   <div class="wrap"><div class="cta-band rv">
-    <span class="eyebrow">Ready?</span>
-    <h2 class="h-lg" style="margin-top:14px">Boot up your <span class="grad">best self.</span></h2>
-    <p class="lead" style="margin:16px auto 0">Join FIT//OS today — free to start, Pro when you want more.</p>
-    <div class="hero-cta"><a class="btn btn-primary" href="app/" data-appurl data-magnetic>Launch the app <span class="arr">→</span></a><a class="btn btn-ghost" href="#pricing">Go Pro</a></div>
+    <span class="eyebrow" data-cms="home.sec.5">Ready?</span>
+    <h2 class="h-lg" style="margin-top:14px" data-cms="home.sec.6">Boot up your <span class="grad">best self.</span></h2>
+    <p class="lead" style="margin:16px auto 0" data-cms="home.sec.7">Join FIT//OS today — free to start, Pro when you want more.</p>
+    <div class="hero-cta"><a class="btn btn-primary" href="app/" data-appurl data-magnetic data-cms="home.sec.8">Launch the app <span class="arr">→</span></a><a class="btn btn-ghost" href="#pricing" data-cms="home.sec.9" data-cms-href="home.sec.9">Go Pro</a></div>
   </div></div>
 </section>
 </main>
-<footer class="footer">
+<footer class="footer" data-cms-sec="g.footer">
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt">FIT<b>//</b>OS</span></a>
-        <p class="foot-about">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
+        <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
+        <p class="foot-about" data-cms="g.your-fitness-nutrition-habit">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
       </div>
-      <div><h4>Product</h4><ul><li><a href="index.html#features">Features</a></li><li><a href="index.html#how">How it works</a></li><li><a href="index.html#pricing">Pricing</a></li><li><a href="app/" data-appurl>Launch app</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="index.html#faq">FAQ</a></li></ul></div>
-      <div><h4>Get in touch</h4><ul>
+      <div><h4 data-cms="g.product">Product</h4><ul><li><a href="index.html#features" data-cms="g.features">Features</a></li><li><a href="index.html#how" data-cms="g.how-it-works">How it works</a></li><li><a href="index.html#pricing" data-cms="g.pricing">Pricing</a></li><li><a href="app/" data-appurl data-cms="g.launch-app">Launch app</a></li></ul></div>
+      <div><h4 data-cms="g.company">Company</h4><ul><li><a href="about.html" data-cms="g.about">About</a></li><li><a href="contact.html" data-cms="g.contact">Contact</a></li><li><a href="index.html#faq" data-cms="g.faq">FAQ</a></li></ul></div>
+      <div><h4 data-cms="g.get-in-touch">Get in touch</h4><ul>
         <li data-contact-box><a data-contact="email" href="#">Email</a></li>
         <li data-contact-box><a data-contact="whatsapp" href="#">WhatsApp</a></li>
         <li data-contact-box><a data-contact="facebook" href="#">Facebook</a></li>
       </ul></div>
     </div>
-    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span>Pay securely with bKash &amp; Nagad</span></div>
+    <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span data-cms="g.pay-securely-with-bkash-naga">Pay securely with bKash &amp; Nagad</span></div>
   </div>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
@@ -209,6 +209,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 <script src="assets/js/config.js"></script>
+<script src="assets/js/cms.js"></script>
 <script src="assets/js/hero3d.js" defer></script>
 <script src="assets/js/device3d.js" defer></script>
 <script src="assets/js/site.js" defer></script>

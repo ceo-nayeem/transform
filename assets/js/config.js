@@ -1,7 +1,8 @@
 /* =====================================================================
    FIT//OS — site configuration (landing page + checkout)
-   Edit THIS file to change prices, payment numbers and contact links.
-   No other file needs to change for those.
+   These are the DEFAULTS. You can override prices, payment numbers, contact links and free limits
+   from the app:  Admin Backend → Website Studio  (no file editing, no redeploy).
+   Edit THIS file only to change the built-in defaults.
    ===================================================================== */
 window.FITOS_SITE = {
   brand: 'FIT//OS',
@@ -33,8 +34,8 @@ window.FITOS_SITE = {
 
   // ⚠ PUT YOUR REAL NUMBERS HERE (the personal bKash / Nagad numbers customers will Send Money to).
   payment: {
-    bkash: { name: 'bKash', number: '01335629707', kind: 'Send Money', color: '#e2136e' },
-    nagad: { name: 'Nagad', number: '01335629707', kind: 'Send Money', color: '#f7941d' }
+    bkash: { name: 'bKash', number: '01XXXXXXXXX', kind: 'Send Money', color: '#e2136e' },
+    nagad: { name: 'Nagad', number: '01XXXXXXXXX', kind: 'Send Money', color: '#f7941d' }
   },
 
   // Contact details shown on the Contact page and footer. Leave a value '' to hide that item.

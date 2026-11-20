@@ -17,7 +17,9 @@
   var camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
   camera.position.set(0, 0, 11);
 
-  var GREEN = new THREE.Color(0x00ff88), VIOLET = new THREE.Color(0xaa77ff), CYAN = new THREE.Color(0x38bdf8);
+  var _cs = getComputedStyle(document.documentElement);
+  function _col(v, d) { try { var x = _cs.getPropertyValue(v).trim(); return new THREE.Color(x || d); } catch (e) { return new THREE.Color(d); } }
+  var GREEN = _col('--g', '#00ff88'), VIOLET = _col('--p', '#aa77ff'), CYAN = _col('--c', '#38bdf8');   /* follows the Website Studio theme */
   var rig = new THREE.Group(); scene.add(rig);           // follows the hero stage position
   var spin = new THREE.Group(); rig.add(spin);           // pointer / scroll rotation
 

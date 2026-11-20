@@ -18,6 +18,15 @@
     t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('show'); }, 2200);
   };
 
+  /* ---------- creator coupon links: any page, e.g. index.html?coupon=RAFI10 → remembered for 30 days, applied at checkout ---------- */
+  try {
+    var cq = new URLSearchParams(location.search).get('coupon'), cc = String(cq || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 20);
+    if (cc.length >= 3 && !/[?&]cmspreview=1/.test(location.search)) {
+      try { localStorage.setItem('fitos_coupon', JSON.stringify({ code: cc, ts: Date.now() })); } catch (e) { /* storage blocked */ }
+      if (!/checkout\.html$/.test(location.pathname)) setTimeout(function () { window.siteToast('🏷️ Coupon ' + cc + ' saved — it will be applied at checkout.'); }, 900);
+    }
+  } catch (e) { /* ignore */ }
+
   /* ---------- nav ---------- */
   var nav = $('.nav');
   function onScroll() { if (nav) nav.classList.toggle('scrolled', window.scrollY > 24); }
@@ -34,12 +43,15 @@
   var path = location.pathname.split('/').pop() || 'index.html';
   $$('.nav-links a').forEach(function (a) { var h = a.getAttribute('href'); if (h && h.split('#')[0] === path && !h.includes('#')) a.classList.add('active'); });
 
-  /* ---------- config-driven bits ---------- */
+  /* ---------- config-driven bits (re-runnable: the Website Studio can change the config live) ---------- */
+  function renderConfig() {
+  CFG = window.FITOS_SITE || CFG; cur = CFG.currency || '৳';
   $$('[data-appurl]').forEach(function (a) { a.setAttribute('href', CFG.appUrl || 'app/'); });
   var c = CFG.contact || {};
   $$('[data-contact]').forEach(function (el) {
     var k = el.getAttribute('data-contact'), v = c[k];
     if (!v) { var box = el.closest('[data-contact-box]') || el; box.style.display = 'none'; return; }
+    (el.closest('[data-contact-box]') || el).style.display = '';
     if (k === 'email') { el.setAttribute('href', 'mailto:' + v); var b = $('b', el); if (b) b.textContent = v; else el.textContent = v; }
     if (k === 'whatsapp') { el.setAttribute('href', 'https://wa.me/' + v.replace(/\D/g, '')); var b2 = $('b', el); if (b2) b2.textContent = '+' + v.replace(/\D/g, ''); }
     if (k === 'facebook') { el.setAttribute('href', v); }
@@ -78,6 +90,8 @@
       return '<tr><td>' + r[0] + '</td><td>' + f + '</td><td class="pro-col">' + p + '</td></tr>';
     }).join('');
   }
+  }
+  renderConfig(); window.__fitosRender = renderConfig;
 
   /* ---------- FAQ ---------- */
   $$('.qa').forEach(function (qa) {

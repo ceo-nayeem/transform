@@ -2694,6 +2694,7 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 .bm-ptr{fill:var(--g)}
 .bm-tab-bg{fill:var(--hs-card-hi);stroke:var(--g);stroke-opacity:.85;stroke-width:1.2;transition:stroke-opacity .2s,filter .2s;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--g) 45%,transparent))}
 .bm-tab-v{font:700 11.5px var(--font-num);fill:var(--hs-ink);letter-spacing:.2px}
+.bm-tab-v.m{font-size:10.5px}
 .bm-tab-s{font:600 8.5px var(--mono);fill:var(--hs-ink2);letter-spacing:.4px}
 .bm-tab.cta .bm-tab-bg{animation:bmPulse 1.8s ease-in-out infinite}
 .bm-ruler.dim .bm-rl,.bm-ruler.dim .bm-rk,.bm-tape.dim .bm-rl,.bm-tape.dim .bm-rk{opacity:.5}
@@ -10274,25 +10275,26 @@ function bmTabTxt(B) {
   return u === 'cm' ? [(Math.round(B.h * 10) / 10) + ' cm', bmFtTxt(B.h)] : [bmFtTxt(B.h), (Math.round(B.h * 10) / 10) + ' cm'];
 }
 function bmRulerSVG(G, B) {
-  var s = G.s, oy = G.oy, u = 650 / BM_REF_H, xr = G.cx + Math.max(119, G.hw) * s + 8, top = Math.max(200, (B.h || 0) + 6), pin = 2.54 * u * s, i, y, len, o = [];
+  var s = G.s, oy = G.oy, u = 650 / BM_REF_H, xr = G.cx + Math.max(119, G.hw) * s + (G.m ? 5 : 8), top = Math.max(200, (B.h || 0) + 6), pin = 2.54 * u * s, i, y, len, o = [];
   var yy = function(cm){ return oy + (676 - cm * u) * s; };
   o.push('<g class="bm-ruler' + (B.h ? '' : ' dim') + '" data-bm="height" role="button" tabindex="0" aria-label="Height ruler. Tap to change your height">');
   o.push('<rect class="bm-rhit" x="' + (xr - 5).toFixed(1) + '" y="' + yy(top).toFixed(1) + '" width="34" height="' + (yy(0) - yy(top)).toFixed(1) + '" fill="transparent"/>');
   o.push('<line class="bm-rl" x1="' + xr.toFixed(1) + '" y1="' + yy(0).toFixed(1) + '" x2="' + xr.toFixed(1) + '" y2="' + yy(top).toFixed(1) + '"/>');
   var d = '', lab = '';
   for (i = 0; i * 2.54 <= top; i++) {
-    y = yy(i * 2.54); len = i % 12 === 0 ? 11 : (i % 6 === 0 ? 7 : 4);
-    if (len === 4 && pin < 4.4) continue;
+    y = yy(i * 2.54); len = G.m ? (i % 12 === 0 ? 8 : (i % 6 === 0 ? 5 : 3)) : (i % 12 === 0 ? 11 : (i % 6 === 0 ? 7 : 4));
+    if (len <= 4 && pin < 4.4) continue;
     d += 'M' + xr.toFixed(1) + ',' + y.toFixed(1) + 'h' + len;
-    if (i % 12 === 0 && i > 0) lab += '<text class="bm-rt" x="' + (xr + 14).toFixed(1) + '" y="' + (y + 3).toFixed(1) + '">' + (i / 12) + '′</text>';
+    if (i % 12 === 0 && i > 0) lab += '<text class="bm-rt" x="' + (xr + (G.m ? 10 : 14)).toFixed(1) + '" y="' + (y + 3).toFixed(1) + '">' + (i / 12) + '′</text>';
   }
   o.push('<path class="bm-rk" d="' + d + '"/>' + lab);
   o.push('<text class="bm-rcap" x="' + xr.toFixed(1) + '" y="' + (yy(top) - 5).toFixed(1) + '" text-anchor="middle">HT</text>');
-  var H = B.h || 170, py = Math.max(16, Math.min(yy(0) - 16, yy(H))), pw = B.h ? 66 : 74, ph = 26, px = xr - 8 - pw;
+  var H = B.h || 170, py = Math.max(16, Math.min(yy(0) - 16, yy(H))), pw = G.m ? (B.h ? ((S.cfg && S.cfg.heightUnit === 'cm') ? 50 : 40) : 56) : (B.h ? 66 : 74), ph = G.m ? 18 : 26, ar = ph / 2, px = xr - (G.m ? 5 : 8) - pw, tx = G.m ? 6 : 9;
   if (B.h) o.push('<line class="bm-guide" x1="' + (G.cx + 34 * B.k * s).toFixed(1) + '" y1="' + py.toFixed(1) + '" x2="' + px.toFixed(1) + '" y2="' + py.toFixed(1) + '"/>');
-  o.push('<g class="bm-tab' + (B.h ? '' : ' cta') + '"><path class="bm-tab-bg" d="M' + px.toFixed(1) + ',' + (py - ph / 2).toFixed(1) + ' h' + pw + ' l7,' + (ph / 2).toFixed(1) + ' l-7,' + (ph / 2).toFixed(1) + ' h' + (-pw) + ' a5,5 0 0 1 -5,-5 v' + (-(ph - 10)) + ' a5,5 0 0 1 5,-5 Z"/>');
-  if (B.h) { var t = bmTabTxt(B); o.push('<text class="bm-tab-v" x="' + (px + 9).toFixed(1) + '" y="' + (py - 1).toFixed(1) + '">' + t[0] + '</text><text class="bm-tab-s" x="' + (px + 9).toFixed(1) + '" y="' + (py + 9.5).toFixed(1) + '">' + t[1] + '</text>'); }
-  else o.push('<text class="bm-tab-v" x="' + (px + 9).toFixed(1) + '" y="' + (py - 1).toFixed(1) + '">SET</text><text class="bm-tab-s" x="' + (px + 9).toFixed(1) + '" y="' + (py + 9.5).toFixed(1) + '">HEIGHT ▸</text>');
+  o.push('<g class="bm-tab' + (B.h ? '' : ' cta') + '"><path class="bm-tab-bg" d="M' + px.toFixed(1) + ',' + (py - ph / 2).toFixed(1) + ' h' + pw + ' l' + (G.m ? 5 : 7) + ',' + ar.toFixed(1) + ' l-' + (G.m ? 5 : 7) + ',' + ar.toFixed(1) + ' h' + (-pw) + ' a5,5 0 0 1 -5,-5 v' + (-(ph - 10)) + ' a5,5 0 0 1 5,-5 Z"/>');
+  if (G.m) o.push('<text class="bm-tab-v m" x="' + (px + tx).toFixed(1) + '" y="' + (py + 3.8).toFixed(1) + '">' + (B.h ? bmTabTxt(B)[0] : 'SET HT ▸') + '</text>');
+  else if (B.h) { var t = bmTabTxt(B); o.push('<text class="bm-tab-v" x="' + (px + tx).toFixed(1) + '" y="' + (py - 1).toFixed(1) + '">' + t[0] + '</text><text class="bm-tab-s" x="' + (px + tx).toFixed(1) + '" y="' + (py + 9.5).toFixed(1) + '">' + t[1] + '</text>'); }
+  else o.push('<text class="bm-tab-v" x="' + (px + tx).toFixed(1) + '" y="' + (py - 1).toFixed(1) + '">SET</text><text class="bm-tab-s" x="' + (px + tx).toFixed(1) + '" y="' + (py + 9.5).toFixed(1) + '">HEIGHT ▸</text>');
   o.push('</g></g>');
   return o.join('');
 }
@@ -11129,7 +11131,7 @@ function hxLabData(id) {
 function hxGeom(st, B) {
   var W = st.clientWidth || 560, m = W < 480, TOP = 40, BOT = 14, BH = 718, H;
   var G = { W:W, m:m, top:34, bot:10, gap:m ? 5 : 7 };
-  G.rm = (!m && W >= 620) ? 'v' : 'h'; G.R = G.rm === 'v' ? 34 : 0; G.tape = G.rm === 'h' ? 46 : 0;     // ruler beside the figure, or a tape under the scale when there is no room
+  G.rm = 'v'; G.R = m ? 26 : 34; G.tape = 0;     // ruler beside the figure, or a tape under the scale when there is no room
   G.cw = m ? Math.max(104, Math.min(108, Math.round(W * .3))) : 156; G.ch = m ? 42 : 48; G.padx = m ? 6 : 14;
   G.fn = m ? 10 : 11; G.ls = m ? .1 : .3; G.ny = m ? 15 : 18; G.vy = m ? 35 : 40;
   G.hw = B ? bmHalfWidth(B.g, B.gender) : 119;
@@ -17140,6 +17142,73 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
   });
 }
 window.addEventListener('load', _pwaRefreshInstallItem);
+
+/*BK-START*/
+/* ===================== BACK BUTTON — step back page by page, double-back on Home to exit ===================== */
+(function(){
+  var HOME = 'dashboard', cur = {fb:'page', id:HOME}, armed = false, armT = 0, silent = false, ready = false;
+  function show(id){ var p = document.getElementById('page-' + id); return !!p; }
+  function pageBtn(id){
+    var out = null;
+    document.querySelectorAll('.sb-item').forEach(function(b){ var oc = b.getAttribute('onclick') || ''; if (oc.indexOf("'" + id + "'") >= 0) out = b; });
+    return out;
+  }
+  function vis(el){ return !!el && el.offsetParent !== null || (el && getComputedStyle(el).position === 'fixed' && getComputedStyle(el).display !== 'none'); }
+  // closes the top-most open popup / sheet / drawer; returns true if something was closed
+  function closeOverlay(){
+    var el, t;
+    el = document.getElementById('bmEd'); if (el) { if (typeof bmEdClose === 'function') bmEdClose(); else el.remove(); return true; }
+    el = document.getElementById('glSheet'); if (el) { el.remove(); return true; }
+    el = document.getElementById('glDetail'); if (el) { if (typeof glClose === 'function') glClose(); else el.remove(); return true; }
+    el = document.getElementById('hbStudio'); if (el) { if (typeof hbStudioClose === 'function') hbStudioClose(); else el.remove(); return true; }
+    el = document.getElementById('wkModal'); if (el && /\bopen\b/.test(el.className)) { if (typeof wkCloseModal === 'function') wkCloseModal(); else el.classList.remove('open'); return true; }
+    el = document.getElementById('entModal'); if (el && el.classList.contains('show')) { if (typeof closeEntModal === 'function') closeEntModal(); else el.classList.remove('show'); return true; }
+    el = document.getElementById('adminUserDetailPanel'); if (el && el.classList.contains('open')) { if (typeof closeAdminUserDetail === 'function') closeAdminUserDetail(); else el.classList.remove('open'); return true; }
+    el = document.getElementById('adminShellOverlay'); if (el && el.style.display && el.style.display !== 'none') { if (typeof closeAdminBackend === 'function') closeAdminBackend(); else el.style.display = 'none'; return true; }
+    el = document.getElementById('mobSheet'); if (el && el.classList.contains('open')) { el.classList.remove('open'); return true; }
+    el = document.querySelector('.modal-bg.open'); if (el) { el.classList.remove('open'); return true; }
+    el = document.querySelector('.sb.open'); if (el) { if (typeof closeMobSidebar === 'function') closeMobSidebar(); else el.classList.remove('open'); return true; }
+    el = document.getElementById('quickAddWrap'); if (el && el.classList.contains('open')) { if (typeof closeQuickAdd === 'function') closeQuickAdd(); return true; }
+    return false;
+  }
+  function goPage(id){
+    if (!show(id)) id = HOME;
+    silent = true;
+    try { nav(pageBtn(id), id); } catch(e) { console.error(e); }
+    silent = false;
+    cur = {fb:'page', id:id};
+  }
+  function push(id){ cur = {fb:'page', id:id}; try { history.pushState(cur, ''); } catch(e) {} }
+  function onNav(){
+    if (!ready || silent) return;
+    var id = (typeof _curPage === 'string' && _curPage) || HOME;
+    if (id === cur.id) return;
+    push(id);
+  }
+  function exitHint(){
+    armed = true; clearTimeout(armT); armT = setTimeout(function(){ armed = false; }, 2200);
+    if (typeof toast === 'function') toast('Press back again to exit');
+  }
+  function onPop(e){
+    var st = e.state;
+    if (closeOverlay()) { push(cur.id); return; }            // popup closed instead of leaving; keep the current page in the stack
+    if (st && st.fb === 'page') { goPage(st.id); return; }    // one step back
+    // reached the guard entry under Home
+    if (cur.id !== HOME) { goPage(HOME); push(HOME); return; }
+    if (armed) { armed = false; clearTimeout(armT); ready = false; history.back(); return; }   // second back → leave the app
+    exitHint(); push(HOME);
+  }
+  function init(){
+    if (ready) return;
+    try { history.replaceState({fb:'guard'}, ''); history.pushState(cur, ''); } catch(e) { return; }
+    ready = true;
+    window.addEventListener('popstate', onPop);
+    var n0 = window.nav;
+    window.nav = function(){ var r = n0.apply(this, arguments); try { onNav(); } catch(e) {} return r; };
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+/*BK-END*/
 </script>
 </body>
 </html>

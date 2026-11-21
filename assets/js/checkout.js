@@ -163,7 +163,20 @@ async function submitPayment() {
       }
     }
     const u = state.user, reqId = state.method + '_' + trx, now = Date.now();
+    // A blocked account cannot buy; everybody else (including people the admin deleted or rejected before) can.
+    // If the customer has no account record yet we create it together with the payment, so the admin sees them in Users right away.
+    const mail = String(u.email).toLowerCase(), userDocId = 'google_' + mail.replace(/[^a-zA-Z0-9_\-]/g, '_').toLowerCase();
+    let needAccount = false;
+    try {
+      const us = await getDoc(doc(db, 'fitos_users', userDocId));
+      if (us.exists() && us.data().status === 'suspended') {
+        $('#e-submit').textContent = 'This account has been blocked, so a new purchase cannot be made. Please contact support.';
+        btn.disabled = false; $('#submit-lbl').textContent = 'Submit payment'; return;
+      }
+      needAccount = !us.exists();
+    } catch (e0) { console.warn('account check skipped:', e0 && e0.message); }
     const batch = writeBatch(db);
+    if (needAccount) batch.set(doc(db, 'fitos_users', userDocId), { userId: mail, authEmail: mail, authUid: u.uid, createdAt: new Date().toISOString(), source: 'checkout', displayName: name });
     const pay = { uid: u.uid, email: String(u.email).toLowerCase(), name, phone, plan: p.id, amount: pr.final, method: state.method, trxId: trx, status: 'pending', createdAt: serverTimestamp() };
     if (pr.code) { pay.coupon = pr.code; pay.listPrice = pr.list; pay.discount = pr.discount; }
     batch.set(doc(db, 'paymentRequests', reqId), pay);

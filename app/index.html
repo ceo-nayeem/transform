@@ -2809,6 +2809,81 @@ html.alpha .hx-lgbar{color:#fff}
 @media (prefers-reduced-motion:reduce){.hx-lgbody{animation:none}.hx-lgbar{transition:none}}
 /*HXL-CSS-END*/
 </style>
+<style id="adm-css">
+/* ===================== ADMIN PRO — bulk bar, trash, dialogs (scoped to #adminShellOverlay) ===================== */
+#adminShellOverlay .adm-bar{position:sticky;top:-1px;z-index:4;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:9px 14px;border-radius:var(--a-radius-md,14px);border:1px solid var(--a-hairline);background:var(--a-glass-soft);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:12px;color:var(--t2);transition:border-color .2s,box-shadow .2s,background .2s}
+#adminShellOverlay .adm-bar.on{border-color:color-mix(in srgb,var(--g) 55%,transparent);background:color-mix(in srgb,var(--g) 9%,var(--panel,#0c0f12));box-shadow:0 8px 30px -12px color-mix(in srgb,var(--g) 55%,transparent);color:var(--t)}
+#adminShellOverlay .adm-master{display:inline-flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;color:var(--t)}
+#adminShellOverlay .adm-master input,#adminShellOverlay .adm-cb{width:17px;height:17px;accent-color:var(--g);cursor:pointer;flex:none;margin:0}
+#adminShellOverlay .adm-cnt b{color:var(--g);font-size:14px}
+#adminShellOverlay .adm-hint{font-size:11.5px;opacity:.8}
+#adminShellOverlay .adm-lnk{background:none;border:0;color:var(--t2);text-decoration:underline;font:inherit;cursor:pointer;padding:2px 4px}
+#adminShellOverlay .adm-acts{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+#adminShellOverlay .adm-btn{font-family:var(--a-font);font-size:12px;font-weight:700;padding:7px 13px;border-radius:99px;border:1px solid var(--a-hairline);background:var(--a-glass-soft);color:var(--t);cursor:pointer;white-space:nowrap;transition:transform .12s,border-color .15s,background .15s}
+#adminShellOverlay .adm-btn:hover{border-color:var(--t2)}#adminShellOverlay .adm-btn:active{transform:scale(.96)}
+#adminShellOverlay .adm-btn[disabled]{opacity:.4;cursor:not-allowed}
+#adminShellOverlay .adm-btn.ok{border-color:color-mix(in srgb,var(--g) 60%,transparent);color:var(--g)}
+#adminShellOverlay .adm-btn.warn{border-color:color-mix(in srgb,var(--o2,#ffa94d) 60%,transparent);color:var(--o2,#ffa94d)}
+#adminShellOverlay .adm-btn.danger{border-color:color-mix(in srgb,var(--red,#ff3355) 60%,transparent);color:var(--red,#ff3355)}
+#adminShellOverlay .adm-btn.danger:hover{background:color-mix(in srgb,var(--red,#ff3355) 12%,transparent)}
+#adminShellOverlay [data-adm-row].adm-sel,#adminShellOverlay tr.adm-sel td{background:color-mix(in srgb,var(--g) 8%,transparent)}
+#adminShellOverlay .admin-card.adm-sel{border-color:color-mix(in srgb,var(--g) 55%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--g) 40%,transparent)}
+#adminShellOverlay .adm-cbw{display:inline-flex;vertical-align:middle;margin-right:10px}
+#adminShellOverlay .adm-cardcb{position:absolute;top:14px;left:14px}
+#adminShellOverlay .adm-card-pad{position:relative;padding-left:42px !important}
+/* trash list */
+#adminShellOverlay .adm-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+#adminShellOverlay .adm-tab{font-family:var(--a-font);font-size:12px;font-weight:700;padding:7px 14px;border-radius:99px;border:1px solid var(--a-hairline);background:transparent;color:var(--t2);cursor:pointer}
+#adminShellOverlay .adm-tab i{font-style:normal;margin-left:5px;padding:1px 7px;border-radius:99px;background:var(--a-hairline-soft);font-size:11px}
+#adminShellOverlay .adm-tab.on{color:var(--t);border-color:color-mix(in srgb,var(--g) 60%,transparent);background:color-mix(in srgb,var(--g) 10%,transparent)}
+#adminShellOverlay .adm-tr-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+#adminShellOverlay .adm-list{display:flex;flex-direction:column;border:1px solid var(--a-hairline);border-radius:var(--a-radius-md,14px);overflow:hidden;background:var(--a-glass-soft)}
+#adminShellOverlay .adm-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--a-hairline-soft);min-width:0}
+#adminShellOverlay .adm-row:last-child{border-bottom:0}
+#adminShellOverlay .adm-ic{width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:var(--a-hairline-soft);flex:none;font-size:13px}
+#adminShellOverlay .adm-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#adminShellOverlay .adm-main b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#adminShellOverlay .adm-main small,#adminShellOverlay .adm-when small{font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#adminShellOverlay .adm-when{display:flex;flex-direction:column;align-items:flex-end;font-size:11.5px;color:var(--t2);flex:none}
+#adminShellOverlay .adm-rowact{display:flex;gap:6px;flex:none}
+#adminShellOverlay .adm-rowact .adm-btn{padding:5px 11px;font-size:11px}
+#adminShellOverlay .adm-empty{text-align:center;padding:34px 18px;color:var(--t2)}
+#adminShellOverlay .adm-empty b{display:block;color:var(--t);margin:6px 0 4px}
+#adminShellOverlay .adm-empty p{font-size:12.5px;max-width:420px;margin:0 auto;line-height:1.6}
+/* waiting customers panel */
+#adminShellOverlay .adm-wait{border-color:color-mix(in srgb,var(--o2,#ffa94d) 55%,transparent);background:color-mix(in srgb,var(--o2,#ffa94d) 7%,var(--a-glass-soft))}
+#adminShellOverlay .adm-wait-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:13px}
+#adminShellOverlay .adm-wait-l{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--t2);overflow-wrap:anywhere}
+#adminShellOverlay .adm-sub{font-size:11.5px;color:var(--t2);margin-top:8px;line-height:1.5}
+/* dialogs + progress */
+#adminShellOverlay .adm-modal{position:fixed;inset:0;z-index:100080;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.58);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);font-family:var(--a-font);animation:admFade .15s}
+#adminShellOverlay .adm-sheet{width:min(460px,100%);padding:20px 20px 16px;background:var(--panel);border:1px solid var(--a-hairline);border-radius:var(--a-radius-lg,20px);box-shadow:var(--a-shadow);animation:admPop .18s cubic-bezier(.2,.9,.3,1.2)}
+#adminShellOverlay .adm-sh-t{font-weight:800;font-size:16px;margin-bottom:8px}#adminShellOverlay .adm-sh-t.danger{color:var(--red,#ff3355)}
+#adminShellOverlay .adm-sh-b{font-size:13px;line-height:1.6;color:var(--t2)}#adminShellOverlay .adm-sh-b b{color:var(--t)}
+#adminShellOverlay .adm-in{display:block;width:100%;margin-top:12px;box-sizing:border-box}
+#adminShellOverlay .adm-sh-f{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+#adminShellOverlay .adm-prog{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:100090;display:flex;align-items:center;gap:10px;padding:11px 18px;border-radius:99px;background:var(--panel);border:1px solid var(--a-hairline);box-shadow:var(--a-shadow);font-size:12.5px;font-weight:600;overflow:hidden;color:var(--t)}
+#adminShellOverlay .adm-prog i{position:absolute;left:0;bottom:0;height:3px;background:var(--g);transition:width .2s}
+#adminShellOverlay .adm-prog .spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--a-hairline);border-top-color:var(--g);animation:admSpin .7s linear infinite}
+@keyframes admSpin{to{transform:rotate(360deg)}}@keyframes admFade{from{opacity:0}}@keyframes admPop{from{opacity:0;transform:translateY(10px) scale(.97)}}
+@media (max-width:760px){
+  #adminShellOverlay .adm-acts{margin-left:0;width:100%}
+  #adminShellOverlay .adm-acts .adm-btn{flex:1 1 auto}
+  #adminShellOverlay .adm-row{flex-wrap:wrap;row-gap:8px}
+  #adminShellOverlay .adm-when{align-items:flex-start;flex-direction:row;gap:8px;order:5}
+  #adminShellOverlay .adm-rowact{order:6;margin-left:auto}
+}
+@media (max-width:600px){
+  #adminShellOverlay .adm-modal{align-items:flex-end;padding:0}
+  #adminShellOverlay .adm-sheet{width:100%;border-radius:22px 22px 0 0;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  #adminShellOverlay .adm-modal .admin-inp{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){#adminShellOverlay .adm-modal,#adminShellOverlay .adm-sheet,#adminShellOverlay .adm-prog .spin{animation:none}}
+#adminShellOverlay .cp-card{position:relative}
+#adminShellOverlay .cp-card .adm-cardcb{top:17px;left:16px}
+#adminShellOverlay .cp-card .cp-top{padding-left:30px}
+#adminShellOverlay .adm-card-pad .adm-cardcb{top:16px;left:15px}
+</style>
 </head>
 <body>
 <script>
@@ -5440,6 +5515,7 @@ body.gl-lock{overflow:hidden}
         <div class="admin-sb-item" id="adminNav-coupons" onclick="adminNav('coupons')">✦ <span class="lbl">Coupons</span></div>
         <div class="admin-sb-item" id="adminNav-ingredients" onclick="adminNav('ingredients')">◍ <span class="lbl">Ingredient Library</span></div>
         <div class="admin-sb-item" id="adminNav-workouts" onclick="adminNav('workouts')">⊞ <span class="lbl">Workout Library</span></div>
+        <div class="admin-sb-item" id="adminNav-trash" onclick="adminNav('trash')">🗑 <span class="lbl">Trash</span><span class="lock-tag" id="adminTrashCountTag" style="display:none">0</span></div>
         <div class="admin-sb-sec">Configuration</div>
         <div class="admin-sb-item" id="adminNav-appconfig" onclick="adminNav('appconfig')">⚙ <span class="lbl">App Config</span></div>
         <div class="admin-sb-item" id="adminNav-flags" onclick="adminNav('flags')">◈ <span class="lbl">Feature Flags</span></div>
@@ -5477,7 +5553,7 @@ body.gl-lock{overflow:hidden}
             <div class="admin-todo-list">
               <li>Metrics are computed live from the <code>fitos_users</code> collection — no placeholder numbers</li>
               <li>"Plan" and "Pro/Free split" are not shown yet — no subscription/plan system exists in the database (Phase 3)</li>
-              <li>Account status enforcement (suspended → blocked login) is a client-side check on login, since this project has no server/Cloud Functions layer — noted under each suspended user</li>
+              <li><b>Block</b> is the only thing that stops a person (sign-in and purchase). Deleted (Trash) or rejected users can always sign in and buy again. Blocking is enforced by the Firestore rules, so publish the latest <code>firestore.rules</code>.</li>
             </div>
           </div>
         </div>
@@ -5486,8 +5562,13 @@ body.gl-lock{overflow:hidden}
         <div id="admin-sec-users" class="admin-sec" style="display:none">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
             <div class="admin-card-title" style="margin:0">Users</div>
-            <button class="admin-exit-btn" onclick="loadAdminUsers(true)">[ ⟳ REFRESH ]</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="admin-exit-btn" onclick="admBlockEmail()">[ ⛔ BLOCK E-MAIL ]</button>
+              <button class="admin-exit-btn" onclick="admUsersCsvAll()">[ ⭳ EXPORT CSV ]</button>
+              <button class="admin-exit-btn" onclick="loadAdminUsers(true)">[ ⟳ REFRESH ]</button>
+            </div>
           </div>
+          <div id="adminUsersWaiting"></div>
           <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
             <input class="admin-inp" id="adminUserSearch" type="text" placeholder="Search name or email…" oninput="adminUsersFilterChanged()" style="flex:2;min-width:180px"/>
             <select class="admin-inp" id="adminUserPlanFilter" onchange="adminUsersFilterChanged()" style="min-width:110px">
@@ -5503,7 +5584,7 @@ body.gl-lock{overflow:hidden}
             <select class="admin-inp" id="adminUserStatusFilter" onchange="adminUsersFilterChanged()" style="min-width:120px">
               <option value="">All statuses</option>
               <option value="active">Active</option>
-              <option value="suspended">Suspended</option>
+              <option value="suspended">Blocked</option>
             </select>
             <select class="admin-inp" id="adminUserSort" onchange="adminUsersFilterChanged()" style="min-width:150px">
               <option value="created_desc">Newest first</option>
@@ -5513,6 +5594,25 @@ body.gl-lock{overflow:hidden}
             </select>
           </div>
           <div id="adminUsersTableWrap"><div style="font-size:11px;color:var(--t2);padding:10px">Loading users…</div></div>
+        </div>
+
+        <!-- ===== TRASH SECTION ===== -->
+        <div id="admin-sec-trash" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Trash</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input class="admin-inp" id="adminTrashSearch" type="text" placeholder="Search trash…" oninput="renderAdminTrash()" style="min-width:180px"/>
+              <button class="admin-exit-btn" onclick="loadAdminTrash(true)">[ ⟳ REFRESH ]</button>
+            </div>
+          </div>
+          <div class="admin-card" style="margin-bottom:14px">
+            <div class="admin-todo-list">
+              <li>Everything you delete from Users, Payments, Coupons, Ingredient Library and Workout Library lands here first.</li>
+              <li><b>Restore</b> puts it back exactly as it was. <b>Delete forever</b> removes it for good (for users, all their data too) — it cannot be undone.</li>
+              <li>A trashed user can still sign in and buy again and simply comes back. Only <b>Block</b> stops a person.</li>
+            </div>
+          </div>
+          <div id="adminTrashBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading…</div></div>
         </div>
 
         <!-- ===== CONTENT SECTION ===== -->
@@ -5702,7 +5802,7 @@ body.gl-lock{overflow:hidden}
         <div id="admin-sec-audit" class="admin-sec" style="display:none">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
             <div class="admin-card-title" style="margin:0">Audit Log</div>
-            <button class="admin-exit-btn" onclick="loadAdminAuditLog(true)">[ ⟳ REFRESH ]</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="admin-exit-btn" onclick="admAuditCsv()">[ ⭳ EXPORT CSV ]</button><button class="admin-exit-btn" onclick="loadAdminAuditLog(true)">[ ⟳ REFRESH ]</button></div>
           </div>
           <div id="adminAuditBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading audit log…</div></div>
         </div>
@@ -6189,6 +6289,13 @@ function googleDocId(email) {
   return 'google_' + sanitizeId(email);
 }
 
+// Turns a Firebase error into a clear sentence (permission errors usually mean the Firestore rules on the server are outdated).
+function loginErrText(e, what) {
+  var code = (e && e.code) || '', msg = (e && e.message) || 'unknown error';
+  if (code === 'permission-denied' || /insufficient permissions/i.test(msg)) return 'Could not ' + what + ': the server refused access. Please try again; if it keeps happening, contact support (the account rules may need to be republished).';
+  if (code === 'unavailable' || /network|offline/i.test(msg)) return 'Could not ' + what + ': no connection. Check your internet and try again.';
+  return 'Could not ' + what + ': ' + msg;
+}
 function doGoogleLogin() {
   var err = document.getElementById('loginErr');
   var btn = document.getElementById('googleLoginBtn');
@@ -6206,7 +6313,7 @@ function doGoogleLogin() {
     bootLoadingStart('Loading your data');
     return handleGoogleUser(email, result.user.uid).catch(function(e){
       console.error(e);
-      err.textContent = 'Could not load your account: ' + (e && e.message ? e.message : 'unknown error');
+      err.textContent = loginErrText(e, 'load your account');
     });
   }).catch(function(e){
     console.error(e);
@@ -6233,6 +6340,7 @@ async function handleGoogleUser(email, uid) {
 
   if (snap.exists()) {
     var userData = snap.data();
+    // Only a BLOCKED account (status 'suspended') is refused. Accounts the admin deleted / trashed / rejected can always sign in again.
     // Suspended accounts are blocked at login. This is a client-side check
     // (there's no server/Cloud Functions layer in this project to enforce
     // it harder) — it stops normal use immediately, but is not a substitute
@@ -6242,12 +6350,25 @@ async function handleGoogleUser(email, uid) {
         window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
       }
       var errEl = document.getElementById('loginErr');
-      if (errEl) errEl.textContent = 'This account has been suspended.';
+      if (errEl) errEl.textContent = 'This account has been blocked by the admin. Contact support if you think this is a mistake.';
+      return;
+    }
+    // A shell record (created by the website checkout or by the admin when a payment arrived before the first sign-in) → first-time setup.
+    if (!userData.data && !userData.summary && !userData.lastSaved && !userData.lastLogin) {
+      var shellFresh = getDefaultState(email.split('@')[0]);
+      shellFresh.onboarded = false;
+      if (userData.displayName) { shellFresh.cfg.name = String(userData.displayName).slice(0, 40).toUpperCase(); shellFresh.cfg.initials = shellFresh.cfg.name.slice(0, 2); }
+      Object.assign(S, shellFresh);
+      await window._fsSetDoc(userRef, { authUid: uid, userId: userData.userId || email, data: JSON.stringify(shellFresh), lastLogin: new Date().toISOString(), trashed: false }, {merge:true});
+      await dataService.bootstrap(uid, docId);
+      beginOnboarding(email, docId);
       return;
     }
     loadUserDataIntoState(userData);
     await dataService.bootstrap(uid, docId);
-    window._fsSetDoc(userRef, { authUid: uid, lastLogin: new Date().toISOString() }, {merge:true}).catch(function(e){ console.error(e); });
+    var _loginPatch = { authUid: uid, lastLogin: new Date().toISOString() };
+    if (userData.trashed) _loginPatch.trashed = false;      // a trashed user who signs in again simply comes back
+    window._fsSetDoc(userRef, _loginPatch, {merge:true}).catch(function(e){ console.error(e); });
     // Existing accounts that somehow never finished onboarding (e.g. closed
     // the tab mid-flow) are sent back to it instead of straight into the app.
     if (!S.onboarded) {
@@ -6482,9 +6603,11 @@ async function tryRestoreSession() {
       clearSession();
       if (window._signOutFirebase) window._signOutFirebase(window._auth).catch(function(e){ console.error(e); });
       var errEl = document.getElementById('loginErr');
-      if (errEl) errEl.textContent = 'This account has been suspended.';
+      if (errEl) errEl.textContent = 'This account has been blocked by the admin.';
       return;
     }
+    if (!userData.data && !userData.summary && !userData.lastSaved && !userData.lastLogin) return;   // shell record: needs the normal first-time sign-in
+    if (userData.trashed) window._fsSetDoc(userRef, { trashed: false }, {merge:true}).catch(function(e){ console.error(e); });
     loadUserDataIntoState(userData);
     await dataService.bootstrap(u.uid, sess.docId);
     loginSuccess(userData.userId || sess.userId, sess.docId, true);
@@ -15422,7 +15545,8 @@ async function loadAdminCoupons(force) {
 
 function renderAdminCoupons() {
   var body = cpEl('adminCouponBody'); if (!body || !CP.rows) return;
-  var all = CP.rows, live = all.filter(function(c){ return cpStatus(c) === 'active'; });
+  var all = CP.rows.filter(function(c){ return !c.trashed; }), live = all.filter(function(c){ return cpStatus(c) === 'active'; });
+  admTrashTagUpdate();
   var uses = 0, rev = 0, disc = 0, owed = 0, pend = 0;
   all.forEach(function(c){ var s = cpStats(c); uses += s.uses; rev += s.revenue; disc += s.discount; owed += cpOwed(c); pend += CP.pend[c.code] || 0; });
   var tile = function(l, v, c){ return '<div class="admin-metric-card"><div class="admin-metric-label">'+l+'</div><div class="admin-metric-val" style="color:'+c+'">'+v+'</div></div>'; };
@@ -15434,9 +15558,10 @@ function renderAdminCoupons() {
     if (!q) return true;
     return [c.code, c.ownerName, c.ownerEmail, c.note].some(function(x){ return String(x || '').toLowerCase().indexOf(q) >= 0; });
   });
+  ADM_VIS.cp = list.map(function(c){ return c.code; }); admPrune('cp', all.map(function(c){ return c.code; }));
   if (!all.length) { body.innerHTML = '<div class="admin-card cp-empty"><div class="cp-empty-ic">🎟</div><b>No coupons yet</b><p>Create a coupon for an influencer — each Gmail owner gets exactly one code. Customers enter it at checkout and you see every verified use here.</p><button class="admin-exit-btn" onclick="cpOpenForm()">[ + NEW COUPON ]</button></div>'; return; }
-  if (!list.length) { body.innerHTML = '<div class="admin-card" style="font-size:12.5px;color:var(--t2)">No coupons match this view.</div>'; return; }
-  body.innerHTML = '<div class="cp-grid">' + list.map(cpCardHtml).join('') + '</div>';
+  if (!list.length) { body.innerHTML = admBarHTML('cp') + '<div class="admin-card" style="font-size:12.5px;color:var(--t2)">No coupons match this view.</div>'; admSync('cp'); return; }
+  body.innerHTML = admBarHTML('cp') + '<div class="cp-grid">' + list.map(cpCardHtml).join('') + '</div>'; admSync('cp');
 }
 
 function cpCardHtml(c) {
@@ -15446,7 +15571,7 @@ function cpCardHtml(c) {
   if (c.maxUses) meta.push(s.uses + '/' + c.maxUses + ' uses'); else meta.push(s.uses + ' uses');
   if (c.expiresAt) meta.push('ends ' + new Date(c.expiresAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }));
   if (c.plans && c.plans.length) meta.push(c.plans.join(' · ') + ' only');
-  return '<div class="admin-card cp-card'+(stt!=='active'?' off':'')+'">'
+  return '<div class="admin-card cp-card'+(stt!=='active'?' off':'')+(admSet('cp')[c.code]?' adm-sel':'')+'" data-adm-row><span class="adm-cardcb">'+admCb('cp', c.code)+'</span>'
     + '<div class="cp-top"><div class="cp-code" title="Click to copy" onclick="cpCopy(\''+c.code+'\')">'+_esc(c.code)+'</div><span class="admin-badge '+badge+'">'+stt.toUpperCase()+'</span></div>'
     + '<div class="cp-disc">'+_esc(cpDiscText(c))+'</div>'
     + '<div class="cp-owner"><span>👤 '+_esc(c.ownerName || 'Owner')+'</span><span class="cp-mail">'+_esc(c.ownerEmail || '')+'</span></div>'
@@ -15495,7 +15620,7 @@ function cpOpenForm(code){
     + '<div class="cp-row sw"><div class="cp-lab" style="margin:0"><b>Coupon is active</b><span class="cp-sub" style="display:block">Turn off to pause it without deleting.</span></div><div class="admin-switch'+(c.active?' on':'')+'" id="cpf_active" role="switch" tabindex="0" onclick="this.classList.toggle(\'on\')"><div class="knob"></div></div></div>'
     + '</div>'
     + '<div class="cp-err cp-err-bar" id="cpf_err" role="alert"></div>'
-    + '<div class="cp-sh-f">'+(isNew?'':'<button class="admin-exit-btn" style="margin-right:auto;border-color:var(--red);color:var(--red)" onclick="cpDelete(\''+c.code+'\')">DELETE</button>')+'<button class="admin-exit-btn" onclick="cpModalClose()">CANCEL</button><button class="admin-exit-btn cp-pri" id="cpf_save" onclick="cpSave('+(isNew?'null':"'"+c.code+"'")+')">'+(isNew?'CREATE COUPON':'SAVE CHANGES')+'</button></div>');
+    + '<div class="cp-sh-f">'+(isNew?'':'<button class="admin-exit-btn" style="margin-right:auto;border-color:var(--red);color:var(--red)" onclick="cpDelete(\''+c.code+'\')">🗑 TRASH</button>')+'<button class="admin-exit-btn" onclick="cpModalClose()">CANCEL</button><button class="admin-exit-btn cp-pri" id="cpf_save" onclick="cpSave('+(isNew?'null':"'"+c.code+"'")+')">'+(isNew?'CREATE COUPON':'SAVE CHANGES')+'</button></div>');
   cpTypeChange();
 }
 function cpTypeChange(){ var w = cpEl('cpf_capWrap'), t = cpEl('cpf_type'); if (w && t) w.style.display = t.value === 'percent' ? '' : 'none'; }
@@ -15524,10 +15649,10 @@ async function cpSave(editCode){
   try {
     var ownerKey = cpKey(ownerEmail);
     if (isNew) {
-      if ((await window._fsGetDoc(window._fsDoc(db, 'coupons', code))).exists()) return cpFormErr('The code ' + code + ' already exists. Choose another code.');
+      if ((await window._fsGetDoc(window._fsDoc(db, 'coupons', code))).exists()) return cpFormErr('The code ' + code + ' already exists' + ((cpFind(code) || {}).trashed ? ' (it is in Trash — restore it, or delete it forever there)' : '') + '. Choose another code.');
     }
     var os = await window._fsGetDoc(window._fsDoc(db, 'couponOwners', ownerKey));
-    if (os.exists() && os.data().code !== code) return cpFormErr(ownerEmail + ' already owns coupon ' + os.data().code + '. One coupon per Gmail owner — edit or delete that one first.');
+    if (os.exists() && os.data().code !== code) return cpFormErr(ownerEmail + ' already owns coupon ' + os.data().code + ((cpFind(os.data().code) || {}).trashed ? ' (in Trash — restore it, or delete it forever there)' : '') + '. One coupon per Gmail owner — edit or trash that one first.');
     var now = Date.now(), stats = old ? cpStats(old) : { uses:0, revenue:0, discount:0, commission:0 };
     var master = { code:code, active:active, type:type, value:value, maxDiscount:type==='percent'?cap:0, plans:plans, maxUses:maxUses, expiresAt:expiresAt,
       ownerName:ownerName, ownerEmail:ownerEmail, ownerKey:ownerKey, commissionType:ctype, commissionValue:cval, note:v('cpf_note').trim().slice(0,160),
@@ -15555,18 +15680,9 @@ async function cpToggle(code){
     toast(on ? 'Coupon resumed' : 'Coupon paused'); loadAdminCoupons(true);
   } catch (e) { console.error(e); toast('Failed (see console / check rules)'); }
 }
-async function cpDelete(code){
-  var c = cpFind(code); if (!c) return;
-  if (cpStats(c).uses > 0) { toast('This coupon has verified uses — pause it instead of deleting.'); return; }
-  if (!confirm('Delete coupon ' + code + '? Customers will no longer be able to use it.')) return;
-  try {
-    var db = window._db, batch = window._fsWriteBatch(db);
-    batch.delete(window._fsDoc(db, 'coupons', code)); batch.delete(window._fsDoc(db, 'couponPub', code));
-    if (c.ownerKey) batch.delete(window._fsDoc(db, 'couponOwners', c.ownerKey));
-    await batch.commit();
-    writeAuditLog('COUPON_DELETED', 'coupon', code, { owner:c.ownerEmail }, undefined);
-    cpModalClose(); toast('Coupon deleted'); loadAdminCoupons(true);
-  } catch (e) { console.error(e); toast('Delete failed (see console / check rules)'); }
+async function cpDelete(code){   // single coupon → Trash (history, uses and payouts are kept)
+  if (!cpFind(code)) return;
+  await ADM_H['cp.trash']([code]); cpModalClose();
 }
 
 // ---- detail: uses list + payout ----
@@ -15707,7 +15823,7 @@ async function writeAuditLog(action, targetType, targetId, before, after) {
 }
 
 // ===================== ADMIN — SECTION NAV =====================
-var ADMIN_SECTIONS = ['dashboard','users','content','payments','coupons','ingredients','workouts','appconfig','flags','plans','analytics','audit','website','system'];
+var ADMIN_SECTIONS = ['dashboard','users','content','payments','coupons','ingredients','workouts','trash','appconfig','flags','plans','analytics','audit','website','system'];
 function adminNav(section) {
   ADMIN_SECTIONS.forEach(function(s){
     var sec = document.getElementById('admin-sec-'+s);
@@ -15718,10 +15834,11 @@ function adminNav(section) {
   adminDrawerClose(); adminSetCurSec(section);
   var _ac = document.querySelector('#adminShellOverlay .admin-content'); if (_ac) { _ac.scrollTop = 0; _ac.classList.toggle('ws-mode', section === 'website'); }
   if (typeof wsSyncFocus === 'function') wsSyncFocus(section === 'website');
-  if (section === 'users') renderAdminUsersTable();
+  if (section === 'users') { if (ADMIN_USERS_CACHE) renderAdminUsersTable(); else loadAdminUsers(true); }
   if (section === 'content') loadAdminContent(false);
   if (section === 'ingredients') loadAdminIngredients(false);
   if (section === 'workouts') loadAdminWorkouts(false);
+  if (section === 'trash') loadAdminTrash(false);
   if (section === 'payments') loadAdminPayments(false);
   if (section === 'coupons') loadAdminCoupons(false);
   if (section === 'appconfig') loadAdminAppConfig(false);
@@ -15773,7 +15890,7 @@ function _adminNormalizeUser(docId, raw) {
     createdAt: _isoOrNull(raw.createdAt),
     lastLogin: _isoOrNull(raw.lastLogin),
     lastSaved: _isoOrNull(raw.lastSaved),
-    status: (raw.status === 'suspended' || raw.status === 'deleted') ? raw.status : 'active',
+    status: raw.status === 'suspended' ? 'suspended' : 'active',   // only 'suspended' (= Blocked) restricts anything
     plan: (raw.plan === 'pro') ? 'pro' : 'free', // placeholder — real plan/billing system arrives in Phase 4
     onboarded: sm.onboarded !== false,
     gender: _esc(sm.gender || '—'),
@@ -15798,15 +15915,17 @@ async function loadAdminUsers(force) {
     var db = window._db;
     var colRef = window._fsCollection(db, 'fitos_users');
     var snap = await window._fsGetDocs(colRef);
-    var users = [];
+    var users = [], trashed = [];
     snap.forEach(function(d){
       var data = d.data();
       if (data.migratedTo) return; // superseded legacy doc, not a real account
-      users.push(_adminNormalizeUser(d.id, data));
+      var nu = _adminNormalizeUser(d.id, data);
+      if (data.trashed === true) trashed.push(nu); else users.push(nu);
     });
-    ADMIN_USERS_CACHE = users;
+    ADMIN_USERS_CACHE = users; ADMIN_USERS_TRASH = trashed;
     var tag = document.getElementById('adminUsersCountTag');
     if (tag) tag.textContent = users.length;
+    await admLoadWaitingData(); admTrashTagUpdate();
     renderAdminDashboard();
     if (document.getElementById('admin-sec-users').style.display !== 'none') renderAdminUsersTable();
   } catch (e) {
@@ -15830,6 +15949,7 @@ function renderAdminDashboard() {
   }).length;
   var onboardedCount = users.filter(function(u){ return u.onboarded; }).length;
   var suspendedCount = users.filter(function(u){ return u.status === 'suspended'; }).length;
+  var waitingCount = (ADM_WAITING || []).length;
 
   grid.innerHTML =
     '<div class="admin-metric-card"><div class="admin-metric-label">Total Users</div><div class="admin-metric-val">'+total+'</div></div>' +
@@ -15838,9 +15958,10 @@ function renderAdminDashboard() {
     '<div class="admin-metric-card"><div class="admin-metric-label">Onboarded</div><div class="admin-metric-val" style="color:var(--p)">'+onboardedCount+'</div><div class="admin-metric-sub">of '+total+'</div></div>';
 
   if (suspendedCount > 0) {
-    grid.innerHTML += '<div class="admin-metric-card"><div class="admin-metric-label">Suspended</div><div class="admin-metric-val" style="color:var(--red)">'+suspendedCount+'</div></div>';
+    grid.innerHTML += '<div class="admin-metric-card"><div class="admin-metric-label">Blocked</div><div class="admin-metric-val" style="color:var(--red)">'+suspendedCount+'</div></div>';
   }
 
+  if (waitingCount > 0) grid.innerHTML += '<div class="admin-metric-card" style="cursor:pointer" onclick="adminNav(\'users\')" title="Paid but no account record yet"><div class="admin-metric-label">Paid · no account</div><div class="admin-metric-val" style="color:var(--o2)">'+waitingCount+'</div></div>';
   var byCreated = users.slice().filter(function(u){return u.createdAt;}).sort(function(a,b){ return new Date(b.createdAt)-new Date(a.createdAt); }).slice(0,5);
   regsEl.innerHTML = byCreated.length ? byCreated.map(function(u){
     return '<div class="admin-mini-row"><span><span class="nm">'+u.name+'</span><span class="em">'+u.email+'</span></span><span class="tm">'+_adminTimeAgo(u.createdAt)+'</span></div>';
@@ -15882,8 +16003,10 @@ function renderAdminUsersTable() {
     return new Date(b.createdAt||0) - new Date(a.createdAt||0); // created_desc default
   });
 
+  ADM_VIS.users = list.map(function(u){ return u.docId; }); admPrune('users', ADMIN_USERS_CACHE.map(function(u){ return u.docId; }));
+  var wt = document.getElementById('adminUsersWaiting'); if (wt) wt.innerHTML = admWaitingHTML();
   if (!list.length) {
-    wrap.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:14px">No users match.</div>';
+    wrap.innerHTML = admBarHTML('users') + '<div style="font-size:11px;color:var(--t2);padding:14px">No users match.</div>'; admSync('users');
     return;
   }
 
@@ -15896,16 +16019,16 @@ function renderAdminUsersTable() {
     '<span><button class="admin-exit-btn" ' + (ADMIN_USERS_PAGE === 0 ? 'disabled style="opacity:.4"' : '') + ' onclick="adminUsersPage(-1)">[ ← PREV ]</button> ' +
     'Page ' + (ADMIN_USERS_PAGE + 1) + '/' + pages + ' ' +
     '<button class="admin-exit-btn" ' + (ADMIN_USERS_PAGE >= pages - 1 ? 'disabled style="opacity:.4"' : '') + ' onclick="adminUsersPage(1)">[ NEXT → ]</button></span></div>';
-  wrap.innerHTML = '<table class="admin-table"><thead><tr>' +
+  wrap.innerHTML = admBarHTML('users') + '<table class="admin-table"><thead><tr>' +
     '<th>Name</th><th>Email</th><th>Created</th><th>Last Active</th><th>Status</th><th>Plan</th><th></th>' +
     '</tr></thead><tbody>' +
     pageList.map(function(u){
-      return '<tr>' +
-        '<td class="u-name" onclick="openAdminUserDetail(\''+u.docId+'\')">'+u.name+'</td>' +
+      return '<tr data-adm-row' + (admSet('users')[u.docId] ? ' class="adm-sel"' : '') + '>' +
+        '<td class="u-name" onclick="openAdminUserDetail(\''+u.docId+'\')"><span class="adm-cbw">'+admCb('users', u.docId)+'</span>'+u.name+'</td>' +
         '<td>'+u.email+'</td>' +
         '<td>'+_adminTimeAgo(u.createdAt)+'</td>' +
         '<td>'+_adminTimeAgo(u.lastSaved||u.lastLogin)+'</td>' +
-        '<td><span class="admin-badge '+(u.status==='suspended'?'suspended':'active')+'">'+u.status.toUpperCase()+'</span></td>' +
+        '<td><span class="admin-badge '+(u.status==='suspended'?'suspended':'active')+'">'+admStatusTxt(u.status)+'</span></td>' +
         '<td><span class="admin-badge plan">'+u.plan.toUpperCase()+'</span></td>' +
         '<td><div class="admin-row-actions">' +
           '<button onclick="openAdminUserDetail(\''+u.docId+'\')">VIEW</button>' +
@@ -15913,6 +16036,7 @@ function renderAdminUsersTable() {
       '</tr>';
     }).join('') +
     '</tbody></table>' + pager;
+  admSync('users');
 }
 
 function openAdminUserDetail(docId) {
@@ -15929,7 +16053,7 @@ function openAdminUserDetail(docId) {
         '<div class="admin-kv"><span class="k">Doc ID</span><span class="v" style="font-size:9px">'+u.docId+'</span></div>' +
         '<div class="admin-kv"><span class="k">Created</span><span class="v">'+(u.createdAt||'—')+'</span></div>' +
         '<div class="admin-kv"><span class="k">Last login</span><span class="v">'+(u.lastLogin||'—')+'</span></div>' +
-        '<div class="admin-kv"><span class="k">Status</span><span class="v"><span class="admin-badge '+(u.status==='suspended'?'suspended':'active')+'">'+u.status.toUpperCase()+'</span></span></div>' +
+        '<div class="admin-kv"><span class="k">Status</span><span class="v"><span class="admin-badge '+(u.status==='suspended'?'suspended':'active')+'">'+admStatusTxt(u.status)+'</span></span></div>' +
         '<div class="admin-kv"><span class="k">Plan</span><span class="v"><span class="admin-badge plan">'+u.plan.toUpperCase()+'</span></span></div>' +
       '</div>' +
       '<div class="admin-detail-sec"><h4>Profile</h4>' +
@@ -15956,11 +16080,11 @@ function openAdminUserDetail(docId) {
     '</div>' +
     '<div style="display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px">' +
       (u.status==='suspended'
-        ? '<button class="admin-exit-btn" onclick="adminActivateUser(\''+u.docId+'\')">[ ✓ ACTIVATE ACCOUNT ]</button>'
-        : '<button class="admin-exit-btn" onclick="adminSuspendUser(\''+u.docId+'\')">[ ⛔ SUSPEND ACCOUNT ]</button>') +
+        ? '<button class="admin-exit-btn" onclick="adminActivateUser(\''+u.docId+'\')">[ ✓ UNBLOCK ACCOUNT ]</button>'
+        : '<button class="admin-exit-btn" onclick="adminSuspendUser(\''+u.docId+'\')">[ ⛔ BLOCK ACCOUNT ]</button>') +
       '<button class="admin-exit-btn" onclick="adminOpenEdit(\''+u.docId+'\')">[ ✎ EDIT PROFILE ]</button>' +
       '<button class="admin-exit-btn" onclick="adminExportUser(\''+u.docId+'\')">[ ⭳ EXPORT JSON ]</button>' +
-      '<button class="admin-exit-btn" style="border-color:var(--red);color:var(--red)" onclick="adminDeleteUser(\''+u.docId+'\')">[ ✕ DELETE ACCOUNT ]</button>' +
+      '<button class="admin-exit-btn" style="border-color:var(--red);color:var(--red)" onclick="adminDeleteUser(\''+u.docId+'\')">[ 🗑 MOVE TO TRASH ]</button>' +
     '</div><div id="adminEditBox" style="margin-top:12px"></div>';
   document.getElementById('adminUserDetailPanel').classList.add('open');
 }
@@ -16040,16 +16164,16 @@ async function adminSaveEdit(docId) {
 
 async function adminSuspendUser(docId) {
   var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
-  if (!confirm('Suspend this account? They will be signed out and blocked from logging back in until reactivated.')) return;
+  if (!(await admConfirm({ title: '⛔ Block this account', body: 'They are refused at sign-in and cannot buy a plan until you unblock them.', ok: 'Block', danger: true }))) return;
   try {
     var db = window._db;
     var ref = window._fsDoc(db, 'fitos_users', docId);
     await window._fsSetDoc(ref, { status: 'suspended', statusChangedAt: new Date().toISOString() }, {merge:true});
-    writeAuditLog('USER_SUSPENDED', 'user', docId, {status: u?u.status:'active'}, {status:'suspended'});
-    toast('Account suspended');
+    writeAuditLog('USER_BLOCKED', 'user', docId, {status: u?u.status:'active'}, {status:'suspended'});
+    toast('⛔ Account blocked');
     await loadAdminUsers(true);
     openAdminUserDetail(docId);
-  } catch(e) { console.error(e); toast('Failed to suspend (see console)'); }
+  } catch(e) { console.error(e); toast('Failed to block (see console)'); }
 }
 
 async function adminActivateUser(docId) {
@@ -16058,11 +16182,11 @@ async function adminActivateUser(docId) {
     var db = window._db;
     var ref = window._fsDoc(db, 'fitos_users', docId);
     await window._fsSetDoc(ref, { status: 'active', statusChangedAt: new Date().toISOString() }, {merge:true});
-    writeAuditLog('USER_ACTIVATED', 'user', docId, {status: u?u.status:'suspended'}, {status:'active'});
-    toast('Account activated');
+    writeAuditLog('USER_UNBLOCKED', 'user', docId, {status: u?u.status:'suspended'}, {status:'active'});
+    toast('✓ Account unblocked');
     await loadAdminUsers(true);
     openAdminUserDetail(docId);
-  } catch(e) { console.error(e); toast('Failed to activate (see console)'); }
+  } catch(e) { console.error(e); toast('Failed to unblock (see console)'); }
 }
 
 async function adminExportUser(docId) {
@@ -16211,17 +16335,19 @@ function renderAdminContentList() {
   if (!body || !ADMIN_CONTENT_CACHE) return;
   var type = ADMIN_CONTENT_TYPES.find(function(t){ return t.key===ADMIN_CONTENT_TAB; });
   var items = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] || [];
+  ADM_VIS.ct = items.map(admCtId); admPrune('ct', ADM_VIS.ct);
   body.innerHTML = '<div class="admin-card">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
       '<div class="admin-card-title" style="margin:0">'+type.label+'</div>' +
       '<button class="admin-exit-btn" onclick="adminOpenNewContentItem()">[ + ADD ]</button>' +
     '</div>' +
-    (items.length ? items.map(function(item,i){
+    (items.length ? admBarHTML('ct') + items.map(function(item,i){
       var sub = type.fields.slice(1).map(function(f){ return item[f]!=null ? _esc(String(item[f])) : ''; }).filter(Boolean).join(' · ');
-      return '<div class="admin-content-list-item"><span>'+_esc(item[type.fields[0]]||'—')+(sub?' <span style="color:var(--t2);font-size:9px">'+sub+'</span>':'')+'</span>' +
-        '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminDeleteContentItem('+i+')">✕</button></div>';
+      return '<div class="admin-content-list-item" data-adm-row><span><span class="adm-cbw">'+admCb('ct', admCtId(item, i))+'</span>'+_esc(item[type.fields[0]]||'—')+(sub?' <span style="color:var(--t2);font-size:9px">'+sub+'</span>':'')+'</span>' +
+        '<button class="admin-exit-btn" style="padding:4px 8px" onclick="adminDeleteContentItem('+i+')" title="Move to Trash">🗑</button></div>';
     }).join('') : '<div style="font-size:11px;color:var(--t2);padding:8px 0">No items yet.</div>') +
   '</div>';
+  admSync('ct');
 }
 
 function adminOpenNewContentItem() {
@@ -16239,15 +16365,9 @@ function adminOpenNewContentItem() {
   adminPersistContent('CONTENT_CREATED', item.id, null, item);
 }
 
-function adminDeleteContentItem(i) {
-  var list = ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB];
-  var item = list[i];
-  if (!confirm('Delete "'+(item[Object.keys(item)[0]])+'"?')) return;
-  list.splice(i,1);
-  adminPersistContent('CONTENT_DELETED', item.id, item, null);
-}
+function adminDeleteContentItem(i) { var it = (ADMIN_CONTENT_CACHE[ADMIN_CONTENT_TAB] || [])[i]; if (it) ADM_H['ct.trash']([admCtId(it, i)]); }
 
-async function adminPersistContent(action, targetId, before, after) {
+async function adminPersistContent(action, targetId, before, after, rethrow) {
   try {
     var db = window._db;
     var ref = window._fsDoc(db, 'admin', 'content');
@@ -16256,7 +16376,7 @@ async function adminPersistContent(action, targetId, before, after) {
     renderAdminContentTabs();
     renderAdminContentList();
     writeAuditLog(action, 'content:'+ADMIN_CONTENT_TAB, targetId, before, after);
-  } catch(e) { console.error(e); toast('Failed to save content (see console)'); }
+  } catch(e) { console.error(e); toast('Failed to save content (see console)'); if (rethrow) throw e; }
 }
 
 // ===================== ADMIN — PAYMENTS (bKash / Nagad) =====================
@@ -16288,7 +16408,8 @@ async function loadAdminPayments(force) {
 
 function renderAdminPayments() {
   var body = document.getElementById('adminPayBody'); if (!body || !ADMIN_PAY_CACHE) return;
-  var all = ADMIN_PAY_CACHE;
+  var all = ADMIN_PAY_CACHE.filter(function(r){ return !r.trashed; });
+  admTrashTagUpdate();
   var pend = all.filter(function(r){ return r.status === 'pending'; });
   var ver = all.filter(function(r){ return r.status === 'verified'; });
   var rej = all.filter(function(r){ return r.status === 'rejected'; });
@@ -16306,10 +16427,11 @@ function renderAdminPayments() {
     if (!q) return true;
     return [r.trxId, r.email, r.phone, r.name, r.method, r.coupon].some(function(x){ return String(x || '').toLowerCase().indexOf(q) >= 0; });
   });
-  if (!list.length) { body.innerHTML = '<div class="admin-card" style="font-size:12px;color:var(--t2)">No payments in this view.</div>'; return; }
+  ADM_VIS.pay = list.map(function(r){ return r.id; }); admPrune('pay', all.map(function(r){ return r.id; }));
+  if (!list.length) { body.innerHTML = admBarHTML('pay') + '<div class="admin-card" style="font-size:12px;color:var(--t2)">No payments in this view.</div>'; admSync('pay'); return; }
   // duplicate-trx warning across methods (same TrxID string submitted twice)
   var seen = {}; all.forEach(function(r){ var k = String(r.trxId || '').toUpperCase(); seen[k] = (seen[k] || 0) + 1; });
-  body.innerHTML = list.map(function(r){
+  body.innerHTML = admBarHTML('pay') + list.map(function(r){
     var dup = seen[String(r.trxId || '').toUpperCase()] > 1;
     var badgeCls = r.status === 'verified' ? 'active' : (r.status === 'rejected' ? 'suspended' : 'plan');
     var idq = "'" + String(r.id).replace(/'/g, '') + "'";
@@ -16317,7 +16439,8 @@ function renderAdminPayments() {
     if (r.status === 'pending') actions = '<button class="admin-exit-btn" style="border-color:var(--g);color:var(--g)" onclick="adminPayVerify('+idq+')">✓ VERIFY</button><button class="admin-exit-btn" style="border-color:var(--red);color:var(--red)" onclick="adminPayReject('+idq+')">✕ REJECT</button>';
     else if (r.status === 'verified') actions = '<button class="admin-exit-btn" onclick="adminPayRevoke('+idq+')">REVOKE</button>';
     else actions = '<button class="admin-exit-btn" onclick="adminPayVerify('+idq+')">✓ VERIFY ANYWAY</button>';
-    return '<div class="admin-card" style="padding:14px 16px">'
+    actions += '<button class="admin-exit-btn" style="margin-left:auto" onclick="adminPayTrash('+idq+')">🗑 TRASH</button>';
+    return '<div class="admin-card adm-card-pad' + (admSet('pay')[r.id] ? ' adm-sel' : '') + '" data-adm-row style="padding:14px 16px"><span class="adm-cardcb">' + admCb('pay', r.id) + '</span>'
       + '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">'
       +   '<div style="min-width:0"><div style="font-size:15px;font-weight:700">৳'+(Number(r.amount)||0)+' <span style="font-size:12px;color:var(--t2);font-weight:500">· '+_esc(PAY_PLAN_LABEL[r.plan] || r.plan || '')+' · '+_esc(String(r.method||'').toUpperCase())+'</span></div>'
       +   '<div style="margin-top:6px;font-size:13px">TrxID <b style="font-family:monospace;letter-spacing:.5px">'+_esc(r.trxId)+'</b> <button class="admin-exit-btn" style="padding:2px 8px;font-size:10px" onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+_esc(r.trxId)+'\');toast(\'Copied\')">COPY</button>'+(dup?' <span class="admin-badge suspended">DUPLICATE?</span>':'')+'</div></div>'
@@ -16333,14 +16456,16 @@ function renderAdminPayments() {
       + '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+actions+'</div>'
       + '</div>';
   }).join('');
+  admSync('pay');
 }
 
 function _payFind(id) { return (ADMIN_PAY_CACHE || []).find(function(r){ return r.id === id; }); }
 function _adminEmail() { return (window._auth && window._auth.currentUser && window._auth.currentUser.email) || 'admin'; }
 
-async function adminPayVerify(id) {
-  var r = _payFind(id); if (!r) return;
-  if (!confirm('Verify ৳' + r.amount + ' (' + String(r.method).toUpperCase() + ' · ' + r.trxId + ') for ' + r.email + '?\n\nOnly continue if you saw this TrxID with the right amount in your bKash/Nagad account.')) return;
+async function adminPayVerify(id, opts) {
+  opts = opts || {};
+  var r = _payFind(id); if (!r) { if (opts.throwOnFail) throw new Error('payment not found'); return; }
+  if (!opts.silent && !confirm('Verify ৳' + r.amount + ' (' + String(r.method).toUpperCase() + ' · ' + r.trxId + ') for ' + r.email + '?\n\nOnly continue if you saw this TrxID with the right amount in your bKash/Nagad account.')) return;
   var db = window._db;
   try {
     var entRef = window._fsDoc(db, 'entitlements', r.uid);
@@ -16359,21 +16484,27 @@ async function adminPayVerify(id) {
       startedAt: startedAt, proUntil: proUntil, verifiedAt: stamp, updatedAt: stamp, rejectReason: '', source:'admin' });
     var cpH = await cpPrepareUse(r); if (cpH) cpH(batch); /*cp-hook*/
     await batch.commit();
-    // Mirror onto the legacy user doc so the Users list shows PRO (best effort — never blocks verification)
+    // Mirror onto the user doc so the Users list shows PRO. If the customer paid but never got an account record
+    // (sign-in failed / not signed in yet) the record is created here, so they always appear in Users. Best effort — never blocks verification.
     try {
-      var uRef = window._fsDoc(db, 'fitos_users', googleDocId(String(r.email).toLowerCase()));
-      if ((await window._fsGetDoc(uRef)).exists()) await window._fsSetDoc(uRef, { plan:'pro', planExpiresAt: proUntil.toISOString(), planUpdatedAt: stamp.toISOString() }, { merge:true });
+      var uRef = window._fsDoc(db, 'fitos_users', admDocIdOf(r.email)), planPatch = { plan:'pro', planExpiresAt: proUntil.toISOString(), planUpdatedAt: stamp.toISOString() };
+      var uSnap = await window._fsGetDoc(uRef);
+      if (uSnap.exists()) { if (uSnap.data().trashed) planPatch.trashed = false; await window._fsSetDoc(uRef, planPatch, { merge:true }); }
+      else await window._fsSetDoc(uRef, Object.assign({ userId: String(r.email).toLowerCase(), authEmail: String(r.email).toLowerCase(), authUid: r.uid || '', createdAt: stamp.toISOString(), source: 'payment', displayName: String(r.name || '').slice(0, 60) }, planPatch));
     } catch (e2) { console.warn('user doc plan mirror skipped:', e2 && e2.message); }
     writeAuditLog('PAYMENT_VERIFIED', 'payment', id, { status: r.status }, { status:'verified', plan: r.plan, proUntil: proUntil.toISOString() });
-    toast('✅ Verified — user is now Pro until ' + proUntil.toLocaleDateString('en-GB'));
-    loadAdminPayments(true);
-    if (typeof loadAdminUsers === 'function') { try { ADMIN_USERS_CACHE = null; } catch(e3) {} }
-  } catch (e) { console.error(e); toast('Verify failed (see console / check rules)'); }
+    if (!opts.silent) {
+      toast('✅ Verified — user is now Pro until ' + proUntil.toLocaleDateString('en-GB'));
+      loadAdminPayments(true);
+      if (typeof loadAdminUsers === 'function') { try { ADMIN_USERS_CACHE = null; } catch(e3) {} }
+    }
+  } catch (e) { console.error(e); if (opts.throwOnFail) throw e; toast('Verify failed (see console / check rules)'); }
 }
 
-async function adminPayReject(id) {
-  var r = _payFind(id); if (!r) return;
-  var reason = prompt('Reason shown to the user (e.g. "TrxID not found in our account"):', 'We could not find this transaction.');
+async function adminPayReject(id, opts) {
+  opts = opts || {};
+  var r = _payFind(id); if (!r) { if (opts.throwOnFail) throw new Error('payment not found'); return; }
+  var reason = opts.silent ? opts.reason : prompt('Reason shown to the user (e.g. "TrxID not found in our account"):', 'We could not find this transaction.');
   if (reason === null) return;
   reason = String(reason).trim().slice(0, 200);
   var db = window._db;
@@ -16389,9 +16520,8 @@ async function adminPayReject(id) {
     var cpH = await cpPrepareUndo(r); if (cpH) cpH(batch); /*cp-hook*/
     await batch.commit();
     writeAuditLog('PAYMENT_REJECTED', 'payment', id, { status: r.status }, { status:'rejected', reason: reason });
-    toast('Payment rejected');
-    loadAdminPayments(true);
-  } catch (e) { console.error(e); toast('Reject failed (see console / check rules)'); }
+    if (!opts.silent) { toast('Payment rejected'); loadAdminPayments(true); }
+  } catch (e) { console.error(e); if (opts.throwOnFail) throw e; toast('Reject failed (see console / check rules)'); }
 }
 
 async function adminPayRevoke(id) {
@@ -16472,8 +16602,9 @@ function renderAdminIngredients() {
   var q = ((document.getElementById('aing-search')||{}).value || '').trim().toLowerCase();
   var list = q ? ADMIN_ING_CACHE.filter(function(i){ return i.name.toLowerCase().indexOf(q) >= 0; }) : ADMIN_ING_CACHE;
   var t = document.getElementById('adminIngTitle'); if (t) t.textContent = 'Ingredients (' + ADMIN_ING_CACHE.length + ')';
+  ADM_VIS.ing = list.map(function(i){ return i.id; }); admPrune('ing', ADMIN_ING_CACHE.map(function(i){ return i.id; }));
   if (!list.length) { body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:8px 0">' + (ADMIN_ING_CACHE.length ? 'No match.' : 'Main library is empty. Add ingredients above, or use IMPORT MY LIBRARY to bring in your existing ones.') + '</div>'; return; }
-  body.innerHTML = list.map(function(i){
+  body.innerHTML = admBarHTML('ing') + list.map(function(i){
     var idq = "'" + i.id + "'";
     if (ADMIN_ING_EDIT === i.id) {
       var f = function(k, ph, w){ return '<input class="admin-inp" id="aing-e-'+k+'" type="number" step="0.1" min="0" value="'+i[k]+'" placeholder="'+ph+'" style="flex:1;min-width:'+(w||80)+'px"/>'; };
@@ -16485,9 +16616,10 @@ function renderAdminIngredients() {
         + '<div style="display:flex;gap:8px"><button class="admin-exit-btn" onclick="adminIngSaveEdit('+idq+')">[ SAVE ]</button><button class="admin-exit-btn" onclick="adminIngEdit(null)">[ CANCEL ]</button></div>'
         + '</div>';
     }
-    return '<div class="admin-content-list-item"><span><b>'+_esc(i.name)+'</b> <span style="color:var(--t2);font-size:11px">per '+i.baseWeight+_esc(i.unit)+' · '+i.cal+' cal · P:'+i.pro+' C:'+i.carb+' F:'+i.fat+' Fib:'+i.fiber+'</span></span>'
-      + '<span style="display:flex;gap:6px"><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminIngEdit('+idq+')">✎</button><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminIngDelete('+idq+')">✕</button></span></div>';
+    return '<div class="admin-content-list-item" data-adm-row><span><span class="adm-cbw">'+admCb('ing', i.id)+'</span><b>'+_esc(i.name)+'</b> <span style="color:var(--t2);font-size:11px">per '+i.baseWeight+_esc(i.unit)+' · '+i.cal+' cal · P:'+i.pro+' C:'+i.carb+' F:'+i.fat+' Fib:'+i.fiber+'</span></span>'
+      + '<span style="display:flex;gap:6px"><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminIngEdit('+idq+')">✎</button><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminIngDelete('+idq+')" title="Move to Trash">🗑</button></span></div>';
   }).join('');
+  admSync('ing');
 }
 
 function adminIngEdit(id) { ADMIN_ING_EDIT = id; renderAdminIngredients(); }
@@ -16531,14 +16663,7 @@ async function adminIngSaveEdit(id) {
   else { ADMIN_ING_CACHE[idx] = before; renderAdminIngredients(); }
 }
 
-async function adminIngDelete(id) {
-  var idx = ADMIN_ING_CACHE.findIndex(function(i){ return i.id === id; }); if (idx < 0) return;
-  var item = ADMIN_ING_CACHE[idx];
-  if (!confirm('Remove "' + item.name + '" from the main library? It disappears for all users (their personal items are untouched).')) return;
-  ADMIN_ING_CACHE.splice(idx, 1);
-  if (await adminIngPersist('INGREDIENT_DELETED', id, item, null)) toast('Removed');
-  else { ADMIN_ING_CACHE.splice(idx, 0, item); renderAdminIngredients(); }
-}
+async function adminIngDelete(id) { await admLibTrash('ing', [id]); }
 
 // Copies the admin's own personal ingredients into the main library (skips names already present),
 // so the pre-existing library becomes the main library without losing anything.
@@ -16604,11 +16729,13 @@ function renderAdminWorkouts() {
   var q = ((document.getElementById('awk-search') || {}).value || '').trim().toLowerCase();
   var list = q ? ADMIN_WK_CACHE.filter(function(i){ return i.n.toLowerCase().indexOf(q) >= 0; }) : ADMIN_WK_CACHE;
   var t = document.getElementById('adminWkTitle'); if (t) t.textContent = 'Shared templates (' + ADMIN_WK_CACHE.length + ')';
+  ADM_VIS.wk = list.map(function(i){ return i.id; }); admPrune('wk', ADMIN_WK_CACHE.map(function(i){ return i.id; }));
   if (!list.length) { body.innerHTML = '<div style="font-size:11px;color:var(--t2);padding:8px 0">' + (ADMIN_WK_CACHE.length ? 'No match.' : 'Nothing added yet. The 140 built-in templates are already available to every user; add extras here.') + '</div>'; return; }
-  body.innerHTML = list.map(function(i){
-    return '<div class="admin-content-list-item"><span><b>' + _esc(i.n) + '</b> <span style="color:var(--t2);font-size:11px">' + _esc((WK_TYPES[i.t] || {}).label || i.t) + ' · ' + _esc((i.m || []).join(', ')) + (i.d ? ' · ' + _esc(i.d.slice(0, 70)) + (i.d.length > 70 ? '…' : '') : '') + '</span></span>'
-      + '<span><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminWkDelete(\'' + _esc(i.id) + '\')">✕</button></span></div>';
+  body.innerHTML = admBarHTML('wk') + list.map(function(i){
+    return '<div class="admin-content-list-item" data-adm-row><span><span class="adm-cbw">' + admCb('wk', i.id) + '</span><b>' + _esc(i.n) + '</b> <span style="color:var(--t2);font-size:11px">' + _esc((WK_TYPES[i.t] || {}).label || i.t) + ' · ' + _esc((i.m || []).join(', ')) + (i.d ? ' · ' + _esc(i.d.slice(0, 70)) + (i.d.length > 70 ? '…' : '') : '') + '</span></span>'
+      + '<span><button class="admin-exit-btn" style="padding:4px 10px" onclick="adminWkDelete(\'' + _esc(i.id) + '\')" title="Move to Trash">🗑</button></span></div>';
   }).join('');
+  admSync('wk');
 }
 async function adminWkPersist(action, targetId, before, after) {
   try {
@@ -16643,13 +16770,7 @@ async function adminWkAdd() {
     toast('✅ "' + item.n + '" added to the shared library');
   } else { ADMIN_WK_CACHE.pop(); renderAdminWorkouts(); }
 }
-async function adminWkDelete(id) {
-  var idx = ADMIN_WK_CACHE.findIndex(function(i){ return i.id === id; }); if (idx < 0) return;
-  var item = ADMIN_WK_CACHE[idx];
-  if (!confirm('Remove "' + item.n + '" from the shared library?')) return;
-  ADMIN_WK_CACHE.splice(idx, 1);
-  if (await adminWkPersist('WORKOUT_TEMPLATE_DELETED', id, item, null)) toast('Removed'); else { ADMIN_WK_CACHE.splice(idx, 0, item); renderAdminWorkouts(); }
-}
+async function adminWkDelete(id) { await admLibTrash('wk', [id]); }
 
 // ===================== ADMIN — APP CONFIGURATION =====================
 var ADMIN_APPCONFIG_CACHE = null;
@@ -17108,23 +17229,421 @@ function renderAdminAuditLog() {
   }).join('') + '</div>';
 }
 
-async function adminDeleteUser(docId) {
-  var u = (ADMIN_USERS_CACHE||[]).find(function(x){ return x.docId === docId; });
-  if (!u) return;
-  var typed = prompt('This PERMANENTLY deletes "'+u.nameRaw+'" ('+u.email+') and all their data.\nType DELETE to confirm:');
-  if (typed !== 'DELETE') return;
-  try {
-    var db = window._db;
-    var ref = window._fsDoc(db, 'fitos_users', docId);
-    // Modular data first; if it fails nothing is deleted (otherwise the account could be resurrected on next login).
-    if (u.uid && u.uid !== '—') await dataService.deleteAll(u.uid);
-    await window._fsDeleteDoc(ref);
-    writeAuditLog('USER_DELETED', 'user', docId, {email: u.email, name: u.name}, null);
-    toast('Account deleted');
-    closeAdminUserDetail();
-    await loadAdminUsers(true);
-  } catch(e) { console.error(e); toast('Failed to delete (see console)'); }
+/*ADM-START*/
+/* ===================== ADMIN PRO — bulk actions, Trash (restore / delete forever), blocked-only access control ===================== */
+var ADM_SEL = {}, ADM_VIS = {}, ADM_ACT = {}, ADM_H = {}, ADM_TRASH_DAYS = 30, ADM_TRASH = null, ADMIN_USERS_TRASH = [], ADM_WAITING = [];
+function admEl(id) { return document.getElementById(id); }
+function admSet(t) { return ADM_SEL[t] || (ADM_SEL[t] = {}); }
+function admIds(t) { return Object.keys(admSet(t)); }
+function admCount(t) { return admIds(t).length; }
+function admNowIso() { return new Date().toISOString(); }
+function admAttr(s) { return String(s == null ? '' : s).replace(/[^A-Za-z0-9_\-:.@]/g, ''); }
+
+// ---------- selection model (works across pages / filters) ----------
+function admToggle(t, id, on) { var s = admSet(t); if (on) s[id] = 1; else delete s[id]; admSync(t); }
+function admAll(t, on) { var s = admSet(t); (ADM_VIS[t] || []).forEach(function(id){ if (on) s[id] = 1; else delete s[id]; }); admSync(t); }
+function admClear(t) { ADM_SEL[t] = {}; admSync(t); }
+function admPrune(t, ids) { var s = admSet(t), keep = {}; (ids || []).forEach(function(i){ keep[i] = 1; }); Object.keys(s).forEach(function(k){ if (!keep[k]) delete s[k]; }); }
+function admBarHTML(t) {
+  var n = admCount(t), vis = (ADM_VIS[t] || []).length, acts = ADM_ACT[t] || [];
+  var h = '<label class="adm-master"><input type="checkbox" id="admAll-' + t + '" onchange="admAll(\'' + t + '\',this.checked)" aria-label="Select all"/><span>Select all' + (vis ? ' (' + vis + ')' : '') + '</span></label>';
+  if (n) h += '<span class="adm-cnt"><b>' + n + '</b> selected</span><button type="button" class="adm-lnk" onclick="admClear(\'' + t + '\')">Clear</button><span class="adm-acts">'
+    + acts.map(function(a){ return '<button type="button" class="adm-btn ' + (a.c || '') + '" onclick="admDo(\'' + t + '\',\'' + a.k + '\')">' + a.l + '</button>'; }).join('') + '</span>';
+  else h += '<span class="adm-hint">Tick rows to run actions on many at once</span>';
+  return '<div class="adm-bar' + (n ? ' on' : '') + '" id="admBar-' + t + '">' + h + '</div>';
 }
+function admSync(t) {
+  var bar = admEl('admBar-' + t); if (!bar) return;
+  var n = admCount(t), vis = ADM_VIS[t] || [], s = admSet(t), all = vis.length && vis.every(function(i){ return s[i]; });
+  bar.outerHTML = admBarHTML(t);
+  var m = admEl('admAll-' + t); if (m) { m.checked = !!all; m.indeterminate = !all && vis.some(function(i){ return s[i]; }); }
+  document.querySelectorAll('input[data-adm-t="' + t + '"]').forEach(function(cb){ var on = !!s[cb.getAttribute('data-adm-id')]; cb.checked = on; var row = cb.closest('[data-adm-row]'); if (row) row.classList.toggle('adm-sel', on); });
+}
+function admCb(t, id) { return '<input type="checkbox" class="adm-cb" data-adm-t="' + t + '" data-adm-id="' + admAttr(id) + '" ' + (admSet(t)[id] ? 'checked ' : '') + 'onchange="admToggle(\'' + t + '\',this.getAttribute(\'data-adm-id\'),this.checked)" onclick="event.stopPropagation()" aria-label="Select"/>'; }
+function admDo(t, k) { var f = ADM_H[t + '.' + k]; if (f) f(admIds(t)); }
+
+// ---------- dialogs & progress ----------
+function admConfirm(o) {
+  return new Promise(function(res){
+    var m = document.createElement('div'); m.className = 'adm-modal';
+    m.innerHTML = '<div class="adm-sheet" role="alertdialog" aria-modal="true"><div class="adm-sh-t' + (o.danger ? ' danger' : '') + '">' + (o.title || 'Confirm') + '</div><div class="adm-sh-b">' + (o.body || '') + '</div>'
+      + (o.input ? '<input class="admin-inp adm-in" id="admIn" type="text" maxlength="200" placeholder="' + _esc(o.input) + '" value="' + _esc(o.value || '') + '"/>' : '')
+      + (o.typed ? '<div class="adm-sh-b" style="margin-top:8px">Type <b>' + o.typed + '</b> to confirm:</div><input class="admin-inp adm-in" id="admTyped" type="text" autocomplete="off"/>' : '')
+      + '<div class="adm-sh-f"><button type="button" class="adm-btn" id="admNo">Cancel</button><button type="button" class="adm-btn ' + (o.danger ? 'danger' : 'ok') + '" id="admYes"' + (o.typed ? ' disabled' : '') + '>' + (o.ok || 'Confirm') + '</button></div></div>';
+    (admEl('adminShellOverlay') || document.body).appendChild(m);
+    var yes = m.querySelector('#admYes'), typed = m.querySelector('#admTyped'), inp = m.querySelector('#admIn');
+    function done(v) { document.removeEventListener('keydown', key, true); m.remove(); res(v); }
+    function key(e) { if (e.key === 'Escape') { e.stopPropagation(); done(false); } else if (e.key === 'Enter' && !yes.disabled && e.target.tagName === 'INPUT') done(o.input ? (inp.value || '') : true); }
+    document.addEventListener('keydown', key, true);
+    m.addEventListener('mousedown', function(e){ if (e.target === m) done(false); });
+    m.querySelector('#admNo').onclick = function(){ done(false); };
+    yes.onclick = function(){ done(o.input ? (inp.value || '') : true); };
+    if (typed) typed.addEventListener('input', function(){ yes.disabled = typed.value.trim() !== o.typed; });
+    setTimeout(function(){ (typed || inp || yes).focus(); }, 30);
+  });
+}
+function admProg(label, done, total) {
+  var b = admEl('admProg');
+  if (!label) { if (b) b.remove(); return; }
+  if (!b) { b = document.createElement('div'); b.id = 'admProg'; b.className = 'adm-prog'; (admEl('adminShellOverlay') || document.body).appendChild(b); }
+  b.innerHTML = '<span class="spin"></span> ' + _esc(label) + ' <b>' + done + '/' + total + '</b><i style="width:' + (total ? Math.round(done / total * 100) : 0) + '%"></i>';
+}
+async function admRun(label, ids, fn, conc) {
+  var ok = 0, bad = 0, errs = [], i = 0, total = ids.length; admProg(label, 0, total);
+  async function worker() { while (i < ids.length) { var id = ids[i++]; try { await fn(id); ok++; } catch (e) { bad++; errs.push(id); console.error(label, id, e); } admProg(label, ok + bad, total); } }
+  var ws = []; for (var k = 0; k < (conc || 3); k++) ws.push(worker());
+  await Promise.all(ws); admProg(null);
+  toast((bad ? '⚠ ' : '✅ ') + label + ': ' + ok + ' done' + (bad ? ', ' + bad + ' failed (see console)' : ''));
+  return { ok: ok, bad: bad, errs: errs };
+}
+async function admFlagBatch(coll, ids, patch) {   // many merges in as few round-trips as possible
+  var db = window._db, n = 0;
+  for (var i = 0; i < ids.length; i += 400) {
+    var b = window._fsWriteBatch(db);
+    ids.slice(i, i + 400).forEach(function(id){ b.set(window._fsDoc(db, coll, id), patch, { merge: true }); n++; });
+    await b.commit();
+  }
+  return n;
+}
+function admLog(action, type, ids, extra) { try { writeAuditLog(action, type, ids.length === 1 ? String(ids[0]) : 'bulk(' + ids.length + ')', Object.assign({ count: ids.length, ids: ids.slice(0, 25) }, extra || {}), null); } catch (e) {} }
+function admCsv(name, header, rows) {
+  var q = function(v){ v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  var txt = '﻿' + [header].concat(rows).map(function(r){ return r.map(q).join(','); }).join('\r\n');
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = name + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function admStatusTxt(s) { return s === 'suspended' ? 'BLOCKED' : String(s || '').toUpperCase(); }
+function admDaysLeft(iso) { var t = iso ? new Date(iso).getTime() : 0; return t ? Math.max(0, Math.ceil((t + ADM_TRASH_DAYS * 86400000 - Date.now()) / 86400000)) : ADM_TRASH_DAYS; }
+
+// ---------- account records created before the person ever signs in ----------
+function admDocIdOf(email) { return googleDocId(String(email || '').trim().toLowerCase()); }
+async function admProvision(r, plan) {   // best-effort; never overwrites an existing account
+  var db = window._db, mail = String(r.email || '').trim().toLowerCase(); if (!mail) return false;
+  var ref = window._fsDoc(db, 'fitos_users', admDocIdOf(mail));
+  if ((await window._fsGetDoc(ref)).exists()) return false;
+  var d = { userId: mail, authEmail: mail, authUid: r.uid || '', createdAt: admNowIso(), source: 'payment', displayName: String(r.name || '').slice(0, 60) };
+  if (plan) d.plan = plan;
+  if (!d.authUid) delete d.authUid;
+  await window._fsSetDoc(ref, d);
+  return true;
+}
+
+// ---------- USERS ----------
+ADM_ACT.users = [
+  { k: 'block', l: '⛔ Block', c: 'warn' }, { k: 'unblock', l: '✓ Unblock' }, { k: 'csv', l: '⭳ CSV' }, { k: 'trash', l: '🗑 Move to Trash', c: 'danger' }
+];
+function admUserById(id) { return (ADMIN_USERS_CACHE || []).find(function(u){ return u.docId === id; }); }
+ADM_H['users.block'] = async function(ids) {
+  var ok = await admConfirm({ title: '⛔ Block ' + ids.length + ' user' + (ids.length > 1 ? 's' : ''), body: 'Blocked users cannot sign in, and cannot buy a plan. Anyone you do <b>not</b> block (including deleted or rejected users) can always sign in and purchase again.', ok: 'Block', danger: true });
+  if (!ok) return;
+  await admFlagBatch('fitos_users', ids, { status: 'suspended', statusChangedAt: admNowIso() }); admLog('USERS_BLOCKED', 'user', ids);
+  toast('⛔ Blocked ' + ids.length); admClear('users'); await loadAdminUsers(true);
+};
+ADM_H['users.unblock'] = async function(ids) {
+  await admFlagBatch('fitos_users', ids, { status: 'active', statusChangedAt: admNowIso() }); admLog('USERS_UNBLOCKED', 'user', ids);
+  toast('✓ Unblocked ' + ids.length); admClear('users'); await loadAdminUsers(true);
+};
+ADM_H['users.csv'] = function(ids) {
+  admCsv('users', ['Name', 'Email', 'Status', 'Plan', 'Created', 'Last active', 'Streak', 'Days with data'],
+    ids.map(admUserById).filter(Boolean).map(function(u){ return [u.nameRaw, u._raw.authEmail || u._raw.userId || '', admStatusTxt(u.status), u.plan, u.createdAt || '', u.lastSaved || u.lastLogin || '', u.streak, u.dailyDataDays]; }));
+};
+ADM_H['users.trash'] = async function(ids) {
+  var ok = await admConfirm({ title: '🗑 Move ' + ids.length + ' user' + (ids.length > 1 ? 's' : '') + ' to Trash', body: 'They disappear from this list but nothing is erased — restore them any time from <b>Trash</b>. A trashed person can still sign in and buy again (they come back automatically); only <b>Block</b> stops someone.', ok: 'Move to Trash', danger: true });
+  if (!ok) return;
+  await admFlagBatch('fitos_users', ids, { trashed: true, trashedAt: admNowIso(), trashedBy: _adminEmail() }); admLog('USERS_TRASHED', 'user', ids);
+  toast('🗑 ' + ids.length + ' moved to Trash'); admClear('users'); await loadAdminUsers(true);
+};
+async function adminDeleteUser(docId) {   // single user → Trash (the old permanent delete now lives in Trash → Delete forever)
+  var u = admUserById(docId); if (!u) return;
+  await ADM_H['users.trash']([docId]); closeAdminUserDetail();
+}
+// Block an e-mail address that has no account yet (they will be refused the moment they try to sign in or buy)
+async function admBlockEmail() {
+  var v = await admConfirm({ title: '⛔ Block an e-mail address', body: 'Enter the Google e-mail of the person to block. They will not be able to sign in or purchase.', input: 'name@gmail.com', ok: 'Block e-mail', danger: true });
+  if (v === false || v === true) return;
+  var mail = String(v || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { toast('Enter a valid e-mail'); return; }
+  try {
+    var ref = window._fsDoc(window._db, 'fitos_users', admDocIdOf(mail)), ex = await window._fsGetDoc(ref);
+    if (ex.exists()) await window._fsSetDoc(ref, { status: 'suspended', statusChangedAt: admNowIso(), trashed: false }, { merge: true });
+    else await window._fsSetDoc(ref, { userId: mail, authEmail: mail, createdAt: admNowIso(), source: 'admin-block', status: 'suspended', statusChangedAt: admNowIso() });
+    admLog('USER_BLOCKED', 'user', [admDocIdOf(mail)], { email: mail }); toast('⛔ ' + mail + ' is blocked'); loadAdminUsers(true);
+  } catch (e) { console.error(e); toast('Failed to block (see console / publish the latest rules)'); }
+}
+// Customers who paid but have no account record (e.g. sign-in failed) — show and fix
+function admComputeWaiting() {
+  var have = {}; (ADMIN_USERS_CACHE || []).concat(ADMIN_USERS_TRASH || []).forEach(function(u){ have[u.docId] = 1; });
+  var seen = {}, out = [];
+  (ADMIN_PAY_CACHE || []).forEach(function(r){
+    if (r.status === 'rejected' || !r.email) return;
+    var id = admDocIdOf(r.email); if (have[id] || seen[id]) return; seen[id] = 1; out.push(r);
+  });
+  ADM_WAITING = out;
+}
+function admWaitingHTML() {
+  if (!ADM_WAITING.length) return '';
+  return '<div class="admin-card adm-wait"><div class="adm-wait-h"><b>💳 ' + ADM_WAITING.length + ' paying customer' + (ADM_WAITING.length > 1 ? 's have' : ' has') + ' no account record yet</b><button type="button" class="adm-btn ok" onclick="admCreateWaiting()">＋ Create all accounts</button></div>'
+    + '<div class="adm-wait-l">' + ADM_WAITING.slice(0, 8).map(function(r){ return '<span>' + _esc(r.name || '') + ' · ' + _esc(r.email) + ' · ' + _esc(r.status) + '</span>'; }).join('') + (ADM_WAITING.length > 8 ? '<span>+' + (ADM_WAITING.length - 8) + ' more</span>' : '') + '</div>'
+    + '<div class="adm-sub">They can still sign in normally — the account is created automatically. Press Create to see them in Users right now.</div></div>';
+}
+async function admCreateWaiting() {
+  var rows = ADM_WAITING.slice(); if (!rows.length) return;
+  var r = await admRun('Creating accounts', rows.map(function(x){ return x.id; }), async function(id){ var row = rows.find(function(x){ return x.id === id; }); await admProvision(row, row.status === 'verified' ? 'pro' : ''); });
+  admLog('USERS_PROVISIONED', 'user', rows.map(function(x){ return admDocIdOf(x.email); })); await loadAdminUsers(true);
+}
+async function admLoadWaitingData() {
+  try {
+    if (!ADMIN_PAY_CACHE) {
+      var snap = await window._fsGetDocs(window._fsCollection(window._db, 'paymentRequests')), rows = [];
+      snap.forEach(function(d){ rows.push(Object.assign({ id: d.id }, d.data())); });
+      rows.sort(function(a, b){ return _payMs(b.createdAt) - _payMs(a.createdAt); }); ADMIN_PAY_CACHE = rows;
+    }
+  } catch (e) { console.warn('payments for waiting list unavailable', e && e.message); }
+  admComputeWaiting();
+}
+
+// ---------- PAYMENTS ----------
+ADM_ACT.pay = [
+  { k: 'verify', l: '✓ Verify', c: 'ok' }, { k: 'reject', l: '✕ Reject', c: 'warn' }, { k: 'csv', l: '⭳ CSV' }, { k: 'trash', l: '🗑 Move to Trash', c: 'danger' }
+];
+function admPayRows(ids) { return ids.map(function(i){ return _payFind(i); }).filter(Boolean); }
+ADM_H['pay.verify'] = async function(ids) {
+  var rows = admPayRows(ids).filter(function(r){ return r.status !== 'verified'; });
+  if (!rows.length) { toast('Nothing to verify — all selected are already verified'); return; }
+  var sum = rows.reduce(function(a, r){ return a + (Number(r.amount) || 0); }, 0);
+  var ok = await admConfirm({ title: '✓ Verify ' + rows.length + ' payment' + (rows.length > 1 ? 's' : ''), body: 'Total <b>৳' + sum.toLocaleString('en-US') + '</b>. Only continue if you saw every one of these TrxIDs with the right amount in your bKash / Nagad account. Each user gets Pro for their plan period.', ok: 'Verify all', danger: false });
+  if (!ok) return;
+  await admRun('Verifying', rows.map(function(r){ return r.id; }), function(id){ return adminPayVerify(id, { silent: true, throwOnFail: true }); }, 1);
+  admClear('pay'); await loadAdminPayments(true); ADMIN_USERS_CACHE = null;
+};
+ADM_H['pay.reject'] = async function(ids) {
+  var rows = admPayRows(ids).filter(function(r){ return r.status === 'pending'; });
+  if (!rows.length) { toast('Only pending payments can be rejected in bulk'); return; }
+  var reason = await admConfirm({ title: '✕ Reject ' + rows.length + ' pending payment' + (rows.length > 1 ? 's' : ''), body: 'This reason is shown to every one of these customers. Their provisional access ends.', input: 'Reason shown to the user', value: 'We could not find this transaction.', ok: 'Reject all', danger: true });
+  if (reason === false || reason === true) return;
+  reason = String(reason || '').trim().slice(0, 200) || 'Payment could not be verified.';
+  await admRun('Rejecting', rows.map(function(r){ return r.id; }), function(id){ return adminPayReject(id, { silent: true, reason: reason, throwOnFail: true }); }, 1);
+  admClear('pay'); await loadAdminPayments(true);
+};
+ADM_H['pay.csv'] = function(ids) {
+  admCsv('payments', ['TrxID', 'Method', 'Plan', 'Amount', 'Status', 'Name', 'Phone', 'Email', 'Coupon', 'Submitted', 'Pro until'],
+    admPayRows(ids).map(function(r){ return [r.trxId, r.method, r.plan, r.amount, r.status, r.name, r.phone, r.email, r.coupon || '', new Date(_payMs(r.createdAt) || 0).toISOString(), r.proUntil ? new Date(_payMs(r.proUntil)).toISOString() : '']; }));
+};
+ADM_H['pay.trash'] = async function(ids) {
+  var ok = await admConfirm({ title: '🗑 Move ' + ids.length + ' payment record' + (ids.length > 1 ? 's' : '') + ' to Trash', body: 'Only hides the records — verified customers keep their Pro access. Restore any time from <b>Trash</b>.', ok: 'Move to Trash', danger: true });
+  if (!ok) return;
+  await admFlagBatch('paymentRequests', ids, { trashed: true, trashedAt: admNowIso(), trashedBy: _adminEmail() }); admLog('PAYMENTS_TRASHED', 'payment', ids);
+  toast('🗑 ' + ids.length + ' moved to Trash'); admClear('pay'); await loadAdminPayments(true);
+};
+async function adminPayTrash(id) { await ADM_H['pay.trash']([id]); }
+
+// ---------- COUPONS ----------
+ADM_ACT.cp = [
+  { k: 'pause', l: '⏸ Pause', c: 'warn' }, { k: 'resume', l: '▶ Resume' }, { k: 'csv', l: '⭳ CSV' }, { k: 'trash', l: '🗑 Move to Trash', c: 'danger' }
+];
+async function admCpSetActive(codes, on) {
+  var db = window._db;
+  for (var i = 0; i < codes.length; i += 200) {
+    var b = window._fsWriteBatch(db);
+    codes.slice(i, i + 200).forEach(function(c){ b.set(window._fsDoc(db, 'coupons', c), { active: on, updatedAt: Date.now() }, { merge: true }); b.set(window._fsDoc(db, 'couponPub', c), { active: on, updatedAt: Date.now() }, { merge: true }); });
+    await b.commit();
+  }
+}
+ADM_H['cp.pause'] = async function(ids) { await admCpSetActive(ids, false); admLog('COUPONS_PAUSED', 'coupon', ids); toast('⏸ Paused ' + ids.length); admClear('cp'); loadAdminCoupons(true); };
+ADM_H['cp.resume'] = async function(ids) { await admCpSetActive(ids, true); admLog('COUPONS_RESUMED', 'coupon', ids); toast('▶ Resumed ' + ids.length); admClear('cp'); loadAdminCoupons(true); };
+ADM_H['cp.csv'] = function(ids) {
+  admCsv('coupons', ['Code', 'Owner', 'Owner e-mail', 'Discount', 'Commission', 'Verified uses', 'Sales', 'Commission owed', 'Status'],
+    ids.map(function(c){ return cpFind(c); }).filter(Boolean).map(function(c){ var s = cpStats(c); return [c.code, c.ownerName, c.ownerEmail, cpDiscText(c), cpCommText(c), s.uses, s.revenue, cpOwed(c), cpStatus(c)]; }));
+};
+ADM_H['cp.trash'] = async function(ids) {
+  var ok = await admConfirm({ title: '🗑 Move ' + ids.length + ' coupon' + (ids.length > 1 ? 's' : '') + ' to Trash', body: 'Customers can no longer use these codes. Uses, sales and payout history are kept — restore from <b>Trash</b> (restored coupons come back <i>paused</i>).', ok: 'Move to Trash', danger: true });
+  if (!ok) return;
+  var db = window._db;
+  for (var i = 0; i < ids.length; i += 150) {
+    var b = window._fsWriteBatch(db), t = admNowIso();
+    ids.slice(i, i + 150).forEach(function(c){ b.set(window._fsDoc(db, 'coupons', c), { trashed: true, trashedAt: t, trashedBy: _adminEmail(), active: false, updatedAt: Date.now() }, { merge: true }); b.set(window._fsDoc(db, 'couponPub', c), { active: false, updatedAt: Date.now() }, { merge: true }); });
+    await b.commit();
+  }
+  admLog('COUPONS_TRASHED', 'coupon', ids); toast('🗑 ' + ids.length + ' moved to Trash'); admClear('cp'); loadAdminCoupons(true);
+};
+
+// ---------- ARRAY LIBRARIES (ingredients, workouts) → Trash document ----------
+async function admTrashDoc(force) {
+  if (ADM_TRASH && !force) return ADM_TRASH;
+  var s = await window._fsGetDoc(window._fsDoc(window._db, 'admin', 'trash')), d = s.exists() ? s.data() : {};
+  ADM_TRASH = { ingredients: Array.isArray(d.ingredients) ? d.ingredients : [], workouts: Array.isArray(d.workouts) ? d.workouts : [], content: Array.isArray(d.content) ? d.content : [] };
+  return ADM_TRASH;
+}
+async function admTrashSave() { await window._fsSetDoc(window._fsDoc(window._db, 'admin', 'trash'), { ingredients: ADM_TRASH.ingredients, workouts: ADM_TRASH.workouts, content: ADM_TRASH.content, updatedAt: admNowIso() }); }
+ADM_ACT.ing = [{ k: 'csv', l: '⭳ CSV' }, { k: 'trash', l: '🗑 Move to Trash', c: 'danger' }];
+ADM_ACT.wk = [{ k: 'trash', l: '🗑 Move to Trash', c: 'danger' }];
+ADM_H['ing.csv'] = function(ids) {
+  var set = {}; ids.forEach(function(i){ set[i] = 1; });
+  admCsv('ingredients', ['Name', 'Per', 'Unit', 'Calories', 'Protein', 'Carbs', 'Fat', 'Fiber'], (ADMIN_ING_CACHE || []).filter(function(i){ return set[i.id]; }).map(function(i){ return [i.name, i.baseWeight, i.unit, i.cal, i.pro, i.carb, i.fat, i.fiber]; }));
+};
+async function admLibTrash(kind, ids, noConfirm) {
+  var isIng = kind === 'ing', cache = isIng ? ADMIN_ING_CACHE : ADMIN_WK_CACHE; if (!cache) return;
+  var set = {}; ids.forEach(function(i){ set[i] = 1; });
+  var moved = cache.filter(function(i){ return set[i.id]; }); if (!moved.length) return;
+  if (!noConfirm) {
+    var ok = await admConfirm({ title: '🗑 Move ' + moved.length + ' item' + (moved.length > 1 ? 's' : '') + ' to Trash', body: 'They disappear for every user straight away. Restore any time from <b>Trash</b>. (Users’ personal items are untouched.)', ok: 'Move to Trash', danger: true });
+    if (!ok) return;
+  }
+  try {
+    var t = await admTrashDoc(true), at = admNowIso(), by = _adminEmail();
+    var tag = moved.map(function(i){ return Object.assign({}, i, { _at: at, _by: by }); });
+    t[isIng ? 'ingredients' : 'workouts'] = t[isIng ? 'ingredients' : 'workouts'].concat(tag).slice(-600);
+    await admTrashSave();                                       // 1) safe copy first
+    var rest = cache.filter(function(i){ return !set[i.id]; });
+    if (isIng) { ADMIN_ING_CACHE = rest; if (!(await adminIngPersist('INGREDIENTS_TRASHED', 'bulk(' + moved.length + ')', { count: moved.length }, null))) { ADMIN_ING_CACHE = cache; renderAdminIngredients(); return; } }
+    else { ADMIN_WK_CACHE = rest; if (!(await adminWkPersist('WORKOUTS_TRASHED', 'bulk(' + moved.length + ')', { count: moved.length }, null))) { ADMIN_WK_CACHE = cache; renderAdminWorkouts(); return; } }
+    toast('🗑 ' + moved.length + ' moved to Trash'); admClear(kind);
+  } catch (e) { console.error(e); toast('Failed (see console / check rules for admin/trash)'); }
+}
+ADM_H['ing.trash'] = function(ids) { return admLibTrash('ing', ids); };
+ADM_H['wk.trash'] = function(ids) { return admLibTrash('wk', ids); };
+
+// ---------- TRASH SECTION ----------
+var ADM_TR_TYPE = 'all', ADM_TR_ITEMS = [];
+var ADM_TR_META = { user: ['◔', 'User'], pay: ['৳', 'Payment'], cp: ['✦', 'Coupon'], ing: ['◍', 'Ingredient'], wk: ['⊞', 'Workout'], ct: ['▤', 'Content item'] };
+ADM_ACT.trash = [{ k: 'restore', l: '↩ Restore', c: 'ok' }, { k: 'purge', l: '✕ Delete forever', c: 'danger' }];
+async function loadAdminTrash(force) {
+  var body = admEl('adminTrashBody'); if (!body) return;
+  body.innerHTML = '<div class="admin-card" style="font-size:12px;color:var(--t2)">Loading Trash…</div>';
+  var items = [], notes = [];
+  try { if (!ADMIN_USERS_CACHE || force) await loadAdminUsers(true); } catch (e) { notes.push('users'); }
+  (ADMIN_USERS_TRASH || []).forEach(function(u){ items.push({ key: 'user:' + u.docId, type: 'user', id: u.docId, label: u.nameRaw, sub: (u._raw.authEmail || u._raw.userId || '') + ' · ' + u.plan.toUpperCase(), at: u._raw.trashedAt }); });
+  try {
+    if (!ADMIN_PAY_CACHE || force) { var ps = await window._fsGetDocs(window._fsCollection(window._db, 'paymentRequests')), rows = []; ps.forEach(function(d){ rows.push(Object.assign({ id: d.id }, d.data())); }); rows.sort(function(a, b){ return _payMs(b.createdAt) - _payMs(a.createdAt); }); ADMIN_PAY_CACHE = rows; }
+    (ADMIN_PAY_CACHE || []).filter(function(r){ return r.trashed; }).forEach(function(r){ items.push({ key: 'pay:' + r.id, type: 'pay', id: r.id, label: '৳' + (Number(r.amount) || 0) + ' · ' + String(r.method || '').toUpperCase() + ' ' + r.trxId, sub: (r.name || '') + ' · ' + (r.email || '') + ' · ' + r.status, at: r.trashedAt }); });
+  } catch (e) { notes.push('payments'); }
+  try {
+    if (!CP.rows || force) { CP.rows = null; await loadAdminCoupons(true); }
+    (CP.rows || []).filter(function(c){ return c.trashed; }).forEach(function(c){ items.push({ key: 'cp:' + c.code, type: 'cp', id: c.code, label: c.code + ' · ' + cpDiscText(c), sub: (c.ownerName || '') + ' · ' + (c.ownerEmail || '') + ' · ' + cpStats(c).uses + ' uses', at: c.trashedAt }); });
+  } catch (e) { notes.push('coupons'); }
+  try { var t = await admTrashDoc(force);
+    t.ingredients.forEach(function(i){ items.push({ key: 'ing:' + i.id, type: 'ing', id: i.id, label: i.name, sub: 'per ' + i.baseWeight + i.unit + ' · ' + i.cal + ' cal', at: i._at, raw: i }); });
+    t.workouts.forEach(function(i){ items.push({ key: 'wk:' + i.id, type: 'wk', id: i.id, label: i.n, sub: ((WK_TYPES[i.t] || {}).label || i.t) + ' · ' + (i.m || []).join(', '), at: i._at, raw: i }); });
+    t.content.forEach(function(i){ items.push({ key: 'ct:' + i.id, type: 'ct', id: i.id, label: i._label || i.id, sub: i._tab || '', at: i._at, raw: i }); });
+  } catch (e) { notes.push('libraries'); }
+  items.sort(function(a, b){ return new Date(b.at || 0) - new Date(a.at || 0); });
+  ADM_TR_ITEMS = items;
+  admTrashTagUpdate();
+  renderAdminTrash(notes);
+}
+function renderAdminTrash(notes) {
+  var body = admEl('adminTrashBody'); if (!body) return;
+  var all = ADM_TR_ITEMS, cnt = { all: all.length }; Object.keys(ADM_TR_META).forEach(function(k){ cnt[k] = all.filter(function(i){ return i.type === k; }).length; });
+  var q = ((admEl('adminTrashSearch') || {}).value || '').trim().toLowerCase();
+  var list = all.filter(function(i){ return (ADM_TR_TYPE === 'all' || i.type === ADM_TR_TYPE) && (!q || (i.label + ' ' + i.sub).toLowerCase().indexOf(q) >= 0); });
+  ADM_VIS.trash = list.map(function(i){ return i.key; }); admPrune('trash', all.map(function(i){ return i.key; }));
+  var tabs = '<div class="adm-tabs">' + [['all', 'All']].concat(Object.keys(ADM_TR_META).map(function(k){ return [k, ADM_TR_META[k][1] + 's']; })).map(function(t){ return '<button type="button" class="adm-tab' + (ADM_TR_TYPE === t[0] ? ' on' : '') + '" onclick="admTrashType(\'' + t[0] + '\')">' + t[1] + ' <i>' + cnt[t[0]] + '</i></button>'; }).join('') + '</div>';
+  var old = all.filter(function(i){ return admDaysLeft(i.at) === 0; }).length;
+  var tools = '<div class="adm-tr-tools"><button type="button" class="adm-btn danger" onclick="admEmptyTrash()">🗑 Empty ' + (ADM_TR_TYPE === 'all' ? 'all trash' : ADM_TR_META[ADM_TR_TYPE][1].toLowerCase() + ' trash') + '</button>' + (old ? '<button type="button" class="adm-btn warn" onclick="admPurgeOld()">Delete ' + old + ' older than ' + ADM_TRASH_DAYS + ' days</button>' : '') + '</div>';
+  var h = (notes && notes.length ? '<div class="admin-card" style="font-size:12px;color:var(--o2)">Could not load: ' + notes.join(', ') + '. Check that the latest Firestore rules are published.</div>' : '') + tabs + tools + admBarHTML('trash');
+  if (!list.length) h += '<div class="admin-card adm-empty"><div style="font-size:34px">🗑</div><b>' + (all.length ? 'Nothing matches' : 'Trash is empty') + '</b><p>Deleted users, payments, coupons and library items wait here until you restore them or delete them forever — nothing is removed by accident.</p></div>';
+  else h += '<div class="adm-list">' + list.map(function(i){
+    var m = ADM_TR_META[i.type], left = admDaysLeft(i.at);
+    return '<div class="adm-row" data-adm-row>' + admCb('trash', i.key) + '<span class="adm-ic">' + m[0] + '</span><span class="adm-main"><b>' + _esc(i.label) + '</b><small>' + _esc(m[1]) + ' · ' + _esc(i.sub) + '</small></span>'
+      + '<span class="adm-when">' + _adminTimeAgo(i.at) + '<small>' + (left ? left + 'd to review' : 'older than ' + ADM_TRASH_DAYS + 'd') + '</small></span>'
+      + '<span class="adm-rowact"><button type="button" class="adm-btn ok" onclick="admTrashOne(\'restore\',\'' + admAttr(i.key) + '\')">↩ Restore</button><button type="button" class="adm-btn danger" onclick="admTrashOne(\'purge\',\'' + admAttr(i.key) + '\')">✕ Delete</button></span></div>';
+  }).join('') + '</div>';
+  body.innerHTML = h; admSync('trash');
+}
+function admTrashType(t) { ADM_TR_TYPE = t; renderAdminTrash(); }
+function admTrashItem(key) { return ADM_TR_ITEMS.find(function(i){ return i.key === key; }); }
+async function admRestoreItem(it) {
+  var db = window._db;
+  if (it.type === 'user') await window._fsSetDoc(window._fsDoc(db, 'fitos_users', it.id), { trashed: false }, { merge: true });
+  else if (it.type === 'pay') await window._fsSetDoc(window._fsDoc(db, 'paymentRequests', it.id), { trashed: false }, { merge: true });
+  else if (it.type === 'cp') await window._fsSetDoc(window._fsDoc(db, 'coupons', it.id), { trashed: false }, { merge: true });   // stays paused — resume it from Coupons
+  else if (it.type === 'ing' || it.type === 'wk') {
+    var isIng = it.type === 'ing', t = await admTrashDoc(), key = isIng ? 'ingredients' : 'workouts', raw = Object.assign({}, it.raw); delete raw._at; delete raw._by;
+    if (isIng) { if (!ADMIN_ING_CACHE) await loadAdminIngredients(true); if (ADMIN_ING_CACHE.some(function(x){ return x.name.toLowerCase() === raw.name.toLowerCase(); })) raw.name += ' (restored)'; ADMIN_ING_CACHE.push(_ingClean(raw)); if (!(await adminIngPersist('INGREDIENT_RESTORED', raw.id, null, raw))) { ADMIN_ING_CACHE.pop(); throw new Error('save failed'); } }
+    else { if (!ADMIN_WK_CACHE) await loadAdminWorkouts(true); ADMIN_WK_CACHE.push(raw); if (!(await adminWkPersist('WORKOUT_RESTORED', raw.id, null, raw))) { ADMIN_WK_CACHE.pop(); throw new Error('save failed'); } }
+    t[key] = t[key].filter(function(x){ return x.id !== it.id; });
+  } else if (it.type === 'ct') {
+    var tc = await admTrashDoc(), rawc = Object.assign({}, it.raw), tab = rawc._tab_key || 'exercises'; ['_at', '_by', '_tab', '_tab_key', '_label'].forEach(function(k){ delete rawc[k]; });
+    if (!ADMIN_CONTENT_CACHE) await loadAdminContent(true);
+    var keep = ADMIN_CONTENT_TAB; ADMIN_CONTENT_TAB = tab;
+    (ADMIN_CONTENT_CACHE[tab] = ADMIN_CONTENT_CACHE[tab] || []).push(rawc);
+    try { await adminPersistContent('CONTENT_RESTORED', rawc.id, null, rawc, true); } finally { ADMIN_CONTENT_TAB = keep; }
+    tc.content = tc.content.filter(function(x){ return x.id !== it.id; });
+  }
+}
+async function admPurgeItem(it) {
+  var db = window._db;
+  if (it.type === 'user') {
+    var u = (ADMIN_USERS_TRASH || []).find(function(x){ return x.docId === it.id; }), uid = u && u._raw && u._raw.authUid;
+    if (uid) await dataService.deleteAll(uid);   // all of the person’s data first; if it fails nothing is deleted
+    await window._fsDeleteDoc(window._fsDoc(db, 'fitos_users', it.id));
+  } else if (it.type === 'pay') await window._fsDeleteDoc(window._fsDoc(db, 'paymentRequests', it.id));
+  else if (it.type === 'cp') {
+    var c = cpFind(it.id), b = window._fsWriteBatch(db);
+    b.delete(window._fsDoc(db, 'coupons', it.id)); b.delete(window._fsDoc(db, 'couponPub', it.id)); if (c && c.ownerKey) b.delete(window._fsDoc(db, 'couponOwners', c.ownerKey)); await b.commit();
+  } else { var t = await admTrashDoc(), key = it.type === 'ing' ? 'ingredients' : (it.type === 'ct' ? 'content' : 'workouts'); t[key] = t[key].filter(function(x){ return x.id !== it.id; }); }
+}
+async function admTrashFinish(kind, n, hasLib) {
+  if (hasLib) { try { await admTrashSave(); } catch (e) { console.error(e); toast('Could not update the trash list'); } }
+  ADMIN_USERS_CACHE = null; await loadAdminTrash(true);
+}
+async function admTrashOne(kind, key) { var it = admTrashItem(key); if (it) await admTrashMany(kind, [it]); }
+async function admTrashMany(kind, items) {
+  if (!items.length) return;
+  var hasUsers = items.some(function(i){ return i.type === 'user'; });
+  if (kind === 'purge') {
+    var ok = await admConfirm({ title: '✕ Delete ' + items.length + ' item' + (items.length > 1 ? 's' : '') + ' forever', body: 'This <b>cannot be undone</b>.' + (hasUsers ? ' For users, <b>all their data</b> (meals, workouts, habits, goals, health logs) is erased too — if they sign in again they start fresh.' : ''), typed: items.length > 1 || hasUsers ? 'DELETE' : null, ok: 'Delete forever', danger: true });
+    if (!ok) return;
+  }
+  var hasLib = items.some(function(i){ return i.type === 'ing' || i.type === 'wk' || i.type === 'ct'; });
+  var r = await admRun(kind === 'purge' ? 'Deleting forever' : 'Restoring', items.map(function(i){ return i.key; }), function(k){ var it = admTrashItem(k); return kind === 'purge' ? admPurgeItem(it) : admRestoreItem(it); }, hasLib ? 1 : 3);
+  admLog(kind === 'purge' ? 'TRASH_PURGED' : 'TRASH_RESTORED', 'trash', items.map(function(i){ return i.key; }));
+  admClear('trash'); await admTrashFinish(kind, r.ok, hasLib);
+  if (kind === 'restore' && items.some(function(i){ return i.type === 'cp'; })) toast('Coupons come back paused — resume them from Coupons');
+}
+ADM_H['trash.restore'] = function(keys) { return admTrashMany('restore', keys.map(admTrashItem).filter(Boolean)); };
+ADM_H['trash.purge'] = function(keys) { return admTrashMany('purge', keys.map(admTrashItem).filter(Boolean)); };
+function admEmptyTrash() {
+  var items = ADM_TR_ITEMS.filter(function(i){ return ADM_TR_TYPE === 'all' || i.type === ADM_TR_TYPE; });
+  if (!items.length) { toast('Trash is already empty'); return; } admTrashMany('purge', items);
+}
+function admPurgeOld() { admTrashMany('purge', ADM_TR_ITEMS.filter(function(i){ return admDaysLeft(i.at) === 0; })); }
+/*ADM-END*/
+/*ADM2-START*/
+function admTrashTagUpdate() {
+  var n = (ADMIN_USERS_TRASH || []).length
+    + (ADMIN_PAY_CACHE || []).filter(function(r){ return r.trashed; }).length
+    + ((CP && CP.rows) || []).filter(function(c){ return c.trashed; }).length
+    + (ADM_TRASH ? ADM_TRASH.ingredients.length + ADM_TRASH.workouts.length + ADM_TRASH.content.length : 0);
+  var tag = admEl('adminTrashCountTag'); if (tag) { tag.textContent = n; tag.style.display = n ? '' : 'none'; }
+}
+function admUsersCsvAll() { ADM_H['users.csv']((ADMIN_USERS_CACHE || []).map(function(u){ return u.docId; })); }
+
+// ---------- CONTENT tab (admin/content arrays) ----------
+ADM_ACT.ct = [{ k: 'trash', l: '🗑 Move to Trash', c: 'danger' }];
+function admCtId(item, i) { return String((item && item.id) || ('i' + i)); }
+ADM_H['ct.trash'] = async function(ids) {
+  var tab = ADMIN_CONTENT_TAB, list = ADMIN_CONTENT_CACHE && ADMIN_CONTENT_CACHE[tab]; if (!list) return;
+  var set = {}; ids.forEach(function(i){ set[i] = 1; });
+  var moved = list.filter(function(it, i){ return set[admCtId(it, i)]; }); if (!moved.length) return;
+  var ok = await admConfirm({ title: '🗑 Move ' + moved.length + ' item' + (moved.length > 1 ? 's' : '') + ' to Trash', body: 'Restore any time from <b>Trash</b>.', ok: 'Move to Trash', danger: true });
+  if (!ok) return;
+  var type = ADMIN_CONTENT_TYPES.find(function(t){ return t.key === tab; }), at = admNowIso(), by = _adminEmail(), before = list.slice();
+  try {
+    var t = await admTrashDoc(true);
+    moved.forEach(function(it, i){ var o = Object.assign({}, it); if (!o.id) o.id = 'ct_' + Date.now().toString(36) + i; o._tab = type.label; o._tab_key = tab; o._label = String(it[type.fields[0]] || '—'); o._at = at; o._by = by; t.content.push(o); });
+    t.content = t.content.slice(-600); await admTrashSave();
+    ADMIN_CONTENT_CACHE[tab] = list.filter(function(it, i){ return !set[admCtId(it, i)]; });
+    await adminPersistContent('CONTENT_TRASHED', 'bulk(' + moved.length + ')', { count: moved.length }, null, true);
+    toast('🗑 ' + moved.length + ' moved to Trash'); admClear('ct'); renderAdminContentTabs(); renderAdminContentList();
+  } catch (e) { console.error(e); ADMIN_CONTENT_CACHE[tab] = before; toast('Failed (see console)'); renderAdminContentList(); }
+};
+function admAuditCsv() {
+  admCsv('audit-log', ['When', 'Admin', 'Action', 'Target type', 'Target', 'Before', 'After'],
+    (ADMIN_AUDIT_CACHE || []).map(function(l){ return [l.timestamp, l.adminEmail, l.action, l.targetType, l.targetId, l.before === undefined ? '' : JSON.stringify(l.before), l.after === undefined ? '' : JSON.stringify(l.after)]; }));
+}
+/*ADM2-END*/
+
 </script>
 
 <!-- ============ SUBSCRIPTION: notification modal ============ -->

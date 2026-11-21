@@ -2766,6 +2766,49 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
 /*BM-CSS-END*/
 
 </style>
+<style id="hxl-css">
+/*HXL-CSS-START*/
+.hx-lgbar{display:flex;align-items:center;justify-content:space-between;width:100%;margin:10px 0 8px;padding:11px 14px;font:inherit;font-weight:800;font-size:13.5px;letter-spacing:1.4px;color:#04130e;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,var(--g2,var(--g))));border:0;border-radius:12px;cursor:pointer;position:relative;box-shadow:0 0 22px color-mix(in srgb,var(--c) 30%,transparent);transition:transform .15s,box-shadow .15s}
+.hx-lgbar:hover{transform:translateY(-1px);box-shadow:0 0 30px color-mix(in srgb,var(--c) 45%,transparent)}
+.hx-lgbar i{font-style:normal;font-size:15px}
+.hx-lgbar.on{background:color-mix(in srgb,var(--c) 16%,var(--card2));color:var(--c);box-shadow:none;border:1.5px solid var(--c)}
+.hx-recent{margin-top:12px}
+#hxSide{scroll-margin-top:72px}
+.hx-lgbody{position:relative;padding:10px !important;background:color-mix(in srgb,var(--card) 82%,transparent);border:1px solid color-mix(in srgb,var(--c,var(--g)) 35%,var(--border));border-radius:14px;margin:0 0 10px;animation:hxlIn .25s cubic-bezier(.2,.8,.2,1)}
+@keyframes hxlIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.hx-lgdate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.hx-lgdate label{font-family:var(--mono);font-size:11px;letter-spacing:1.4px;color:var(--t2)}
+.hx-lgdate .inp{width:auto;flex:0 1 150px;font-size:14px;padding:7px 9px}
+.hx-lgg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.hx-lgf{min-width:0}.hx-lgf.wide{grid-column:1/-1}
+.hx-lgf label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1.1px;color:var(--t2);margin-bottom:5px}
+.hx-lgf label span{opacity:.7}.hx-lgf label em{font-style:normal;color:var(--c,var(--g));letter-spacing:0;margin-left:6px}
+.hx-lgf .inp{width:100%;font-size:16px}
+.hx-ftin{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hx-prev{min-height:30px;margin:8px 0;padding:6px 10px;border-radius:10px;background:var(--card2);border:1px dashed var(--border);font-size:13.5px;line-height:1.5;color:var(--t)}
+.hx-prev .mut{color:var(--t2);font-size:12.5px}.hx-prev .ok{color:var(--c,var(--g));font-weight:700}
+.hx-prev .up{color:var(--o2,#ffb020);font-weight:700}.hx-prev .dn{color:var(--c2,#38d6ff);font-weight:700}
+.hx-lgsave{width:100%;padding:11px;font-size:14px;letter-spacing:1.4px}
+.hx-recent{margin-top:12px;border-top:1px dashed var(--border);padding-top:8px}
+.hx-rh{font-family:var(--mono);font-size:10.5px;letter-spacing:1.6px;color:var(--t2);margin-bottom:4px}
+.hx-rc{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13.5px;border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent)}
+.hx-rc:last-child{border-bottom:0}
+.hx-rc .d{color:var(--t2);font-size:12.5px;min-width:72px}.hx-rc b{flex:1;font-family:var(--raj);font-size:15px}
+.hx-rc button{font:inherit;font-size:13px;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--t2);cursor:pointer}
+.hx-rc button:hover{color:var(--t);border-color:var(--c,var(--g))}
+.hx-pcustom{margin:0 0 10px}
+.hx-pcustom input{font-size:13.5px}
+.hx-mini i{display:block;font-style:normal;font-size:11px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hx-note .up{color:var(--o2,#ffb020)}.hx-note .dn{color:var(--c2,#38d6ff)}
+.hx-pcap{font-family:var(--mono);font-size:11px;letter-spacing:1.2px;color:var(--t2);margin:2px 0 4px}
+.hx-lgcard{margin-top:10px;--c:var(--g)}
+.hx-lgcard .hx-lgbody{border:0;padding:0;background:none;animation:none;margin:0}
+.hx-lgcard h4{margin:0 0 12px;color:var(--c)}
+html.alpha .hx-lgbar{color:#fff}
+@media (max-width:560px){.hx-lgg{grid-template-columns:1fr 1fr}.hx-mini i{font-size:10.5px}}
+@media (prefers-reduced-motion:reduce){.hx-lgbody{animation:none}.hx-lgbar{transition:none}}
+/*HXL-CSS-END*/
+</style>
 </head>
 <body>
 <script>
@@ -3818,7 +3861,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
     <div class="hx-ov">
       <div class="hx-stage" id="hxStage"></div>
       <div class="hx-side" id="hxSide">
-        <div class="hx-hint"><b>TAP A GLOWING POINT</b>Select any organ, tape ring or reading on the body to expand its live data, trend and history.</div>
+        <div class="hx-hint"><b>TAP A GLOWING POINT</b>Select any organ, tape ring or reading on the body — see its trend, change the date range and log a new entry right here.</div>
         <div class="hx-acc"><div class="hx-acc-in" id="hxPanel"></div></div>
       </div>
     </div>
@@ -11179,26 +11222,159 @@ function hxMarkSel() {
   if (hx.sel) st.querySelectorAll('[data-m="' + hx.sel + '"]').forEach(function(n){ n.classList.add('sel'); });
 }
 function hxSelect(m, toggle) {
+  hx.lgFlash = '';
   if (m === null || m === undefined) { hx.sel = null; hxMarkSel(); hxRenderPanel(); return; }
   if (!HX_M[m]) return;
   if (toggle && hx.sel === m) hx.sel = null; else hx.sel = m;
   hxMarkSel(); hxRenderPanel();
   if (hx.sel && !hxIsWide()) { var sd = hxEl('hxSide'); if (sd) setTimeout(function(){ var r = sd.getBoundingClientRect(); if (r.top > window.innerHeight * .62 || r.top < 60) { try { sd.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e) {} } }, 120); }
 }
-function hxPanelRange(r) { hx.pr = r; hxSaveUI(); hxRenderPanel(); }
+// ---------- inline workspace: trend + live log in the same side panel (no tab hopping) ----------
+var HX_LOG = {
+  weight:{ k:'m', f:['weight'] }, bf:{ k:'m', f:['bf'] }, bmi:{ k:'m', f:['height', 'weight'] },
+  chest:{ k:'m', f:['chest'] }, waist:{ k:'m', f:['waist'] }, hips:{ k:'m', f:['hips'] }, arm:{ k:'m', f:['arm'] }, thigh:{ k:'m', f:['thigh'] }, calf:{ k:'m', f:['calf'] },
+  hr:{ k:'v', f:['hr'] }, bp:{ k:'v', f:['sys', 'dia'] }, sleep:{ k:'v', f:['sleep', 'quality'], t:1 }, quality:{ k:'v', f:['quality'] }
+};
+hx.logOpen = false; hx.lgDate = ''; hx.lgM = 'weight'; hx.lgFlash = '';
+function hxFld(kind, key) { return HX_FIELDS[kind].filter(function(f){ return f[0] === key; })[0]; }
+function hxLastVal(kind, key) { var arr = hxArr(kind); for (var i = arr.length - 1; i >= 0; i--) if (hxNum(arr[i][key])) return arr[i][key]; return null; }
+function hxSleepHrs(bed, wake) {
+  if (!bed || !wake) return null; var b = bed.split(':'), w = wake.split(':'); if (b.length < 2 || w.length < 2) return null;
+  var d = ((+w[0] * 60 + +w[1]) - (+b[0] * 60 + +b[1]) + 1440) % 1440; return d ? Math.round(d / 6) / 10 : null;
+}
+function hxLgSnap() {
+  var o = {}, a = document.activeElement; document.querySelectorAll('.hx-lgbody input').forEach(function(e){ if (e.id) o[e.id] = e.value; });
+  return { v:o, a:(a && a.id && /^h[lz]-/.test(a.id)) ? a.id : null, s:(a && a.selectionStart !== undefined) ? a.selectionStart : null };
+}
+function hxLgRestore(sn) {
+  if (!sn) return;
+  Object.keys(sn.v).forEach(function(k){ var e = hxEl(k); if (e && sn.v[k] !== '' && e.type !== 'date') e.value = sn.v[k]; });
+  if (sn.a) { var f = hxEl(sn.a); if (f) { try { f.focus({ preventScroll:true }); if (sn.s !== null && f.type !== 'number' && f.type !== 'time' && f.type !== 'date') f.setSelectionRange(sn.s, sn.s); } catch(e) {} } }
+}
+function hxLgFieldHTML(id, key, p) {
+  var kind = HX_LOG[id].k, f = hxFld(kind, key), lv = hxLastVal(kind, key);
+  return '<div class="hx-lgf"><label for="' + p + key + '">' + f[1].toUpperCase() + ' <span>' + f[2] + '</span>' + (lv ? '<em>last ' + lv + '</em>' : '') + '</label>'
+    + '<input class="inp" id="' + p + key + '" type="number" inputmode="decimal" step="' + f[5] + '" min="' + f[3] + '" max="' + f[4] + '" placeholder="' + (lv ? lv : '') + '" autocomplete="off"/></div>';
+}
+function hxLgHeightHTML(p) {
+  var u = (S.cfg && S.cfg.heightUnit) || 'ftin', h = bmHeightNow(), o = bmFt(h || 170);
+  if (u === 'cm') return '<div class="hx-lgf"><label for="' + p + 'height">HEIGHT <span>cm</span>' + (h ? '<em>now ' + (Math.round(h * 10) / 10) + '</em>' : '') + '</label><input class="inp" id="' + p + 'height" type="number" inputmode="decimal" step="0.1" min="50" max="260" placeholder="' + (h ? Math.round(h * 10) / 10 : 'e.g. 172') + '" autocomplete="off"/></div>';
+  return '<div class="hx-lgf"><label for="' + p + 'ft">HEIGHT <span>ft · in</span>' + (h ? '<em>now ' + bmFtTxt(h) + '</em>' : '') + '</label><div class="hx-ftin"><input class="inp" id="' + p + 'ft" type="number" inputmode="numeric" step="1" min="1" max="8" placeholder="' + (h ? o.ft : 'ft') + '" autocomplete="off"/><input class="inp" id="' + p + 'in" type="number" inputmode="decimal" step="0.5" min="0" max="11.5" placeholder="' + (h ? o.inch : 'in') + '" autocomplete="off"/></div></div>';
+}
+function hxEntryTxt(id, e) {
+  var M = HX_M[id], sp = HX_LOG[id];
+  if (id === 'bp') return Math.round(e.sys) + '/' + Math.round(e.dia) + ' mmHg';
+  if (id === 'bmi') { var a = []; if (hxNum(e.height)) a.push(bmFtTxt(+e.height)); if (hxNum(e.weight)) a.push(e.weight + ' kg'); return a.join(' · '); }
+  var v = e[sp.f[0]]; return (+v).toFixed(M.d) + (M.u ? ' ' + M.u : '');
+}
+function hxRecentHTML(id, p) {
+  var sp = HX_LOG[id], arr = hxArr(sp.k), out = [], i, e, ok;
+  for (i = arr.length - 1; i >= 0 && out.length < 5; i--) {
+    e = arr[i];
+    ok = id === 'bp' ? hxNum(e.sys) : id === 'bmi' ? (hxNum(e.height) || hxNum(e.weight)) : (id === 'sleep' ? hxNum(e.sleep) : hxNum(e[sp.f[0]]));
+    if (!ok) continue;
+    out.push('<div class="hx-rc"><span class="d">' + wtFmt(wtDay(e.date), { day:'numeric', month:'short', year:'2-digit' }) + '</span><b>' + hxEntryTxt(id, e) + '</b>'
+      + '<button type="button" title="Edit" aria-label="Edit entry" onclick="hxEdit(\'' + sp.k + '\',' + i + ')">✎</button><button type="button" title="Delete" aria-label="Delete entry" onclick="hxDel(\'' + sp.k + '\',' + i + ')">✕</button></div>');
+  }
+  return out.length ? '<div class="hx-recent"><div class="hx-rh">RECENT ENTRIES</div>' + out.join('') + '</div>' : '';
+}
+function hxLgBody(id, p, noRecent) {
+  var sp = HX_LOG[id], M = HX_M[id], f = '', dt = hx.lgDate || today();
+  if (id === 'bmi') f += hxLgHeightHTML(p);
+  sp.f.forEach(function(k){ if (k !== 'height') f += hxLgFieldHTML(id, k, p); });
+  if (sp.t) f += '<div class="hx-lgf"><label for="' + p + 'bed">BED TIME</label><input class="inp" id="' + p + 'bed" type="time"/></div><div class="hx-lgf"><label for="' + p + 'wake">WAKE TIME</label><input class="inp" id="' + p + 'wake" type="time"/></div>';
+  if (sp.k === 'v') f += '<div class="hx-lgf wide"><label for="' + p + 'notes">NOTE <span>optional</span></label><input class="inp" id="' + p + 'notes" type="text" maxlength="200" placeholder="How are you feeling?" autocomplete="off"/></div>';
+  return '<div class="hx-lgbody" data-id="' + id + '" data-p="' + p + '" oninput="hxLgPreview(\'' + id + '\',\'' + p + '\')" onkeydown="if(event.key===\'Enter\'&&event.target.tagName===\'INPUT\'){event.preventDefault();hxLgSave(\'' + id + '\',\'' + p + '\')}">'
+    + '<div class="hx-lgdate"><label for="' + p + 'date">DATE</label><input class="inp" type="date" id="' + p + 'date" max="' + today() + '" value="' + dt + '" oninput="hx.lgDate=this.value"/><button type="button" class="hx-chip" onclick="var d=hxEl(\'' + p + 'date\');d.value=today();hx.lgDate=\'\'">TODAY</button></div>'
+    + '<div class="hx-lgg">' + f + '</div>'
+    + '<div class="hx-prev" id="' + p + 'prev" aria-live="polite">' + (hx.lgFlash ? '<span class="ok">' + hx.lgFlash + '</span>' : '<span class="mut">Type a value — it saves instantly to your history.</span>') + '</div>'
+    + '<button type="button" class="wk-btn primary hx-lgsave" onclick="hxLgSave(\'' + id + '\',\'' + p + '\')">✓ SAVE ' + M.n.toUpperCase() + '</button>'
+    + (noRecent ? '' : hxRecentHTML(id, p)) + '</div>';
+}
+function hxLgRead(id, p) {   // current numbers typed in the form (null when empty / invalid)
+  var sp = HX_LOG[id], o = {}, g = function(k){ var e = hxEl(p + k); if (!e || e.value === '') return null; var v = parseFloat(e.value); return isNaN(v) ? null : v; };
+  sp.f.forEach(function(k){ if (k !== 'height') o[k] = g(k); });
+  if (id === 'bmi') {
+    if (hxEl(p + 'height')) o.height = g('height');
+    else { var a = g('ft'), b = g('in'); o.height = (a === null && b === null) ? null : bmToCm(a || 0, b || 0); }
+  }
+  if (sp.t) { var be = hxEl(p + 'bed'), wk = hxEl(p + 'wake'); o.bed = be && be.value; o.wake = wk && wk.value; }
+  return o;
+}
+function hxLgPreview(id, p) {
+  var box = hxEl(p + 'prev'); if (!box) return;
+  var o = hxLgRead(id, p), M = HX_M[id], h = '', st;
+  if (hx.lgFlash) hx.lgFlash = '';
+  if (id === 'bmi') {
+    var ht = o.height || bmHeightNow(), wt = o.weight || (hxLatest('weight').last && hxLatest('weight').last.v);
+    if (o.height === null && o.weight === null) h = '';
+    else if (ht && wt) { var b = wt / Math.pow(ht / 100, 2), c = bmCat(b); h = 'BMI <b>' + b.toFixed(1) + '</b> <span class="status-badge s-' + c.k + '">' + c.t + '</span> <span class="mut">at ' + bmFtTxt(ht) + ' · ' + (Math.round(wt * 10) / 10) + ' kg</span>'; }
+    else h = '<span class="mut">Needs both height and weight to work out BMI.</span>';
+  } else if (id === 'bp') {
+    if (o.sys && o.dia) { st = hxStatus('bp', { v:o.sys, v2:o.dia }); h = '<b>' + Math.round(o.sys) + '/' + Math.round(o.dia) + '</b> mmHg' + (st ? ' <span class="status-badge s-' + st.k + '">' + st.t + '</span>' : ''); }
+  } else {
+    var key = HX_LOG[id].f[0], v = o[key], auto = false;
+    if (id === 'sleep' && v === null) { v = hxSleepHrs(o.bed, o.wake); auto = v !== null; }
+    if (v !== null && v !== undefined) {
+      var lv = hxLastVal(HX_LOG[id].k, key), dv = lv ? v - lv : null; st = hxStatus(id, { v:v });
+      h = '<b>' + (+v).toFixed(M.d) + '</b> ' + (M.u || '') + (auto ? ' <span class="mut">(from bed → wake)</span>' : '') + (st ? ' <span class="status-badge s-' + st.k + '">' + st.t + '</span>' : '')
+        + (dv !== null && Math.abs(dv) >= Math.pow(10, -M.d) / 2 ? ' <span class="' + (dv > 0 ? 'up' : 'dn') + '">' + (dv > 0 ? '▲ ' : '▼ ') + Math.abs(dv).toFixed(M.d) + ' vs last</span>' : '');
+    }
+  }
+  box.innerHTML = h || '<span class="mut">Type a value — it saves instantly to your history.</span>';
+}
+function hxLgSave(id, p) {
+  var sp = HX_LOG[id]; if (!sp) return;
+  var de = hxEl(p + 'date'), date = ((de && de.value) || today()).slice(0, 10);
+  if (isNaN(wtDay(date))) { toast('Pick a valid date'); return; }
+  if (wtDay(date) > wtDay(today())) { toast('Date cannot be in the future'); return; }
+  var kind = sp.k, r = hxReadForm(kind, function(k){ return p + k; });
+  if (!r.ok) { toast(r.err); return; }
+  var d = r.data;
+  if (id === 'bmi') {
+    var o = hxLgRead(id, p); if (o.height) { if (o.height < 50 || o.height > 260) { toast('Height must be between 50 and 260 cm (1′ 8″ – 8′ 6″)'); return; } d.height = o.height; }
+  }
+  if (id === 'sleep' && !d.sleep && d.bed && d.wake) { var hr = hxSleepHrs(d.bed, d.wake); if (hr) d.sleep = hr; }
+  var has = kind === 'm' ? !!(d.weight || d.bf || d.height || d.chest || d.waist || d.hips || d.arm || d.thigh || d.calf) : !!(d.hr || d.sys || d.sleep || d.quality);
+  if (id === 'bmi' && !d.height && !d.weight) has = false;
+  if (!has) { toast(id === 'sleep' ? 'Enter hours, or both bed and wake time' : id === 'bp' ? 'Enter both systolic and diastolic' : 'Enter a value first'); return; }
+  hxInsert(hxArr(kind), Object.assign({ id:hxId(), date:date }, d));
+  if (d.height) bmFromEntry(d.height, date);
+  var shown = hxEntryTxt(id, d);
+  if (id === 'sleep') shown = (+d.sleep).toFixed(1) + ' h';
+  document.querySelectorAll('.hx-lgbody input:not([type=date])').forEach(function(e){ e.value = ''; });
+  hx.lgFlash = '✓ Saved ' + HX_M[id].n + ' · ' + shown + (date !== today() ? ' · ' + wtFmt(wtDay(date), { day:'numeric', month:'short' }) : '');
+  save(); hxAfterChange(); toast(HX_M[id].n + ' saved');
+  var f = document.querySelector('.hx-lgbody input:not([type=date])'); if (f) try { f.focus({ preventScroll:true }); } catch(e) {}
+}
+function hxToggleLog() {
+  hx.logOpen = !hx.logOpen; hx.lgFlash = ''; hxRenderPanel();
+  if (hx.logOpen) setTimeout(function(){ var b = document.querySelector('#hxPanel .hx-lgbody'); if (b) { try { b.scrollIntoView({ behavior:'smooth', block:'nearest' }); } catch(e) {} var f = b.querySelector('input:not([type=date])'); if (f && hxIsWide()) try { f.focus({ preventScroll:true }); } catch(e) {} } }, 60);
+}
+function hxPanelRange(r) {
+  hx.pr = r;
+  if (r === 'custom' && (!hx.pFrom || !hx.pTo)) { var e = wtDay(today()); hx.pTo = wtDayStr(e); hx.pFrom = wtDayStr(e - 29); }
+  hxSaveUI(); hxRenderPanel();
+}
+function hxPanelCustom() { var f = hxEl('hxPFrom'), t = hxEl('hxPTo'); if (f && t && f.value && t.value) { hx.pFrom = f.value; hx.pTo = t.value; hxRenderPanel(); } }
 function hxRenderPanel() {
   var sd = hxEl('hxSide'), body = hxEl('hxPanel'); if (!sd || !body) return;
   var id = hx.sel;
   if (!id) { sd.classList.remove('open'); return; }
-  var M = HX_M[id], L = hxLatest(id), l = L.last, daily = hxDaily(id, L.all), w = hxWin(hx.pr, '', '', daily), B = hxBucket(daily, w, id), S_ = hxStats(B.inW);
+  var snap = hxLgSnap(), pst = body.parentNode ? body.parentNode.scrollTop : 0;
+  if (hx.pr === 'custom' && (!hx.pFrom || !hx.pTo)) { var e0 = wtDay(today()); hx.pTo = wtDayStr(e0); hx.pFrom = wtDayStr(e0 - 29); }
+  var M = HX_M[id], L = hxLatest(id), l = L.last, daily = hxDaily(id, L.all), w = hxWin(hx.pr, hx.pFrom, hx.pTo, daily), B = hxBucket(daily, w, id), S_ = hxStats(B.inW);
   if (id === 'bmi') l = bmFixLatest(l);
-  var dl = hxDelta(id, l, L.prev), stt = hxStatus(id, l);
+  var dl = hxDelta(id, l, L.prev), stt = hxStatus(id, l), open = !!hx.logOpen;
   var h = '<div class="hx-panel" style="--c:' + M.c + '">'
     + '<div class="hx-ph"><div class="hx-pic">' + M.ic + '</div><div class="hx-pn"><b>' + M.n + '</b><small>' + (M.src === 'v' ? 'VITALS' : 'BODY') + ' · ' + (l ? 'LAST ' + hxAgo(l.day).toUpperCase() : 'NO DATA') + '</small></div><button class="hx-x" onclick="hxSelect(null)" aria-label="Collapse">✕</button></div>';
   if (l) {
     h += '<div class="hx-big"><b>' + hxTxt(id, l.v, l.v2) + '</b><small>' + (M.u || '') + '</small>' + (stt ? '<span class="status-badge s-' + stt.k + '">' + stt.t + '</span>' : '') + '</div>'
       + '<div class="hx-sub">' + (dl ? '<span class="' + dl.cls + '">' + dl.t + ' ' + (M.u === '/10' ? '' : M.u) + '</span> since previous entry' : 'Latest reading · ' + wtFmt(l.day, { day:'numeric', month:'short', year:'numeric' })) + '</div>';
-    if (S_) h += '<div class="hx-mini"><div><span>AVG · ' + hx.pr.toUpperCase().replace('365', '1Y') + '</span><b>' + hxTxt(id, S_.avg, S_.avg2) + '</b></div><div><span>LOWEST</span><b>' + hxTxt(id, S_.min) + '</b></div><div><span>HIGHEST</span><b>' + hxTxt(id, S_.max) + '</b></div><div><span>ENTRIES</span><b>' + S_.ent + '</b></div></div>';
+  }
+  h += '<button type="button" class="hx-lgbar' + (open ? ' on' : '') + '" onclick="hxToggleLog()" aria-expanded="' + open + '"><span>＋ LOG ' + M.n.toUpperCase() + '</span><i>' + (open ? '▴' : '▾') + '</i></button>'
+    + (open ? hxLgBody(id, 'hl-', true) : '');
+  if (l) {
     if (id === 'sleep' || id === 'quality') {
       var sv = null, vv = hxArr('v'); for (var q = vv.length - 1; q >= 0; q--) if (vv[q].bed || vv[q].wake) { sv = vv[q]; break; }
       var sq = hxLatest('quality').last, sd2 = hxLatest('sleep').last;
@@ -11206,23 +11382,30 @@ function hxRenderPanel() {
     }
     if (id === 'bmi') h += bmPanelHTML(bmState());
     if (id === 'hr') h += '<div class="hx-note"><span>The heart on the model beats at <b>' + Math.round(l.v) + ' bpm</b></span></div>';
-    if (id === 'weight') { var b2 = bmState(); if (b2.bmi) h += '<div class="hx-note"><span>BMI <b>' + b2.bmi.toFixed(1) + '</b> \u00B7 ' + b2.cat.t + '</span><span>Ideal ' + bmGlyph() + ' <b>' + b2.ideal + '</b></span></div>'; }
+    if (id === 'weight') { var b2 = bmState(); if (b2.bmi) h += '<div class="hx-note"><span>BMI <b>' + b2.bmi.toFixed(1) + '</b> · ' + b2.cat.t + '</span><span>Ideal ' + bmGlyph() + ' <b>' + b2.ideal + '</b></span></div>'; }
   } else {
-    h += id === 'bmi' ? bmPanelHTML(bmState()) : '<div class="hx-empty" style="margin:14px 0">No ' + M.n.toLowerCase() + ' logged yet.<br>Add your first entry to light this up.</div>';
+    h += id === 'bmi' ? bmPanelHTML(bmState()) : '<div class="hx-empty" style="margin:14px 0">No ' + M.n.toLowerCase() + ' logged yet.<br>Use <b>＋ LOG</b> above to add your first entry.</div>';
   }
-  h += '<div class="hx-ranges">' + [['30', '30D'], ['90', '90D'], ['365', '1Y'], ['all', 'ALL']].map(function(r){ return '<button class="hx-chip' + (hx.pr === r[0] ? ' on' : '') + '" style="--c:' + M.c + '" onclick="hxPanelRange(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join('') + '</div>'
-    + '<div class="hx-chart" id="hxPChart"></div>'
-    + '<div class="hx-act"><button class="wk-btn" onclick="hxGoTrends(\'' + id + '\')">▤ FULL TRENDS</button><button class="wk-btn primary" onclick="hxGoLog(\'' + id + '\')">＋ LOG</button></div></div>';
+  // ---- trend: any range, custom dates, avg / lowest / highest / entries ----
+  var rl = hx.pr === 'custom' ? 'CUSTOM' : hx.pr === 'all' ? 'ALL' : hx.pr === '365' ? '1Y' : hx.pr.toUpperCase() + 'D';
+  h += '<div class="hx-ranges">' + [['7', '7D'], ['30', '30D'], ['90', '90D'], ['365', '1Y'], ['all', 'ALL'], ['custom', 'CUSTOM']].map(function(r){ return '<button class="hx-chip' + (hx.pr === r[0] ? ' on' : '') + '" style="--c:' + M.c + '" onclick="hxPanelRange(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join('') + '</div>';
+  if (hx.pr === 'custom') h += '<div class="hx-custom hx-pcustom"><label>FROM<input type="date" id="hxPFrom" value="' + hx.pFrom + '" max="' + today() + '" onchange="hxPanelCustom()"/></label><label>TO<input type="date" id="hxPTo" value="' + hx.pTo + '" max="' + today() + '" onchange="hxPanelCustom()"/></label></div>';
+  var dd = function(v){ var p = B.inW.filter(function(x){ return x.v === v; })[0]; return p ? hxDateLbl(p.day, false) : ''; };
+  h += '<div class="hx-mini">'
+    + '<div><span>AVG · ' + rl + '</span><b>' + (S_ ? hxTxt(id, S_.avg, S_.avg2) : '—') + '</b></div>'
+    + '<div><span>LOWEST</span><b>' + (S_ ? hxTxt(id, S_.min) : '—') + '</b>' + (S_ ? '<i>' + dd(S_.min) + '</i>' : '') + '</div>'
+    + '<div><span>HIGHEST</span><b>' + (S_ ? hxTxt(id, S_.max) : '—') + '</b>' + (S_ ? '<i>' + dd(S_.max) + '</i>' : '') + '</div>'
+    + '<div><span>ENTRIES</span><b>' + (S_ ? S_.ent : 0) + '</b>' + (S_ ? '<i>' + S_.n + ' day' + (S_.n === 1 ? '' : 's') + '</i>' : '') + '</div></div>';
+  if (S_ && id !== 'bp' && S_.n > 1) { var ch = S_.chg, pc = S_.first.v ? ch / S_.first.v * 100 : 0; h += '<div class="hx-note"><span>Change over period <b class="' + (ch > 0 ? 'up' : ch < 0 ? 'dn' : '') + '">' + (ch > 0 ? '+' : '') + ch.toFixed(M.d) + ' ' + (M.u === '/10' ? '' : M.u) + ' (' + (pc > 0 ? '+' : '') + pc.toFixed(1) + '%)</b></span></div>'; }
+  h += '<div class="hx-pcap">' + hxRangeLabel(w, B.g) + '</div><div class="hx-chart" id="hxPChart"></div>' + hxRecentHTML(id, 'hl-') + '</div>';
   body.innerHTML = h; sd.classList.add('open');
-  var stH = hxEl('hxStage') ? hxEl('hxStage').clientHeight : 520, chH = hxIsWide() ? Math.max(110, Math.min(240, stH - 372)) : 176;
-  if (l) hxChart('hxPChart', id, B, w, { h:chH, compact:true });
+  hxLgRestore(snap); if (open && !hx.lgFlash) hxLgPreview(id, 'hl-');
+  if (body.parentNode) body.parentNode.scrollTop = pst;
+  var stH = hxEl('hxStage') ? hxEl('hxStage').clientHeight : 520, chH = hxIsWide() ? Math.max(130, Math.min(230, stH - 440)) : 190;
+  if (l || B.pts.length) hxChart('hxPChart', id, B, w, { h:chH, compact:true });
 }
 function hxGoTrends(id) { if (id && HX_M[id]) { hx.tm = id; hxSaveUI(); } switchHealthTab('trends'); window.scrollTo({ top:0, behavior:'smooth' }); }
-function hxGoLog(id) {
-  switchHealthTab('log'); window.scrollTo({ top:0, behavior:'smooth' });
-  var map = { weight:'ml-weight', bf:'ml-bf', bmi:'ml-height', chest:'ml-chest', waist:'ml-waist', hips:'ml-hips', arm:'ml-arm', thigh:'ml-thigh', calf:'ml-calf', hr:'vt-hr', bp:'vt-sys', sleep:'vt-sleep', quality:'vt-q' };
-  setTimeout(function(){ var e = hxEl(map[id]); if (e) try { e.focus({ preventScroll:true }); } catch(x) {} }, 120);
-}
+function hxGoLog(id) { if (id && HX_M[id]) hx.sel = id; hx.logOpen = true; switchHealthTab('overview'); }
 
 // ---------- trends ----------
 function hxRangeBtns(cur, fn, withCustom) {
@@ -11278,20 +11461,15 @@ function hxFormHTML(kind, idFn, vals, hint) {
   }
   return o + '</div>';
 }
+// ---------- log tab: every measurement is its own entry (no categories) ----------
+function hxLgPick(id) { if (HX_LOG[id]) { hx.lgM = id; hx.lgFlash = ''; hxRenderLog(); } }
 function hxRenderLog() {
   var root = hxEl('hx-v-log'); if (!root) return;
-  if (!hx.logBuilt) {
-    hx.logBuilt = true;
-    root.innerHTML = '<div class="hx-datebar"><label for="hx-date">ENTRY DATE</label><input class="inp" type="date" id="hx-date" max="' + today() + '" value="' + today() + '"/><button class="hx-chip" onclick="hxEl(\'hx-date\').value=today()">TODAY</button></div>'
-      + '<div class="hx-form"><div class="hx-card"><h4>⚖ BODY &amp; MEASUREMENTS</h4>' + hxFormHTML('m', function(k){ return hxFieldId('m', k); }) + '</div>'
-      + '<div class="hx-card"><h4>♥ VITALS &amp; SLEEP</h4>' + hxFormHTML('v', function(k){ return hxFieldId('v', k); }) + '</div></div>'
-      + '<button class="wk-btn primary" style="width:100%;padding:14px" onclick="hxSaveEntry()">SAVE ENTRY</button>'
-      + '<div class="hx-foot" style="margin-top:10px">Fill only what you measured — body and vitals are saved to your history separately. Every entry is kept forever.</div>';
-  }
-  var dt = hxEl('hx-date'); if (dt) dt.max = today();
-  var hint = { weight:'weight', bf:'bf', height:'height', chest:'chest', waist:'waist', hips:'hips', arm:'arm', thigh:'thigh', calf:'calf' };
-  Object.keys(hint).forEach(function(k){ var e = hxEl('ml-' + k + '-h'); if (!e) return; var arr = hxArr('m'), v = null; for (var i = arr.length - 1; i >= 0; i--) if (hxNum(arr[i][k])) { v = arr[i][k]; break; } e.textContent = (k === 'height' && bmHeightNow()) ? 'now ' + bmFtTxt(bmHeightNow()) : (v ? 'last ' + v : ''); });
-  ['hr','sys','dia','sleep','quality'].forEach(function(k){ var e = hxEl(hxFieldId('v', k) + '-h'); if (!e) return; var arr = hxArr('v'), v = null; for (var i = arr.length - 1; i >= 0; i--) if (hxNum(arr[i][k])) { v = arr[i][k]; break; } e.textContent = v ? 'last ' + v : ''; });
+  var id = HX_LOG[hx.lgM] ? hx.lgM : 'weight', M = HX_M[id], snap = hxLgSnap(), chips = '', grp = 'm';
+  HX_ORDER.forEach(function(k){ var g = HX_M[k].src; if (g !== grp) { chips += '<span class="sep"></span>'; grp = g; } chips += '<button class="hx-chip' + (id === k ? ' on' : '') + '" style="--c:' + hxCC(k) + '" onclick="hxLgPick(\'' + k + '\')">' + HX_M[k].n.toUpperCase() + '</button>'; });
+  root.innerHTML = '<div class="hx-mchips">' + chips + '</div><div class="hx-card hx-lgcard" style="--c:' + M.c + '"><h4>' + M.ic + ' LOG ' + M.n.toUpperCase() + '</h4>' + hxLgBody(id, 'hz-') + '</div>'
+    + '<div class="hx-foot" style="margin-top:10px">Tip: you can also log straight from the Overview — tap any reading on the body and press <b>＋ LOG</b>. Every entry is kept forever.</div>';
+  hxLgRestore(snap); if (!hx.lgFlash) hxLgPreview(id, 'hz-');
 }
 // Reads + validates one form. Returns { ok, data, err }.
 function hxReadForm(kind, idFn) {
@@ -11312,6 +11490,7 @@ function hxReadForm(kind, idFn) {
 }
 function hxInsert(arr, e) { var d = wtDay(e.date), i = arr.length; while (i > 0) { var pd = wtDay(arr[i - 1].date); if (!isNaN(pd) && pd > d) i--; else break; } arr.splice(i, 0, e); return i; }
 function hxSaveEntry() {
+  if (!hxEl('hx-date')) { switchHealthTab('log'); return; }
   var date = (hxEl('hx-date').value || today()).slice(0, 10);
   if (isNaN(wtDay(date))) { toast('Pick a valid date'); return; }
   if (wtDay(date) > wtDay(today())) { toast('Date cannot be in the future'); return; }
@@ -11445,7 +11624,7 @@ function renderMeasurements() { hxRender(); }
 function renderMeasHistory() { hxRender(); }
 function delVital(i) { hxDel('v', i); }
 function delMeas(i) { hxDel('m', i); }
-(function(){ var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(function(){ var pg = hxEl('page-health'); if (pg && pg.classList.contains('active')) hxRender(); }, 180); }); })();
+(function(){ var t, lw = window.innerWidth; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(function(){ if (window.innerWidth === lw) return; lw = window.innerWidth; var pg = hxEl('page-health'); if (pg && pg.classList.contains('active')) hxRender(); }, 180); }); })();
 
 /*GL-START*/
 /* ===================== GOALS 2.0 =====================

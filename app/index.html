@@ -128,18 +128,9 @@ html.boot-restoring #bootSplash{display:flex}
 #onboardScreen{
   position:fixed;inset:0;z-index:9999;
   background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:0;
 }
 #onboardScreen.hidden{display:none}
 .hidden{display:none !important}
-.ob-choice-card{
-  background:var(--sb);border:1px solid var(--border);border-radius:10px;
-  padding:16px 18px;margin-bottom:14px;cursor:pointer;transition:border-color .2s,transform .15s;
-}
-.ob-choice-card:hover{border-color:var(--g);transform:translateY(-2px);}
-.ob-choice-title{font-family:'Smooch Sans','Noto Sans Khmer','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-weight:700;font-size:16px;color:var(--t);margin-bottom:6px;}
-.ob-choice-desc{font-family:'Noto Sans Khmer','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:14.5px;color:var(--t2);line-height:1.5;}
 .login-box{
   width:360px;background:var(--card);border:1px solid var(--border);
   border-top:2px solid var(--g);padding:36px 32px;
@@ -2640,6 +2631,230 @@ div[style*="position:fixed;inset:0;background:rgba(0,0,0"]{
   #sbLabelLayer .sb-tip-bubble{z-index:895}
 }
 
+/*ONB-CSS-START*/
+/* ===================== ONBOARDING — full-screen first-run ===================== */
+#onboardScreen{display:block !important;overflow:hidden;flex-direction:initial;z-index:9999}
+#onboardScreen.hidden{display:none !important}
+#onboardScreen.onb-preview{z-index:100000}
+.onb{position:absolute;inset:0;display:flex;flex-direction:column;color:var(--t);font-family:var(--mono);--onb-glow:color-mix(in srgb,var(--g) 45%,transparent)}
+.onb-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--t2);font-size:14px}
+.onb-loading b{font-weight:600;letter-spacing:.04em}
+.onb-spin{width:38px;height:38px;border-radius:50%;border:3px solid color-mix(in srgb,var(--g) 18%,transparent);border-top-color:var(--g);animation:onbSpin .9s linear infinite}
+@keyframes onbSpin{to{transform:rotate(360deg)}}
+/* living background */
+.onb-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.onb-bg::before{content:'';position:absolute;inset:-2px;background-image:linear-gradient(color-mix(in srgb,var(--g) 9%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--g) 9%,transparent) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(ellipse at 50% 35%,#000 10%,transparent 72%);mask-image:radial-gradient(ellipse at 50% 35%,#000 10%,transparent 72%);animation:onbGrid 22s linear infinite}
+@keyframes onbGrid{to{background-position:46px 46px,46px 46px}}
+.onb-bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;will-change:transform}
+.onb-bg i:nth-child(1){width:46vmax;height:46vmax;left:-14vmax;top:-18vmax;background:color-mix(in srgb,var(--g) 55%,transparent);animation:onbF1 24s ease-in-out infinite alternate}
+.onb-bg i:nth-child(2){width:40vmax;height:40vmax;right:-14vmax;bottom:-16vmax;background:color-mix(in srgb,var(--c) 50%,transparent);animation:onbF2 28s ease-in-out infinite alternate}
+.onb-bg i:nth-child(3){width:30vmax;height:30vmax;left:40%;top:48%;background:rgba(170,119,255,.38);animation:onbF3 32s ease-in-out infinite alternate}
+@keyframes onbF1{to{transform:translate(9vmax,7vmax) scale(1.15)}}@keyframes onbF2{to{transform:translate(-8vmax,-6vmax) scale(1.2)}}@keyframes onbF3{to{transform:translate(-12vmax,-8vmax) scale(.8)}}
+html.alpha .onb-bg i{opacity:.32}
+/* progress bar + stepper */
+.onb-prog{position:relative;z-index:3;height:5px;background:color-mix(in srgb,var(--t) 9%,transparent);flex:none}
+.onb-prog b{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--c),#aa77ff);border-radius:0 6px 6px 0;box-shadow:0 0 14px var(--g),0 0 30px var(--onb-glow);transition:width .6s cubic-bezier(.2,.8,.2,1);position:relative}
+.onb-prog b::after{content:'';position:absolute;right:0;top:50%;width:11px;height:11px;margin:-5.5px -3px 0 0;border-radius:50%;background:#fff;box-shadow:0 0 12px 3px var(--g)}
+.onb-top{position:relative;z-index:3;display:flex;align-items:center;gap:14px;padding:12px clamp(14px,3vw,34px);flex:none;background:linear-gradient(var(--glass-bg,rgba(10,14,12,.55)),transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.onb-brand{display:flex;align-items:baseline;gap:8px;flex:none}
+.onb-logo{font-family:var(--raj);font-weight:800;font-size:20px;letter-spacing:.06em;background:linear-gradient(135deg,var(--g),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent}
+.onb-brand em{font-style:normal;font-size:10px;letter-spacing:.2em;color:var(--t2);border:1px solid var(--border);border-radius:99px;padding:2px 8px}
+.onb-steps{flex:1;display:flex;align-items:center;justify-content:center;justify-content:safe center;min-width:0;overflow-x:auto;scrollbar-width:none;padding:4px 2px}
+.onb-steps::-webkit-scrollbar{display:none}
+.onb-step{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;flex:none;cursor:default;border-radius:99px;padding:3px 4px}
+.onb-step:not([disabled]){cursor:pointer}.onb-step:not([disabled]):hover .onb-dot{transform:scale(1.1)}
+.onb-step:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.onb-dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;border:1.5px solid var(--border);color:var(--t2);background:var(--card);transition:all .35s;flex:none}
+.onb-step.cur .onb-dot{border-color:var(--g);color:#00110a;background:linear-gradient(135deg,var(--g),var(--c));box-shadow:0 0 0 4px color-mix(in srgb,var(--g) 18%,transparent),0 0 20px var(--onb-glow);animation:onbPulse 2.4s ease-in-out infinite}
+@keyframes onbPulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--g) 8%,transparent),0 0 26px var(--onb-glow)}}
+.onb-step.done .onb-dot{border-color:var(--g);color:var(--g);background:color-mix(in srgb,var(--g) 12%,var(--card))}
+.onb-st{font-size:12.5px;font-weight:600;color:var(--t2);white-space:nowrap;transition:color .3s}
+.onb-step.cur .onb-st{color:var(--t)}.onb-step.done .onb-st{color:color-mix(in srgb,var(--t) 78%,var(--g))}
+.onb-line{width:clamp(14px,3.2vw,44px);height:2px;background:var(--border);border-radius:2px;flex:none;margin:0 6px;transition:background .5s}
+.onb-line.on{background:linear-gradient(90deg,var(--g),var(--c))}
+.onb-top-r{display:flex;align-items:center;gap:10px;flex:none;min-width:48px;justify-content:flex-end}
+.onb-pct{font-family:var(--raj);font-weight:800;font-size:18px;color:var(--g);font-variant-numeric:tabular-nums}
+.onb-exit{all:unset;cursor:pointer;font-size:12px;font-weight:700;color:var(--red);border:1px solid color-mix(in srgb,var(--red) 50%,transparent);border-radius:99px;padding:6px 12px}
+/* main */
+.onb-main{position:relative;z-index:2;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:clamp(18px,4vh,46px) clamp(14px,3vw,34px) 24px;scroll-behavior:smooth}
+.onb-panel{max-width:720px;margin:0 auto}
+.onb-panel.go-f{animation:onbInF .55s cubic-bezier(.2,.8,.2,1)}.onb-panel.go-b{animation:onbInB .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes onbInF{from{opacity:0;transform:translateX(44px)}}@keyframes onbInB{from{opacity:0;transform:translateX(-44px)}}
+.onb-eyebrow{font-family:var(--raj);font-weight:800;font-size:clamp(26px,5.4vw,42px);letter-spacing:.01em;line-height:1.1;background:linear-gradient(135deg,var(--t) 30%,var(--g) 75%,var(--c));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px}
+.onb-eyebrow span{-webkit-text-fill-color:initial}
+.onb-lead{color:var(--t2);font-size:14.5px;line-height:1.55;margin:0 0 22px;max-width:560px}
+.onb-head{display:flex;align-items:center;gap:14px;margin:0 0 22px}
+.onb-ico{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:26px;flex:none;background:linear-gradient(135deg,color-mix(in srgb,var(--g) 20%,transparent),color-mix(in srgb,var(--c) 14%,transparent));border:1px solid color-mix(in srgb,var(--g) 38%,transparent);box-shadow:0 0 28px color-mix(in srgb,var(--g) 18%,transparent)}
+.onb-head h1{margin:0;font-family:var(--raj);font-weight:800;font-size:clamp(24px,4.6vw,34px);line-height:1.1}
+.onb-head p{margin:4px 0 0;color:var(--t2);font-size:14px;line-height:1.45}
+.onb-qs{display:flex;flex-direction:column;gap:16px}
+.onb-q{background:var(--glass-bg,rgba(255,255,255,.04));border:1px solid var(--glass-border,var(--border));border-radius:18px;padding:18px clamp(14px,3vw,22px);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:border-color .25s,box-shadow .25s;animation:onbQ .5s both}
+.onb-q:nth-child(2){animation-delay:.05s}.onb-q:nth-child(3){animation-delay:.1s}.onb-q:nth-child(4){animation-delay:.15s}.onb-q:nth-child(5){animation-delay:.2s}.onb-q:nth-child(n+6){animation-delay:.25s}
+@keyframes onbQ{from{opacity:0;transform:translateY(14px)}}
+.onb-q:focus-within{border-color:color-mix(in srgb,var(--g) 60%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 12%,transparent)}
+.onb-q.bad{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 14%,transparent)}
+.onb-q.shake{animation:onbShake .45s}@keyframes onbShake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.onb-ql{font-weight:700;font-size:15.5px;line-height:1.35;margin-bottom:4px}.onb-ql i{color:var(--g);font-style:normal}.onb-ql small{font-weight:500;font-size:11px;color:var(--t2);margin-left:6px;letter-spacing:.04em}
+.onb-qh{margin:0 0 10px;color:var(--t2);font-size:12.5px;line-height:1.45}
+.onb-ql + .onb-inp,.onb-ql + .onb-inpw,.onb-ql + .onb-opts,.onb-ql + .onb-scale{margin-top:10px}
+.onb-qe{min-height:0;color:var(--red);font-size:12.5px;font-weight:600;margin-top:0}.onb-qe:not(:empty){margin-top:8px}
+.onb-info{border-left:3px solid var(--c);padding:2px 0 2px 12px}.onb-info b{font-size:14px}.onb-info p{margin:4px 0 0;color:var(--t2);font-size:13px;line-height:1.5}
+.onb-inp{width:100%;box-sizing:border-box;background:var(--glass-bg,rgba(255,255,255,.05));border:1px solid var(--glass-border,var(--border));border-radius:12px;padding:13px 14px;font-size:16px;color:var(--t);font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;min-width:0}
+.onb-inp:focus{border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 16%,transparent)}
+.onb-inp.s{width:50%}.onb-inpw{display:flex;align-items:center;gap:8px}.onb-inpw .onb-inp{flex:1}.onb-inpw .onb-inp.s{flex:1;width:auto}
+.onb-unit{color:var(--t2);font-size:13px;font-weight:600;flex:none}
+.onb-seg{display:inline-flex;flex:none;border:1px solid var(--border);border-radius:99px;padding:3px;background:var(--card)}
+.onb-seg button{all:unset;cursor:pointer;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700;color:var(--t2);transition:all .2s}
+.onb-seg button.on{background:linear-gradient(135deg,var(--g),var(--c));color:#00110a}
+/* option cards */
+.onb-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.onb-opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.onb-opt{all:unset;box-sizing:border-box;position:relative;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:14px;border:1.5px solid var(--glass-border,var(--border));background:var(--glass-bg,rgba(255,255,255,.04));transition:transform .18s,border-color .2s,background .2s,box-shadow .2s;min-width:0}
+.onb-opt:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--g) 55%,transparent)}
+.onb-opt:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.onb-opt:active{transform:scale(.98)}
+.onb-opt.on{border-color:var(--g);background:linear-gradient(135deg,color-mix(in srgb,var(--g) 16%,transparent),color-mix(in srgb,var(--c) 9%,transparent));box-shadow:0 0 0 1px var(--g) inset,0 8px 26px color-mix(in srgb,var(--g) 14%,transparent)}
+.onb-oe{font-size:26px;line-height:1;flex:none;width:34px;text-align:center}
+.onb-ot{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}.onb-ot b{font-size:14.5px;font-weight:700;line-height:1.25}.onb-ot small{font-size:12px;color:var(--t2);line-height:1.35}
+.onb-ck{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:grid;place-items:center;font-size:12px;color:transparent;transition:all .2s}
+.onb-opt.on .onb-ck,.onb-tpl.on .onb-ck{background:var(--g);border-color:var(--g);color:#00110a;box-shadow:0 0 12px var(--g)}
+.onb-cnt{margin-top:8px;font-size:12px;color:var(--t2)}
+.onb-scale{display:flex;align-items:center;gap:14px}.onb-scale input{flex:1;accent-color:var(--g);height:30px}.onb-sv{font-family:var(--raj);font-size:26px;color:var(--g);min-width:34px;text-align:center}
+.onb-sl{display:flex;justify-content:space-between;color:var(--t2);font-size:11.5px;margin-top:2px}
+/* plan step */
+.onb-snap{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.onb-chip{border:1px solid color-mix(in srgb,var(--g) 40%,transparent);background:color-mix(in srgb,var(--g) 9%,transparent);border-radius:99px;padding:7px 14px;font-size:12.5px;color:var(--t2)}.onb-chip b{color:var(--g);font-family:var(--raj);font-size:16px;margin-right:3px}
+.onb-sec{margin-bottom:22px;animation:onbQ .5s both}
+.onb-sh{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;letter-spacing:.04em;margin-bottom:10px}.onb-sh em{margin-left:auto;font-style:normal;font-size:11.5px;color:var(--t2);font-weight:600}
+.onb-tpls{display:flex;flex-direction:column;gap:9px}
+.onb-tpl{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:13px;padding:14px;border-radius:16px;border:1.5px solid var(--glass-border,var(--border));background:var(--glass-bg,rgba(255,255,255,.04));transition:all .2s;position:relative;overflow:hidden}
+.onb-tpl:hover{border-color:color-mix(in srgb,var(--g) 55%,transparent);transform:translateY(-1px)}
+.onb-tpl:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.onb-tpl.on{border-color:var(--g);background:linear-gradient(135deg,color-mix(in srgb,var(--g) 14%,transparent),color-mix(in srgb,var(--c) 8%,transparent));box-shadow:0 0 0 1px var(--g) inset}
+.onb-te{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:22px;flex:none;background:color-mix(in srgb,var(--t) 7%,transparent)}
+.onb-tt{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}.onb-tt b{font-size:14.5px;line-height:1.25}.onb-tt small{font-size:12px;color:var(--t2)}
+.onb-why{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}.onb-why i{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.03em;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 40%,transparent);border-radius:99px;padding:2px 8px}
+.onb-empty{text-align:center;padding:34px 10px;color:var(--t2)}.onb-empty div{font-size:46px}.onb-empty b{display:block;color:var(--t);font-size:18px;margin:8px 0 4px}.onb-empty p{margin:0 auto;max-width:380px;font-size:13.5px;line-height:1.5}
+.onb-blank{text-align:center;margin-top:6px}.onb-link{all:unset;cursor:pointer;color:var(--t2);font-size:13px;text-decoration:underline;text-underline-offset:3px}.onb-link:hover{color:var(--g)}
+/* footer */
+.onb-foot{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(14px,3vw,34px) calc(12px + env(safe-area-inset-bottom,0px));flex:none;border-top:1px solid var(--glass-border,var(--border));background:var(--glass-bg2,rgba(10,14,12,.7));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.onb-hint{font-size:12px;color:var(--t2);letter-spacing:.06em;text-transform:uppercase}
+.onb-btn{all:unset;box-sizing:border-box;cursor:pointer;font-weight:800;font-size:14.5px;border-radius:99px;padding:13px 26px;transition:transform .15s,box-shadow .25s,opacity .2s;white-space:nowrap}
+.onb-btn:focus-visible{outline:2px solid var(--c);outline-offset:3px}.onb-btn:active{transform:scale(.97)}
+.onb-btn.pri{background:linear-gradient(135deg,var(--g),var(--c));color:#00110a;box-shadow:0 8px 28px var(--onb-glow)}.onb-btn.pri:hover{box-shadow:0 10px 36px color-mix(in srgb,var(--g) 65%,transparent);transform:translateY(-1px)}
+.onb-btn.ghost{border:1.5px solid var(--border);color:var(--t)}.onb-btn.ghost:hover{border-color:var(--g);color:var(--g)}
+/* build screen */
+.onb-build{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:onbQ .4s both}
+.onb-build[hidden]{display:none}
+.onb-build-in{text-align:center;padding:20px}.onb-build-in b{display:block;font-family:var(--raj);font-weight:800;font-size:clamp(24px,5vw,34px);margin:20px 0 14px}
+.onb-ring{display:block;width:84px;height:84px;margin:0 auto;border-radius:50%;border:4px solid color-mix(in srgb,var(--g) 15%,transparent);border-top-color:var(--g);border-right-color:var(--c);animation:onbSpin 1.1s linear infinite;box-shadow:0 0 40px var(--onb-glow)}
+.onb-build ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;align-items:center}
+.onb-build li{opacity:0;transform:translateY(10px);transition:all .4s;font-size:15px;font-weight:600;color:var(--t2);border:1px solid var(--border);border-radius:99px;padding:8px 18px;background:var(--card)}
+.onb-build li.on{opacity:1;transform:none;color:var(--t);border-color:color-mix(in srgb,var(--g) 50%,transparent)}
+.onb-panel.still .onb-q,.onb-panel.still .onb-sec{animation:none}
+/* light theme + small screens + motion */
+html.alpha .onb-btn.pri,html.alpha .onb-step.cur .onb-dot,html.alpha .onb-seg button.on{color:#fff}
+html.alpha .onb-opt,html.alpha .onb-tpl,html.alpha .onb-q{background:rgba(255,255,255,.7)}
+html.alpha .onb-foot,html.alpha .onb-top{background:rgba(255,255,255,.6)}
+@media (max-width:640px){
+  .onb-st{display:none}
+  .onb-line{margin:0 2px;width:10px}.onb-dot{width:26px;height:26px;font-size:12px}.onb-step{padding:0}.onb-top{gap:8px}
+  .onb-logo{font-size:17px}.onb-brand em{display:none}
+  .onb-opts,.onb-opts.two{grid-template-columns:1fr}.onb-opts.two{grid-template-columns:1fr 1fr}.onb-opts.two .onb-ck{display:none}
+  .onb-hint{display:none}.onb-foot{justify-content:space-between}.onb-btn{padding:13px 22px}.onb-btn.pri{flex:1;text-align:center;max-width:62%}
+  .onb-ico{width:46px;height:46px;font-size:22px}
+}
+@media (max-width:380px){.onb-opts.two{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.onb *,.onb *::before,.onb *::after{animation:none !important;transition:none !important}.onb-main{scroll-behavior:auto}}
+/*ONB-CSS-END*/
+
+/*ONBS-CSS-START*/
+/* ===================== Onboarding Studio (admin) ===================== */
+#adminShellOverlay .obs-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+#adminShellOverlay .obs-top-l,#adminShellOverlay .obs-top-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#adminShellOverlay .obs-chip{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:3px 10px;border-radius:99px;border:1px solid var(--a-hairline);color:var(--t2);white-space:nowrap;background:transparent}
+#adminShellOverlay .obs-chip.ok{color:var(--g);border-color:color-mix(in srgb,var(--g) 50%,transparent);background:color-mix(in srgb,var(--g) 8%,transparent)}
+#adminShellOverlay .obs-chip.warn{color:var(--o2,#ffa94d);border-color:color-mix(in srgb,var(--o2,#ffa94d) 55%,transparent);background:color-mix(in srgb,var(--o2,#ffa94d) 9%,transparent)}
+#adminShellOverlay .obs-switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:12.5px;font-weight:700}
+#adminShellOverlay .obs-switch input{position:absolute;opacity:0;pointer-events:none}
+#adminShellOverlay .obs-switch i{width:36px;height:20px;border-radius:99px;background:var(--a-hairline);position:relative;transition:background .2s;flex:none}
+#adminShellOverlay .obs-switch i::after{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+#adminShellOverlay .obs-switch input:checked + i{background:var(--g)}#adminShellOverlay .obs-switch input:checked + i::after{transform:translateX(16px)}
+#adminShellOverlay .obs-switch input:focus-visible + i{outline:2px solid var(--c);outline-offset:2px}
+#adminShellOverlay .obs-help{font-size:12.5px;line-height:1.6;color:var(--t2);background:color-mix(in srgb,var(--c) 6%,transparent);border:1px solid color-mix(in srgb,var(--c) 22%,transparent);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+#adminShellOverlay .obs-help code{background:var(--a-hairline-soft);padding:1px 5px;border-radius:5px}
+#adminShellOverlay .obs-flowbar{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:12px;font-weight:700;color:var(--t2)}#adminShellOverlay .obs-flowbar select{max-width:340px}
+#adminShellOverlay .obs-in{width:100%;box-sizing:border-box;min-width:0}
+#adminShellOverlay .obs-in.s{max-width:130px}#adminShellOverlay .obs-in.xs{max-width:62px;text-align:center}#adminShellOverlay .obs-in.grow{flex:1}
+#adminShellOverlay textarea.obs-in{resize:vertical;font-family:inherit;line-height:1.45}
+#adminShellOverlay .obs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px 14px;margin-top:12px}
+#adminShellOverlay .obs-f{display:flex;flex-direction:column;gap:5px;min-width:0}#adminShellOverlay .obs-f.wide{grid-column:1/-1}
+#adminShellOverlay .obs-f>span{font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.02em}#adminShellOverlay .obs-f em{font-style:normal;font-size:11px;color:var(--t2);opacity:.85;line-height:1.45}
+#adminShellOverlay .obs-chk{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;cursor:pointer;min-height:32px}#adminShellOverlay .obs-chk input{accent-color:var(--g);width:16px;height:16px}
+#adminShellOverlay .obs-checks{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:12px}
+#adminShellOverlay .obs-nums{display:flex;flex-wrap:wrap;gap:12px}#adminShellOverlay .obs-nums label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--t2)}#adminShellOverlay .obs-nums .xs{width:78px}
+#adminShellOverlay .obs-card{transition:border-color .2s}#adminShellOverlay .obs-card.sel{border-color:color-mix(in srgb,var(--g) 55%,transparent)}
+#adminShellOverlay .obs-card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#adminShellOverlay .obs-card-t{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}#adminShellOverlay .obs-card-s{font-size:12px;color:var(--t2);margin-top:3px}
+#adminShellOverlay .obs-card-a{display:flex;gap:6px;flex-wrap:wrap}
+#adminShellOverlay .obs-addrow{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+#adminShellOverlay .obs-ib{all:unset;box-sizing:border-box;cursor:pointer;min-width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;font-size:12px;color:var(--t2);border:1px solid var(--a-hairline);background:var(--a-glass-soft);flex:none}
+#adminShellOverlay .obs-ib:hover{color:var(--t);border-color:var(--t2)}#adminShellOverlay .obs-ib[disabled]{opacity:.3;cursor:default}#adminShellOverlay .obs-ib.x:hover{color:var(--red);border-color:var(--red)}
+#adminShellOverlay .obs-ib:focus-visible{outline:2px solid var(--c);outline-offset:1px}
+#adminShellOverlay .obs-mv{display:inline-flex;gap:3px;flex:none}
+/* steps + questions */
+#adminShellOverlay .obs-step{padding:14px 16px}#adminShellOverlay .obs-step.off{opacity:.62}
+#adminShellOverlay .obs-step-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#adminShellOverlay .obs-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--g),var(--c));color:#00110a;flex:none}
+#adminShellOverlay .obs-step-d{margin:12px 0 4px;padding:12px;border:1px dashed var(--a-hairline);border-radius:12px}
+#adminShellOverlay .obs-qlist{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+#adminShellOverlay .obs-q{border:1px solid var(--a-hairline);border-radius:12px;background:var(--a-glass-soft)}#adminShellOverlay .obs-q.open{border-color:color-mix(in srgb,var(--g) 45%,transparent)}
+#adminShellOverlay .obs-q-h,#adminShellOverlay .obs-rule-h,#adminShellOverlay .obs-tpl-h{display:flex;align-items:center;gap:8px;padding:8px 10px}
+#adminShellOverlay .obs-q-t,#adminShellOverlay .obs-rule-t{all:unset;cursor:pointer;flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#adminShellOverlay .obs-q-t b,#adminShellOverlay .obs-rule-t b{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#adminShellOverlay .obs-q-t small,#adminShellOverlay .obs-rule-t small{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#adminShellOverlay .obs-q-t:focus-visible,#adminShellOverlay .obs-rule-t:focus-visible{outline:2px solid var(--c);outline-offset:2px;border-radius:6px}
+#adminShellOverlay .obs-qed{padding:4px 14px 16px;border-top:1px solid var(--a-hairline-soft)}
+#adminShellOverlay .obs-sub{font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin:16px 0 8px}#adminShellOverlay .obs-sub em{text-transform:none;font-weight:500;letter-spacing:0}
+#adminShellOverlay .obs-opts{display:flex;flex-direction:column;gap:7px}
+#adminShellOverlay .obs-opt{display:flex;align-items:center;gap:6px}#adminShellOverlay .obs-opt .obs-in{flex:1}#adminShellOverlay .obs-opt .obs-in.xs{flex:none;width:54px}#adminShellOverlay .obs-opt .obs-in.s{flex:none;width:110px}
+#adminShellOverlay .obs-none{font-size:12px;color:var(--t2);padding:6px 2px}
+/* conditions */
+#adminShellOverlay .obs-conds{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+#adminShellOverlay .obs-cond{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;padding:8px 10px;border-radius:12px;border:1px solid var(--a-hairline);background:var(--a-glass-soft)}
+#adminShellOverlay .obs-cond.bad{border-color:var(--red)}#adminShellOverlay .obs-cond .obs-in{width:auto;max-width:230px;flex:0 1 auto}
+#adminShellOverlay .obs-if{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--g);min-width:26px}#adminShellOverlay .obs-and{font-size:11px;color:var(--t2)}
+#adminShellOverlay .obs-vals{display:flex;flex-wrap:wrap;gap:6px}
+#adminShellOverlay .obs-vchip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:99px;border:1px solid var(--a-hairline);cursor:pointer;color:var(--t2);user-select:none}
+#adminShellOverlay .obs-vchip input{position:absolute;opacity:0;pointer-events:none}#adminShellOverlay .obs-vchip:has(input:focus-visible){outline:2px solid var(--c);outline-offset:1px}
+#adminShellOverlay .obs-vchip.on{color:var(--t);border-color:color-mix(in srgb,var(--g) 60%,transparent);background:color-mix(in srgb,var(--g) 11%,transparent)}
+#adminShellOverlay .obs-vchip.bad{color:var(--o2,#ffa94d);border-color:color-mix(in srgb,var(--o2,#ffa94d) 55%,transparent);cursor:default}
+/* rules / templates */
+#adminShellOverlay .obs-rule,#adminShellOverlay .obs-tpl{padding:0;overflow:hidden}#adminShellOverlay .obs-rule.off{opacity:.6}#adminShellOverlay .obs-rule.open,#adminShellOverlay .obs-tpl.open{border-color:color-mix(in srgb,var(--g) 45%,transparent)}
+#adminShellOverlay .obs-rule-b{padding:4px 16px 16px;border-top:1px solid var(--a-hairline-soft)}
+#adminShellOverlay .obs-pick{display:flex;flex-direction:column;gap:6px;margin:10px 0}#adminShellOverlay .obs-pick>b{font-size:12.5px}
+#adminShellOverlay .obs-te{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px;background:var(--a-hairline-soft);flex:none}
+/* simulator */
+#adminShellOverlay .obs-simq{display:flex;flex-direction:column;gap:9px;margin:8px 0 14px}#adminShellOverlay .obs-simrow{display:grid;grid-template-columns:minmax(120px,240px) 1fr;gap:10px;align-items:center;font-size:12.5px}
+#adminShellOverlay .obs-simrow .obs-in{max-width:260px}
+#adminShellOverlay .obs-res{border-top:1px solid var(--a-hairline-soft);padding-top:4px}
+#adminShellOverlay .obs-resrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--a-hairline-soft);font-size:13px}#adminShellOverlay .obs-resrow small{color:var(--t2)}#adminShellOverlay .obs-resrow em{font-style:normal;font-size:11px;color:var(--g);margin-left:auto}
+#adminShellOverlay .obs-why{display:flex;gap:5px;flex-wrap:wrap;width:100%}#adminShellOverlay .obs-why i{font-style:normal;font-size:10.5px;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);color:var(--c);border-radius:99px;padding:1px 8px}
+/* users + insights */
+#adminShellOverlay .obs-usrbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}#adminShellOverlay .obs-usrbar .obs-in{max-width:320px}
+#adminShellOverlay .obs-ut{padding:0}#adminShellOverlay .obs-ut-n{flex:1;min-width:0;display:flex;flex-direction:column}#adminShellOverlay .obs-ut-n small{font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis}#adminShellOverlay .obs-ut-s{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+#adminShellOverlay .obs-kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+#adminShellOverlay .obs-kpi{border:1px solid var(--a-hairline);border-radius:14px;padding:12px 14px;background:var(--a-glass)}#adminShellOverlay .obs-kpi b{display:block;font-size:22px;font-weight:800}#adminShellOverlay .obs-kpi span{font-size:11.5px;color:var(--t2)}
+#adminShellOverlay .obs-dist-t{font-weight:700;margin-bottom:10px;font-size:14px}#adminShellOverlay .obs-dist-t small{color:var(--t2);font-weight:500;margin-left:6px}
+#adminShellOverlay .obs-bar{display:grid;grid-template-columns:minmax(110px,220px) 1fr 82px;gap:10px;align-items:center;font-size:12.5px;margin:6px 0}#adminShellOverlay .obs-bar i{height:9px;border-radius:99px;background:var(--a-hairline-soft);overflow:hidden}#adminShellOverlay .obs-bar b{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--c));border-radius:99px}#adminShellOverlay .obs-bar em{font-style:normal;color:var(--t2);font-size:11.5px;text-align:right}
+#adminShellOverlay .obs-vl{margin:8px 0 0;padding-left:18px;font-size:12.5px;line-height:1.55}#adminShellOverlay .obs-vl.err{color:var(--red)}
+@media (max-width:640px){
+  #adminShellOverlay .obs-grid{grid-template-columns:1fr}#adminShellOverlay .obs-simrow{grid-template-columns:1fr}#adminShellOverlay .obs-bar{grid-template-columns:1fr 70px}#adminShellOverlay .obs-bar i{grid-column:1/-1;order:3}
+  #adminShellOverlay .obs-cond .obs-in{max-width:100%;flex:1 1 100%}#adminShellOverlay .obs-opt{flex-wrap:wrap}#adminShellOverlay .obs-opt .obs-in{flex:1 1 40%}
+  #adminShellOverlay .obs-top-r .adm-btn{padding:6px 10px}
+}
+/*ONBS-CSS-END*/
+
 </style>
 <style id="bm-css">
 /*BM-CSS-START*/
@@ -2959,66 +3174,8 @@ setTimeout(endBootSplash, 15000);
   </div>
 </div>
 
-<!-- ===== ONBOARDING SCREEN (shown once, for brand-new Google accounts) ===== -->
-<div id="onboardScreen" class="hidden">
-  <div class="login-box" id="onboardBox" style="width:420px;">
-
-    <!-- STEP 1: mandatory basic info -->
-    <div id="onboardStep1">
-      <div class="login-logo" style="font-size:16px;">WELCOME</div>
-      <div class="login-sub" style="margin-bottom:26px;">Let's set up your profile</div>
-
-      <div class="login-label">NAME</div>
-      <input class="login-inp" id="obName" type="text" placeholder="Your name" autocomplete="name"/>
-
-      <div style="display:flex;gap:10px;">
-        <div style="flex:1;">
-          <div class="login-label">AGE</div>
-          <input class="login-inp" id="obAge" type="number" min="5" max="120" placeholder="e.g. 25"/>
-        </div>
-        <div style="flex:1;">
-          <div class="login-label">GENDER</div>
-          <select class="login-inp inp" id="obGender" style="cursor:pointer;">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="login-label">BODY WEIGHT (KG)</div>
-      <input class="login-inp" id="obWeight" type="number" min="1" step="0.1" placeholder="e.g. 70"/>
-
-      <div class="login-label">HEIGHT <span style="opacity:.6">(OPTIONAL · FEET / INCHES)</span></div>
-      <div style="display:flex;gap:10px;">
-        <input class="login-inp" id="obHeightFt" type="number" min="1" max="8" step="1" placeholder="ft" style="flex:1;"/>
-        <input class="login-inp" id="obHeightIn" type="number" min="0" max="11.5" step="0.5" placeholder="in" style="flex:1;"/>
-      </div>
-
-      <button class="login-btn" onclick="onboardStep1Next()">[ CONTINUE ]</button>
-      <div class="login-err" id="onboardErr1"></div>
-    </div>
-
-    <!-- STEP 2: customize vs template -->
-    <div id="onboardStep2" class="hidden">
-      <div class="login-logo" style="font-size:16px;">SET UP YOUR SPACE</div>
-      <div class="login-sub" style="margin-bottom:26px;">How would you like to start?</div>
-
-      <div class="ob-choice-card" onclick="finishOnboarding('custom')">
-        <div class="ob-choice-title">🛠 Customize It Myself</div>
-        <div class="ob-choice-desc">Start with a blank slate — set up your own habits, workouts and goals from scratch.</div>
-      </div>
-
-      <div class="ob-choice-card" onclick="finishOnboarding('template')">
-        <div class="ob-choice-title">📋 Use a Template</div>
-        <div class="ob-choice-desc">Templates tailored to specific occupations/lifestyles are coming soon. For now this will start you off the same as Customize.</div>
-      </div>
-
-      <div class="login-err" id="onboardErr2"></div>
-    </div>
-
-  </div>
-</div>
+<!-- ===== ONBOARDING — full-screen, rendered from the config in Admin → Onboarding Studio (see ONB-START) ===== -->
+<div id="onboardScreen" class="hidden" role="dialog" aria-modal="true" aria-label="Setup"></div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -3882,7 +4039,7 @@ html.alpha .wt-range-btn,html.alpha .htab,html.alpha .toggle-label{
 /* ---- Type range locked to 11–16px: hierarchy comes from weight, not size ---- */
 .card-val,.vital-big,.meas-val,.ring-pct,.macro-ring-val,.hwk-ring-pct,.hstat-val,
 .goal-pct,.wt-current-val,.timer-big,.dp-num,.page-title,.modal-title,.mob-sheet-title,
-.ob-choice-title,.login-logo,.hstat-name,.goal-name,.ex-name{
+.login-logo,.hstat-name,.goal-name,.ex-name{
   font-weight:800 !important;letter-spacing:-.01em !important;
 }
 .timer-big{letter-spacing:.5px !important;}
@@ -3903,7 +4060,7 @@ body,input,select,textarea,button,.inp,.btn,.btn-ghost{font-family:var(--font-ui
 
 /* Marcellus has one weight (400): never fake-bold it */
 .app-brand,.login-logo,.page-title,.modal-title,.sec-head,.mob-sheet-title,
-.ob-choice-title,.goal-name,.ex-name,.hstat-name,.user-name,.saved-timer-name,
+.goal-name,.ex-name,.hstat-name,.user-name,.saved-timer-name,
 .profile-dropdown-name,.card-title{
   font-family:var(--font-head) !important;
   font-weight:400 !important;font-synthesis:none;
@@ -5518,6 +5675,7 @@ body.gl-lock{overflow:hidden}
         <div class="admin-sb-item" id="adminNav-trash" onclick="adminNav('trash')">🗑 <span class="lbl">Trash</span><span class="lock-tag" id="adminTrashCountTag" style="display:none">0</span></div>
         <div class="admin-sb-sec">Configuration</div>
         <div class="admin-sb-item" id="adminNav-appconfig" onclick="adminNav('appconfig')">⚙ <span class="lbl">App Config</span></div>
+        <div class="admin-sb-item" id="adminNav-onboarding" onclick="adminNav('onboarding')">🧭 <span class="lbl">Onboarding</span></div>
         <div class="admin-sb-item" id="adminNav-flags" onclick="adminNav('flags')">◈ <span class="lbl">Feature Flags</span></div>
         <div class="admin-sb-item" id="adminNav-plans" onclick="adminNav('plans')">◆ <span class="lbl">Plans</span></div>
         <div class="admin-sb-sec">Website</div>
@@ -5745,6 +5903,15 @@ body.gl-lock{overflow:hidden}
             <button class="admin-exit-btn" onclick="loadAdminAppConfig(true)">[ ⟳ REFRESH ]</button>
           </div>
           <div id="adminAppConfigBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading configuration…</div></div>
+        </div>
+
+        <!-- ===== ONBOARDING STUDIO SECTION ===== -->
+        <div id="admin-sec-onboarding" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Onboarding Studio</div>
+            <button class="admin-exit-btn" onclick="loadAdminOnboarding(true)">[ ⟳ RELOAD ]</button>
+          </div>
+          <div id="adminOnbBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading onboarding…</div></div>
         </div>
 
         <!-- ===== FEATURE FLAGS SECTION ===== -->
@@ -6116,6 +6283,7 @@ body.gl-lock{overflow:hidden}
     var m = (st.measurements || []), v = (st.vitals || []), c = st.cfg || {};
     var lm = m.length ? m[m.length - 1] : null, lv = v.length ? v[v.length - 1] : null;
     return { name: c.name || null, gender: c.gender || null, age: c.age || null, onboarded: st.onboarded !== false,
+      onb: c.onb ? { f: c.onb.flow || '', v: c.onb.v || 0, at: c.onb.at || '', blank: !!c.onb.blank, a: c.onb.answers || {}, ap: c.onb.applied || {} } : null,
       streak: st.streak || 0, dailyDataDays: Object.keys(st.dailyData || {}).length,
       habitsCount: (st.habits || []).length, goalsCount: (st.goals || []).length,
       measurementsCount: m.length, vitalsCount: v.length,
@@ -6361,7 +6529,7 @@ async function handleGoogleUser(email, uid) {
       Object.assign(S, shellFresh);
       await window._fsSetDoc(userRef, { authUid: uid, userId: userData.userId || email, data: JSON.stringify(shellFresh), lastLogin: new Date().toISOString(), trashed: false }, {merge:true});
       await dataService.bootstrap(uid, docId);
-      beginOnboarding(email, docId);
+      beginOnboarding(email, docId, { flowId: userData.onbFlow || '' });
       return;
     }
     loadUserDataIntoState(userData);
@@ -6371,8 +6539,8 @@ async function handleGoogleUser(email, uid) {
     window._fsSetDoc(userRef, _loginPatch, {merge:true}).catch(function(e){ console.error(e); });
     // Existing accounts that somehow never finished onboarding (e.g. closed
     // the tab mid-flow) are sent back to it instead of straight into the app.
-    if (!S.onboarded) {
-      beginOnboarding(email, docId);
+    if (!S.onboarded || userData.forceOnboarding) {
+      beginOnboarding(email, docId, { flowId: userData.onbFlow || '' });
     } else {
       loginSuccess(userData.userId || email, docId);
     }
@@ -6486,72 +6654,690 @@ function loginSuccess(id, docId, silent) {
   trackEvent('login');
 }
 
-// ===================== ONBOARDING (new Google accounts only) =====================
-// Holds the identity of the user currently going through onboarding, since
-// they aren't "logged in" (loginSuccess hasn't run yet) while it's shown.
-var _onboardEmail = null;
-var _onboardDocId = null;
+/*ONB-START*/
+/* ===================== ONBOARDING ENGINE — config-driven (admin/onboarding) =====================
+   The whole first-run experience (steps, questions, options, branching, suggestion rules and the template library)
+   lives in ONE Firestore document the owner edits in Admin → Onboarding Studio. If it is missing or invalid the built-in default below is used,
+   so a new user can never be locked out of the app by a bad config. */
+var ONB_QTYPES = ['text','number','choice','multi','weight','height','scale','yesno','date','info'];
+var ONB_FIELDS = ['none','name','age','gender','weight','height','goalWeight','activity'];
+var ONB_OPS = ['eq','ne','in','nin','has','nhas','hasAny','hasAll','gt','gte','lt','lte','between','filled','empty'];
+var ONB_TPL_KINDS = ['habits','routines','goals','plans'];
+var ONB_CFG = null, OB = null;
 
-function beginOnboarding(email, docId) {
-  _onboardEmail = email;
-  _onboardDocId = docId;
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('onboardStep1').classList.remove('hidden');
-  document.getElementById('onboardStep2').classList.add('hidden');
-  document.getElementById('onboardScreen').classList.remove('hidden');
-  // Pre-fill name with whatever we can infer, so the field isn't empty.
-  var nameInp = document.getElementById('obName');
-  if (nameInp && !nameInp.value) nameInp.value = (S.cfg && S.cfg.name) ? S.cfg.name : '';
+function onbOpt(id, l, e, v, d) { return { id: id, label: l, emoji: e || '', value: v == null ? id : v, desc: d || '' }; }
+var ONB_DEFAULT = {
+  v: 1, disabled: false,
+  templates: {
+    habits: [
+      { id:'h_water',  name:'Drink water',          emoji:'💧', cat:'Health',      type:'amount', target:8,    unit:'glasses', step:1,    tod:'any', freq:{t:'daily'}, why:'Steady hydration = better energy and focus' },
+      { id:'h_steps',  name:'Walk 8,000 steps',     emoji:'🚶', cat:'Fitness',     type:'amount', target:8000, unit:'steps',   step:1000, tod:'any', freq:{t:'daily'} },
+      { id:'h_sleep',  name:'In bed by 11 PM',      emoji:'😴', cat:'Sleep',       type:'check',  tod:'evening', freq:{t:'daily'}, cue:'Phone down, lights low' },
+      { id:'h_sleep7', name:'Sleep 7+ hours',       emoji:'🛏️', cat:'Sleep',       type:'amount', target:7,    unit:'hours',   step:0.5,  tod:'any', freq:{t:'daily'} },
+      { id:'h_med',    name:'Meditate',             emoji:'🧘', cat:'Mindfulness', type:'timer',  target:10,   tod:'morning', freq:{t:'daily'} },
+      { id:'h_stretch',name:'Stretch',              emoji:'🤸', cat:'Fitness',     type:'timer',  target:10,   tod:'morning', freq:{t:'daily'} },
+      { id:'h_sugar',  name:'No sugary drinks',     emoji:'🍬', cat:'Nutrition',   type:'avoid',  tod:'any', freq:{t:'daily'} },
+      { id:'h_protein',name:'Protein with every meal', emoji:'🥩', cat:'Nutrition', type:'check', tod:'any', freq:{t:'daily'} },
+      { id:'h_log',    name:'Log my meals',         emoji:'🍎', cat:'Nutrition',   type:'check',  tod:'evening', freq:{t:'daily'} },
+      { id:'h_train',  name:'Workout (3× a week)',  emoji:'🏋️', cat:'Fitness',     type:'check',  tod:'any', freq:{t:'weekly', n:3} },
+      { id:'h_read',   name:'Read 15 minutes',      emoji:'📖', cat:'Learning',    type:'timer',  target:15,   tod:'evening', freq:{t:'daily'} },
+      { id:'h_weigh',  name:'Weekly weigh-in',      emoji:'⚖️', cat:'Health',      type:'check',  tod:'morning', freq:{t:'weekly', n:1} }
+    ],
+    routines: [
+      { id:'r_begin', name:'Beginner full body', desc:'Three easy machine/dumbbell moves for every muscle group.', items:[{n:'Goblet Squat'},{n:'Machine Chest Press'},{n:'Lat Pulldown'},{n:'Seated Dumbbell Press'},{n:'Plank'}] },
+      { id:'r_push',  name:'Push day',  desc:'Chest, shoulders and triceps.',   items:[{n:'Barbell Bench Press'},{n:'Incline Dumbbell Press'},{n:'Seated Dumbbell Press'},{n:'Lateral Raise'},{n:'Rope Pushdown'}] },
+      { id:'r_pull',  name:'Pull day',  desc:'Back and biceps.',                items:[{n:'Lat Pulldown'},{n:'Barbell Bent-Over Row'},{n:'Seated Cable Row'},{n:'Face Pull'},{n:'Barbell Curl'},{n:'Hammer Curl'}] },
+      { id:'r_legs',  name:'Leg day',   desc:'Quads, hamstrings, glutes and calves.', items:[{n:'Barbell Back Squat'},{n:'Romanian Deadlift'},{n:'Leg Press'},{n:'Lying Leg Curl'},{n:'Standing Calf Raise'}] },
+      { id:'r_home',  name:'Home bodyweight', desc:'No equipment needed.',      items:[{n:'Push-Ups'},{n:'Bodyweight Squat'},{n:'Glute Bridge'},{n:'Plank'},{n:'Mountain Climbers'}] },
+      { id:'r_burn',  name:'Fat-burn cardio', desc:'Low-impact cardio plus a core finisher.', items:[{n:'Brisk Walking',p:[40,'Moderate']},{n:'Cycling',p:[20,'Moderate']},{n:'Jump Rope',p:[10,'High']},{n:'Plank'}] },
+      { id:'r_mob',   name:'Mobility & recovery', desc:'Ten relaxed minutes for stiff days.', items:[{n:'Cat-Cow Stretch'},{n:"Child's Pose"},{n:'Hip Flexor Stretch'},{n:'Standing Hamstring Stretch'},{n:'Doorway Chest Stretch'},{n:'Foam Rolling'}] }
+    ],
+    goals: [
+      { id:'g_lose',  name:'Lose 5 kg in 2 months',    emoji:'🔻', ck:'body',    kind:'metric', metric:'weight',      delta:-5,  days:60 },
+      { id:'g_gain',  name:'Gain 3 kg in 2 months',    emoji:'💪', ck:'body',    kind:'metric', metric:'weight',      delta:3,   days:60 },
+      { id:'g_work',  name:'20 workouts this month',   emoji:'🏋️', ck:'fitness', kind:'metric', metric:'workouts',    target:20, days:30 },
+      { id:'g_water', name:'Hit water goal 30 days',   emoji:'💧', ck:'water',   kind:'metric', metric:'water_days',  target:30, days:30 },
+      { id:'g_prot',  name:'Hit protein goal 25 days', emoji:'🥩', ck:'nutrition',kind:'metric',metric:'protein_days',target:25, days:30 },
+      { id:'g_sleep', name:'Sleep 7h+ for 21 nights',  emoji:'😴', ck:'sleep',   kind:'metric', metric:'sleep_nights',target:21, days:30, mp:{hours:7} },
+      { id:'g_bmi',   name:'Reach a healthy BMI (22)', emoji:'◎',  ck:'body',    kind:'metric', metric:'bmi',         target:22, days:90 }
+    ],
+    plans: [
+      { id:'p_cut',   name:'Fat-loss plan',      desc:'A moderate calorie deficit with high protein.',      calMode:'tdee',  adjust:-500, protPerKg:2.0, fatPct:25, water:12 },
+      { id:'p_lean',  name:'Lean muscle plan',   desc:'A small surplus to build muscle without much fat.',  calMode:'tdee',  adjust:250,  protPerKg:2.0, fatPct:25, water:12 },
+      { id:'p_gain',  name:'Weight-gain plan',   desc:'A bigger surplus for healthy weight gain.',          calMode:'tdee',  adjust:500,  protPerKg:1.8, fatPct:28, water:12 },
+      { id:'p_maint', name:'Maintenance plan',   desc:'Eat at maintenance and keep a balanced split.',      calMode:'tdee',  adjust:0,    protPerKg:1.6, fatPct:28, water:10 },
+      { id:'p_hpro',  name:'High-protein plan',  desc:'Maintenance calories with extra protein.',           calMode:'tdee',  adjust:0,    protPerKg:2.2, fatPct:25, water:12 }
+    ]
+  },
+  flows: [{
+    id: 'default', name: 'Default onboarding', enabled: true, isDefault: true, audience: { emails: [] },
+    brand: { icon: '⚡', planLabel: 'Your plan', title: 'Welcome to FIT//OS', subtitle: 'A few quick questions so we can set everything up for you.', planTitle: 'Your starter plan', planSub: 'Based on your answers we picked these for you. Keep what you like — you can change everything later.', finishLabel: 'Start FIT//OS', blankLabel: 'Skip — I will set it up myself' },
+    behavior: { allowBack: true, showStepper: true, showProgress: true, planStep: true, autoSelect: true, allowBlank: true, maxPerType: { habits: 4, routines: 2, goals: 2, plans: 1 } },
+    steps: [
+      { id:'s_about',  title:'About you',  subtitle:'The basics help us calculate your targets.', icon:'👤', enabled:true, showIf:[] },
+      { id:'s_goal',   title:'Your goal',  subtitle:'What do you want to achieve?',                 icon:'🎯', enabled:true, showIf:[] },
+      { id:'s_life',   title:'Lifestyle',  subtitle:'So the plan fits your real week.',            icon:'⚡', enabled:true, showIf:[] },
+      { id:'s_habits', title:'Habits',     subtitle:'Small daily wins add up.',                    icon:'✨', enabled:true, showIf:[] }
+    ],
+    questions: [
+      { id:'q_name', step:'s_about', type:'text', field:'name', required:true, label:'What should we call you?', help:'', placeholder:'Your name', showIf:[] },
+      { id:'q_age', step:'s_about', type:'number', field:'age', required:true, label:'How old are you?', unit:'years', min:5, max:120, inc:1, placeholder:'e.g. 25', showIf:[] },
+      { id:'q_gender', step:'s_about', type:'choice', field:'gender', required:true, label:'Gender', help:'Used for BMI and calorie estimates.', showIf:[],
+        options:[ onbOpt('male','Male','👨','Male'), onbOpt('female','Female','👩','Female'), onbOpt('other','Other','✨','Other') ] },
+      { id:'q_weight', step:'s_about', type:'weight', field:'weight', required:true, label:'Current body weight', help:'', min:20, max:400, showIf:[] },
+      { id:'q_height', step:'s_about', type:'height', field:'height', required:false, label:'Height', help:'Optional — unlocks BMI and a more accurate calorie target.', showIf:[] },
+      { id:'q_goal', step:'s_goal', type:'choice', field:'none', required:true, label:'What is your main goal?', help:'', showIf:[],
+        options:[ onbOpt('lose','Lose weight','🔻','lose','Burn fat and get lighter'), onbOpt('muscle','Build muscle','💪','muscle','Get stronger and more defined'), onbOpt('gain','Gain weight','📈','gain','Healthy weight gain'), onbOpt('fit','Get fitter','🏃','fit','More energy and stamina'), onbOpt('health','Stay healthy','🌿','health','Maintain and build good habits') ] },
+      { id:'q_goalw', step:'s_goal', type:'weight', field:'goalWeight', required:false, label:'Target weight', help:'Optional — we will track your progress towards it.', min:20, max:400, showIf:[{ q:'q_goal', op:'in', val:['lose','gain'] }] },
+      { id:'q_activity', step:'s_life', type:'choice', field:'activity', required:true, label:'How active are you day to day?', help:'Outside of planned workouts.', showIf:[],
+        options:[ onbOpt('sedentary','Mostly sitting','🪑','sedentary','Desk job, little walking'), onbOpt('light','Lightly active','🚶','light','On my feet some of the day'), onbOpt('moderate','Moderately active','🏃','moderate','Active most of the day'), onbOpt('active','Very active','🏋️','active','Physical job or daily training') ] },
+      { id:'q_exp', step:'s_life', type:'choice', field:'none', required:true, label:'Training experience', help:'', showIf:[],
+        options:[ onbOpt('none','Beginner','🌱','none','New to working out'), onbOpt('some','Intermediate','🌿','some','Some experience'), onbOpt('adv','Advanced','🌳','adv','Train regularly for years') ] },
+      { id:'q_place', step:'s_life', type:'choice', field:'none', required:true, label:'Where will you work out?', help:'', showIf:[],
+        options:[ onbOpt('home','At home','🏠','home'), onbOpt('gym','At the gym','🏢','gym'), onbOpt('outdoor','Outdoors','🌳','outdoor'), onbOpt('none','I won\'t train','🚫','none') ] },
+      { id:'q_days', step:'s_life', type:'choice', field:'none', required:false, label:'Days per week you can train', help:'', showIf:[{ q:'q_place', op:'ne', val:'none' }],
+        options:[ onbOpt('d3','2–3 days','','d3'), onbOpt('d5','4–5 days','','d5'), onbOpt('d6','6–7 days','','d6') ] },
+      { id:'q_focus', step:'s_habits', type:'multi', field:'none', required:false, label:'Which habits do you want to build?', help:'Pick up to 3.', max:3, showIf:[],
+        options:[ onbOpt('water','Drink more water','💧'), onbOpt('sleep','Sleep better','😴'), onbOpt('steps','Walk more','🚶'), onbOpt('nutrition','Eat cleaner','🥗'), onbOpt('mind','Calm my mind','🧘'), onbOpt('sugar','Cut sugar','🍬') ] },
+      { id:'q_diet', step:'s_habits', type:'choice', field:'none', required:false, label:'How do you eat?', help:'', showIf:[],
+        options:[ onbOpt('normal','No special diet','🍽️','normal'), onbOpt('highpro','High protein','🥩','highpro'), onbOpt('veg','Vegetarian','🥦','veg') ] }
+    ],
+    rules: [
+      { id:'ru_lose', name:'Wants to lose weight', enabled:true, priority:90, match:'all', when:[{ q:'q_goal', op:'eq', val:'lose' }], reason:'You want to lose weight',
+        suggest:{ plans:['p_cut'], goals:['g_lose'], habits:['h_water','h_steps','h_sugar'], routines:['r_burn'] } },
+      { id:'ru_muscle', name:'Wants to build muscle', enabled:true, priority:90, match:'all', when:[{ q:'q_goal', op:'eq', val:'muscle' }], reason:'You want to build muscle',
+        suggest:{ plans:['p_lean'], goals:['g_work'], habits:['h_protein','h_train','h_sleep7'], routines:[] } },
+      { id:'ru_gain', name:'Wants to gain weight', enabled:true, priority:90, match:'all', when:[{ q:'q_goal', op:'eq', val:'gain' }], reason:'You want to gain weight',
+        suggest:{ plans:['p_gain'], goals:['g_gain'], habits:['h_protein','h_log'], routines:[] } },
+      { id:'ru_fit', name:'Wants to get fitter', enabled:true, priority:80, match:'all', when:[{ q:'q_goal', op:'eq', val:'fit' }], reason:'You want to get fitter',
+        suggest:{ plans:['p_maint'], goals:['g_work'], habits:['h_steps','h_train'], routines:[] } },
+      { id:'ru_health', name:'Wants to stay healthy', enabled:true, priority:70, match:'all', when:[{ q:'q_goal', op:'eq', val:'health' }], reason:'You want to stay healthy',
+        suggest:{ plans:['p_maint'], goals:['g_water'], habits:['h_water','h_med','h_weigh'], routines:['r_mob'] } },
+      { id:'ru_begin', name:'Beginner at the gym', enabled:true, priority:60, match:'all', when:[{ q:'q_exp', op:'eq', val:'none' },{ q:'q_place', op:'in', val:['gym','outdoor'] }], reason:'You are new to training',
+        suggest:{ routines:['r_begin'], habits:[], goals:[], plans:[] } },
+      { id:'ru_home', name:'Trains at home', enabled:true, priority:65, match:'all', when:[{ q:'q_place', op:'eq', val:'home' }], reason:'You train at home',
+        suggest:{ routines:['r_home'], habits:[], goals:[], plans:[] } },
+      { id:'ru_split', name:'Experienced gym-goer', enabled:true, priority:55, match:'all', when:[{ q:'q_place', op:'eq', val:'gym' },{ q:'q_exp', op:'in', val:['some','adv'] },{ q:'q_days', op:'in', val:['d5','d6'] }], reason:'You train often at the gym',
+        suggest:{ routines:['r_push','r_pull','r_legs'], habits:[], goals:[], plans:[] } },
+      { id:'ru_bmi', name:'High BMI', enabled:true, priority:50, match:'all', when:[{ q:'$bmi', op:'gte', val:'30' }], reason:'A gentle start is best for your BMI',
+        suggest:{ routines:['r_burn'], goals:['g_bmi'], habits:['h_steps'], plans:[] } },
+      { id:'ru_sed', name:'Sedentary', enabled:true, priority:45, match:'all', when:[{ q:'q_activity', op:'eq', val:'sedentary' }], reason:'You sit most of the day',
+        suggest:{ habits:['h_steps','h_stretch'], routines:[], goals:[], plans:[] } },
+      { id:'ru_water', name:'Wants to drink more water', enabled:true, priority:75, match:'all', when:[{ q:'q_focus', op:'has', val:'water' }], reason:'You want to drink more water', suggest:{ habits:['h_water'], goals:['g_water'], routines:[], plans:[] } },
+      { id:'ru_sleep', name:'Wants better sleep', enabled:true, priority:75, match:'all', when:[{ q:'q_focus', op:'has', val:'sleep' }], reason:'You want to sleep better', suggest:{ habits:['h_sleep','h_sleep7'], goals:['g_sleep'], routines:[], plans:[] } },
+      { id:'ru_steps', name:'Wants to walk more', enabled:true, priority:70, match:'all', when:[{ q:'q_focus', op:'has', val:'steps' }], reason:'You want to walk more', suggest:{ habits:['h_steps'], routines:[], goals:[], plans:[] } },
+      { id:'ru_nut', name:'Wants to eat cleaner', enabled:true, priority:70, match:'all', when:[{ q:'q_focus', op:'has', val:'nutrition' }], reason:'You want to eat cleaner', suggest:{ habits:['h_log','h_protein'], goals:['g_prot'], routines:[], plans:[] } },
+      { id:'ru_mind', name:'Wants a calmer mind', enabled:true, priority:70, match:'all', when:[{ q:'q_focus', op:'has', val:'mind' }], reason:'You want a calmer mind', suggest:{ habits:['h_med','h_read'], routines:['r_mob'], goals:[], plans:[] } },
+      { id:'ru_sugar', name:'Wants to cut sugar', enabled:true, priority:70, match:'all', when:[{ q:'q_focus', op:'has', val:'sugar' }], reason:'You want to cut sugar', suggest:{ habits:['h_sugar'], routines:[], goals:[], plans:[] } },
+      { id:'ru_hpro', name:'High-protein eater', enabled:true, priority:95, match:'all', when:[{ q:'q_diet', op:'eq', val:'highpro' },{ q:'q_goal', op:'in', val:['fit','health'] }], reason:'You eat a high-protein diet', suggest:{ plans:['p_hpro'], habits:[], routines:[], goals:[] } }
+    ]
+  }]
+};
+
+/* ---------- sanitising (the document is owner-written, but never trust a shape) ---------- */
+function oS(v, n) { return String(v == null ? '' : v).slice(0, n || 200); }
+function oId(v, fb) { v = String(v == null ? '' : v).replace(/[^A-Za-z0-9_\-]/g, '').slice(0, 40); return v || fb || ('x' + Math.random().toString(36).slice(2, 7)); }
+function oN(v, d) { var n = parseFloat(v); return isFinite(n) ? n : d; }
+function oB(v, d) { return v === undefined || v === null ? d : !!v; }
+function oA(v, n) { return Array.isArray(v) ? v.slice(0, n || 100) : []; }
+function onbSanConds(a) {
+  return oA(a, 12).filter(function(c){ return c && typeof c === 'object'; }).map(function(c){
+    return { q: oS(c.q, 50), op: ONB_OPS.indexOf(c.op) >= 0 ? c.op : 'eq', val: Array.isArray(c.val) ? c.val.slice(0, 30).map(function(x){ return oS(x, 60); }) : oS(c.val, 60) };
+  }).filter(function(c){ return c.q; });
 }
-
-function onboardStep1Next() {
-  var err = document.getElementById('onboardErr1');
-  err.textContent = '';
-  var name = (document.getElementById('obName').value || '').trim();
-  var age = parseInt(document.getElementById('obAge').value, 10);
-  var gender = document.getElementById('obGender').value;
-  var weight = parseFloat(document.getElementById('obWeight').value);
-
-  if (!name) { err.textContent = 'Please enter your name'; return; }
-  if (!age || age < 5 || age > 120) { err.textContent = 'Please enter a valid age'; return; }
-  if (!weight || weight <= 0) { err.textContent = 'Please enter a valid body weight'; return; }
-  var _hf = parseFloat(document.getElementById('obHeightFt').value), _hi = parseFloat(document.getElementById('obHeightIn').value) || 0, _hcm = null;
-  if (!isNaN(_hf)) { _hcm = Math.round((_hf * 12 + _hi) * 2.54 * 10) / 10; if (_hcm < 50 || _hcm > 260) { err.textContent = 'Height must be between 1\u203211\u2033 and 8\u203206\u2033 (or leave it empty)'; return; } }
-
-  // Stash into S.cfg right away so it's ready no matter which path (custom
-  // or template) the user picks on step 2.
-  S.cfg.name = name.toUpperCase();
-  S.cfg.initials = name.trim().slice(0,2).toUpperCase();
-  S.cfg.age = age;
-  S.cfg.gender = gender;
-  S.cfg.weight = weight;
-  if (_hcm) { S.cfg.height = _hcm; S.cfg.heightAt = ''; }
-
-  document.getElementById('onboardStep1').classList.add('hidden');
-  document.getElementById('onboardStep2').classList.remove('hidden');
-}
-
-// mode: 'custom' | 'template' — template presets don't exist yet, so both
-// paths currently behave the same (custom, blank slate); the choice is
-// still recorded on the profile for when templates ship.
-function finishOnboarding(mode) {
-  S.cfg.setupMode = mode;
-
-  // Seed the very first measurement entry from the onboarding weight, so
-  // it shows up immediately in Health/Measurements and the weight chart.
-  if (S.cfg.weight) {
-    S.measurements.push({ date: today(), weight: String(S.cfg.weight) });
+function onbSanTpl(kind, t) {
+  var o = { id: oId(t.id), name: oS(t.name, 60) || 'Untitled' };
+  if (kind === 'habits') {
+    o.emoji = oS(t.emoji, 4); o.cat = oS(t.cat, 20) || 'Other'; o.type = ['check','amount','timer','checklist','avoid'].indexOf(t.type) >= 0 ? t.type : 'check';
+    o.tod = ['any','morning','afternoon','evening'].indexOf(t.tod) >= 0 ? t.tod : 'any';
+    var f = t.freq || {}, ft = ['daily','weekdays','weekly','monthly'].indexOf(f.t) >= 0 ? f.t : 'daily'; o.freq = { t: ft };
+    if (ft === 'weekdays') o.freq.days = oA(f.days, 7).map(function(x){ return Math.max(0, Math.min(6, oN(x, 0) | 0)); });
+    if (ft === 'weekly' || ft === 'monthly') o.freq.n = Math.max(1, Math.min(ft === 'weekly' ? 7 : 31, oN(f.n, 1) | 0));
+    if (o.type === 'amount' || o.type === 'timer') { o.target = Math.max(0.1, oN(t.target, 1)); o.unit = oS(t.unit, 14); o.step = Math.max(0.1, oN(t.step, 1)); if (t.cmp === 'max') o.cmp = 'max'; }
+    if (o.type === 'checklist') o.items = oA(t.items, 12).map(function(x){ return oS(x, 60); }).filter(Boolean);
+    o.cue = oS(t.cue, 80); o.why = oS(t.why, 120);
+  } else if (kind === 'routines') {
+    o.desc = oS(t.desc, 140);
+    o.items = oA(t.items, 20).filter(function(i){ return i && i.n; }).map(function(i){ var r = { n: oS(i.n, 80) }; if (Array.isArray(i.p)) r.p = i.p.slice(0, 3).map(function(x){ return typeof x === 'number' ? x : oS(x, 24); }); return r; });
+  } else if (kind === 'goals') {
+    o.emoji = oS(t.emoji, 4); o.ck = oS(t.ck, 12) || 'custom'; o.kind = ['metric','habit','tasks'].indexOf(t.kind) >= 0 ? t.kind : 'metric'; o.metric = oS(t.metric, 24);
+    if (t.delta != null && t.delta !== '') o.delta = oN(t.delta, 0); if (t.target != null && t.target !== '') o.target = oN(t.target, 0);
+    o.days = Math.max(0, Math.min(1000, oN(t.days, 30) | 0)); if (t.mp && typeof t.mp === 'object') { o.mp = {}; Object.keys(t.mp).slice(0, 4).forEach(function(k){ o.mp[oS(k, 12)] = oS(t.mp[k], 30); }); }
+    o.habit = oS(t.habit, 40); o.tasks = oS(t.tasks, 600); o.hmode = ['count','streak','rate'].indexOf(t.hmode) >= 0 ? t.hmode : 'streak';
+  } else {
+    o.desc = oS(t.desc, 140); o.calMode = t.calMode === 'fixed' ? 'fixed' : 'tdee'; o.adjust = Math.max(-1500, Math.min(1500, oN(t.adjust, 0))); o.cal = Math.max(1000, Math.min(6000, oN(t.cal, 2200)));
+    o.protPerKg = Math.max(0.5, Math.min(4, oN(t.protPerKg, 1.6))); o.fatPct = Math.max(10, Math.min(50, oN(t.fatPct, 28))); o.water = Math.max(1, Math.min(40, oN(t.water, 10) | 0));
   }
-
-  S.onboarded = true;
-
-  document.getElementById('onboardScreen').classList.add('hidden');
-  loginSuccess(_onboardEmail, _onboardDocId);
-  toast('Welcome, ' + S.cfg.name + '! Your profile is ready.');
-  _onboardEmail = null;
-  _onboardDocId = null;
-  trackEvent('onboarding_complete');
+  return o;
 }
+function onbSanitize(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  var out = { v: oN(raw.v, 1), disabled: !!raw.disabled, templates: {}, flows: [] }, T = raw.templates || {};
+  ONB_TPL_KINDS.forEach(function(k){ var seen = {}; out.templates[k] = oA(T[k], 120).filter(function(t){ return t && typeof t === 'object'; }).map(function(t){ return onbSanTpl(k, t); }).filter(function(t){ if (seen[t.id]) return false; seen[t.id] = 1; return true; }); });
+  oA(raw.flows, 12).forEach(function(f){
+    if (!f || typeof f !== 'object') return;
+    var b = f.brand || {}, h = f.behavior || {}, mp = h.maxPerType || {}, steps = [], sid = {};
+    oA(f.steps, 14).forEach(function(s){ if (!s || typeof s !== 'object') return; var id = oId(s.id); if (sid[id]) return; sid[id] = 1; steps.push({ id: id, title: oS(s.title, 50) || 'Step', subtitle: oS(s.subtitle, 160), icon: oS(s.icon, 4), enabled: oB(s.enabled, true), showIf: onbSanConds(s.showIf) }); });
+    var qs = [], qid = {};
+    oA(f.questions, 70).forEach(function(q){
+      if (!q || typeof q !== 'object' || !sid[oId(q.step)]) return;
+      var id = oId(q.id); if (qid[id]) return; qid[id] = 1;
+      var o = { id: id, step: oId(q.step), type: ONB_QTYPES.indexOf(q.type) >= 0 ? q.type : 'text', field: ONB_FIELDS.indexOf(q.field) >= 0 ? q.field : 'none', required: !!q.required, label: oS(q.label, 140), help: oS(q.help, 200), placeholder: oS(q.placeholder, 60), unit: oS(q.unit, 14), showIf: onbSanConds(q.showIf) };
+      o.min = oN(q.min, null); o.max = oN(q.max, null); o.inc = oN(q.inc, null); o.lowLabel = oS(q.lowLabel, 30); o.highLabel = oS(q.highLabel, 30);
+      if (q.type === 'choice' || q.type === 'multi') { var ov = {}; o.options = oA(q.options, 24).filter(function(x){ return x && typeof x === 'object'; }).map(function(x){ return { id: oId(x.id), label: oS(x.label, 60) || 'Option', emoji: oS(x.emoji, 4), desc: oS(x.desc, 80), value: oS(x.value != null ? x.value : x.id, 40) }; }).filter(function(x){ if (ov[x.id]) return false; ov[x.id] = 1; return true; }); }
+      qs.push(o);
+    });
+    var sIx = {}; steps.forEach(function(s, i){ sIx[s.id] = i; });
+    qs = qs.map(function(q, i){ return { q: q, i: i }; }).sort(function(a, b){ return (sIx[a.q.step] - sIx[b.q.step]) || (a.i - b.i); }).map(function(x){ return x.q; });   // questions are evaluated in step order, so a condition can only look back
+    var rules = [], rid = {};
+    oA(f.rules, 70).forEach(function(r){
+      if (!r || typeof r !== 'object') return; var id = oId(r.id); if (rid[id]) return; rid[id] = 1; var S_ = r.suggest || {}, sg = {};
+      ONB_TPL_KINDS.forEach(function(k){ sg[k] = oA(S_[k], 30).map(function(x){ return oS(x, 40); }); });
+      rules.push({ id: id, name: oS(r.name, 60) || 'Rule', enabled: oB(r.enabled, true), priority: Math.max(0, Math.min(1000, oN(r.priority, 50) | 0)), match: r.match === 'any' ? 'any' : 'all', when: onbSanConds(r.when), reason: oS(r.reason, 120), suggest: sg });
+    });
+    out.flows.push({ id: oId(f.id), name: oS(f.name, 60) || 'Flow', enabled: oB(f.enabled, true), isDefault: !!f.isDefault, audience: { emails: oA((f.audience || {}).emails, 400).map(function(e){ return oS(e, 120).toLowerCase().trim(); }).filter(Boolean) },
+      brand: { icon: oS(b.icon, 4), title: oS(b.title, 80), subtitle: oS(b.subtitle, 200), planLabel: oS(b.planLabel, 20) || 'Your plan', planLabel: oS(b.planLabel, 20) || 'Your plan', planTitle: oS(b.planTitle, 80), planSub: oS(b.planSub, 240), finishLabel: oS(b.finishLabel, 40) || 'Start', blankLabel: oS(b.blankLabel, 60) },
+      behavior: { allowBack: oB(h.allowBack, true), showStepper: oB(h.showStepper, true), showProgress: oB(h.showProgress, true), planStep: oB(h.planStep, true), autoSelect: oB(h.autoSelect, true), allowBlank: oB(h.allowBlank, true),
+        maxPerType: { habits: Math.max(0, Math.min(12, oN(mp.habits, 4) | 0)), routines: Math.max(0, Math.min(8, oN(mp.routines, 2) | 0)), goals: Math.max(0, Math.min(8, oN(mp.goals, 2) | 0)), plans: Math.max(0, Math.min(1, oN(mp.plans, 1) | 0)) } },
+      steps: steps, questions: qs, rules: rules });
+  });
+  if (!out.flows.length) return null;
+  if (!out.flows.some(function(f){ return f.isDefault; })) out.flows[0].isDefault = true;
+  return out;
+}
+function onbDefaultCfg() { return onbSanitize(JSON.parse(JSON.stringify(ONB_DEFAULT))); }
+// NOTE: a question's `step` is the id of the step it belongs to; the increment of a number input is `inc`.
+async function onbLoadConfig(force) {
+  if (ONB_CFG && !force) return ONB_CFG;
+  var cfg = null;
+  try {
+    var snap = await window._fsGetDoc(window._fsDoc(window._db, 'admin', 'onboarding'));
+    if (snap.exists() && snap.data().json) { cfg = onbSanitize(JSON.parse(snap.data().json)); if (cfg && snap.data().v) cfg.v = snap.data().v; }
+  } catch (e) { console.warn('Onboarding config unavailable, using the built-in default:', e && e.message); }
+  ONB_CFG = cfg || onbDefaultCfg();
+  return ONB_CFG;
+}
+function onbPickFlow(cfg, email, forcedId) {
+  var live = cfg.flows.filter(function(f){ return f.enabled; }), m = String(email || '').toLowerCase();
+  if (forcedId) { var ff = live.filter(function(f){ return f.id === forcedId; })[0]; if (ff) return ff; }
+  var hit = live.filter(function(f){ return !f.isDefault && f.audience.emails.some(function(a){ return a === m || (a.charAt(0) === '@' && m.slice(-a.length) === a); }); })[0];
+  return hit || live.filter(function(f){ return f.isDefault; })[0] || live[0] || cfg.flows[0];
+}
+
+/* ---------- conditions + visibility + derived values ---------- */
+function onbDerived(flow, ans) {
+  var m = {}; flow.questions.forEach(function(q){ if (q.field !== 'none' && ans[q.id] !== undefined) m[q.field] = ans[q.id]; });
+  var w = oN(m.weight, null), h = oN(m.height, null), d = { '$weight': w, '$height': h, '$age': oN(m.age, null), '$gender': m.gender || '', '$activity': m.activity || '' };
+  if (w && h) { var b = w / Math.pow(h / 100, 2); d['$bmi'] = +b.toFixed(1); d['$bmicat'] = b < 18.5 ? 'underweight' : b < 25 ? 'normal' : b < 30 ? 'overweight' : 'obese'; }
+  return d;
+}
+function onbCond(c, vals, der) {
+  var v = c.q.charAt(0) === '$' ? der[c.q] : vals[c.q];
+  var has = v !== undefined && v !== null && v !== '' && !(Array.isArray(v) && !v.length) && !(typeof v === 'number' && isNaN(v));
+  var S_ = function(x){ return String(x); }, list = [].concat(c.val == null ? [] : c.val).map(S_), n = parseFloat(v);
+  switch (c.op) {
+    case 'filled': return has;
+    case 'empty': return !has;
+    case 'eq': return has && S_(v) === S_(Array.isArray(c.val) ? c.val[0] : c.val);
+    case 'ne': return !has || S_(v) !== S_(Array.isArray(c.val) ? c.val[0] : c.val);
+    case 'in': return has && list.indexOf(S_(v)) >= 0;
+    case 'nin': return !has || list.indexOf(S_(v)) < 0;
+    case 'has': return Array.isArray(v) && v.map(S_).indexOf(list[0]) >= 0;
+    case 'nhas': return !Array.isArray(v) || v.map(S_).indexOf(list[0]) < 0;
+    case 'hasAny': return Array.isArray(v) && v.some(function(x){ return list.indexOf(S_(x)) >= 0; });
+    case 'hasAll': return Array.isArray(v) && list.length > 0 && list.every(function(x){ return v.map(S_).indexOf(x) >= 0; });
+    case 'gt': return has && !isNaN(n) && n > parseFloat(list[0]);
+    case 'gte': return has && !isNaN(n) && n >= parseFloat(list[0]);
+    case 'lt': return has && !isNaN(n) && n < parseFloat(list[0]);
+    case 'lte': return has && !isNaN(n) && n <= parseFloat(list[0]);
+    case 'between': return has && !isNaN(n) && n >= parseFloat(list[0]) && n <= parseFloat(list[1]);
+  }
+  return false;
+}
+function onbAll(conds, vals, der) { return (conds || []).every(function(c){ return onbCond(c, vals, der); }); }
+// visible questions per step, evaluated in order so a condition can only depend on what the person can actually see
+function onbVisible(flow, ans) {
+  var vals = {}, der = onbDerived(flow, ans), stepsOn = {}, byStep = {};
+  flow.steps.forEach(function(s){ if (!s.enabled) return; stepsOn[s.id] = true; });
+  flow.questions.forEach(function(q){
+    if (!stepsOn[q.step]) return;
+    var st = flow.steps.filter(function(s){ return s.id === q.step; })[0];
+    if (!onbAll(st.showIf, vals, der) || !onbAll(q.showIf, vals, der)) return;
+    (byStep[q.step] = byStep[q.step] || []).push(q);
+    if (ans[q.id] !== undefined && q.type !== 'info') { vals[q.id] = ans[q.id]; der = onbDerived(flow, vals); }
+  });
+  return { vals: vals, byStep: byStep, der: onbDerived(flow, vals) };
+}
+function onbHasAnswer(q, v) { return v !== undefined && v !== null && v !== '' && !(Array.isArray(v) && !v.length) && !(typeof v === 'number' && isNaN(v)); }
+function onbQError(q, v) {
+  if (q.type === 'info') return '';
+  if (!onbHasAnswer(q, v)) return q.required ? 'This one is required' : '';
+  if (q.type === 'number' || q.type === 'weight' || q.type === 'height' || q.type === 'scale') {
+    var n = parseFloat(v); if (!isFinite(n)) return 'Enter a number';
+    var lo = q.min, hi = q.max;
+    if (q.type === 'height') { lo = lo == null ? 50 : lo; hi = hi == null ? 260 : hi; if (n < lo || n > hi) return 'Height must be between 1′11″ and 8′06″'; return ''; }
+    if (q.type === 'weight') { lo = lo == null ? 20 : lo; hi = hi == null ? 400 : hi; if (n < lo || n > hi) return 'Enter a weight between ' + lo + ' and ' + hi + ' kg'; return ''; }
+    if (lo != null && n < lo) return 'Minimum is ' + lo; if (hi != null && n > hi) return 'Maximum is ' + hi;
+  }
+  return '';
+}
+
+/* ---------- suggestions ---------- */
+function onbSuggest(cfg, flow, ans) {
+  var vis = onbVisible(flow, ans), res = {}, T = cfg.templates;
+  ONB_TPL_KINDS.forEach(function(k){
+    var map = {}, order = [];
+    flow.rules.forEach(function(r){
+      if (!r.enabled || !r.when.length) return;
+      var hits = r.when.map(function(c){ return onbCond(c, vis.vals, vis.der); }), ok = r.match === 'any' ? hits.some(Boolean) : hits.every(Boolean);
+      if (!ok) return;
+      (r.suggest[k] || []).forEach(function(id){
+        var t = T[k].filter(function(x){ return x.id === id; })[0]; if (!t) return;
+        if (!map[id]) { map[id] = { t: t, score: 0, why: [] }; order.push(id); }
+        map[id].score += r.priority + 1; var why = r.reason || r.name; if (why && map[id].why.indexOf(why) < 0) map[id].why.push(why);
+      });
+    });
+    var arr = order.map(function(id){ return map[id]; }).sort(function(a, b){ return b.score - a.score; });
+    res[k] = arr.slice(0, flow.behavior.maxPerType[k]);
+  });
+  return res;
+}
+// calorie / macro targets from a plan template + the answers (Mifflin-St Jeor)
+function onbPlanTargets(plan, flow, ans) {
+  var d = onbDerived(flow, onbVisible(flow, ans).vals), w = d['$weight'] || 70, h = d['$height'] || 170, a = d['$age'] || 25, g = d['$gender'];
+  var bmr = 10 * w + 6.25 * h - 5 * a + (g === 'Male' ? 5 : g === 'Female' ? -161 : -78);
+  var f = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725 }[d['$activity']] || 1.375;
+  var cal = plan.calMode === 'fixed' ? plan.cal : (bmr * f + plan.adjust);
+  cal = Math.max(1200, Math.min(5000, Math.round(cal / 10) * 10));
+  var prot = Math.round(plan.protPerKg * w), fat = Math.round(cal * plan.fatPct / 100 / 9), carb = Math.max(0, Math.round((cal - prot * 4 - fat * 9) / 4));
+  return { calGoal: cal, protGoal: prot, carbGoal: carb, fatGoal: fat, fiberGoal: Math.round(14 * cal / 1000), waterGoal: plan.water };
+}
+/*ONB-CORE-END*/
+
+/*ONB-UI-START*/
+/* ===================== ONBOARDING — full-screen experience ===================== */
+var _onboardEmail = null, _onboardDocId = null;
+function oEl(id) { return document.getElementById(id); }
+function onbKg(v) { return Math.round(v * 10) / 10; }
+function onbDraftKey() { return 'fitos_onb_' + (OB && OB.docId || ''); }
+function onbDraftSave() {
+  if (!OB || OB.preview) return;
+  try { localStorage.setItem(onbDraftKey(), JSON.stringify({ flow: OB.flow.id, v: OB.cfg.v, vals: OB.vals, cur: OB.cur, visited: OB.visited, desel: OB.desel, mode: OB.mode, ui: OB.ui })); } catch (e) {}
+}
+function onbDraftClear() { try { localStorage.removeItem(onbDraftKey()); } catch (e) {} }
+
+async function beginOnboarding(email, docId, opts) {
+  opts = opts || {};
+  _onboardEmail = email; _onboardDocId = docId;
+  var scr = oEl('onboardScreen'); oEl('loginScreen').classList.add('hidden');
+  scr.className = ''; scr.innerHTML = '<div class="onb-loading"><span class="onb-spin"></span><b>Preparing your setup…</b></div>';
+  var cfg = await onbLoadConfig(true);
+  if (cfg.disabled) return onbSkipAll();
+  var flow = onbPickFlow(cfg, email, opts.flowId);
+  onbStart(cfg, flow, { email: email, docId: docId, preview: false });
+}
+// the owner can switch onboarding off entirely: the person goes straight in with the basics from their Google account
+function onbSkipAll() {
+  S.onboarded = true; S.cfg.setupMode = 'custom';
+  oEl('onboardScreen').classList.add('hidden'); loginSuccess(_onboardEmail, _onboardDocId);
+  try { save(); } catch (e) {} _onboardEmail = null; _onboardDocId = null;
+}
+function onbStart(cfg, flow, o) {
+  var cf = S.cfg || {}, prev = (cf.onb && cf.onb.answers) || {}, vals = {}, rerun = S.onboarded === true;
+  OB = { cfg: cfg, flow: flow, vals: vals, cur: '', visited: {}, desel: {}, sel: { habits: {}, routines: {}, goals: {}, plans: {} }, mode: 'template', dir: 1, preview: !!o.preview, email: o.email, docId: o.docId, ui: { w: {}, h: {} }, errs: {}, sig: '', sug: null, busy: false };
+  if (!o.preview) {
+    // a brand-new account only pre-fills the name; a re-run (owner asked for it) starts from what the person already has
+    flow.questions.forEach(function(q){
+      var v;
+      if (q.field === 'name') v = cf.name ? String(cf.name).toLowerCase().replace(/(^|\s)\S/g, function(m){ return m.toUpperCase(); }) : '';
+      else if (rerun && q.field !== 'none') v = cf[q.field];
+      if ((v === undefined || v === null || v === '') && rerun) v = prev[q.id];
+      if (v !== undefined && v !== null && v !== '') vals[q.id] = v;
+    });
+    try {
+      var d = JSON.parse(localStorage.getItem(onbDraftKey()) || 'null');
+      if (d && d.flow === flow.id) { Object.assign(vals, d.vals || {}); OB.visited = d.visited || {}; OB.desel = d.desel || {}; OB.mode = d.mode || 'template'; OB.ui = d.ui || OB.ui; OB.cur = d.cur || ''; }
+    } catch (e) {}
+  }
+  var st = onbSteps(); if (!st.some(function(s){ return s.id === OB.cur; })) OB.cur = st.length ? st[0].id : '';
+  var scr = oEl('onboardScreen'); scr.className = o.preview ? 'onb-preview' : '';
+  scr.innerHTML = '<div class="onb" id="onb"><div class="onb-bg" aria-hidden="true"><i></i><i></i><i></i></div>'
+    + '<div class="onb-prog" id="onbProg"><b id="onbProgFill"></b></div>'
+    + '<header class="onb-top"><div class="onb-brand"><span class="onb-logo">FIT//OS</span><em>' + (o.preview ? 'PREVIEW' : 'SETUP') + '</em></div><nav class="onb-steps" id="onbSteps" aria-label="Setup steps"></nav>'
+    + '<div class="onb-top-r"><span class="onb-pct" id="onbPct">0%</span>' + (o.preview ? '<button type="button" class="onb-exit" onclick="onbExitPreview()">✕ Exit preview</button>' : '') + '</div></header>'
+    + '<main class="onb-main" id="onbMain"><div class="onb-panel" id="onbPanel"></div></main>'
+    + '<footer class="onb-foot"><button type="button" class="onb-btn ghost" id="onbBack" onclick="onbBack()">← Back</button><span class="onb-hint" id="onbHint"></span><button type="button" class="onb-btn pri" id="onbNext" onclick="onbNext()">Continue →</button></footer>'
+    + '<div class="onb-build" id="onbBuild" hidden><div class="onb-build-in"><span class="onb-ring"></span><b id="onbBuildT">Building your space…</b><ul id="onbBuildL"></ul></div></div></div>';
+  scr.classList.remove('hidden');
+  onbRenderPanel(0); onbPaint();
+}
+
+/* ---------- step list ---------- */
+function onbSteps() {
+  var vis = onbVisible(OB.flow, OB.vals), out = [];
+  OB.flow.steps.forEach(function(s){
+    if (!s.enabled) return; var qs = vis.byStep[s.id]; if (!qs || !qs.length) return;
+    out.push({ id: s.id, kind: 'q', title: s.title, subtitle: s.subtitle, icon: s.icon, qs: qs });
+  });
+  if (OB.flow.behavior.planStep) out.push({ id: '$plan', kind: 'plan', title: OB.flow.brand.planLabel || 'Your plan', subtitle: OB.flow.brand.planSub, icon: '🚀', qs: [] });
+  return out;
+}
+function onbIdx(steps) { for (var i = 0; i < steps.length; i++) if (steps[i].id === OB.cur) return i; return 0; }
+function onbStepFrac(s) {
+  if (s.kind !== 'q') return 0;
+  var qs = s.qs.filter(function(q){ return q.type !== 'info'; }); if (!qs.length) return 1;
+  var n = qs.filter(function(q){ return onbHasAnswer(q, OB.vals[q.id]) && !onbQError(q, OB.vals[q.id]); }).length; return n / qs.length;
+}
+function onbSig() { var st = onbSteps(); return st.map(function(s){ return s.id + ':' + s.qs.map(function(q){ return q.id; }).join(','); }).join('|'); }
+
+/* ---------- chrome: progress, stepper, footer ---------- */
+function onbPaint() {
+  if (!OB) return;
+  var st = onbSteps(), i = onbIdx(st), cur = st[i]; if (!cur) return;
+  OB.cur = cur.id;
+  var pct = Math.min(100, Math.round(100 * (i + (cur.kind === 'q' ? onbStepFrac(cur) * 0.9 : 0.5)) / st.length));
+  var f = oEl('onbProgFill'); if (f) f.style.width = pct + '%'; var p = oEl('onbPct'); if (p) p.textContent = pct + '%';
+  var showSt = OB.flow.behavior.showStepper, nav = oEl('onbSteps'); if (nav) nav.style.display = showSt ? '' : 'none';
+  var pr = oEl('onbProg'); if (pr) pr.style.display = OB.flow.behavior.showProgress ? '' : 'none'; if (p) p.style.display = OB.flow.behavior.showProgress ? '' : 'none';
+  if (nav && showSt) {
+    var can = OB.flow.behavior.allowBack;
+    var html = st.map(function(s, k){
+      var state = k < i ? 'done' : (k === i ? 'cur' : 'todo'), ok = can && (k < i || OB.visited[s.id]) && k !== i;
+      return (k ? '<span class="onb-line' + (k <= i ? ' on' : '') + '"></span>' : '')
+        + '<button type="button" class="onb-step ' + state + '"' + (ok ? ' onclick="onbGo(\'' + s.id + '\')"' : ' tabindex="-1" disabled') + ' aria-label="' + _esc(s.title) + '"' + (k === i ? ' aria-current="step"' : '') + '><span class="onb-dot">' + (state === 'done' ? '✓' : (k + 1)) + '</span><span class="onb-st">' + _esc(s.title) + '</span></button>';
+    }).join('');
+    if (nav.getAttribute('data-h') !== html) { nav.innerHTML = html; nav.setAttribute('data-h', html); } else return onbPaintFoot(st, i, cur);   // untouched markup keeps a click in progress alive
+    var c = nav.querySelector('.cur'); if (c && c.scrollIntoView) { try { nav.scrollTo({ left: c.offsetLeft - nav.clientWidth / 2 + c.clientWidth / 2, behavior: 'smooth' }); } catch (e) {} }
+  }
+  onbPaintFoot(st, i, cur);
+}
+function onbPaintFoot(st, i, cur) {
+  var last = i === st.length - 1, nx = oEl('onbNext'), bk = oEl('onbBack'), hint = oEl('onbHint');
+  if (nx) nx.innerHTML = last ? (cur.kind === 'plan' ? onbFinishLabel() : _esc(OB.flow.brand.finishLabel)) + ' ✓' : 'Continue →';
+  if (bk) { bk.style.visibility = (i > 0 && OB.flow.behavior.allowBack) ? '' : 'hidden'; }
+  if (hint) hint.textContent = 'Step ' + (i + 1) + ' of ' + st.length;
+}
+function onbFinishLabel() { var n = onbSelCount(); return n ? _esc(OB.flow.brand.finishLabel) : _esc(OB.flow.brand.finishLabel); }
+
+/* ---------- panel ---------- */
+function onbRenderPanel(dir) {
+  var st = onbSteps(), i = onbIdx(st), s = st[i], pn = oEl('onbPanel'); if (!s || !pn) return;
+  OB.sig = onbSig();
+  var focusId = document.activeElement && document.activeElement.id && pn.contains(document.activeElement) ? document.activeElement.id : '', selStart = null;
+  try { selStart = document.activeElement.selectionStart; } catch (e) {}
+  var b = OB.flow.brand, head = '';
+  if (i === 0 && s.kind === 'q') head += '<div class="onb-eyebrow">' + (b.icon ? '<span>' + _esc(b.icon) + '</span> ' : '') + _esc(b.title) + '</div>' + (b.subtitle ? '<p class="onb-lead">' + _esc(b.subtitle) + '</p>' : '');
+  head += '<div class="onb-head"><span class="onb-ico">' + _esc(s.icon || '•') + '</span><div><h1>' + _esc(s.kind === 'plan' ? (b.planTitle || s.title) : s.title) + '</h1>' + (s.subtitle ? '<p>' + _esc(s.subtitle) + '</p>' : '') + '</div></div>';
+  pn.innerHTML = head + (s.kind === 'plan' ? onbPlanHTML() : '<div class="onb-qs">' + s.qs.map(onbQHTML).join('') + '</div>');
+  pn.classList.toggle('still', !dir);
+  if (dir) { pn.classList.remove('go-f', 'go-b'); void pn.offsetWidth; pn.classList.add(dir > 0 ? 'go-f' : 'go-b'); var m = oEl('onbMain'); if (m) m.scrollTop = 0; }
+  if (focusId) { var fe = oEl(focusId); if (fe) { try { fe.focus(); if (selStart != null) fe.setSelectionRange(selStart, selStart); } catch (e) {} } }
+  Object.keys(OB.errs).forEach(function(id){ onbShowErr(id, OB.errs[id]); });
+}
+function onbShowErr(id, msg) { var e = oEl('onbe-' + id); if (e) e.textContent = msg || ''; var q = oEl('onbq-' + id); if (q) q.classList.toggle('bad', !!msg); }
+function onbQHTML(q) {
+  var v = OB.vals[q.id], id = _esc(q.id), h = '<section class="onb-q' + (OB.errs[q.id] ? ' bad' : '') + '" id="onbq-' + id + '"' + (q.type === 'info' ? ' data-info="1"' : '') + '>';
+  if (q.type === 'info') return h + '<div class="onb-info"><b>' + _esc(q.label) + '</b>' + (q.help ? '<p>' + _esc(q.help) + '</p>' : '') + '</div></section>';
+  h += '<div class="onb-ql">' + _esc(q.label) + (q.required ? ' <i title="Required">*</i>' : ' <small>optional</small>') + '</div>' + (q.help ? '<p class="onb-qh">' + _esc(q.help) + '</p>' : '');
+  var oc = 'onbPick(\'' + q.id + '\',', has = onbHasAnswer(q, v);
+  if (q.type === 'text') h += '<input class="onb-inp" id="onbi-' + id + '" type="text" maxlength="60" value="' + _esc(v || '') + '" placeholder="' + _esc(q.placeholder) + '" autocomplete="' + (q.field === 'name' ? 'name' : 'off') + '" oninput="onbSet(\'' + q.id + '\',this.value)" onchange="onbCommit()"/>';
+  else if (q.type === 'number') h += '<div class="onb-inpw"><input class="onb-inp" id="onbi-' + id + '" type="number" inputmode="decimal" ' + (q.min != null ? 'min="' + q.min + '" ' : '') + (q.max != null ? 'max="' + q.max + '" ' : '') + 'step="' + (q.inc || 'any') + '" value="' + _esc(has ? v : '') + '" placeholder="' + _esc(q.placeholder) + '" oninput="onbSetN(\'' + q.id + '\',this.value)" onchange="onbCommit()"/>' + (q.unit ? '<span class="onb-unit">' + _esc(q.unit) + '</span>' : '') + '</div>';
+  else if (q.type === 'weight') {
+    var u = OB.ui.w[q.id] || 'kg', shown = has ? (u === 'lb' ? Math.round(v / 0.45359237 * 10) / 10 : v) : '';
+    h += '<div class="onb-inpw"><input class="onb-inp" id="onbi-' + id + '" type="number" inputmode="decimal" min="0" step="0.1" value="' + _esc(shown) + '" placeholder="' + (u === 'lb' ? 'e.g. 154' : 'e.g. 70') + '" oninput="onbSetW(\'' + q.id + '\',this.value)" onchange="onbCommit()"/><span class="onb-seg"><button type="button" class="' + (u === 'kg' ? 'on' : '') + '" onclick="onbUnitW(\'' + q.id + '\',\'kg\')">kg</button><button type="button" class="' + (u === 'lb' ? 'on' : '') + '" onclick="onbUnitW(\'' + q.id + '\',\'lb\')">lb</button></span></div>';
+  } else if (q.type === 'height') {
+    var hu = (OB.ui.h[q.id] || {}).unit || 'ft', ft = '', inn = '', cm = '';
+    if (has) { var tot = v / 2.54; ft = Math.floor(tot / 12); inn = Math.round((tot - ft * 12) * 2) / 2; if (inn >= 12) { ft++; inn = 0; } cm = Math.round(v); }
+    h += hu === 'cm'
+      ? '<div class="onb-inpw"><input class="onb-inp" id="onbi-' + id + '" type="number" inputmode="decimal" value="' + _esc(cm) + '" placeholder="e.g. 170" oninput="onbSetH(\'' + q.id + '\')" onchange="onbCommit()"/><span class="onb-unit">cm</span>' + onbHSeg(q.id, hu) + '</div>'
+      : '<div class="onb-inpw"><input class="onb-inp s" id="onbi-' + id + '" type="number" inputmode="numeric" min="1" max="8" value="' + _esc(ft) + '" placeholder="ft" oninput="onbSetH(\'' + q.id + '\')" onchange="onbCommit()"/><input class="onb-inp s" id="onbi2-' + id + '" type="number" inputmode="decimal" min="0" max="11.5" step="0.5" value="' + _esc(inn === '' ? '' : inn) + '" placeholder="in" oninput="onbSetH(\'' + q.id + '\')" onchange="onbCommit()"/>' + onbHSeg(q.id, hu) + '</div>';
+  } else if (q.type === 'choice' || q.type === 'yesno') {
+    var opts = q.type === 'yesno' ? [{ id: 'y', label: 'Yes', emoji: '✅', value: 'yes', desc: '' }, { id: 'n', label: 'No', emoji: '🚫', value: 'no', desc: '' }] : q.options;
+    h += '<div class="onb-opts' + (opts.length === 2 || opts.length === 4 ? ' two' : '') + '" role="radiogroup">' + opts.map(function(o){ var on = has && String(v) === String(o.value);
+      return '<button type="button" class="onb-opt' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" onclick="' + oc + '\'' + _esc(String(o.value).replace(/'/g, '')) + '\')">' + (o.emoji ? '<span class="onb-oe">' + _esc(o.emoji) + '</span>' : '') + '<span class="onb-ot"><b>' + _esc(o.label) + '</b>' + (o.desc ? '<small>' + _esc(o.desc) + '</small>' : '') + '</span><span class="onb-ck">✓</span></button>'; }).join('') + '</div>';
+  } else if (q.type === 'multi') {
+    var arr = Array.isArray(v) ? v.map(String) : [];
+    h += '<div class="onb-opts" role="group">' + q.options.map(function(o){ var on = arr.indexOf(String(o.value)) >= 0;
+      return '<button type="button" class="onb-opt' + (on ? ' on' : '') + '" role="checkbox" aria-checked="' + on + '" onclick="onbToggle(\'' + q.id + '\',\'' + _esc(String(o.value).replace(/'/g, '')) + '\')">' + (o.emoji ? '<span class="onb-oe">' + _esc(o.emoji) + '</span>' : '') + '<span class="onb-ot"><b>' + _esc(o.label) + '</b>' + (o.desc ? '<small>' + _esc(o.desc) + '</small>' : '') + '</span><span class="onb-ck">✓</span></button>'; }).join('') + '</div>'
+      + (q.max ? '<div class="onb-cnt">' + arr.length + ' / ' + q.max + ' selected</div>' : '');
+  } else if (q.type === 'scale') {
+    var lo = q.min == null ? 1 : q.min, hi = q.max == null ? 10 : q.max, cv = has ? v : Math.round((lo + hi) / 2);
+    h += '<div class="onb-scale"><input type="range" id="onbi-' + id + '" min="' + lo + '" max="' + hi + '" step="1" value="' + cv + '" oninput="onbSetN(\'' + q.id + '\',this.value);document.getElementById(\'onbsv-' + id + '\').textContent=this.value" onchange="onbCommit()"/><b class="onb-sv" id="onbsv-' + id + '">' + (has ? v : '–') + '</b></div><div class="onb-sl"><span>' + _esc(q.lowLabel || lo) + '</span><span>' + _esc(q.highLabel || hi) + '</span></div>';
+  } else if (q.type === 'date') h += '<input class="onb-inp" id="onbi-' + id + '" type="date" value="' + _esc(v || '') + '" oninput="onbSet(\'' + q.id + '\',this.value)" onchange="onbCommit()"/>';
+  return h + '<div class="onb-qe" id="onbe-' + id + '" role="alert"></div></section>';
+}
+function onbHSeg(id, u) { return '<span class="onb-seg"><button type="button" class="' + (u === 'ft' ? 'on' : '') + '" onclick="onbUnitH(\'' + id + '\',\'ft\')">ft·in</button><button type="button" class="' + (u === 'cm' ? 'on' : '') + '" onclick="onbUnitH(\'' + id + '\',\'cm\')">cm</button></span>'; }
+function onbQ(id) { return OB.flow.questions.filter(function(q){ return q.id === id; })[0]; }
+
+/* ---------- answering ---------- */
+function onbTouch(id) { if (OB.errs[id]) { delete OB.errs[id]; onbShowErr(id, ''); } }
+function onbSet(id, v) { OB.vals[id] = v; onbTouch(id); onbDraftSave(); onbPaint(); }
+function onbSetN(id, v) { if (v === '' || v == null) delete OB.vals[id]; else OB.vals[id] = parseFloat(v); onbTouch(id); onbDraftSave(); onbPaint(); }
+function onbSetW(id, v) { var n = parseFloat(v); if (!isFinite(n)) { delete OB.vals[id]; } else OB.vals[id] = onbKg((OB.ui.w[id] === 'lb') ? n * 0.45359237 : n); onbTouch(id); onbDraftSave(); onbPaint(); }
+function onbUnitW(id, u) { OB.ui.w[id] = u; onbRenderPanel(0); }
+function onbSetH(id) {
+  var a = oEl('onbi-' + id), b = oEl('onbi2-' + id), u = (OB.ui.h[id] || {}).unit || 'ft', cm;
+  if (u === 'cm') { var c = parseFloat(a.value); cm = isFinite(c) ? Math.round(c * 10) / 10 : null; }
+  else { var f = parseFloat(a.value), n = parseFloat(b && b.value) || 0; cm = isFinite(f) ? Math.round((f * 12 + n) * 2.54 * 10) / 10 : null; }
+  if (cm == null) delete OB.vals[id]; else OB.vals[id] = cm; onbTouch(id); onbDraftSave(); onbPaint();
+}
+function onbUnitH(id, u) { OB.ui.h[id] = { unit: u }; onbRenderPanel(0); }
+function onbPick(id, val) { var q = onbQ(id); OB.vals[id] = (q && q.type === 'yesno') ? val : val; onbTouch(id); onbAfterChange(); }
+function onbToggle(id, val) {
+  var q = onbQ(id), a = Array.isArray(OB.vals[id]) ? OB.vals[id].slice() : [], k = a.indexOf(val);
+  if (k >= 0) a.splice(k, 1); else { if (q.max && a.length >= q.max) { toast('You can pick up to ' + q.max); return; } a.push(val); }
+  OB.vals[id] = a; onbTouch(id); onbAfterChange();
+}
+function onbAfterChange() { onbDraftSave(); onbRenderPanel(0); onbPaint(); }
+function onbCommit() { var sg = onbSig(); if (sg !== OB.sig) { OB.sig = sg; onbRenderPanel(0); } onbPaint(); }
+
+/* ---------- navigation ---------- */
+function onbValidateStep(s) {
+  var first = null; OB.errs = {};
+  s.qs.forEach(function(q){ var e = onbQError(q, OB.vals[q.id]); if (e) { OB.errs[q.id] = e; if (!first) first = q.id; } });
+  if (first) { onbRenderPanel(0); var el = oEl('onbq-' + first); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); var inp = el.querySelector('input'); if (inp) { try { inp.focus({ preventScroll: true }); } catch (e) {} } } }
+  return !first;
+}
+function onbNext() {
+  if (!OB || OB.busy) return;
+  var st = onbSteps(), i = onbIdx(st), s = st[i];
+  if (s.kind === 'q' && !onbValidateStep(s)) return;
+  OB.visited[s.id] = 1;
+  if (i >= st.length - 1) return onbFinish();
+  OB.cur = st[i + 1].id; OB.sig = onbSig(); OB.errs = {}; onbDraftSave(); onbRenderPanel(1); onbPaint();
+}
+function onbBack() {
+  if (!OB || !OB.flow.behavior.allowBack) return;
+  var st = onbSteps(), i = onbIdx(st); if (i <= 0) return;
+  OB.cur = st[i - 1].id; OB.errs = {}; onbDraftSave(); onbRenderPanel(-1); onbPaint();     // answers are never touched on the way back
+}
+function onbGo(id) {
+  if (!OB || !OB.flow.behavior.allowBack) return;
+  var st = onbSteps(), ci = onbIdx(st), ti = -1; st.forEach(function(s, k){ if (s.id === id) ti = k; });
+  if (ti < 0 || ti === ci) return; OB.cur = id; OB.errs = {}; onbDraftSave(); onbRenderPanel(ti > ci ? 1 : -1); onbPaint();
+}
+document.addEventListener('keydown', function(e){
+  if (!OB || !oEl('onb')) return;
+  if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && e.target.type !== 'range' && e.target.type !== 'date') { e.preventDefault(); onbNext(); }
+});
+
+/* ---------- plan step ---------- */
+function onbSelCount() { var n = 0; ONB_TPL_KINDS.forEach(function(k){ n += Object.keys(OB.sel[k]).filter(function(i){ return OB.sel[k][i]; }).length; }); return n; }
+function onbMeta(k, t) {
+  if (k === 'habits') {
+    var fr = t.freq || {}, f = fr.t === 'weekly' ? fr.n + '× a week' : fr.t === 'monthly' ? fr.n + '× a month' : fr.t === 'weekdays' ? 'on set days' : 'every day';
+    var a = t.type === 'amount' ? t.target + ' ' + t.unit : t.type === 'timer' ? t.target + ' min' : t.type === 'avoid' ? 'quit / avoid' : t.type === 'checklist' ? (t.items || []).length + ' steps' : 'yes / no';
+    return a + ' · ' + f;
+  }
+  if (k === 'routines') return t.items.length + ' exercises' + (t.desc ? ' · ' + t.desc : '');
+  if (k === 'goals') return (t.days ? 'in ' + t.days + ' days' : 'no deadline');
+  var tg = onbPlanTargets(t, OB.flow, OB.vals); return tg.calGoal.toLocaleString('en-US') + ' kcal · P ' + tg.protGoal + 'g · C ' + tg.carbGoal + 'g · F ' + tg.fatGoal + 'g';
+}
+function onbPlanHTML() {
+  var sug = OB.sug = onbSuggest(OB.cfg, OB.flow, OB.vals), total = 0, h = '';
+  ONB_TPL_KINDS.forEach(function(k){
+    var keep = {}; sug[k].forEach(function(x){ keep[x.t.id] = 1; if (OB.sel[k][x.t.id] === undefined) OB.sel[k][x.t.id] = OB.flow.behavior.autoSelect && !OB.desel[k + ':' + x.t.id]; });
+    Object.keys(OB.sel[k]).forEach(function(id){ if (!keep[id]) delete OB.sel[k][id]; });
+  });
+  var der = onbVisible(OB.flow, OB.vals).der, chips = '';
+  if (der['$bmi']) chips += '<span class="onb-chip"><b>' + der['$bmi'] + '</b> BMI · ' + der['$bmicat'] + '</span>';
+  var selPlan = sug.plans.filter(function(x){ return OB.sel.plans[x.t.id]; })[0];
+  if (selPlan) { var tg = onbPlanTargets(selPlan.t, OB.flow, OB.vals); chips += '<span class="onb-chip"><b>' + tg.calGoal.toLocaleString('en-US') + '</b> kcal / day</span><span class="onb-chip"><b>' + tg.protGoal + 'g</b> protein</span>'; }
+  if (chips) h += '<div class="onb-snap">' + chips + '</div>';
+  var titles = { plans: ['🥗', 'Nutrition plan'], habits: ['✨', 'Habits'], routines: ['🏋️', 'Workout routines'], goals: ['🎯', 'Goals'] };
+  ['plans', 'routines', 'habits', 'goals'].forEach(function(k){
+    if (!sug[k].length) return; total += sug[k].length;
+    h += '<div class="onb-sec"><div class="onb-sh"><span>' + titles[k][0] + '</span>' + titles[k][1] + '<em>' + sug[k].filter(function(x){ return OB.sel[k][x.t.id]; }).length + '/' + sug[k].length + '</em></div><div class="onb-tpls">'
+      + sug[k].map(function(x){ var on = !!OB.sel[k][x.t.id];
+        return '<button type="button" class="onb-tpl' + (on ? ' on' : '') + '" role="checkbox" aria-checked="' + on + '" onclick="onbTog(\'' + k + '\',\'' + x.t.id + '\')"><span class="onb-te">' + _esc(x.t.emoji || titles[k][0]) + '</span><span class="onb-tt"><b>' + _esc(x.t.name) + '</b><small>' + _esc(onbMeta(k, x.t)) + '</small>'
+          + (x.why.length ? '<span class="onb-why">' + x.why.slice(0, 2).map(function(w){ return '<i>' + _esc(w) + '</i>'; }).join('') + '</span>' : '') + '</span><span class="onb-ck">✓</span></button>'; }).join('') + '</div></div>';
+  });
+  if (!total) h += '<div class="onb-empty"><div>🌱</div><b>You’re all set</b><p>Start with a clean slate — add habits, workouts and goals whenever you like. Everything is customisable.</p></div>';
+  if (total && OB.flow.behavior.allowBlank && OB.flow.brand.blankLabel) h += '<div class="onb-blank"><button type="button" class="onb-link" onclick="onbFinish(\'custom\')">' + _esc(OB.flow.brand.blankLabel) + '</button></div>';
+  return h;
+}
+function onbTog(k, id) { OB.sel[k][id] = !OB.sel[k][id]; if (!OB.sel[k][id]) OB.desel[k + ':' + id] = 1; else delete OB.desel[k + ':' + id]; onbDraftSave(); onbRenderPanel(0); onbPaint(); }
+function onbExitPreview() {
+  var s = oEl('onboardScreen'); if (s) { s.classList.add('hidden'); s.innerHTML = ''; s.className = 'hidden'; }
+  OB = null; try { if (typeof obsAfterPreview === 'function') obsAfterPreview(); } catch (e) {}
+}
+/*ONB-UI-END*/
+
+/*ONB-APPLY-START*/
+/* ---------- finishing: write the answers to the profile and create the chosen templates ---------- */
+function onbHabitFrom(t) {
+  var fr = { t: t.freq.t }; if (t.freq.days) fr.days = t.freq.days.slice(); if (t.freq.n) fr.n = t.freq.n;
+  var h = { id: hbNewId(), logs: {}, vals: {}, checks: {}, notes: {}, name: t.name, cat: HB_CATS.indexOf(t.cat) >= 0 ? t.cat : 'Other', emoji: t.emoji || '', type: t.type, freq: fr, tod: t.tod, start: hbToday(), goal: hbLegacyGoal(fr), fromOnb: 1 };
+  if (t.type === 'amount') { h.target = t.target; h.unit = t.unit || ''; h.step = t.step > 0 ? t.step : 1; if (t.cmp === 'max') h.cmp = 'max'; }
+  if (t.type === 'timer') { h.target = t.target; h.unit = 'min'; if (t.cmp === 'max') h.cmp = 'max'; }
+  if (t.type === 'checklist') h.items = (t.items || []).slice();
+  if (t.cue) h.cue = t.cue; if (t.why) h.why = t.why;
+  return h;
+}
+function onbRoutineFrom(t) {
+  var items = [];
+  t.items.forEach(function(it){
+    var lib = wkTplAll().filter(function(x){ return x.n.toLowerCase() === it.n.toLowerCase(); })[0];
+    if (lib) { var ex = wkTplToEx(lib); if (Array.isArray(it.p)) { var d = wkTplDefaults(lib.t, it.p); Object.keys(d).forEach(function(k){ if (d[k] !== undefined) ex[k] = d[k]; }); } items.push(wkCleanItem(wkNorm(ex))); }
+    else items.push(wkCleanItem(wkNorm({ id: wkId(), name: it.n, type: 'strength', muscles: [], sets: 3, reps: '10', rest: 60, notes: '', done: false, setsDone: 0 })));
+  });
+  return { id: wkId(), name: t.name, items: items, savedAt: new Date().toISOString(), fromOnb: 1 };
+}
+function onbGoalFrom(t, habitByTpl) {
+  var keep = GL.w, goal = null;
+  try {
+    var w = { step: 2, edit: null, ck: t.ck && GL_CK[t.ck] ? t.ck : 'custom', kind: t.kind, metric: t.metric, habitId: '', hmode: t.hmode || 'streak', mp: Object.assign({}, t.mp || {}), name: t.name, nameT: true, emoji: t.emoji || '', emojiT: true, start: '', target: '', unit: '', startDate: glT(), date: '', autoMs: true, ms: [], tasksTxt: '', err: '' };
+    if (t.kind === 'habit') { var hh = habitByTpl[t.habit]; if (!hh) return null; w.habitId = String(hh.id); w.target = String(t.target || 7); }
+    else if (t.kind === 'tasks') { w.tasksTxt = t.tasks || ''; }
+    else if (!GL_M[t.metric]) return null;
+    GL.w = w;
+    if (t.kind === 'metric') {
+      glWDef(w);
+      var M = GL_M[t.metric], s = parseFloat(w.start);
+      if (t.delta != null) { if (!isFinite(s)) return null; w.target = String(+(s + t.delta).toFixed(M.dec == null ? 1 : M.dec)); }
+      else if (t.target != null) w.target = String(t.target);
+      w.emoji = t.emoji || M.e; w.name = t.name; w.nameT = true; w.emojiT = true;
+    }
+    if (t.days) { var d = new Date(glT() + 'T00:00:00'); d.setDate(d.getDate() + t.days); w.date = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+    if (glWizValidate(2)) return null;
+    if (t.kind === 'tasks' && !glParseTasks(w.tasksTxt).length) return null;
+    goal = glWizBuild(w, false);
+  } catch (e) { console.warn('Onboarding goal skipped:', t && t.name, e && e.message); goal = null; }
+  finally { GL.w = keep; }
+  return goal;
+}
+function onbFinish(forceMode) {
+  if (!OB || OB.busy) return;
+  var st = onbSteps(), cur = st.filter(function(s){ return s.id === OB.cur; })[0];
+  if (cur && cur.kind === 'q' && !onbValidateStep(cur)) return;
+  var blank = forceMode === 'custom';
+  OB.busy = true;
+  var vis = onbVisible(OB.flow, OB.vals), cf = S.cfg || (S.cfg = {});
+  var sug = blank ? { habits: [], routines: [], goals: [], plans: [] } : (OB.sug || onbSuggest(OB.cfg, OB.flow, OB.vals));
+  if (!OB.flow.behavior.planStep && !blank) ONB_TPL_KINDS.forEach(function(k){ (sug[k] || []).forEach(function(x){ if (OB.sel[k][x.t.id] === undefined) OB.sel[k][x.t.id] = !!OB.flow.behavior.autoSelect; }); });   // no plan screen: apply the matches automatically
+  var picked = {}; ONB_TPL_KINDS.forEach(function(k){ picked[k] = (sug[k] || []).filter(function(x){ return OB.sel[k][x.t.id]; }).map(function(x){ return x.t; }); });
+  if (OB.preview) return onbPreviewDone(picked, vis);
+  // 1) profile fields
+  OB.flow.questions.forEach(function(q){
+    var v = vis.vals[q.id]; if (!onbHasAnswer(q, v) || q.field === 'none') return;
+    if (q.field === 'name') { var nm = String(v).trim().slice(0, 40); if (nm) { cf.name = nm.toUpperCase(); cf.initials = nm.slice(0, 2).toUpperCase(); } }
+    else if (q.field === 'age') cf.age = Math.round(parseFloat(v));
+    else if (q.field === 'gender') cf.gender = String(v);
+    else if (q.field === 'weight') cf.weight = parseFloat(v);
+    else if (q.field === 'goalWeight') cf.goalWeight = parseFloat(v);
+    else if (q.field === 'height') { cf.height = parseFloat(v); cf.heightAt = ''; }
+    else if (q.field === 'activity') cf.activity = String(v);
+  });
+  if (cf.weight && !(S.measurements || []).some(function(m){ return m.date === today() && m.weight; })) (S.measurements = S.measurements || []).push({ date: today(), weight: String(cf.weight) });
+  var done = { habits: 0, routines: 0, goals: 0, plan: '' }, names = [];
+  // 2) nutrition plan → daily targets
+  if (picked.plans[0]) { var tg = onbPlanTargets(picked.plans[0], OB.flow, vis.vals); Object.keys(tg).forEach(function(k){ cf[k] = tg[k]; }); cf.planName = picked.plans[0].name; done.plan = picked.plans[0].name; names.push('🥗 ' + picked.plans[0].name); }
+  // 3) habits, routines, goals (existing names are never duplicated)
+  var habitByTpl = {}; S.habits = S.habits || [];
+  picked.habits.forEach(function(t){
+    var ex = S.habits.filter(function(h){ return String(h.name).toLowerCase() === t.name.toLowerCase(); })[0];
+    if (ex) { habitByTpl[t.id] = ex; return; }
+    var h = onbHabitFrom(t); S.habits.push(h); habitByTpl[t.id] = h; done.habits++;
+  });
+  if (done.habits) names.push('✨ ' + done.habits + ' habit' + (done.habits > 1 ? 's' : ''));
+  var rs = wkRoutines();
+  picked.routines.forEach(function(t){
+    if (rs.some(function(r){ return String(r.name).toLowerCase() === t.name.toLowerCase(); })) return;
+    try { var r = onbRoutineFrom(t); if (r.items.length) { rs.push(r); done.routines++; } } catch (e) { console.warn('Onboarding routine skipped:', t.name, e && e.message); }
+  });
+  if (done.routines) names.push('🏋️ ' + done.routines + ' routine' + (done.routines > 1 ? 's' : ''));
+  S.goals = S.goals || [];
+  picked.goals.forEach(function(t){
+    if (S.goals.some(function(g){ return String(g.name).toLowerCase() === t.name.toLowerCase(); })) return;
+    var g = onbGoalFrom(t, habitByTpl); if (g) { S.goals.push(g); done.goals++; }
+  });
+  if (done.goals) { names.push('🎯 ' + done.goals + ' goal' + (done.goals > 1 ? 's' : '')); try { glSweep({ silent: true }); } catch (e) {} }
+  // 4) remember what was answered (shown in Admin → Onboarding insights)
+  var ans = {}; Object.keys(vis.vals).forEach(function(k){ var q = onbQ(k); if (q && q.field !== 'name' && q.type !== 'text') ans[k] = vis.vals[k]; });
+  cf.onb = { flow: OB.flow.id, v: OB.cfg.v, at: new Date().toISOString(), blank: blank, answers: ans, applied: { habits: done.habits, routines: done.routines, goals: done.goals, plan: done.plan } };
+  cf.setupMode = blank ? 'custom' : 'template';
+  S.onboarded = true;
+  onbDraftClear();
+  onbBuildScreen(names, blank, function(){
+    var email = OB.email, docId = OB.docId, nm = cf.name;
+    OB = null; var scr = oEl('onboardScreen'); scr.classList.add('hidden'); scr.innerHTML = ''; scr.className = 'hidden';
+    loginSuccess(email, docId, true); toast('Welcome, ' + nm + '! Your space is ready.');
+    _onboardEmail = null; _onboardDocId = null; trackEvent('onboarding_complete');
+    onbSaveFinal(docId);
+  });
+  onbSaveNow();
+}
+// the person's own account doc keeps a re-run flag the owner can set; clear it once they have finished
+function onbSaveNow() { try { save(); } catch (e) { console.error('Onboarding save failed:', e); } }
+function onbSaveFinal(docId) {
+  try { save(); } catch (e) { console.error(e); }
+  try { if (docId && window._fsSetDoc) window._fsSetDoc(window._fsDoc(window._db, 'fitos_users', docId), { forceOnboarding: false, onbDoneAt: new Date().toISOString() }, { merge: true }).catch(function(e){ console.warn(e && e.message); }); } catch (e) {}
+}
+function onbBuildScreen(names, blank, cb) {
+  var el = oEl('onbBuild'); if (!el) return cb();
+  var ul = oEl('onbBuildL'), t = oEl('onbBuildT'), lines = blank || !names.length ? ['🌱 A clean slate, ready for you'] : names;
+  if (t) t.textContent = 'Building your space…'; if (ul) ul.innerHTML = lines.map(function(l){ return '<li>' + _esc(l) + '</li>'; }).join('');
+  el.hidden = false; var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, step = reduce ? 0 : 420;
+  var li = ul ? ul.querySelectorAll('li') : [];
+  [].forEach.call(li, function(x, i){ setTimeout(function(){ x.classList.add('on'); }, step * (i + 1)); });
+  setTimeout(function(){ if (t) t.textContent = 'All set ✓'; }, step * (li.length + 1));
+  setTimeout(cb, step * (li.length + 2) + (reduce ? 0 : 250));
+}
+function onbPreviewDone(picked, vis) {
+  OB.busy = false;
+  var n = ONB_TPL_KINDS.reduce(function(a, k){ return a + picked[k].length; }, 0);
+  toast('Preview finished — ' + n + ' template' + (n === 1 ? '' : 's') + ' would be added. Nothing was saved.');
+  onbExitPreview();
+}
+// an admin-only live preview of any flow: nothing is written anywhere
+function onbPreview(flowId, cfgOverride) {
+  var cfg = cfgOverride || ONB_CFG; if (!cfg) return;
+  var flow = cfg.flows.filter(function(f){ return f.id === flowId; })[0] || cfg.flows[0];
+  onbStart(cfg, flow, { email: '', docId: '', preview: true });
+}
+/*ONB-APPLY-END*/
+
+/*ONB-END*/
 
 // ===================== SESSION PERSISTENCE (per-tab only) =====================
 var SESSION_KEY = 'fitos_session';
@@ -6610,6 +7396,10 @@ async function tryRestoreSession() {
     if (userData.trashed) window._fsSetDoc(userRef, { trashed: false }, {merge:true}).catch(function(e){ console.error(e); });
     loadUserDataIntoState(userData);
     await dataService.bootstrap(u.uid, sess.docId);
+    if (S.onboarded === false || userData.forceOnboarding) {     // closed the tab mid-setup, or the owner asked this person to redo it
+      beginOnboarding(u.email.trim().toLowerCase(), sess.docId, { flowId: userData.onbFlow || '' });
+      return;
+    }
     loginSuccess(userData.userId || sess.userId, sess.docId, true);
     restoreLastView();
   } catch(e) { console.error('Session restore failed:', e); }
@@ -15823,7 +16613,7 @@ async function writeAuditLog(action, targetType, targetId, before, after) {
 }
 
 // ===================== ADMIN — SECTION NAV =====================
-var ADMIN_SECTIONS = ['dashboard','users','content','payments','coupons','ingredients','workouts','trash','appconfig','flags','plans','analytics','audit','website','system'];
+var ADMIN_SECTIONS = ['dashboard','users','content','payments','coupons','ingredients','workouts','trash','appconfig','onboarding','flags','plans','analytics','audit','website','system'];
 function adminNav(section) {
   ADMIN_SECTIONS.forEach(function(s){
     var sec = document.getElementById('admin-sec-'+s);
@@ -15842,6 +16632,7 @@ function adminNav(section) {
   if (section === 'payments') loadAdminPayments(false);
   if (section === 'coupons') loadAdminCoupons(false);
   if (section === 'appconfig') loadAdminAppConfig(false);
+  if (section === 'onboarding') loadAdminOnboarding(false);
   if (section === 'flags') loadAdminFeatureFlags(false);
   if (section === 'plans') loadAdminPlans(false);
   if (section === 'analytics') loadAdminAnalytics(false);
@@ -17328,9 +18119,573 @@ async function admProvision(r, plan) {   // best-effort; never overwrites an exi
   return true;
 }
 
+/*ONBS-START*/
+/* ===================== ADMIN → ONBOARDING STUDIO ===================== */
+var OBS = { cfg: null, pubJson: '', pubV: 0, hasDoc: false, hasPrev: false, tab: 'flows', fi: 0, openStep: null, openQ: null, openRule: null, tplKind: 'habits', openTpl: null, sim: {}, insFlow: '', loaded: false, dirty: false, uq: '', uf: 'all', busy: false };
+var OBS_DRAFT_KEY = 'fitos_onb_admin_draft';
+function obsEl(id) { return document.getElementById(id); }
+function obsFlow() { var c = OBS.cfg; if (!c) return null; if (OBS.fi >= c.flows.length || OBS.fi < 0) OBS.fi = 0; return c.flows[OBS.fi]; }
+function obsUid(p) { return p + Math.random().toString(36).slice(2, 7); }
+function obsClone(o) { return JSON.parse(JSON.stringify(o)); }
+function obsJson() { return JSON.stringify(OBS.cfg); }
+
+async function loadAdminOnboarding(force) {
+  if (OBS.loaded && !force) { obsRender(); return; }
+  var host = obsEl('adminOnbBody'); if (host && !OBS.loaded) host.innerHTML = '<div class="adm-empty"><b>Loading onboarding…</b></div>';
+  try {
+    var db = window._db, snap = await window._fsGetDoc(window._fsDoc(db, 'admin', 'onboarding')), cfg = null, v = 0;
+    OBS.hasDoc = snap.exists();
+    if (OBS.hasDoc) { var d = snap.data(); v = d.v || 0; try { cfg = onbSanitize(JSON.parse(d.json)); } catch (e) { cfg = null; } }
+    try { OBS.hasPrev = (await window._fsGetDoc(window._fsDoc(db, 'admin', 'onboardingPrev'))).exists(); } catch (e) { OBS.hasPrev = false; }
+    OBS.pubV = v; OBS.cfg = cfg || onbDefaultCfg(); OBS.cfg.v = v; OBS.pubJson = JSON.stringify(OBS.cfg); OBS.dirty = false;
+    try { var dr = localStorage.getItem(OBS_DRAFT_KEY); if (dr && dr !== OBS.pubJson) { var dc = onbSanitize(JSON.parse(dr)); if (dc) { OBS.cfg = dc; OBS.dirty = true; toast('Restored your unsaved onboarding draft'); } } } catch (e) {}
+    OBS.loaded = true; OBS.fi = Math.min(OBS.fi, OBS.cfg.flows.length - 1);
+  } catch (e) {
+    console.error(e); if (host) host.innerHTML = '<div class="adm-empty"><b>Could not load</b><p>' + _esc(e && e.message || e) + '</p><button class="adm-btn" onclick="loadAdminOnboarding(true)">Retry</button></div>'; return;
+  }
+  obsRender();
+}
+var _obsDraftT = 0;
+function obsDirty() {
+  OBS.dirty = obsJson() !== OBS.pubJson;
+  clearTimeout(_obsDraftT); _obsDraftT = setTimeout(function(){ try { if (OBS.dirty) localStorage.setItem(OBS_DRAFT_KEY, obsJson()); else localStorage.removeItem(OBS_DRAFT_KEY); } catch (e) {} }, 400);
+  obsStatus();
+}
+function obsStatus() {
+  var e = obsEl('obsStatus'); if (!e) return;
+  e.className = 'obs-chip ' + (OBS.dirty ? 'warn' : 'ok'); e.textContent = OBS.dirty ? '● Unpublished changes' : (OBS.hasDoc ? '✓ Published · v' + OBS.pubV : '○ Using built-in default');
+  var p = obsEl('obsPub'); if (p) p.disabled = !OBS.dirty && OBS.hasDoc; var d = obsEl('obsDiscard'); if (d) d.disabled = !OBS.dirty;
+}
+
+/* ---------- generic path editing ---------- */
+function obsRoot() { return { c: OBS.cfg, f: obsFlow() }; }
+function obsGetP(path) { var p = path.split('.'), o = obsRoot()[p[0]]; for (var i = 1; i < p.length && o != null; i++) o = o[p[i]]; return o; }
+function obsSetP(path, v) { var p = path.split('.'), o = obsRoot()[p[0]]; for (var i = 1; i < p.length - 1; i++) { if (o[p[i]] == null) o[p[i]] = {}; o = o[p[i]]; } o[p[p.length - 1]] = v; }
+function obsIn(path, v) { obsSetP(path, v); obsDirty(); }
+function obsCh(path, v, kind, re) {
+  if (kind === 'n') { var n = parseFloat(v); v = isFinite(n) ? n : null; } else if (kind === 'b') v = !!v;
+  obsSetP(path, v); obsDirty(); if (re) obsRender();
+}
+function obsMove(path, i, d) { var a = obsGetP(path), j = i + d; if (j < 0 || j >= a.length) return; var t = a[i]; a[i] = a[j]; a[j] = t; obsFix(); obsDirty(); obsRender(); }
+function obsFix() {   // keep questions in step order (a condition can only look back at earlier questions)
+  var f = obsFlow(); if (!f) return; var ix = {}; f.steps.forEach(function(s, i){ ix[s.id] = i; });
+  f.questions = f.questions.map(function(q, i){ return { q: q, i: i }; }).sort(function(a, b){ return ((ix[a.q.step] == null ? 99 : ix[a.q.step]) - (ix[b.q.step] == null ? 99 : ix[b.q.step])) || (a.i - b.i); }).map(function(x){ return x.q; });
+}
+function obsMoveQ(i, d) {
+  var f = obsFlow(), q = f.questions[i], j = i + d; while (j >= 0 && j < f.questions.length && f.questions[j].step !== q.step) j += d;
+  if (j < 0 || j >= f.questions.length) return; f.questions[i] = f.questions[j]; f.questions[j] = q; obsDirty(); obsRender();
+}
+function obsTab(t) { OBS.tab = t; obsRender(); }
+function obsPickFlow(i) { OBS.fi = +i; OBS.openStep = OBS.openQ = OBS.openRule = null; OBS.sim = {}; obsRender(); }
+
+/* ---------- small HTML helpers ---------- */
+function oi(path, val, cls, ph, extra) { return '<input class="admin-inp obs-in ' + (cls || '') + '" value="' + _esc(val == null ? '' : val) + '" placeholder="' + _esc(ph || '') + '" oninput="obsIn(\'' + path + '\',this.value)" ' + (extra || '') + '/>'; }
+function on_(path, val, cls, ph, min, max, step, re) { return '<input type="number" class="admin-inp obs-in ' + (cls || '') + '" value="' + _esc(val == null ? '' : val) + '" placeholder="' + _esc(ph || '') + '" ' + (min != null ? 'min="' + min + '" ' : '') + (max != null ? 'max="' + max + '" ' : '') + 'step="' + (step || 'any') + '" onchange="obsCh(\'' + path + '\',this.value,\'n\',' + (re ? 1 : 0) + ')"/>'; }
+function osel(path, val, opts, re, cls) { return '<select class="admin-inp obs-in ' + (cls || '') + '" onchange="obsCh(\'' + path + '\',this.value,\'s\',' + (re ? 1 : 0) + ')">' + opts.map(function(o){ return '<option value="' + _esc(o[0]) + '"' + (String(o[0]) === String(val) ? ' selected' : '') + '>' + _esc(o[1]) + '</option>'; }).join('') + '</select>'; }
+function ochk(path, val, label, re) { return '<label class="obs-chk"><input type="checkbox" ' + (val ? 'checked ' : '') + 'onchange="obsCh(\'' + path + '\',this.checked,\'b\',' + (re ? 1 : 0) + ')"/><span>' + label + '</span></label>'; }
+function ofield(label, html, hint, cls) { return '<label class="obs-f ' + (cls || '') + '"><span>' + label + '</span>' + html + (hint ? '<em>' + hint + '</em>' : '') + '</label>'; }
+function oact(label, js, cls, title) { return '<button type="button" class="adm-btn ' + (cls || '') + '" onclick="' + js + '"' + (title ? ' title="' + _esc(title) + '"' : '') + '>' + label + '</button>'; }
+function omv(path, i, n) { return '<span class="obs-mv"><button type="button" class="obs-ib" ' + (i ? '' : 'disabled ') + 'onclick="obsMove(\'' + path + '\',' + i + ',-1)" aria-label="Move up">▲</button><button type="button" class="obs-ib" ' + (i < n - 1 ? '' : 'disabled ') + 'onclick="obsMove(\'' + path + '\',' + i + ',1)" aria-label="Move down">▼</button></span>'; }
+
+/* ---------- validation ---------- */
+function obsValidate(cfg) {
+  var er = [], wn = [];
+  if (!cfg.flows.length) er.push('There is no flow.');
+  if (!cfg.flows.some(function(f){ return f.enabled; })) er.push('At least one flow must be enabled — otherwise new users would see nothing.');
+  cfg.flows.forEach(function(f){
+    var nm = '“' + f.name + '”', qid = {}, order = {};
+    f.questions.forEach(function(q, i){ qid[q.id] = q; order[q.id] = i; });
+    var live = f.steps.filter(function(s){ return s.enabled && f.questions.some(function(q){ return q.step === s.id; }); });
+    if (f.enabled && !live.length) er.push(nm + ' has no enabled step with questions.');
+    f.questions.forEach(function(q){
+      if ((q.type === 'choice' || q.type === 'multi') && (q.options || []).length < 2) er.push(nm + ': question “' + (q.label || q.id) + '” needs at least 2 options.');
+      if (!q.label && q.type !== 'info') wn.push(nm + ': a question has no text.');
+      q.showIf.forEach(function(c){ if (c.q.charAt(0) !== '$' && !qid[c.q]) wn.push(nm + ': “' + (q.label || q.id) + '” depends on a question that no longer exists.'); else if (c.q.charAt(0) !== '$' && order[c.q] > order[q.id]) wn.push(nm + ': “' + (q.label || q.id) + '” depends on a question that comes later — it will be treated as empty.'); });
+    });
+    f.steps.forEach(function(s){ s.showIf.forEach(function(c){ if (c.q.charAt(0) !== '$' && !qid[c.q]) wn.push(nm + ': step “' + s.title + '” depends on a question that no longer exists.'); }); });
+    var haveW = f.questions.some(function(q){ return q.field === 'weight'; });
+    if (!haveW) wn.push(nm + ' has no question mapped to “Weight” — calorie targets will assume 70 kg.');
+    f.rules.forEach(function(r){
+      ONB_TPL_KINDS.forEach(function(k){ (r.suggest[k] || []).forEach(function(id){ if (!cfg.templates[k].some(function(t){ return t.id === id; })) wn.push(nm + ': rule “' + r.name + '” points to a ' + k.slice(0, -1) + ' template that no longer exists.'); }); });
+      r.when.forEach(function(c){ if (c.q.charAt(0) !== '$' && !qid[c.q]) wn.push(nm + ': rule “' + r.name + '” uses a question that no longer exists.'); });
+      if (r.enabled && !r.when.length) wn.push(nm + ': rule “' + r.name + '” has no conditions, so it never matches.');
+    });
+  });
+  return { errors: er, warnings: wn };
+}
+
+/* ---------- publish / rollback / reset / import / export ---------- */
+async function obsWrite(json, v, label) {
+  var db = window._db, u = _adminEmail(), now = new Date().toISOString();
+  if (OBS.hasDoc) { var cur = await window._fsGetDoc(window._fsDoc(db, 'admin', 'onboarding')); if (cur.exists()) await window._fsSetDoc(window._fsDoc(db, 'admin', 'onboardingPrev'), cur.data()); }
+  await window._fsSetDoc(window._fsDoc(db, 'admin', 'onboarding'), { v: v, updatedAt: now, updatedBy: u, json: json });
+  OBS.hasDoc = true; OBS.hasPrev = true; OBS.pubV = v; ONB_CFG = null;
+  try { writeAuditLog(label, 'onboarding', 'config', { v: v - 1 }, { v: v }); } catch (e) {}
+}
+async function obsPublish() {
+  if (OBS.busy) return; var cfg = onbSanitize(obsClone(OBS.cfg)); if (!cfg) { toast('Nothing to publish'); return; }
+  var vr = obsValidate(cfg);
+  if (vr.errors.length) { await admConfirm({ title: '⛔ Cannot publish yet', body: '<ul class="obs-vl err">' + vr.errors.map(function(x){ return '<li>' + _esc(x) + '</li>'; }).join('') + '</ul>', ok: 'OK' }); return; }
+  var ok = await admConfirm({ title: 'Publish onboarding v' + (OBS.pubV + 1), body: 'Every <b>new</b> user (and anyone you ask to re-run it) will see this version. Users who already finished are not affected. The previous version is kept so you can roll back.'
+    + (vr.warnings.length ? '<div style="margin-top:10px"><b>Heads-up (' + vr.warnings.length + ')</b></div><ul class="obs-vl">' + vr.warnings.slice(0, 8).map(function(x){ return '<li>' + _esc(x) + '</li>'; }).join('') + '</ul>' : ''), ok: 'Publish' });
+  if (!ok) return;
+  OBS.busy = true;
+  try {
+    var v = OBS.pubV + 1; cfg.v = v; OBS.cfg = cfg; var json = JSON.stringify(cfg);
+    await obsWrite(json, v, 'ONBOARDING_PUBLISHED'); OBS.pubJson = JSON.stringify(cfg); OBS.dirty = false; try { localStorage.removeItem(OBS_DRAFT_KEY); } catch (e) {}
+    toast('✅ Onboarding v' + v + ' published');
+  } catch (e) { console.error(e); toast('Publish failed: ' + (e && e.message || e)); }
+  OBS.busy = false; obsRender();
+}
+async function obsDiscard() {
+  if (!OBS.dirty) return; if (!(await admConfirm({ title: 'Discard changes?', body: 'Your unpublished edits will be lost and the published version restored.', ok: 'Discard', danger: true }))) return;
+  try { OBS.cfg = onbSanitize(JSON.parse(OBS.pubJson)); } catch (e) { OBS.cfg = onbDefaultCfg(); } OBS.dirty = false; try { localStorage.removeItem(OBS_DRAFT_KEY); } catch (e) {} OBS.fi = 0; obsRender();
+}
+async function obsRollback() {
+  if (!OBS.hasPrev) return; if (!(await admConfirm({ title: 'Roll back to the previous version?', body: 'The previous published onboarding becomes live again (as a new version). Your current draft is replaced.', ok: 'Roll back', danger: true }))) return;
+  try {
+    var s = await window._fsGetDoc(window._fsDoc(window._db, 'admin', 'onboardingPrev')); if (!s.exists()) { toast('No previous version found'); return; }
+    var cfg = onbSanitize(JSON.parse(s.data().json)); if (!cfg) { toast('Previous version is invalid'); return; }
+    var v = OBS.pubV + 1; cfg.v = v; await obsWrite(JSON.stringify(cfg), v, 'ONBOARDING_ROLLBACK'); OBS.cfg = cfg; OBS.pubJson = JSON.stringify(cfg); OBS.dirty = false; try { localStorage.removeItem(OBS_DRAFT_KEY); } catch (e) {}
+    toast('↩ Rolled back (now v' + v + ')');
+  } catch (e) { console.error(e); toast('Rollback failed: ' + (e && e.message || e)); }
+  obsRender();
+}
+async function obsReset() {
+  if (!(await admConfirm({ title: 'Load the built-in default?', body: 'Replaces your current <b>draft</b> with the standard FIT//OS onboarding. Nothing goes live until you press Publish.', ok: 'Load default', danger: true }))) return;
+  var v = OBS.cfg.v; OBS.cfg = onbDefaultCfg(); OBS.cfg.v = v; OBS.fi = 0; obsDirty(); obsRender();
+}
+function obsExport() {
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(OBS.cfg, null, 2)], { type: 'application/json' })); a.download = 'fitos-onboarding-v' + OBS.pubV + '.json'; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function obsImportPick() { var i = document.createElement('input'); i.type = 'file'; i.accept = 'application/json,.json'; i.onchange = function(){ var f = i.files[0]; if (!f) return; var r = new FileReader(); r.onload = function(){ obsImport(String(r.result)); }; r.readAsText(f); }; i.click(); }
+async function obsImport(txt) {
+  var cfg = null; try { cfg = onbSanitize(JSON.parse(txt)); } catch (e) {}
+  if (!cfg) { toast('That file is not a valid onboarding export'); return; }
+  if (!(await admConfirm({ title: 'Import into draft?', body: 'Found <b>' + cfg.flows.length + '</b> flow(s). This replaces your current draft; nothing goes live until you Publish.', ok: 'Import' }))) return;
+  cfg.v = OBS.cfg.v; OBS.cfg = cfg; OBS.fi = 0; obsDirty(); obsRender();
+}
+function obsPreviewNow() { var f = obsFlow(); var c = onbSanitize(obsClone(OBS.cfg)); if (!c) return; onbPreview(f.id, c); }
+function obsToggleAll(on) { OBS.cfg.disabled = !on; obsDirty(); obsRender(); }
+
+/* ---------- render shell ---------- */
+function obsRender() {
+  var host = obsEl('adminOnbBody'); if (!host || !OBS.cfg) return;
+  var keep = host.closest('.admin-content'), top = keep ? keep.scrollTop : 0, c = OBS.cfg, f = obsFlow();
+  var tabs = [['flows', '🧭 Flows'], ['builder', '🧱 Questions'], ['rules', '🔗 Suggestions'], ['templates', '📦 Templates'], ['users', '👥 Users'], ['insights', '📊 Insights']];
+  var h = '<div class="obs-top"><div class="obs-top-l"><span id="obsStatus" class="obs-chip"></span>'
+    + '<label class="obs-switch" title="Turn the whole onboarding off: new users go straight into the app"><input type="checkbox" ' + (c.disabled ? '' : 'checked ') + 'onchange="obsToggleAll(this.checked)"/><i></i><span>' + (c.disabled ? 'Onboarding is OFF' : 'Onboarding is ON') + '</span></label></div>'
+    + '<div class="obs-top-r">' + oact('▶ Preview', 'obsPreviewNow()', 'ok', 'See the full-screen experience for the selected flow — nothing is saved')
+    + oact('⭳ Export', 'obsExport()') + oact('⭱ Import', 'obsImportPick()') + oact('↩ Roll back', 'obsRollback()', '', 'Go back to the previously published version').replace('<button', '<button' + (OBS.hasPrev ? '' : ' disabled'))
+    + oact('✕ Discard', 'obsDiscard()').replace('<button', '<button id="obsDiscard"') + oact('🚀 Publish', 'obsPublish()', 'ok').replace('<button', '<button id="obsPub"') + '</div></div>';
+  h += '<div class="adm-tabs obs-tabs" role="tablist">' + tabs.map(function(t){ return '<button type="button" role="tab" class="adm-tab' + (OBS.tab === t[0] ? ' on' : '') + '" onclick="obsTab(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div>';
+  if (OBS.tab === 'builder' || OBS.tab === 'rules') h += '<div class="obs-flowbar"><span>Flow</span>' + osel('', f.id, c.flows.map(function(x){ return [x.id, x.name + (x.isDefault ? ' (default)' : '') + (x.enabled ? '' : ' — off')]; }), 0).replace(/onchange="[^"]*"/, 'onchange="obsPickFlow(this.selectedIndex)"') + '</div>';
+  var body = OBS.tab === 'flows' ? obsFlowsHTML() : OBS.tab === 'builder' ? obsBuilderHTML() : OBS.tab === 'rules' ? obsRulesHTML() : OBS.tab === 'templates' ? obsTemplatesHTML() : OBS.tab === 'users' ? obsUsersHTML() : obsInsightsHTML();
+  host.innerHTML = h + '<div class="obs-body">' + body + '</div>';
+  obsStatus(); if (keep) keep.scrollTop = top;
+  if (OBS.tab === 'users') { try { admSync('onbu'); } catch (e) {} }
+}
+
+/* ---------- condition builder ---------- */
+var OBS_DERIVED = [['$bmi', 'BMI (calculated)', 'num'], ['$age', 'Age', 'num'], ['$weight', 'Weight (kg)', 'num'], ['$height', 'Height (cm)', 'num'], ['$bmicat', 'BMI category', 'choice'], ['$gender', 'Gender', 'choice'], ['$activity', 'Activity level', 'choice']];
+var OBS_OPS = { choice: [['eq', 'is'], ['ne', 'is not'], ['in', 'is any of'], ['nin', 'is none of'], ['filled', 'is answered'], ['empty', 'is empty']],
+  multi: [['has', 'includes'], ['nhas', 'does not include'], ['hasAny', 'includes any of'], ['hasAll', 'includes all of'], ['filled', 'is answered'], ['empty', 'is empty']],
+  num: [['eq', '='], ['ne', '≠'], ['gt', '>'], ['gte', '≥'], ['lt', '<'], ['lte', '≤'], ['between', 'between'], ['filled', 'is answered'], ['empty', 'is empty']],
+  text: [['eq', 'equals'], ['ne', 'does not equal'], ['filled', 'is answered'], ['empty', 'is empty']] };
+function obsQInfo(f, id) {
+  if (id.charAt(0) === '$') {
+    var d = OBS_DERIVED.filter(function(x){ return x[0] === id; })[0] || ['', id, 'text'];
+    var opts = id === '$bmicat' ? ['underweight', 'normal', 'overweight', 'obese'] : id === '$activity' ? ['sedentary', 'light', 'moderate', 'active'] : id === '$gender' ? (function(){ var g = f.questions.filter(function(q){ return q.field === 'gender'; })[0]; return g && g.options ? g.options.map(function(o){ return o.value; }) : ['Male', 'Female', 'Other']; })() : null;
+    return { kind: d[2], options: opts ? opts.map(function(o){ return { value: o, label: o }; }) : null, label: d[1] };
+  }
+  var q = f.questions.filter(function(x){ return x.id === id; })[0]; if (!q) return { kind: 'text', options: null, label: id + ' (missing)', missing: true };
+  var kind = q.type === 'multi' ? 'multi' : (q.type === 'choice' || q.type === 'yesno') ? 'choice' : (q.type === 'number' || q.type === 'weight' || q.type === 'height' || q.type === 'scale') ? 'num' : 'text';
+  var opts2 = q.type === 'yesno' ? [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }] : q.options || null;
+  return { kind: kind, options: opts2, label: q.label || q.id };
+}
+var OBS_LIST_OPS = { 'in': 1, nin: 1, hasAny: 1, hasAll: 1 }, OBS_NOVAL = { filled: 1, empty: 1 };
+function obsCondText(f, c) {
+  var info = obsQInfo(f, c.q), op = (OBS_OPS[info.kind].filter(function(o){ return o[0] === c.op; })[0] || [0, c.op])[1], lab = function(v){ var o = (info.options || []).filter(function(x){ return String(x.value) === String(v); })[0]; return o ? o.label : v; };
+  var val = OBS_NOVAL[c.op] ? '' : Array.isArray(c.val) ? c.val.map(lab).join(c.op === 'between' ? ' – ' : ', ') : lab(c.val);
+  return info.label + ' ' + op + (val !== '' ? ' ' + val : '');
+}
+// path = the array path of the conditions (e.g. "f.questions.3.showIf"); selfIdx = index of the question that owns it (so it can only look at earlier ones)
+function obsCondsHTML(path, conds, selfQ, stepId) {
+  var f = obsFlow(), qs = [];
+  var order = f.questions.map(function(q){ return q.id; }), self = selfQ ? order.indexOf(selfQ) : -1;
+  f.questions.forEach(function(q, i){ if (q.type === 'info') return; if (selfQ && (i >= self)) return; if (stepId) { var si = f.steps.map(function(s){ return s.id; }), qi = si.indexOf(q.step), ci = si.indexOf(stepId); if (qi >= ci) return; } qs.push([q.id, q.label || q.id]); });
+  var srcOpts = OBS_DERIVED.map(function(d){ return [d[0], '⚙ ' + d[1]]; }).concat(qs);
+  var h = '<div class="obs-conds">' + (conds.length ? '' : '<div class="obs-none">Always shown</div>');
+  conds.forEach(function(c, i){
+    var info = obsQInfo(f, c.q), ops = OBS_OPS[info.kind], p = path + '.' + i;
+    if (!ops.some(function(o){ return o[0] === c.op; })) c.op = ops[0][0];
+    var valHtml = '';
+    if (!OBS_NOVAL[c.op]) {
+      if (info.options && OBS_LIST_OPS[c.op]) { var cur = [].concat(c.val == null ? [] : c.val).map(String); valHtml = '<span class="obs-vals">' + info.options.map(function(o){ return '<label class="obs-vchip' + (cur.indexOf(String(o.value)) >= 0 ? ' on' : '') + '"><input type="checkbox" ' + (cur.indexOf(String(o.value)) >= 0 ? 'checked ' : '') + 'onchange="obsCondTick(\'' + path + '\',' + i + ',\'' + _esc(String(o.value).replace(/'/g, '')) + '\',this.checked)"/>' + _esc((o.emoji ? o.emoji + ' ' : '') + o.label) + '</label>'; }).join('') + '</span>'; }
+      else if (info.options) { valHtml = '<select class="admin-inp obs-in" onchange="obsCondVal(\'' + path + '\',' + i + ',this.value)"><option value="">— pick —</option>' + info.options.map(function(o){ return '<option value="' + _esc(o.value) + '"' + (String(c.val) === String(o.value) ? ' selected' : '') + '>' + _esc(o.label) + '</option>'; }).join('') + '</select>'; }
+      else if (c.op === 'between') { var bv = [].concat(c.val == null ? [] : c.val); valHtml = '<input class="admin-inp obs-in s" type="number" value="' + _esc(bv[0] == null ? '' : bv[0]) + '" onchange="obsCondBt(\'' + path + '\',' + i + ',0,this.value)"/><span class="obs-and">and</span><input class="admin-inp obs-in s" type="number" value="' + _esc(bv[1] == null ? '' : bv[1]) + '" onchange="obsCondBt(\'' + path + '\',' + i + ',1,this.value)"/>'; }
+      else valHtml = '<input class="admin-inp obs-in s" ' + (info.kind === 'num' ? 'type="number" step="any"' : 'type="text"') + ' value="' + _esc(Array.isArray(c.val) ? c.val[0] : (c.val == null ? '' : c.val)) + '" onchange="obsCondVal(\'' + path + '\',' + i + ',this.value)"/>';
+    }
+    h += '<div class="obs-cond' + (info.missing ? ' bad' : '') + '"><span class="obs-if">' + (i ? 'AND' : 'IF') + '</span>'
+      + '<select class="admin-inp obs-in" onchange="obsCondQ(\'' + path + '\',' + i + ',this.value)">' + (info.missing ? '<option selected value="' + _esc(c.q) + '">⚠ ' + _esc(c.q) + ' (missing)</option>' : '') + srcOpts.map(function(o){ return '<option value="' + _esc(o[0]) + '"' + (o[0] === c.q ? ' selected' : '') + '>' + _esc(String(o[1]).slice(0, 60)) + '</option>'; }).join('') + '</select>'
+      + '<select class="admin-inp obs-in" onchange="obsCondOp(\'' + path + '\',' + i + ',this.value)">' + ops.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === c.op ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'
+      + valHtml + '<button type="button" class="obs-ib x" onclick="obsCondDel(\'' + path + '\',' + i + ')" aria-label="Remove condition">✕</button></div>';
+  });
+  return h + '<button type="button" class="adm-btn" onclick="obsCondAdd(\'' + path + '\',\'' + (selfQ || '') + '\',\'' + (stepId || '') + '\')">+ Add condition</button></div>';
+}
+function obsCondAdd(path, selfQ, stepId) {
+  var f = obsFlow(), arr = obsGetP(path), first = null;
+  var order = f.questions.map(function(q){ return q.id; }), self = selfQ ? order.indexOf(selfQ) : -1;
+  f.questions.some(function(q, i){ if (q.type === 'info') return false; if (selfQ && i >= self) return false; if (stepId) { var si = f.steps.map(function(s){ return s.id; }); if (si.indexOf(q.step) >= si.indexOf(stepId)) return false; } first = q; return true; });
+  var qid = first ? first.id : '$bmi', info = obsQInfo(f, qid); arr.push({ q: qid, op: OBS_OPS[info.kind][0][0], val: '' }); obsDirty(); obsRender();
+}
+function obsCondDel(path, i) { obsGetP(path).splice(i, 1); obsDirty(); obsRender(); }
+function obsCondQ(path, i, q) { var c = obsGetP(path)[i], info = obsQInfo(obsFlow(), q); c.q = q; c.op = OBS_OPS[info.kind][0][0]; c.val = ''; obsDirty(); obsRender(); }
+function obsCondOp(path, i, op) { var c = obsGetP(path)[i]; c.op = op; if (OBS_LIST_OPS[op]) c.val = c.val === '' || c.val == null ? [] : [].concat(c.val); else if (op === 'between') c.val = ['', '']; else c.val = Array.isArray(c.val) ? (c.val[0] == null ? '' : c.val[0]) : c.val; obsDirty(); obsRender(); }
+function obsCondVal(path, i, v) { obsGetP(path)[i].val = v; obsDirty(); }
+function obsCondBt(path, i, k, v) { var c = obsGetP(path)[i], a = [].concat(c.val == null ? [] : c.val); while (a.length < 2) a.push(''); a[k] = v; c.val = a; obsDirty(); }
+function obsCondTick(path, i, val, on) { var c = obsGetP(path)[i], a = [].concat(c.val == null || c.val === '' ? [] : c.val).map(String), k = a.indexOf(val); if (on && k < 0) a.push(val); if (!on && k >= 0) a.splice(k, 1); c.val = a; obsDirty(); obsRender(); }
+
+/* ---------- tab: flows ---------- */
+function obsNewFlow(dup) {
+  var c = OBS.cfg, f = dup ? obsClone(obsFlow()) : onbDefaultCfg().flows[0];
+  f.id = obsUid('flow_'); f.name = (dup ? obsFlow().name + ' (copy)' : 'New onboarding'); f.isDefault = false; f.audience = { emails: [] }; f.enabled = true;
+  c.flows.push(f); OBS.fi = c.flows.length - 1; obsDirty(); obsRender(); toast(dup ? 'Flow duplicated' : 'New flow created from the standard questions');
+}
+async function obsDelFlow(i) {
+  var c = OBS.cfg; if (c.flows.length < 2) { toast('Keep at least one flow'); return; }
+  if (!(await admConfirm({ title: 'Delete flow “' + _esc(c.flows[i].name) + '”?', body: 'Its steps, questions and rules are removed from the draft.', ok: 'Delete', danger: true }))) return;
+  var was = c.flows[i].isDefault; c.flows.splice(i, 1); if (was) c.flows[0].isDefault = true; OBS.fi = 0; obsDirty(); obsRender();
+}
+function obsMakeDefault(i) { OBS.cfg.flows.forEach(function(f, k){ f.isDefault = k === i; if (k === i) f.enabled = true; }); obsDirty(); obsRender(); }
+function obsAud(i, txt) { OBS.cfg.flows[i].audience.emails = txt.split(/[\s,;]+/).map(function(x){ return x.trim().toLowerCase(); }).filter(Boolean); obsDirty(); }
+function obsFlowsHTML() {
+  var c = OBS.cfg, h = '<div class="obs-help">An onboarding <b>flow</b> is one complete set of steps, questions and suggestion rules. The <b>default</b> flow is shown to everyone. Add other flows for a specific audience (by e-mail or <code>@domain</code>), or assign one to a single user from the Users tab.</div>';
+  c.flows.forEach(function(f, i){
+    var p = 'c.flows.' + i, nQ = f.questions.length, nS = f.steps.filter(function(s){ return s.enabled; }).length;
+    h += '<div class="admin-card obs-card' + (i === OBS.fi ? ' sel' : '') + '"><div class="obs-card-h"><div><div class="obs-card-t">' + _esc(f.name) + (f.isDefault ? ' <span class="obs-chip ok">DEFAULT</span>' : '') + (f.enabled ? '' : ' <span class="obs-chip">OFF</span>') + '</div><div class="obs-card-s">' + nS + ' steps · ' + nQ + ' questions · ' + f.rules.length + ' rules' + (f.audience.emails.length ? ' · audience: ' + f.audience.emails.length : '') + '</div></div><div class="obs-card-a">'
+      + oact('▶ Preview', 'obsPickFlow(' + i + ');obsPreviewNow()', 'ok') + oact('✏ Edit questions', 'obsPickFlow(' + i + ');obsTab(\'builder\')') + oact('⧉ Duplicate', 'obsPickFlow(' + i + ');obsNewFlow(true)')
+      + (f.isDefault ? '' : oact('★ Make default', 'obsMakeDefault(' + i + ')') + oact('🗑', 'obsDelFlow(' + i + ')', 'danger')) + '</div></div>'
+      + '<div class="obs-grid">'
+      + ofield('Flow name', oi(p + '.name', f.name)) + ofield('Status', ochk(p + '.enabled', f.enabled, 'Enabled', 1))
+      + ofield('Welcome title', oi(p + '.brand.title', f.brand.title)) + ofield('Welcome icon', oi(p + '.brand.icon', f.brand.icon, 's'), 'an emoji')
+      + ofield('Welcome text', oi(p + '.brand.subtitle', f.brand.subtitle), '', 'wide')
+      + ofield('Last step title', oi(p + '.brand.planTitle', f.brand.planTitle)) + ofield('Last step name (stepper)', oi(p + '.brand.planLabel', f.brand.planLabel), 'short, e.g. “Your plan”')
+      + ofield('Last step text', oi(p + '.brand.planSub', f.brand.planSub), '', 'wide')
+      + ofield('Finish button', oi(p + '.brand.finishLabel', f.brand.finishLabel)) + ofield('“Skip” link text', oi(p + '.brand.blankLabel', f.brand.blankLabel), 'leave empty to hide')
+      + '</div><div class="obs-checks">' + ochk(p + '.behavior.allowBack', f.behavior.allowBack, 'Allow going back to earlier steps') + ochk(p + '.behavior.showStepper', f.behavior.showStepper, 'Show step numbers at the top') + ochk(p + '.behavior.showProgress', f.behavior.showProgress, 'Show progress bar')
+      + ochk(p + '.behavior.planStep', f.behavior.planStep, 'Show the suggestions step', 1) + ochk(p + '.behavior.autoSelect', f.behavior.autoSelect, 'Pre-select suggestions') + ochk(p + '.behavior.allowBlank', f.behavior.allowBlank, 'Let people skip suggestions') + '</div>'
+      + '<div class="obs-grid"><div class="obs-f wide"><span>How many suggestions per type (max)</span><div class="obs-nums">'
+      + [['plans', 'Nutrition plan'], ['routines', 'Routines'], ['habits', 'Habits'], ['goals', 'Goals']].map(function(k){ return '<label>' + k[1] + on_(p + '.behavior.maxPerType.' + k[0], f.behavior.maxPerType[k[0]], 'xs', '', 0, k[0] === 'plans' ? 1 : 12, 1) + '</label>'; }).join('') + '</div></div></div>'
+      + (f.isDefault ? '' : ofield('Audience — who gets this flow', '<textarea class="admin-inp obs-in" rows="3" placeholder="one e-mail or @domain per line" onchange="obsAud(' + i + ',this.value)">' + _esc(f.audience.emails.join('\n')) + '</textarea>', 'Matched by sign-in e-mail. Anyone not matched gets the default flow. A flow assigned to a specific user always wins.', 'wide'))
+      + '</div>';
+  });
+  return h + '<div class="obs-addrow">' + oact('+ New flow (standard questions)', 'obsNewFlow(false)', 'ok') + '</div>';
+}
+
+/* ---------- tab: questions (steps + questions) ---------- */
+var OBS_QT = [['text', 'Short text'], ['number', 'Number'], ['choice', 'Single choice'], ['multi', 'Multiple choice'], ['yesno', 'Yes / No'], ['weight', 'Weight (kg/lb)'], ['height', 'Height (ft·in / cm)'], ['scale', 'Scale slider'], ['date', 'Date'], ['info', 'Info text (no answer)']];
+var OBS_FIELDS = [['none', 'Nothing (only used for suggestions)'], ['name', 'Profile → Name'], ['age', 'Profile → Age'], ['gender', 'Profile → Gender'], ['weight', 'Profile → Weight'], ['height', 'Profile → Height'], ['goalWeight', 'Profile → Goal weight'], ['activity', 'Profile → Activity level']];
+function obsAddStep() {
+  var f = obsFlow(), id = obsUid('s_'); f.steps.push({ id: id, title: 'New step', subtitle: '', icon: '✨', enabled: true, showIf: [] });
+  f.questions.push({ id: obsUid('q_'), step: id, type: 'choice', field: 'none', required: false, label: 'New question', help: '', placeholder: '', unit: '', showIf: [], min: null, max: null, inc: null, lowLabel: '', highLabel: '', options: [{ id: 'a', label: 'Option A', emoji: '', desc: '', value: 'a' }, { id: 'b', label: 'Option B', emoji: '', desc: '', value: 'b' }] });
+  OBS.openStep = f.steps.length - 1; obsDirty(); obsRender();
+}
+async function obsDelStep(i) {
+  var f = obsFlow(), s = f.steps[i], n = f.questions.filter(function(q){ return q.step === s.id; }).length;
+  if (!(await admConfirm({ title: 'Delete step “' + _esc(s.title) + '”?', body: n ? 'Its <b>' + n + '</b> question(s) are deleted too. Rules that used them will stop matching.' : 'This step is empty.', ok: 'Delete', danger: true }))) return;
+  f.questions = f.questions.filter(function(q){ return q.step !== s.id; }); f.steps.splice(i, 1); OBS.openQ = null; obsDirty(); obsRender();
+}
+function obsMoveStep(i, d) { var f = obsFlow(), j = i + d; if (j < 0 || j >= f.steps.length) return; var t = f.steps[i]; f.steps[i] = f.steps[j]; f.steps[j] = t; obsFix(); obsDirty(); obsRender(); }
+function obsAddQ(stepId) {
+  var f = obsFlow(), id = obsUid('q_'); f.questions.push({ id: id, step: stepId, type: 'choice', field: 'none', required: false, label: 'New question', help: '', placeholder: '', unit: '', showIf: [], min: null, max: null, inc: null, lowLabel: '', highLabel: '', options: [{ id: 'a', label: 'Option A', emoji: '', desc: '', value: 'a' }, { id: 'b', label: 'Option B', emoji: '', desc: '', value: 'b' }] });
+  obsFix(); OBS.openQ = f.questions.map(function(q){ return q.id; }).indexOf(id); obsDirty(); obsRender();
+}
+function obsDupQ(i) { var f = obsFlow(), q = obsClone(f.questions[i]); q.id = obsUid('q_'); q.label += ' (copy)'; f.questions.splice(i + 1, 0, q); OBS.openQ = i + 1; obsDirty(); obsRender(); }
+async function obsDelQ(i) {
+  var f = obsFlow(), q = f.questions[i], used = 0; f.rules.forEach(function(r){ if (r.when.some(function(c){ return c.q === q.id; })) used++; });
+  if (!(await admConfirm({ title: 'Delete question?', body: '“' + _esc(q.label || q.id) + '”' + (used ? '<br><br>⚠ ' + used + ' suggestion rule(s) use this answer and will stop matching until you update them.' : ''), ok: 'Delete', danger: true }))) return;
+  f.questions.splice(i, 1); OBS.openQ = null; obsDirty(); obsRender();
+}
+function obsToggleQ(i) { OBS.openQ = OBS.openQ === i ? null : i; obsRender(); }
+function obsToggleStep(i) { OBS.openStep = OBS.openStep === i ? null : i; obsRender(); }
+function obsOptAdd(qi) { var q = obsFlow().questions[qi]; q.options = q.options || []; var n = q.options.length + 1, id = 'opt' + n + Math.random().toString(36).slice(2, 4); q.options.push({ id: id, label: 'Option ' + n, emoji: '', desc: '', value: id }); obsDirty(); obsRender(); }
+function obsOptDel(qi, oi_) { var q = obsFlow().questions[qi]; q.options.splice(oi_, 1); obsDirty(); obsRender(); }
+function obsOptMove(qi, oi_, d) { var a = obsFlow().questions[qi].options, j = oi_ + d; if (j < 0 || j >= a.length) return; var t = a[oi_]; a[oi_] = a[j]; a[j] = t; obsDirty(); obsRender(); }
+function obsOptLabel(qi, k, v) { var o = obsFlow().questions[qi].options[k]; o.label = v; obsDirty(); }
+function obsOptVal(qi, k, v) { var o = obsFlow().questions[qi].options[k]; v = String(v).trim().replace(/[^A-Za-z0-9_\-]/g, '').slice(0, 40); o.value = v || o.id; obsDirty(); obsRender(); }
+function obsQType(qi, t) { var q = obsFlow().questions[qi]; q.type = t; if ((t === 'choice' || t === 'multi') && !(q.options || []).length) q.options = [{ id: 'a', label: 'Option A', emoji: '', desc: '', value: 'a' }, { id: 'b', label: 'Option B', emoji: '', desc: '', value: 'b' }]; if (t === 'weight') q.field = q.field === 'none' ? 'weight' : q.field; obsDirty(); obsRender(); }
+function obsQEditor(f, q, i) {
+  var p = 'f.questions.' + i, t = q.type, isOpt = t === 'choice' || t === 'multi', isNum = t === 'number' || t === 'scale';
+  var h = '<div class="obs-qed"><div class="obs-grid">'
+    + ofield('Question text', oi(p + '.label', q.label, '', 'e.g. What is your main goal?'), '', 'wide')
+    + ofield('Help text (under the question)', oi(p + '.help', q.help), '', 'wide')
+    + ofield('Answer type', osel('', t, OBS_QT, 0).replace(/onchange="[^"]*"/, 'onchange="obsQType(' + i + ',this.value)"'))
+    + ofield('Save the answer to', osel(p + '.field', q.field, OBS_FIELDS, 0), 'Profile fields are written when the person finishes. Anything else is kept as an answer for rules & insights.')
+    + (t === 'info' ? '' : ofield('Required', ochk(p + '.required', q.required, 'Must be answered', 1)))
+    + ((t === 'text' || t === 'number') ? ofield('Placeholder', oi(p + '.placeholder', q.placeholder)) : '')
+    + ((t === 'number') ? ofield('Unit label', oi(p + '.unit', q.unit, 's', 'e.g. years')) : '')
+    + (isNum ? ofield('Minimum', on_(p + '.min', q.min, 's')) + ofield('Maximum', on_(p + '.max', q.max, 's')) : '')
+    + (t === 'number' ? ofield('Step', on_(p + '.inc', q.inc, 's', '1')) : '')
+    + (t === 'multi' ? ofield('Max selections', on_(p + '.max', q.max, 's', '', 1, 24, 1), 'empty = no limit') : '')
+    + (t === 'scale' ? ofield('Low label', oi(p + '.lowLabel', q.lowLabel, 's')) + ofield('High label', oi(p + '.highLabel', q.highLabel, 's')) : '')
+    + ofield('Belongs to step', osel(p + '.step', q.step, f.steps.map(function(s){ return [s.id, s.title]; }), 1))
+    + '</div>';
+  if (isOpt) {
+    h += '<div class="obs-sub">Options <em>(the “value” is what rules compare against — keep it short, letters/numbers only)</em></div><div class="obs-opts">';
+    (q.options || []).forEach(function(o, k){
+      h += '<div class="obs-opt"><input class="admin-inp obs-in xs" value="' + _esc(o.emoji) + '" placeholder="😀" oninput="obsIn(\'' + p + '.options.' + k + '.emoji\',this.value)"/><input class="admin-inp obs-in" value="' + _esc(o.label) + '" placeholder="Label" oninput="obsOptLabel(' + i + ',' + k + ',this.value)"/><input class="admin-inp obs-in" value="' + _esc(o.desc) + '" placeholder="Small description (optional)" oninput="obsIn(\'' + p + '.options.' + k + '.desc\',this.value)"/><input class="admin-inp obs-in s" value="' + _esc(o.value) + '" placeholder="value" title="value used by rules" onchange="obsOptVal(' + i + ',' + k + ',this.value)"/>'
+        + '<span class="obs-mv"><button type="button" class="obs-ib" onclick="obsOptMove(' + i + ',' + k + ',-1)">▲</button><button type="button" class="obs-ib" onclick="obsOptMove(' + i + ',' + k + ',1)">▼</button></span><button type="button" class="obs-ib x" onclick="obsOptDel(' + i + ',' + k + ')" aria-label="Remove option">✕</button></div>';
+    });
+    h += '<button type="button" class="adm-btn" onclick="obsOptAdd(' + i + ')">+ Add option</button></div>';
+  }
+  h += '<div class="obs-sub">Show this question only when…</div>' + obsCondsHTML(p + '.showIf', q.showIf, q.id);
+  return h + '</div>';
+}
+function obsBuilderHTML() {
+  var f = obsFlow(), h = '<div class="obs-help">Build the onboarding as <b>steps</b> (shown as 1, 2, 3… at the top) with <b>questions</b> inside. A step or question can be shown only when earlier answers match (e.g. “Target weight” only when the goal is <i>Lose weight</i>). Hidden steps disappear from the stepper automatically. Use <b>▶ Preview</b> to try it exactly as a user sees it.</div>';
+  f.steps.forEach(function(s, si){
+    var sp = 'f.steps.' + si, open = OBS.openStep === si, qs = f.questions.map(function(q, i){ return { q: q, i: i }; }).filter(function(x){ return x.q.step === s.id; });
+    h += '<div class="admin-card obs-step' + (s.enabled ? '' : ' off') + '"><div class="obs-step-h"><span class="obs-num">' + (si + 1) + '</span>' + omv('f.steps', si, f.steps.length) + '<input class="admin-inp obs-in xs" value="' + _esc(s.icon) + '" oninput="obsIn(\'' + sp + '.icon\',this.value)" aria-label="Step icon"/><input class="admin-inp obs-in grow" value="' + _esc(s.title) + '" oninput="obsIn(\'' + sp + '.title\',this.value)" aria-label="Step title"/>'
+      + ochk(sp + '.enabled', s.enabled, 'On', 1) + '<button type="button" class="adm-btn" onclick="obsToggleStep(' + si + ')">' + (open ? '▾ Less' : '▸ Details') + (s.showIf.length ? ' · ' + s.showIf.length + ' cond.' : '') + '</button><button type="button" class="obs-ib x" onclick="obsDelStep(' + si + ')" aria-label="Delete step">🗑</button></div>';
+    if (open) h += '<div class="obs-step-d">' + ofield('Subtitle', oi(sp + '.subtitle', s.subtitle), '', 'wide') + '<div class="obs-sub">Show this whole step only when…</div>' + obsCondsHTML(sp + '.showIf', s.showIf, null, s.id) + '</div>';
+    h += '<div class="obs-qlist">';
+    if (!qs.length) h += '<div class="obs-none">No questions in this step — it will be skipped.</div>';
+    qs.forEach(function(x){
+      var q = x.q, i = x.i, isOpen = OBS.openQ === i, tl = (OBS_QT.filter(function(t){ return t[0] === q.type; })[0] || [0, q.type])[1];
+      h += '<div class="obs-q' + (isOpen ? ' open' : '') + '"><div class="obs-q-h"><span class="obs-mv"><button type="button" class="obs-ib" onclick="obsMoveQ(' + i + ',-1)" aria-label="Move up">▲</button><button type="button" class="obs-ib" onclick="obsMoveQ(' + i + ',1)" aria-label="Move down">▼</button></span>'
+        + '<button type="button" class="obs-q-t" onclick="obsToggleQ(' + i + ')"><b>' + _esc(q.label || '(no text)') + '</b><small>' + _esc(tl) + (q.required ? ' · required' : '') + (q.field !== 'none' ? ' · → ' + q.field : '') + (q.showIf.length ? ' · conditional' : '') + '</small></button>'
+        + '<button type="button" class="obs-ib" onclick="obsDupQ(' + i + ')" title="Duplicate">⧉</button><button type="button" class="obs-ib x" onclick="obsDelQ(' + i + ')" aria-label="Delete question">🗑</button></div>' + (isOpen ? obsQEditor(f, q, i) : '') + '</div>';
+    });
+    h += '<button type="button" class="adm-btn" onclick="obsAddQ(\'' + s.id + '\')">+ Add question</button></div></div>';
+  });
+  return h + '<div class="obs-addrow">' + oact('+ Add step', 'obsAddStep()', 'ok') + '</div>';
+}
+
+/* ---------- tab: suggestion rules + simulator ---------- */
+function obsAddRule() { var f = obsFlow(); f.rules.push({ id: obsUid('ru_'), name: 'New rule', enabled: true, priority: 50, match: 'all', when: [], reason: '', suggest: { habits: [], routines: [], goals: [], plans: [] } }); OBS.openRule = f.rules.length - 1; obsDirty(); obsRender(); }
+function obsDupRule(i) { var f = obsFlow(), r = obsClone(f.rules[i]); r.id = obsUid('ru_'); r.name += ' (copy)'; f.rules.splice(i + 1, 0, r); OBS.openRule = i + 1; obsDirty(); obsRender(); }
+async function obsDelRule(i) { var f = obsFlow(); if (!(await admConfirm({ title: 'Delete rule “' + _esc(f.rules[i].name) + '”?', ok: 'Delete', danger: true }))) return; f.rules.splice(i, 1); OBS.openRule = null; obsDirty(); obsRender(); }
+function obsToggleRule(i) { OBS.openRule = OBS.openRule === i ? null : i; obsRender(); }
+function obsTplTick(i, kind, id, on) { var a = obsFlow().rules[i].suggest[kind], k = a.indexOf(id); if (on && k < 0) a.push(id); if (!on && k >= 0) a.splice(k, 1); obsDirty(); obsRender(); }
+function obsRuleSummary(f, r) {
+  var n = ONB_TPL_KINDS.map(function(k){ var c = (r.suggest[k] || []).length; return c ? c + ' ' + k.replace(/s$/, '') + (c > 1 ? 's' : '') : ''; }).filter(Boolean).join(', ');
+  return (r.when.length ? r.when.map(function(c){ return obsCondText(f, c); }).join(r.match === 'any' ? ' OR ' : ' AND ') : 'no conditions') + '  →  ' + (n || 'nothing');
+}
+function obsRulesHTML() {
+  var f = obsFlow(), c = OBS.cfg, h = '<div class="obs-help">Connect answers to templates. When a rule’s conditions match, its templates are suggested on the last step. If several rules suggest the same template, their <b>priorities add up</b> — the highest-scoring ones win (limited by “max per type” in Flows). The simulator below shows exactly what a person would get.</div>';
+  f.rules.forEach(function(r, i){
+    var p = 'f.rules.' + i, open = OBS.openRule === i;
+    h += '<div class="admin-card obs-rule' + (r.enabled ? '' : ' off') + (open ? ' open' : '') + '"><div class="obs-rule-h">' + ochk(p + '.enabled', r.enabled, '', 1) + '<button type="button" class="obs-rule-t" onclick="obsToggleRule(' + i + ')"><b>' + _esc(r.name) + '</b><small>' + _esc(obsRuleSummary(f, r)) + '</small></button><span class="obs-chip">P ' + r.priority + '</span>'
+      + '<button type="button" class="obs-ib" onclick="obsDupRule(' + i + ')" title="Duplicate">⧉</button><button type="button" class="obs-ib x" onclick="obsDelRule(' + i + ')" aria-label="Delete rule">🗑</button></div>';
+    if (open) {
+      h += '<div class="obs-rule-b"><div class="obs-grid">' + ofield('Rule name', oi(p + '.name', r.name)) + ofield('Priority (0–1000)', on_(p + '.priority', r.priority, 's', '', 0, 1000, 1), 'higher = more important')
+        + ofield('Match', osel(p + '.match', r.match, [['all', 'ALL conditions (AND)'], ['any', 'ANY condition (OR)']], 1)) + ofield('Reason shown to the user', oi(p + '.reason', r.reason, '', 'e.g. You want to lose weight'), 'appears as a small tag on each suggestion') + '</div>'
+        + '<div class="obs-sub">When…</div>' + obsCondsHTML(p + '.when', r.when, null, null) + '<div class="obs-sub">…suggest</div>';
+      [['plans', '🥗 Nutrition plans'], ['routines', '🏋️ Routines'], ['habits', '✨ Habits'], ['goals', '🎯 Goals']].forEach(function(k){
+        var all = c.templates[k[0]];
+        h += '<div class="obs-pick"><b>' + k[1] + '</b><div class="obs-vals">' + (all.length ? all.map(function(t){ var on = r.suggest[k[0]].indexOf(t.id) >= 0; return '<label class="obs-vchip' + (on ? ' on' : '') + '"><input type="checkbox" ' + (on ? 'checked ' : '') + 'onchange="obsTplTick(' + i + ',\'' + k[0] + '\',\'' + t.id + '\',this.checked)"/>' + _esc((t.emoji ? t.emoji + ' ' : '') + t.name) + '</label>'; }).join('') : '<span class="obs-none">No templates yet — create some in the Templates tab.</span>') + '</div></div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+  });
+  if (!f.rules.length) h += '<div class="adm-empty"><b>No rules yet</b><p>Add a rule to start suggesting templates from answers.</p></div>';
+  h += '<div class="obs-addrow">' + oact('+ Add rule', 'obsAddRule()', 'ok') + '</div>' + obsSimHTML();
+  return h;
+}
+/* simulator: fill in answers → see exactly what the engine suggests */
+function obsSimSet(id, v) { OBS.sim[id] = v; obsRender(); }
+function obsSimTick(id, v, on) { var a = Array.isArray(OBS.sim[id]) ? OBS.sim[id].slice() : [], k = a.indexOf(v); if (on && k < 0) a.push(v); if (!on && k >= 0) a.splice(k, 1); OBS.sim[id] = a; obsRender(); }
+function obsSimNum(id, v) { if (v === '' || v == null) delete OBS.sim[id]; else OBS.sim[id] = parseFloat(v); obsRender(); }
+function obsSimClear() { OBS.sim = {}; obsRender(); }
+function obsSimHTML() {
+  var f = obsFlow(), cfg = onbSanitize(obsClone(OBS.cfg)); if (!cfg) return '';
+  var fl = cfg.flows.filter(function(x){ return x.id === f.id; })[0]; if (!fl) return '';
+  var vis = onbVisible(fl, OBS.sim), h = '<div class="admin-card obs-sim"><div class="admin-card-title">🧪 Suggestion tester</div><div class="obs-help" style="margin-top:-4px">Pick answers as a user would. Questions appear and disappear exactly like they do for real users.</div><div class="obs-simq">';
+  fl.steps.forEach(function(s){ (vis.byStep[s.id] || []).forEach(function(q){
+    if (q.type === 'info') return; var v = OBS.sim[q.id], id = q.id;
+    h += '<div class="obs-simrow"><label>' + _esc(q.label) + '</label>';
+    if (q.type === 'choice' || q.type === 'yesno') { var opts = q.type === 'yesno' ? [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }] : q.options; h += '<select class="admin-inp obs-in" onchange="obsSimSet(\'' + id + '\',this.value)"><option value="">—</option>' + opts.map(function(o){ return '<option value="' + _esc(o.value) + '"' + (String(v) === String(o.value) ? ' selected' : '') + '>' + _esc(o.label) + '</option>'; }).join('') + '</select>'; }
+    else if (q.type === 'multi') { var cur = Array.isArray(v) ? v : []; h += '<span class="obs-vals">' + q.options.map(function(o){ var on = cur.indexOf(o.value) >= 0; return '<label class="obs-vchip' + (on ? ' on' : '') + '"><input type="checkbox" ' + (on ? 'checked ' : '') + 'onchange="obsSimTick(\'' + id + '\',\'' + _esc(o.value) + '\',this.checked)"/>' + _esc(o.label) + '</label>'; }).join('') + '</span>'; }
+    else if (q.type === 'number' || q.type === 'weight' || q.type === 'height' || q.type === 'scale') h += '<input class="admin-inp obs-in s" type="number" step="any" value="' + _esc(v == null ? '' : v) + '" placeholder="' + (q.type === 'weight' ? 'kg' : q.type === 'height' ? 'cm' : '') + '" onchange="obsSimNum(\'' + id + '\',this.value)"/>';
+    else h += '<input class="admin-inp obs-in s" type="text" value="' + _esc(v == null ? '' : v) + '" onchange="obsSimSet(\'' + id + '\',this.value)"/>';
+    h += '</div>';
+  }); });
+  var sug = onbSuggest(cfg, fl, OBS.sim), any = false;
+  h += '</div><div class="obs-res"><div class="obs-sub">Result' + (vis.der['$bmi'] ? ' · BMI ' + vis.der['$bmi'] + ' (' + vis.der['$bmicat'] + ')' : '') + '</div>';
+  [['plans', '🥗 Nutrition plan'], ['routines', '🏋️ Routines'], ['habits', '✨ Habits'], ['goals', '🎯 Goals']].forEach(function(k){
+    sug[k[0]].forEach(function(x){ any = true; var extra = k[0] === 'plans' ? ' — ' + (function(){ var t = onbPlanTargets(x.t, fl, OBS.sim); return t.calGoal + ' kcal · P' + t.protGoal + ' C' + t.carbGoal + ' F' + t.fatGoal; })() : '';
+      h += '<div class="obs-resrow"><span>' + k[1].split(' ')[0] + '</span><b>' + _esc(x.t.name) + '</b><small>' + _esc(extra) + '</small><em>score ' + x.score + '</em><span class="obs-why">' + x.why.map(function(w){ return '<i>' + _esc(w) + '</i>'; }).join('') + '</span></div>'; });
+  });
+  if (!any) h += '<div class="obs-none">Nothing is suggested for these answers.</div>';
+  return h + '<div class="obs-addrow">' + oact('Reset answers', 'obsSimClear()') + '</div></div></div>';
+}
+
+/* ---------- tab: templates ---------- */
+var OBS_KINDS = [['habits', '✨ Habits'], ['routines', '🏋️ Routines'], ['goals', '🎯 Goals'], ['plans', '🥗 Nutrition plans']];
+function obsTplUse(kind, id) { var n = 0; OBS.cfg.flows.forEach(function(f){ f.rules.forEach(function(r){ if ((r.suggest[kind] || []).indexOf(id) >= 0) n++; }); }); return n; }
+function obsTplKind(k) { OBS.tplKind = k; OBS.openTpl = null; obsRender(); }
+function obsTplToggle(i) { OBS.openTpl = OBS.openTpl === i ? null : i; obsRender(); }
+function obsTplAdd() {
+  var k = OBS.tplKind, id = obsUid(k.charAt(0) + '_'), t;
+  if (k === 'habits') t = { id: id, name: 'New habit', emoji: '✨', cat: 'Health', type: 'check', tod: 'any', freq: { t: 'daily' }, cue: '', why: '' };
+  else if (k === 'routines') t = { id: id, name: 'New routine', desc: '', items: [{ n: 'Push-Ups' }, { n: 'Bodyweight Squat' }, { n: 'Plank' }] };
+  else if (k === 'goals') t = { id: id, name: 'New goal', emoji: '🎯', ck: 'body', kind: 'metric', metric: 'weight', delta: -3, days: 60, habit: '', hmode: 'streak', tasks: '' };
+  else t = { id: id, name: 'New plan', desc: '', calMode: 'tdee', adjust: 0, cal: 2200, protPerKg: 1.8, fatPct: 28, water: 10 };
+  OBS.cfg.templates[k].push(t); OBS.openTpl = OBS.cfg.templates[k].length - 1; obsDirty(); obsRender();
+}
+function obsTplDup(i) { var a = OBS.cfg.templates[OBS.tplKind], t = obsClone(a[i]); t.id = obsUid(OBS.tplKind.charAt(0) + '_'); t.name += ' (copy)'; a.splice(i + 1, 0, t); OBS.openTpl = i + 1; obsDirty(); obsRender(); }
+async function obsTplDel(i) {
+  var k = OBS.tplKind, a = OBS.cfg.templates[k], t = a[i], n = obsTplUse(k, t.id);
+  if (!(await admConfirm({ title: 'Delete “' + _esc(t.name) + '”?', body: n ? '⚠ Used by ' + n + ' suggestion rule(s) — they will simply skip it.' : 'Not used by any rule.', ok: 'Delete', danger: true }))) return;
+  a.splice(i, 1); OBS.openTpl = null; obsDirty(); obsRender();
+}
+function obsTplItems(i, txt) { OBS.cfg.templates.routines[i].items = txt.split('\n').map(function(x){ return x.trim(); }).filter(Boolean).map(function(n){ return { n: n }; }); obsDirty(); }
+function obsTplList(path, txt) { obsSetP(path, txt.split('\n').map(function(x){ return x.trim(); }).filter(Boolean)); obsDirty(); }
+function obsTplFreq(i, t) { var h = OBS.cfg.templates.habits[i], f = { t: t }; if (t === 'weekdays') f.days = [1, 2, 3, 4, 5]; if (t === 'weekly') f.n = 3; if (t === 'monthly') f.n = 12; h.freq = f; obsDirty(); obsRender(); }
+function obsTplDay(i, d, on) { var f = OBS.cfg.templates.habits[i].freq; f.days = f.days || []; var k = f.days.indexOf(d); if (on && k < 0) f.days.push(d); if (!on && k >= 0) f.days.splice(k, 1); obsDirty(); }
+function obsTplEditor(k, t, i) {
+  var p = 'c.templates.' + k + '.' + i, h = '<div class="obs-qed"><div class="obs-grid">' + ofield('Name', oi(p + '.name', t.name), '', 'wide');
+  if (k === 'habits') {
+    var ty = t.type, fr = t.freq || { t: 'daily' };
+    h += ofield('Emoji', oi(p + '.emoji', t.emoji, 's')) + ofield('Category', osel(p + '.cat', t.cat, HB_CATS.map(function(x){ return [x, x]; }), 0))
+      + ofield('Tracking', osel(p + '.type', ty, [['check', 'Done / not done'], ['amount', 'Amount (e.g. 8 glasses)'], ['timer', 'Minutes'], ['checklist', 'Checklist'], ['avoid', 'Quit / avoid']], 1))
+      + ((ty === 'amount' || ty === 'timer') ? ofield('Daily target', on_(p + '.target', t.target, 's', '', 0, null, 'any')) + (ty === 'amount' ? ofield('Unit', oi(p + '.unit', t.unit, 's', 'glasses')) + ofield('Quick-add step', on_(p + '.step', t.step, 's', '1')) : '') + ofield('Limit', ochk(p + '.cmp', t.cmp === 'max', 'This is a maximum (stay under)', 0).replace(/onchange="[^"]*"/, 'onchange="obsCh(\'' + p + '.cmp\',this.checked?\'max\':\'min\',\'s\',0)"')) : '')
+      + ofield('Time of day', osel(p + '.tod', t.tod, [['any', 'Anytime'], ['morning', 'Morning'], ['afternoon', 'Afternoon'], ['evening', 'Evening']], 0))
+      + ofield('How often', osel('', fr.t, [['daily', 'Every day'], ['weekdays', 'Specific days'], ['weekly', 'X times a week'], ['monthly', 'X times a month']], 0).replace(/onchange="[^"]*"/, 'onchange="obsTplFreq(' + i + ',this.value)"'))
+      + ((fr.t === 'weekly' || fr.t === 'monthly') ? ofield('Times', on_(p + '.freq.n', fr.n, 's', '', 1, fr.t === 'weekly' ? 7 : 31, 1)) : '')
+      + (fr.t === 'weekdays' ? ofield('Days', '<span class="obs-vals">' + ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(d, n){ var on = (fr.days || []).indexOf(n) >= 0; return '<label class="obs-vchip' + (on ? ' on' : '') + '"><input type="checkbox" ' + (on ? 'checked ' : '') + 'onchange="obsTplDay(' + i + ',' + n + ',this.checked);this.parentNode.classList.toggle(\'on\',this.checked)"/>' + d + '</label>'; }).join('') + '</span>', '', 'wide') : '')
+      + (ty === 'checklist' ? ofield('Checklist items (one per line)', '<textarea class="admin-inp obs-in" rows="4" onchange="obsTplList(\'' + p + '.items\',this.value)">' + _esc((t.items || []).join('\n')) + '</textarea>', '', 'wide') : '')
+      + ofield('Cue / reminder', oi(p + '.cue', t.cue), '', 'wide') + ofield('Why it helps (shown on hover/detail)', oi(p + '.why', t.why), '', 'wide');
+  } else if (k === 'routines') {
+    var lib = wkTplAll(), names = {}; lib.forEach(function(x){ names[x.n.toLowerCase()] = 1; });
+    h += ofield('Description', oi(p + '.desc', t.desc), '', 'wide')
+      + ofield('Exercises (one per line)', '<textarea class="admin-inp obs-in" rows="6" onchange="obsTplItems(' + i + ',this.value);obsRender()">' + _esc(t.items.map(function(x){ return x.n; }).join('\n')) + '</textarea>', 'Use names from the Workout Library (sets/reps come from the library). Unknown names become simple 3×10 exercises.', 'wide')
+      + '<div class="obs-f wide"><span>Matched against the library</span><div class="obs-vals">' + t.items.map(function(x){ var ok = names[x.n.toLowerCase()]; return '<span class="obs-vchip ' + (ok ? 'on' : 'bad') + '">' + (ok ? '✓ ' : '? ') + _esc(x.n) + '</span>'; }).join('') + '</div></div>';
+  } else if (k === 'goals') {
+    var metrics = Object.keys(GL_M).map(function(m){ return [m, (GL_M[m].e || '') + ' ' + GL_M[m].l]; }), M = GL_M[t.metric], isDelta = t.delta != null && t.delta !== '';
+    h += ofield('Emoji', oi(p + '.emoji', t.emoji, 's')) + ofield('Category', osel(p + '.ck', t.ck, Object.keys(GL_CK).map(function(c){ return [c, GL_CK[c].n]; }), 0))
+      + ofield('Goal type', osel(p + '.kind', t.kind, [['metric', 'Track a number from the app'], ['habit', 'Follow a habit'], ['tasks', 'Checklist of tasks']], 1));
+    if (t.kind === 'metric') {
+      h += ofield('What to track', osel(p + '.metric', t.metric, metrics, 1)) + ofield('Deadline (days from today)', on_(p + '.days', t.days, 's', '', 0, 1000, 1))
+        + ofield('Change from today’s value', on_(p + '.delta', t.delta, 's', 'e.g. -5'), 'For body measurements: relative to the person’s latest value, e.g. −5 kg. Leave empty to use an exact target.')
+        + ofield('…or exact target', on_(p + '.target', t.target, 's', M ? M.u : ''), isDelta ? 'ignored while “change” is set' : (M ? 'in ' + M.u : ''));
+      if (M && M.needHours) h += ofield('Hours of sleep', oi(p + '.mp.hours', (t.mp || {}).hours, 's', '7'));
+    } else if (t.kind === 'habit') {
+      h += ofield('Linked habit template', osel(p + '.habit', t.habit, [['', '— pick —']].concat(OBS.cfg.templates.habits.map(function(x){ return [x.id, x.name]; })), 0), 'The habit is created in the same onboarding (if it was suggested/selected).') + ofield('Counts', osel(p + '.hmode', t.hmode, [['streak', 'Streak (days in a row)'], ['count', 'Times completed'], ['rate', 'Consistency %']], 0)) + ofield('Target', on_(p + '.target', t.target, 's', '7')) + ofield('Deadline (days)', on_(p + '.days', t.days, 's', '', 0, 1000, 1));
+    } else h += ofield('Tasks (one per line)', '<textarea class="admin-inp obs-in" rows="4" onchange="obsIn(\'' + p + '.tasks\',this.value)">' + _esc(t.tasks || '') + '</textarea>', '', 'wide') + ofield('Deadline (days)', on_(p + '.days', t.days, 's', '', 0, 1000, 1));
+  } else {
+    var tg = onbPlanTargets(onbSanTpl('plans', t), { steps: [], questions: [], rules: [] }, {});
+    h += ofield('Description', oi(p + '.desc', t.desc), '', 'wide') + ofield('Calories', osel(p + '.calMode', t.calMode, [['tdee', 'Maintenance + adjustment'], ['fixed', 'Fixed number']], 1))
+      + (t.calMode === 'fixed' ? ofield('Calories / day', on_(p + '.cal', t.cal, 's', '', 1000, 6000, 10)) : ofield('Adjustment (kcal)', on_(p + '.adjust', t.adjust, 's', '', -1500, 1500, 50), '−500 = fat loss, +300 = muscle gain'))
+      + ofield('Protein (g per kg)', on_(p + '.protPerKg', t.protPerKg, 's', '', 0.5, 4, 0.1)) + ofield('Fat (% of calories)', on_(p + '.fatPct', t.fatPct, 's', '', 10, 50, 1)) + ofield('Water (glasses)', on_(p + '.water', t.water, 's', '', 1, 40, 1))
+      + '<div class="obs-f wide"><span>Example (70 kg · 170 cm · 25 y · lightly active)</span><div class="obs-vals"><span class="obs-vchip on">' + tg.calGoal + ' kcal</span><span class="obs-vchip on">P ' + tg.protGoal + ' g</span><span class="obs-vchip on">C ' + tg.carbGoal + ' g</span><span class="obs-vchip on">F ' + tg.fatGoal + ' g</span></div></div>';
+  }
+  return h + '</div></div>';
+}
+function obsTplSummary(k, t) {
+  if (k === 'habits') return onbMeta('habits', onbSanTpl('habits', t));
+  if (k === 'routines') return t.items.length + ' exercises';
+  if (k === 'goals') return (t.kind === 'metric' ? ((GL_M[t.metric] || {}).l || t.metric) + (t.delta != null && t.delta !== '' ? ' ' + (t.delta > 0 ? '+' : '') + t.delta : t.target != null && t.target !== '' ? ' → ' + t.target : '') : t.kind) + (t.days ? ' · ' + t.days + ' days' : '');
+  return (t.calMode === 'fixed' ? t.cal + ' kcal' : (t.adjust > 0 ? '+' : '') + t.adjust + ' kcal vs maintenance') + ' · ' + t.protPerKg + ' g/kg protein';
+}
+function obsTemplatesHTML() {
+  var k = OBS.tplKind, a = OBS.cfg.templates[k], h = '<div class="obs-help">Templates are the building blocks people get as a starter: habits, workout routines, goals and nutrition plans. Create them here, then connect them to answers in the <b>Suggestions</b> tab.</div>';
+  h += '<div class="adm-tabs">' + OBS_KINDS.map(function(x){ return '<button type="button" class="adm-tab' + (k === x[0] ? ' on' : '') + '" onclick="obsTplKind(\'' + x[0] + '\')">' + x[1] + '<i>' + OBS.cfg.templates[x[0]].length + '</i></button>'; }).join('') + '</div>';
+  a.forEach(function(t, i){
+    var open = OBS.openTpl === i, u = obsTplUse(k, t.id);
+    h += '<div class="admin-card obs-tpl' + (open ? ' open' : '') + '"><div class="obs-tpl-h"><span class="obs-te">' + _esc(t.emoji || OBS_KINDS.filter(function(x){ return x[0] === k; })[0][1].split(' ')[0]) + '</span><button type="button" class="obs-rule-t" onclick="obsTplToggle(' + i + ')"><b>' + _esc(t.name) + '</b><small>' + _esc(obsTplSummary(k, t)) + '</small></button><span class="obs-chip' + (u ? ' ok' : '') + '" title="Suggestion rules using it">' + u + ' rule' + (u === 1 ? '' : 's') + '</span><button type="button" class="obs-ib" onclick="obsTplDup(' + i + ')" title="Duplicate">⧉</button><button type="button" class="obs-ib x" onclick="obsTplDel(' + i + ')" aria-label="Delete">🗑</button></div>' + (open ? obsTplEditor(k, t, i) : '') + '</div>';
+  });
+  return h + '<div class="obs-addrow">' + oact('+ New ' + k.replace(/s$/, '').replace('plan', 'nutrition plan'), 'obsTplAdd()', 'ok') + '</div>';
+}
+
+/* ---------- tab: users ---------- */
+function obsUserOnb(u) {
+  var r = u._raw || {}, sm = r.summary && r.summary.onb;
+  if (sm) return sm;
+  try { if (r.data) { var d = JSON.parse(r.data), o = d.cfg && d.cfg.onb; if (o) return { f: o.flow, v: o.v, at: o.at, blank: !!o.blank, a: o.answers || {}, ap: o.applied || {} }; } } catch (e) {}
+  return null;
+}
+function obsUsersHTML() {
+  if (!ADMIN_USERS_CACHE) { loadAdminUsers(true).then(function(){ if (OBS.tab === 'users' || OBS.tab === 'insights') obsRender(); }); return '<div class="adm-empty"><b>Loading users…</b></div>'; }
+  var q = OBS.uq.toLowerCase(), f = OBS.uf, flows = OBS.cfg.flows, rows = ADMIN_USERS_CACHE.filter(function(u){
+    var raw = u._raw || {}, on = obsUserOnb(u);
+    if (q && (String(u.nameRaw || '').toLowerCase() + ' ' + String(raw.authEmail || raw.userId || '').toLowerCase()).indexOf(q) < 0) return false;
+    if (f === 'done') return !!u.onboarded; if (f === 'todo') return !u.onboarded; if (f === 'forced') return !!raw.forceOnboarding; if (f === 'assigned') return !!raw.onbFlow; return true;
+  });
+  ADM_VIS.onbu = rows.map(function(u){ return u.docId; });
+  var h = '<div class="obs-help">Make anyone redo onboarding (their old answers pre-fill) or give a specific person a different flow. It takes effect the next time they open the app. Tick rows, then use the bar.</div>'
+    + '<div class="obs-usrbar"><input class="admin-inp obs-in" placeholder="Search name or e-mail…" value="' + _esc(OBS.uq) + '" oninput="OBS.uq=this.value;obsUsersFilter()"/>'
+    + osel('', f, [['all', 'Everyone'], ['done', 'Finished onboarding'], ['todo', 'Not finished'], ['forced', 'Asked to re-run'], ['assigned', 'Has an assigned flow']], 0).replace(/onchange="[^"]*"/, 'onchange="OBS.uf=this.value;obsRender()"') + '</div>'
+    + '<div id="obsUsrTable">' + obsUsersTable(rows, flows) + '</div>';
+  return h;
+}
+function obsUsersFilter() { clearTimeout(obsUsersFilter._t); obsUsersFilter._t = setTimeout(obsRender, 250); }
+function obsUsersTable(rows, flows) {
+  var h = admBarHTML('onbu') + '<div class="admin-card obs-ut">';
+  if (!rows.length) return h + '<div class="adm-empty"><b>No users match</b></div></div>';
+  rows.slice(0, 300).forEach(function(u){
+    var raw = u._raw || {}, on = obsUserOnb(u), fl = flows.filter(function(x){ return x.id === raw.onbFlow; })[0], used = on && flows.filter(function(x){ return x.id === on.f; })[0];
+    h += '<div class="adm-row" data-adm-row>' + admCb('onbu', u.docId) + '<div class="obs-ut-n"><b>' + _esc(u.nameRaw || '—') + '</b><small>' + _esc(raw.authEmail || raw.userId || u.docId) + '</small></div>'
+      + '<div class="obs-ut-s">' + (u.onboarded ? '<span class="obs-chip ok">Done' + (on ? ' · ' + _esc(used ? used.name : on.f) : '') + '</span>' : '<span class="obs-chip warn">Not finished</span>') + (on && on.blank ? ' <span class="obs-chip">blank start</span>' : '') + (raw.forceOnboarding ? ' <span class="obs-chip warn">will re-run</span>' : '') + (raw.onbFlow ? ' <span class="obs-chip">→ ' + _esc(fl ? fl.name : raw.onbFlow) + '</span>' : '') + '</div></div>';
+  });
+  return h + (rows.length > 300 ? '<div class="adm-hint" style="padding:10px">Showing the first 300 of ' + rows.length + ' — use the search.</div>' : '') + '</div>';
+}
+ADM_ACT.onbu = [{ k: 'rerun', l: '↻ Ask to redo onboarding', c: 'ok' }, { k: 'cancel', l: '✕ Cancel re-run' }, { k: 'assign', l: '🧭 Assign flow…' }, { k: 'unassign', l: 'Clear assigned flow' }, { k: 'csv', l: '⭳ CSV' }];
+async function obsFlowPicker(title, body) {
+  var flows = OBS.cfg ? OBS.cfg.flows : (await (async function(){ await loadAdminOnboarding(false); return OBS.cfg.flows; })());
+  return new Promise(function(res){
+    var m = document.createElement('div'); m.className = 'adm-modal';
+    m.innerHTML = '<div class="adm-sheet" role="dialog" aria-modal="true"><div class="adm-sh-t">' + title + '</div><div class="adm-sh-b">' + body + '</div><select class="admin-inp adm-in" id="obsPick">' + flows.map(function(f){ return '<option value="' + _esc(f.id) + '">' + _esc(f.name) + (f.isDefault ? ' (default)' : '') + '</option>'; }).join('') + '</select><div class="adm-sh-f"><button type="button" class="adm-btn" id="obsPNo">Cancel</button><button type="button" class="adm-btn ok" id="obsPYes">Assign</button></div></div>';
+    (obsEl('adminShellOverlay') || document.body).appendChild(m);
+    m.querySelector('#obsPNo').onclick = function(){ m.remove(); res(null); }; m.querySelector('#obsPYes').onclick = function(){ var v = m.querySelector('#obsPick').value; m.remove(); res(v); };
+  });
+}
+ADM_H['onbu.rerun'] = ADM_H['users.onbrun'] = async function(ids) {
+  if (!(await admConfirm({ title: '↻ Ask ' + ids.length + ' user(s) to redo onboarding', body: 'Next time they open FIT//OS they see the onboarding again, pre-filled with their current answers. Nothing they already have is deleted — suggested templates that already exist are skipped.', ok: 'Ask them' }))) return;
+  await admFlagBatch('fitos_users', ids, { forceOnboarding: true }); admLog('ONBOARDING_RERUN', 'user', ids); toast('↻ ' + ids.length + ' user(s) will redo onboarding'); admClear('onbu'); admClear('users'); await loadAdminUsers(true); if (OBS.tab === 'users') obsRender();
+};
+ADM_H['onbu.cancel'] = ADM_H['users.onbcancel'] = async function(ids) { await admFlagBatch('fitos_users', ids, { forceOnboarding: false }); admLog('ONBOARDING_RERUN_CANCELLED', 'user', ids); toast('Cancelled for ' + ids.length); await loadAdminUsers(true); if (OBS.tab === 'users') obsRender(); };
+ADM_H['onbu.assign'] = ADM_H['users.onbflow'] = async function(ids) {
+  var fid = await obsFlowPicker('🧭 Assign an onboarding flow to ' + ids.length + ' user(s)', 'They will use this flow instead of the default one. Tick “redo” below if they already finished.');
+  if (!fid) return; var redo = await admConfirm({ title: 'Make them redo it now?', body: 'Choose <b>Yes</b> to also ask them to go through the assigned flow the next time they open the app. Choose Cancel to only assign it (it applies to people who have not finished yet).', ok: 'Yes, redo it' });
+  await admFlagBatch('fitos_users', ids, redo ? { onbFlow: fid, forceOnboarding: true } : { onbFlow: fid }); admLog('ONBOARDING_FLOW_ASSIGNED', 'user', ids, { flow: fid, redo: !!redo }); toast('🧭 Flow assigned to ' + ids.length); await loadAdminUsers(true); if (OBS.tab === 'users') obsRender();
+};
+ADM_H['onbu.unassign'] = async function(ids) { await admFlagBatch('fitos_users', ids, { onbFlow: '' }); admLog('ONBOARDING_FLOW_CLEARED', 'user', ids); toast('Cleared for ' + ids.length); await loadAdminUsers(true); if (OBS.tab === 'users') obsRender(); };
+ADM_H['onbu.csv'] = function(ids) {
+  var flows = OBS.cfg ? OBS.cfg.flows : [], f = obsFlow(), qs = f ? f.questions.filter(function(q){ return q.type !== 'info' && q.type !== 'text'; }) : [];
+  admCsv('onboarding-answers', ['Name', 'Email', 'Finished', 'Flow', 'Completed at', 'Blank start', 'Habits added', 'Routines added', 'Goals added', 'Plan'].concat(qs.map(function(q){ return q.label || q.id; })),
+    ids.map(function(id){ return (ADMIN_USERS_CACHE || []).find(function(u){ return u.docId === id; }); }).filter(Boolean).map(function(u){ var o = obsUserOnb(u) || {}, a = o.a || {}, ap = o.ap || {}; return [u.nameRaw, (u._raw || {}).authEmail || (u._raw || {}).userId || '', u.onboarded ? 'yes' : 'no', o.f || '', o.at || '', o.blank ? 'yes' : '', ap.habits || 0, ap.routines || 0, ap.goals || 0, ap.plan || ''].concat(qs.map(function(q){ return Array.isArray(a[q.id]) ? a[q.id].join(' | ') : (a[q.id] == null ? '' : a[q.id]); })); }));
+};
+
+/* ---------- tab: insights ---------- */
+function obsInsFlow(id) { OBS.insFlow = id; obsRender(); }
+function obsInsightsHTML() {
+  if (!ADMIN_USERS_CACHE) { loadAdminUsers(true).then(function(){ if (OBS.tab === 'insights' || OBS.tab === 'users') obsRender(); }); return '<div class="adm-empty"><b>Loading users…</b></div>'; }
+  var users = ADMIN_USERS_CACHE, flows = OBS.cfg.flows, fid = OBS.insFlow || (flows.filter(function(f){ return f.isDefault; })[0] || flows[0]).id, fl = flows.filter(function(f){ return f.id === fid; })[0] || flows[0];
+  var done = users.filter(function(u){ return u.onboarded; }).length, pend = users.length - done, rows = users.map(function(u){ return { u: u, o: obsUserOnb(u) }; }).filter(function(x){ return x.o; });
+  var mine = rows.filter(function(x){ return x.o.f === fl.id; }), blank = mine.filter(function(x){ return x.o.blank; }).length, sum = { habits: 0, routines: 0, goals: 0, plan: 0 };
+  mine.forEach(function(x){ var a = x.o.ap || {}; sum.habits += a.habits || 0; sum.routines += a.routines || 0; sum.goals += a.goals || 0; if (a.plan) sum.plan++; });
+  var avg = function(n){ return mine.length ? (n / mine.length).toFixed(1) : '0'; };
+  var h = '<div class="obs-kpis">' + [['Users', users.length], ['Finished', done], ['Not finished', pend], ['Used the new onboarding', rows.length]].map(function(k){ return '<div class="obs-kpi"><b>' + k[1] + '</b><span>' + k[0] + '</span></div>'; }).join('') + '</div>';
+  h += '<div class="obs-flowbar"><span>Flow</span>' + osel('', fl.id, flows.map(function(f){ return [f.id, f.name]; }), 0).replace(/onchange="[^"]*"/, 'onchange="obsInsFlow(this.value)"') + '</div>';
+  if (!mine.length) return h + '<div class="adm-empty"><b>No answers yet for this flow</b><p>Answers appear here as people finish onboarding.</p></div>';
+  h += '<div class="obs-kpis">' + [['Completed', mine.length], ['Started blank', blank + ' (' + Math.round(blank * 100 / mine.length) + '%)'], ['Avg habits added', avg(sum.habits)], ['Avg routines added', avg(sum.routines)], ['Avg goals added', avg(sum.goals)], ['Took a nutrition plan', Math.round(sum.plan * 100 / mine.length) + '%']].map(function(k){ return '<div class="obs-kpi"><b>' + k[1] + '</b><span>' + k[0] + '</span></div>'; }).join('') + '</div>';
+  fl.questions.filter(function(q){ return q.type === 'choice' || q.type === 'multi' || q.type === 'yesno'; }).forEach(function(q){
+    var cnt = {}, n = 0, opts = q.type === 'yesno' ? [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }] : q.options;
+    mine.forEach(function(x){ var v = (x.o.a || {})[q.id]; if (v == null || v === '') return; n++; [].concat(v).forEach(function(z){ cnt[z] = (cnt[z] || 0) + 1; }); });
+    h += '<div class="admin-card obs-dist"><div class="obs-dist-t">' + _esc(q.label) + ' <small>' + n + ' answered</small></div>' + opts.map(function(o){ var c = cnt[o.value] || 0, pc = n ? Math.round(c * 100 / n) : 0; return '<div class="obs-bar"><span>' + _esc((o.emoji ? o.emoji + ' ' : '') + o.label) + '</span><i><b style="width:' + pc + '%"></b></i><em>' + c + ' · ' + pc + '%</em></div>'; }).join('') + '</div>';
+  });
+  return h;
+}
+function obsAfterPreview() { if (OBS.cfg) obsRender(); }
+/*ONBS-END*/
+
+
 // ---------- USERS ----------
 ADM_ACT.users = [
-  { k: 'block', l: '⛔ Block', c: 'warn' }, { k: 'unblock', l: '✓ Unblock' }, { k: 'csv', l: '⭳ CSV' }, { k: 'trash', l: '🗑 Move to Trash', c: 'danger' }
+  { k: 'block', l: '⛔ Block', c: 'warn' }, { k: 'unblock', l: '✓ Unblock' }, { k: 'onbrun', l: '↻ Redo onboarding' }, { k: 'onbflow', l: '🧭 Onboarding flow…' }, { k: 'csv', l: '⭳ CSV' }, { k: 'trash', l: '🗑 Move to Trash', c: 'danger' }
 ];
 function admUserById(id) { return (ADMIN_USERS_CACHE || []).find(function(u){ return u.docId === id; }); }
 ADM_H['users.block'] = async function(ids) {

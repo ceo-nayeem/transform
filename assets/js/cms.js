@@ -113,17 +113,18 @@
     if (g) { v.push('--g:' + g, '--g2:' + mix(g, '#000000', .2), '--g-rgb:' + rgb(g).join(',')); }
     if (p) { v.push('--p:' + p, '--p-rgb:' + rgb(p).join(',')); }
     if (c) { v.push('--c:' + c, '--c-rgb:' + rgb(c).join(',')); }
-    if (bg) { v.push('--bg:' + bg, '--bg2:' + mix(bg, '#ffffff', .035), '--panel:' + mix(bg, '#ffffff', .06)); }
+    var vb = []; if (bg) { vb.push('--bg:' + bg, '--bg2:' + mix(bg, '#ffffff', .035), '--panel:' + mix(bg, '#ffffff', .06)); }   /* background colours only restyle the DARK theme; light mode keeps its own clean surfaces */
     if (th.r !== undefined && th.r !== '') { var r = num(th.r, 4, 36, 18); v.push('--r:' + r + 'px', '--r-lg:' + Math.round(r * 1.45) + 'px'); }
     var fh = FONTS[th.fh] ? th.fh : '', fb = FONTS[th.fb] ? th.fb : '';
     if (fh) v.push("--f-head:'" + fh + "','Inter',system-ui,sans-serif");
     if (fb) v.push("--f-body:'" + fb + "',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif");
-    if (v.length) css = ':root{' + v.join(';') + '}';
+    if (v.length) css += ':root:root{' + v.join(';') + '}';
+    if (vb.length) css += ':root[data-theme="dark"]{' + vb.join(';') + '}';
     var need = []; if (fh && fh !== 'Inter' && fh !== 'Plus Jakarta Sans') need.push(fh); if (fb && fb !== 'Inter' && fb !== 'Plus Jakarta Sans') need.push(fb);
     if (need.length) fonts = 'https://fonts.googleapis.com/css2?' + need.filter(function (x, i) { return need.indexOf(x) === i; }).map(function (f) { return 'family=' + FONTS[f]; }).join('&') + '&display=swap';
     if (css || themeEl) { themeEl = styleEl('cms-theme'); if (themeEl.textContent !== css) themeEl.textContent = css; }
     if (fonts) { if (!fontEl) { fontEl = document.createElement('link'); fontEl.rel = 'stylesheet'; document.head.appendChild(fontEl); } if (fontEl.href !== fonts) fontEl.href = fonts; } else if (fontEl) { fontEl.remove(); fontEl = null; }
-    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', bg || '#06080a');
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', root.getAttribute('data-theme') === 'light' ? '#eceeef' : (bg || '#0a0d0c'));
     var cs = (C && typeof C.css === 'string') ? C.css.replace(/<\/?style[^>]*>/gi, '') : '';
     if (cs || cssEl) { cssEl = styleEl('cms-css'); if (cssEl.textContent !== cs) cssEl.textContent = cs; }
   }

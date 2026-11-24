@@ -17,8 +17,10 @@ provider.setCustomParameters({ prompt: 'select_account' });
 
 const state = { plan: null, method: 'bkash', user: null, ent: null, step: 1, timer: null, cp: { pub: null, busy: false, wanted: '' } };
 const q = new URLSearchParams(location.search);
-state.plan = (CFG.plans.find(p => p.id === q.get('plan')) || CFG.plans.find(p => p.tag === 'Popular') || CFG.plans[0]).id;
-const planObj = () => CFG.plans.find(p => p.id === state.plan);
+/* plan = one of the paid plan ids, or 'free' (no payment: just continue to the app's login) */
+state.plan = q.get('plan') === 'free' ? 'free' : (CFG.plans.find(p => p.id === q.get('plan')) || CFG.plans.find(p => p.tag === 'Popular') || CFG.plans[0]).id;
+const isFree = () => state.plan === 'free';
+const planObj = () => CFG.plans.find(p => p.id === state.plan) || CFG.plans[0];
 const durText = (p) => p.months === 1 ? '1 month' : p.months === 12 ? '1 year' : p.months + ' months';
 
 /* ---------------- coupon helpers ---------------- */
@@ -38,6 +40,7 @@ function cpCalc(pub, price) {
 }
 /* what the customer pays for the CURRENT plan (with the applied coupon, if it is valid for this plan) */
 function pricing(planId) {
+  if (!planId && isFree()) return { list: 0, discount: 0, final: 0, code: '' };
   const p = CFG.plans.find(x => x.id === (planId || state.plan)), list = p.price, c = state.cp.pub;
   if (c && couponEnabled() && cpPlanOk(c, p.id)) { const d = cpCalc(c, list); if (d > 0) return { list, discount: d, final: list - d, code: c.code }; }
   return { list, discount: 0, final: list, code: '' };
@@ -56,7 +59,10 @@ function showStep(n) {
 /* ---------------- plan picker + summary ---------------- */
 function renderPlans() {
   const box = $('#plan-pick'); const monthly = (CFG.plans.find(p => p.months === 1) || CFG.plans[0]).price;
-  box.innerHTML = CFG.plans.map(p => {
+  const F = CFG.free || {};
+  const freeCard = `<button type="button" class="pp pp-free${isFree() ? ' on' : ''}" role="radio" aria-checked="${isFree()}" data-plan="free">
+      <span class="pf-ico" aria-hidden="true">🎁</span><span class="pf-b"><span>Free</span><b>${cur}0 <i class="pf-sub">forever</i></b><span>${F.goals || 5} goals · ${F.habits || 8} habits · ${F.meals || 20} meals — no payment needed</span></span></button>`;
+  box.innerHTML = freeCard + CFG.plans.map(p => {
     const sv = monthly * p.months > p.price ? Math.round((1 - p.price / (monthly * p.months)) * 100) : 0;
     const pr = pricing(p.id);
     return `<button type="button" class="pp${p.id === state.plan ? ' on' : ''}" role="radio" aria-checked="${p.id === state.plan}" data-plan="${p.id}">
@@ -65,6 +71,14 @@ function renderPlans() {
   box.querySelectorAll('.pp').forEach(b => b.addEventListener('click', () => { state.plan = b.dataset.plan; refresh(); }));
 }
 function renderSummary() {
+  if (isFree()) {
+    $('#sum-plan').textContent = 'Free'; $('#sum-dur').textContent = 'No time limit';
+    $('#sum-total').textContent = cur + '0';
+    $('#sum-list-row').classList.add('cp-off'); $('#sum-disc-row').classList.add('cp-off');
+    $('#sum-email').textContent = state.user ? state.user.email : 'Sign in inside the app';
+    $('#sum-note').textContent = 'No payment needed. You will sign in with Google in the app.';
+    return;
+  }
   const p = planObj();
   $('#sum-plan').textContent = 'Pro · ' + p.label; $('#sum-dur').textContent = durText(p);
   const pr = pricing();
@@ -126,6 +140,7 @@ const HOW = {
   nagad: (n, a) => [`Open the <b>Nagad</b> app and choose <b>Send Money</b>.`, `Enter <b>${n}</b> and the amount <b>${cur}${fmt(a)}</b> (exactly).`, `Confirm with your PIN. Copy the <b>Transaction ID</b> from the success screen or SMS.`, `Paste it below and press Submit.`]
 };
 function renderPay() {
+  if (isFree()) return;
   const p = planObj(), pr = pricing(), m = CFG.payment[state.method], configured = !/X/i.test(m.number);
   $('#pay-tabs').innerHTML = Object.keys(CFG.payment).map(k => { const c = CFG.payment[k];
     return `<button type="button" class="ptab${k === state.method ? ' on' : ''}" role="tab" aria-selected="${k === state.method}" data-m="${k}" style="--pc:${c.color}"><i style="background:${c.color}"></i>${c.name}</button>`; }).join('');
@@ -261,6 +276,7 @@ async function cpApply(raw, auto) {
 function cpRemove() { state.cp.pub = null; state.cp.wanted = ''; lsSet(''); $('#cp-input').value = ''; cpMsg(''); refresh(); }
 function openCoupon(on) { $('#cp-body').classList.toggle('cp-off', !on); $('#cp-toggle').setAttribute('aria-expanded', String(!!on)); if (on) { try { $('#cp-input').focus({ preventScroll: true }); } catch (e) { /* ignore */ } } }
 function renderCoupon() {
+  if (isFree()) return;
   const c = state.cp.pub, pr = pricing(), applied = !!c, ok = applied && pr.discount > 0;
   $('#cp-applied').classList.toggle('cp-off', !applied);
   $('#cp-toggle').classList.toggle('cp-off', applied); if (applied) $('#cp-body').classList.add('cp-off');
@@ -278,7 +294,12 @@ $('#cp-input').addEventListener('input', (e) => { e.target.value = normCode(e.ta
 $('#cp-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); cpApply($('#cp-input').value, false); } });
 $('#cp-remove').addEventListener('click', cpRemove);
 
-function refresh() { renderPlans(); renderCoupon(); renderSummary(); renderPay(); }
+function refresh() {
+  renderPlans(); renderCoupon(); renderSummary(); renderPay();
+  const free = isFree();                                   // free plan: hide coupon, sign-in form and payment — just continue to the app
+  $('#free-part').classList.toggle('cp-off', !free); $('#paid-part').classList.toggle('cp-off', free);
+  $('#sum-perks').classList.toggle('cp-off', free); $('#sum-perks-free').classList.toggle('cp-off', !free);
+}
 
 /* a code can arrive from a creator's link (checkout.html?coupon=CODE — or any page of the site, saved by site.js) */
 {

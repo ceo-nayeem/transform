@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js" data-cms-page="contact">
+<html lang="en" class="no-js" data-cms-page="contact" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
@@ -7,7 +7,9 @@
 (function(){try{var sa=(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: minimal-ui)').matches))||window.navigator.standalone===true;if(sa&&!/[?&](site|cmspreview)=1/.test(location.search)){location.replace((window.FITOS_APP_PATH||'app/'));}}catch(e){}})();</script>
 <title>Contact — FIT//OS</title>
 <meta name="description" content="Get in touch with the FIT//OS team: payment help, feature requests, bug reports and general questions."/>
-<meta name="theme-color" content="#06080a"/>
+<meta name="theme-color" content="#0a0d0c"/>
+<script>/* theme before first paint — same key as the app (fitos_theme: light | dark) */
+(function(){var d=document.documentElement;d.classList.remove('no-js');d.classList.add('js');var l=false;try{var t=localStorage.getItem('fitos_theme');l=(t==='light'||t==='alpha');}catch(e){}d.setAttribute('data-theme',l?'light':'dark');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',l?'#eceeef':'#0a0d0c');})();</script>
 <meta property="og:type" content="website"/>
 <meta property="og:title" content="Contact — FIT//OS"/>
 <meta property="og:description" content="Get in touch with the FIT//OS team: payment help, feature requests, bug reports and general questions."/>
@@ -17,51 +19,54 @@
 <link rel="apple-touch-icon" href="app/icons/apple-touch-icon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="assets/css/site.css"/>
-
 </head>
 <body>
-<div class="bg-glow"></div><div class="bg-grid"></div><div class="noise"></div><div class="scroll-progress"></div>
 <header class="nav" id="top">
-  <div class="wrap">
+  <div class="wrap"><div class="nav-bar">
     <a href="index.html" class="logo" aria-label="FIT//OS home"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
     <nav class="nav-links" aria-label="Primary">
       <a href="index.html#features" data-cms="g.features">Features</a>
       <a href="index.html#how" data-cms="g.how-it-works">How it works</a>
       <a href="index.html#pricing" data-cms="g.pricing">Pricing</a>
       <a href="about.html" data-cms="g.about">About</a>
-      <a href="contact.html" class="active" data-cms="g.contact">Contact</a>
+      <a href="contact.html" data-cms="g.contact">Contact</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="app/" data-appurl data-cms="g.open-app">Open App</a>
-      <a class="btn btn-primary btn-sm" href="index.html#pricing" data-magnetic data-cms="g.go-pro">Go Pro</a>
-      <button class="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
+      <button class="theme-btn" type="button" aria-label="Switch to light mode" title="Light mode"><svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7Z"/></svg></button>
+      <a class="btn btn-ghost btn-sm btn-login" href="app/" data-appurl data-cms="g.login">Login</a>
+      <a class="btn btn-primary btn-sm btn-cont" href="checkout.html" data-cms="g.continue">Continue</a>
+      <button class="burger" type="button" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
     </div>
-  </div>
+  </div></div>
 </header>
-<div class="mobile-menu">
-  <a href="index.html#features" data-cms="g.features">Features</a><a href="index.html#how" data-cms="g.how-it-works">How it works</a><a href="index.html#pricing" data-cms="g.pricing">Pricing</a><a href="about.html" data-cms="g.about">About</a><a href="contact.html" data-cms="g.contact">Contact</a>
-  <a class="btn btn-primary" href="app/" data-appurl data-cms="g.launch-the-app">Launch the app →</a>
-</div>
-
+<div class="mobile-menu"><div class="mm-card">
+  <a href="index.html#features" data-cms="g.features">Features</a>
+  <a href="index.html#how" data-cms="g.how-it-works">How it works</a>
+  <a href="index.html#pricing" data-cms="g.pricing">Pricing</a>
+  <a href="about.html" data-cms="g.about">About</a>
+  <a href="contact.html" data-cms="g.contact">Contact</a>
+  <div class="mm-actions"><a class="btn btn-ghost btn-login" href="app/" data-appurl data-cms="g.login">Login</a><a class="btn btn-primary" href="checkout.html" data-cms="g.continue">Continue</a></div>
+  <div class="mm-theme"><span>Dark mode</span><button class="theme-btn" type="button" aria-label="Switch to light mode" title="Light mode"><svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7Z"/></svg></button></div>
+</div></div>
 <main>
 <section class="page-hero" data-cms-sec="contact.s1"><div class="wrap-narrow">
-  <span class="eyebrow" data-cms="contact.page-hero.1">Contact</span>
-  <h1 class="h-xl split" style="margin-top:18px;font-size:clamp(2.4rem,6.4vw,5rem)" data-now data-cms="contact.page-hero.2">Let’s <span class="grad">talk.</span></h1>
-  <p class="lead rv" data-now data-d=".3" data-cms="contact.page-hero.3">Payment question, feature idea or found a bug? Send us a message — we read everything.</p>
+  <span class="eyebrow rv" data-cms="contact.page-hero.1">Contact</span>
+  <h1 class="h-xl rv" data-d=".05" style="font-size:clamp(2.2rem,5.6vw,4.2rem)" data-cms="contact.page-hero.2">Let’s <span class="grad">talk.</span></h1>
+  <p class="lead rv" data-d=".1" data-cms="contact.page-hero.3">Payment question, feature idea or found a bug? Send us a message — we read everything.</p>
 </div></section>
 
 <section class="sec" style="padding-top:10px" data-cms-sec="contact.s2"><div class="wrap contact-grid">
-  <div class="contact-list" data-stagger>
+  <div class="contact-list">
     <a class="c-item" data-contact-box data-contact="email" href="#"><span class="ico">✉️</span><span><small>Email</small><b>email</b></span></a>
     <a class="c-item" data-contact-box data-contact="whatsapp" href="#" target="_blank" rel="noopener"><span class="ico">💬</span><span><small>WhatsApp</small><b>whatsapp</b></span></a>
     <a class="c-item" data-contact-box data-contact="facebook" href="#" target="_blank" rel="noopener"><span class="ico">📘</span><span><small>Facebook</small><b>Message our page</b></span></a>
     <a class="c-item" data-contact-box data-contact="phone" href="#"><span class="ico">📞</span><span><small>Phone</small><b>phone</b></span></a>
-    <div class="c-item" style="cursor:default"><span class="ico" data-cms="contact.sec.1">⏱️</span><span data-cms="contact.sec.2"><small>Typical response time</small><b>Within 24 hours</b></span></div>
-    <div class="glass info-card"><h3 style="font-size:1.05rem" data-cms="contact.sec.3">Payment help?</h3><p>Include the <b style="color:var(--t)" data-cms="contact.sec.4">email you signed in with</b> and your <b style="color:var(--t)" data-cms="contact.sec.5">Transaction ID (TrxID)</b> so we can find it fast.</p></div>
+    <div class="c-item"><span class="ico" data-cms="contact.sec.1">⏱️</span><span data-cms="contact.sec.2"><small>Typical response time</small><b>Within 24 hours</b></span></div>
+    <div class="info-card"><h3 style="font-size:1.05rem" data-cms="contact.sec.3">Payment help?</h3><p>Include the <b style="color:var(--t)" data-cms="contact.sec.4">email you signed in with</b> and your <b style="color:var(--t)" data-cms="contact.sec.5">Transaction ID (TrxID)</b> so we can find it fast.</p></div>
   </div>
-  <form class="glass form" id="contact-form" novalidate>
+  <form class="glass form rv" id="contact-form" novalidate>
     <div class="row2">
       <div class="field"><label for="c-name" data-cms="contact.sec.6">Your name</label><input class="inp" id="c-name" autocomplete="name" placeholder="Your name"/></div>
       <div class="field"><label for="c-email" data-cms="contact.sec.7">Your email</label><input class="inp" id="c-email" type="email" autocomplete="email" placeholder="you@gmail.com"/></div>
@@ -69,8 +74,8 @@
     <div class="field"><label for="c-topic" data-cms="contact.sec.8">Topic</label><select class="inp" id="c-topic"><option>Payment help</option><option>Feature request</option><option>Report a bug</option><option>General question</option></select></div>
     <div class="field"><label for="c-msg" data-cms="contact.sec.9">Message</label><textarea class="inp" id="c-msg" placeholder="How can we help?"></textarea></div>
     <div class="err" id="c-err" role="alert"></div>
-    <div class="co-actions"><button class="btn btn-primary" type="submit" data-magnetic data-cms="contact.sec.10">Send via email →</button><button class="btn btn-ghost" type="button" id="c-wa" style="display:none" data-cms="contact.sec.11">Send via WhatsApp</button></div>
-    <p class="hint" data-cms="contact.sec.12">This opens your email app with the message ready to send — nothing is stored on this website.</p>
+    <div class="co-actions"><button class="btn btn-primary" type="submit" data-cms="contact.sec.10">Send via email →</button><button class="btn btn-ghost" type="button" id="c-wa" style="display:none" data-cms="contact.sec.11">Send via WhatsApp</button></div>
+    <p class="hint" style="margin-top:14px" data-cms="contact.sec.12">This opens your email app with the message ready to send — nothing is stored on this website.</p>
   </form>
 </div></section>
 </main>
@@ -81,7 +86,7 @@
         <a href="index.html" class="logo"><img src="app/icons/icon-192.png" alt="" width="30" height="30"/><span class="lt" data-cms="g.fit-os">FIT<b>//</b>OS</span></a>
         <p class="foot-about" data-cms="g.your-fitness-nutrition-habit">Your fitness, nutrition, habits and health in one fast, private operating system. Built in Bangladesh.</p>
       </div>
-      <div><h4 data-cms="g.product">Product</h4><ul><li><a href="index.html#features" data-cms="g.features">Features</a></li><li><a href="index.html#how" data-cms="g.how-it-works">How it works</a></li><li><a href="index.html#pricing" data-cms="g.pricing">Pricing</a></li><li><a href="app/" data-appurl data-cms="g.launch-app">Launch app</a></li></ul></div>
+      <div><h4 data-cms="g.product">Product</h4><ul><li><a href="index.html#features" data-cms="g.features">Features</a></li><li><a href="index.html#how" data-cms="g.how-it-works">How it works</a></li><li><a href="index.html#pricing" data-cms="g.pricing">Pricing</a></li><li><a href="app/" data-appurl data-cms="g.launch-app">Login</a></li><li><a href="checkout.html" data-cms="g.continue">Continue</a></li></ul></div>
       <div><h4 data-cms="g.company">Company</h4><ul><li><a href="about.html" data-cms="g.about">About</a></li><li><a href="contact.html" data-cms="g.contact">Contact</a></li><li><a href="index.html#faq" data-cms="g.faq">FAQ</a></li></ul></div>
       <div><h4 data-cms="g.get-in-touch">Get in touch</h4><ul>
         <li data-contact-box><a data-contact="email" href="#">Email</a></li>
@@ -92,9 +97,7 @@
     <div class="foot-bottom"><span>© <span data-year>2026</span> FIT//OS. All rights reserved.</span><span data-cms="g.pay-securely-with-bkash-naga">Pay securely with bKash &amp; Nagad</span></div>
   </div>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<div class="toast" role="status"></div>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/cms.js"></script>
 <script src="assets/js/site.js" defer></script>

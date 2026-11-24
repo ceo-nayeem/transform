@@ -14,8 +14,8 @@ your-repo/
 ├─ assets/
 │  ├─ css/site.css       ← ডিজাইন
 │  ├─ js/config.js       ← ★ দাম, bKash/Nagad নম্বর, কন্টাক্ট — এখানেই বদলান
-│  ├─ js/site.js         ← অ্যানিমেশন/নেভিগেশন
-│  ├─ js/hero3d.js       ← 3D hero
+│  ├─ js/site.js         ← থিম (dark/light), নেভিগেশন, carousel বাটন, প্রাইসিং
+│  ├─ js/cms.js          ← Website Studio কানেকশন
 │  ├─ js/checkout.js     ← checkout + Firebase
 │  └─ img/               ← og.png, shots/ (অ্যাপের screenshot)
 └─ app/                  ← আসল সফটওয়্যার  (yourdomain.com/app/)
@@ -361,3 +361,39 @@ Firebase Console → Firestore Database → **Rules** → নতুন `firestor
 
 ### আপলোড
 `app/index.html` ও `app/sw.js` (cache `fitos-v11`) রিপ্লেস করুন। ইনস্টল করা অ্যাপে "update available" ব্যানার আসবে। নতুন ফন্ট Google Fonts থেকে আসে; অফলাইনে সিস্টেম ফন্টে ফলব্যাক করে।
+
+---
+
+## ১৯. ওয়েবসাইট "Clean Soft" আপডেট — অ্যাপের মতো ক্লিন ও মডার্ন (নতুন)
+
+পুরো ওয়েবসাইট (Home, About, Contact, Checkout, 404) এখন অ্যাপের নতুন ডিজাইনের সাথে মিলিয়ে আবার বানানো হয়েছে।
+
+**কী কী বদলেছে**
+- **নতুন মকআপ:** ওয়েবসাইটের সব phone/desktop স্ক্রিনশট এখন অ্যাপের *বর্তমান* চেহারা (Dashboard, Nutrition, Workout, Habits, Goals, Desktop Dashboard)। প্রতিটার **dark ও light** দুই ভার্সন আছে — ওয়েবসাইটের থিম বদলালে মকআপও নিজে থেকে বদলায়। ফাইল: `assets/img/shots/*-d.webp` (dark), `*-l.webp` (light)।
+- **ক্লিন লুক:** ভারী 3D / GSAP / three.js / pinned-scroll বাদ। এখন নরম কার্ড, pill বাটন, পরিষ্কার spacing — ফলে সাইট অনেক হালকা ও দ্রুত।
+- **Horizontal scroll নেই:** আগের পাশে-স্ক্রল-হওয়া কার্ডের জায়গায় এখন **বাম/ডান (‹ ›) বাটন + dots** দিয়ে স্লাইড হয় (Modules সেকশন)। ডেস্কটপে ৩টা, ট্যাবলেটে ২টা, ফোনে ১টা কার্ড দেখায়। ফোনে আঙুল দিয়ে swipe-ও করা যায়, কিন্তু কোনো horizontal scrollbar আসে না।
+- **Dark / Light মোড:** হেডারে সূর্য/চাঁদ বাটন। শুধু ২টা অপশন (কোনো কালার থিম নেই)। পছন্দ `localStorage`-এর `fitos_theme` কী-তে সেভ হয় — **অ্যাপও একই কী ব্যবহার করে**, তাই ওয়েবসাইটে light করলে অ্যাপও light-এ খোলে (আর উল্টোটাও)।
+- **হেডারের নতুন বাটন:** আগের "Go Pro" + "Open App"-এর জায়গায় এখন **Login** ও **Continue**।
+- **অল-ডিভাইস রেসপন্সিভ:** 320px থেকে 1920px পর্যন্ত, dark ও light দুই মোডে টেস্ট করা — কোনো পেজে sideways overflow নেই।
+
+**Login ও Continue কীভাবে কাজ করে**
+| বাটন | কোথায় যায় | আচরণ |
+|---|---|---|
+| **Login** | `app/` | নতুন ইউজার → অ্যাপের Google login স্ক্রিন দেখে। আগে থেকে login করা ইউজার → অ্যাপ নিজেই সেশন রিস্টোর করে **সরাসরি ভেতরে** ঢুকে যায় (আবার login লাগে না)। login থাকলে বাটনের কোণে ছোট সবুজ ডট দেখা যায়। |
+| **Continue** | `checkout.html` | প্ল্যান বাছাইয়ের পেজ। সবার আগে **Free** অপশন + ৪টা Pro প্ল্যান। |
+
+**Checkout-এ "Continue free"**
+- Free কার্ড সিলেক্ট করলে কুপন, Google sign-in ফর্ম, নাম/মোবাইল, bKash/Nagad, TrxID — **কিছুই চাইবে না**। শুধু **"Continue free →"** বাটন আসে, চাপলে অ্যাপের login স্ক্রিনে যায় (ফ্রি-তে যেভাবে login করে ঠিক সেভাবে)।
+- Pro প্ল্যান সিলেক্ট করলে আগের মতোই: Google sign-in → নাম/মোবাইল → bKash/Nagad → TrxID। নিচে একটা "Not ready to pay? Continue free" লিংকও থাকে।
+- সরাসরি লিংক: `checkout.html?plan=free` (Free আগে থেকে সিলেক্ট), `checkout.html?plan=6m` (নির্দিষ্ট প্ল্যান)। কুপন লিংক আগের মতোই কাজ করে।
+- Landing page-এর Pricing সেকশনে Free কার্ডের "Continue Free" বাটন সরাসরি অ্যাপে নিয়ে যায়।
+
+**Website Studio আগের মতোই কাজ করে** — সব `data-cms` কী অক্ষত। নতুন কী: `g.login`, `g.continue` (হেডার/মেনু/ফুটার বাটনের লেখা), `checkout.s1.11–15` (Free অংশের লেখা), `checkout.main.19–22` (Free perks)। Studio-র Accent/Font/Radius ওভাররাইড dark ও light দুই মোডেই লাগে; **Background রঙ ওভাররাইড শুধু dark মোডে** লাগে (light মোড নিজের ক্লিন সাদা/ধূসর ধরে রাখে)। একই ছবির key (যেমন `home.img.1`) দিয়ে আপলোড করা ছবি dark ও light দুই ভার্সনেই বসে।
+
+**আপলোড করতে হলে (শুধু ওয়েবসাইট আপডেট)**
+1. `website-update.zip` খুলুন। এর ভেতরের ফাইল/ফোল্ডার আপনার GitHub repo-র **root**-এ কপি করুন (পুরনো ফাইল replace হবে): `index.html`, `about.html`, `contact.html`, `checkout.html`, `404.html`, `assets/`।
+2. **মুছে ফেলুন** (আর লাগে না): `assets/js/hero3d.js`, `assets/js/device3d.js`, এবং পুরনো `assets/img/shots/*.webp` যেগুলোর নামের শেষে `-d`/`-l` নেই (zip-এর `assets/img/shots/` ফোল্ডার দিয়ে পুরোটা replace করাই সবচেয়ে সহজ)।
+3. **অ্যাপ (`app/`) বদলাতে হয়নি** — `app/index.html` ও `app/sw.js` আগের মতোই থাকবে।
+4. Commit → কয়েক মিনিটে Pages লাইভ। ব্রাউজারে একবার **Ctrl+Shift+R** (hard refresh) দিন।
+
+**টেস্ট চেকলিস্ট:** (১) হেডারে Login/Continue দেখাচ্ছে? (২) সূর্য/চাঁদ চাপলে dark↔light বদলায়, রিলোডেও থাকে? (৩) Modules সেকশনে ‹ › চাপলে কার্ড স্লাইড হয়? (৪) Continue → Free সিলেক্ট → "Continue free" → অ্যাপের login স্ক্রিন? (৫) অ্যাপে login থাকা অবস্থায় Login চাপলে সরাসরি ড্যাশবোর্ডে ঢোকে? (৬) ফোনে কোনো পেজ পাশে সরে না?

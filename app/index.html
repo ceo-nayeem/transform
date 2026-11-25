@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>FIT//OS — Fitness Tracker</title>
 <!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest"/>
@@ -19333,6 +19333,7 @@ window.addEventListener('load', _pwaRefreshInstallItem);
   --ds-rail-hover:rgba(255,255,255,.18);--ds-rail-hi:#ffffff;
   --ds-rail-shadow:0 24px 50px -22px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.08) inset;
   --ds-dock-fade:linear-gradient(180deg,rgba(10,13,12,0),rgba(10,13,12,.88) 62%);
+  --ds-bar-shadow:0 -16px 34px -16px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.07) inset;
   --ds-topbar:color-mix(in srgb,#0a0d0c 72%,transparent);
   --ds-h:'Plus Jakarta Sans',var(--ds-font);
 }
@@ -19357,6 +19358,7 @@ html.alpha{
   --ds-rail-hover:rgba(20,28,26,.10);--ds-rail-hi:#14181a;
   --ds-rail-shadow:0 1px 2px rgba(20,28,26,.05),0 22px 44px -22px rgba(20,28,26,.32);
   --ds-dock-fade:linear-gradient(180deg,rgba(236,238,239,0),rgba(236,238,239,.92) 62%);
+  --ds-bar-shadow:0 -1px 2px rgba(20,28,26,.04),0 -14px 30px -16px rgba(20,28,26,.24);
   --ds-topbar:color-mix(in srgb,#eceeef 78%,transparent);
 }
 
@@ -19514,7 +19516,7 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
 .avatar,.avatar.avatar-sm{background:var(--g) !important;color:var(--ds-ink-on-accent) !important;border-radius:50% !important;box-shadow:none !important;font-weight:800;letter-spacing:0}
 .profile-menu-btn{border-radius:999px !important;padding:3px 10px 3px 3px !important}
 @media (max-width:768px){
-  .topbar{height:58px !important;padding:8px 14px !important}
+  .topbar{height:calc(58px + env(safe-area-inset-top,0px)) !important;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px !important}
   .sync-indicator{display:none !important}
   #topPagePath{display:none}
 }
@@ -19563,9 +19565,11 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
 /* ---------- 12. Mobile bottom navigation (floating pill + centre FAB) ---------- */
 @media (max-width:768px){
   html:root body .mob-nav{
-    left:12px !important;right:12px !important;bottom:calc(12px + env(safe-area-inset-bottom,0px)) !important;height:68px !important;border-radius:36px !important;
-    background:var(--ds-rail) !important;border:1px solid var(--ds-rail-bd) !important;padding:0 8px !important;gap:2px !important;
-    box-shadow:var(--ds-rail-shadow) !important;backdrop-filter:none !important;align-items:center !important;
+    left:0 !important;right:0 !important;bottom:0 !important;width:auto !important;
+    height:calc(68px + env(safe-area-inset-bottom,0px)) !important;border-radius:24px 24px 0 0 !important;
+    background:var(--ds-rail) !important;border:0 !important;border-top:1px solid var(--ds-rail-bd) !important;
+    padding:0 max(10px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(10px,env(safe-area-inset-left,0px)) !important;gap:2px !important;
+    box-shadow:var(--ds-bar-shadow) !important;backdrop-filter:none !important;align-items:center !important;
   }
   html:root body .mob-nav-item{flex:1 1 0 !important;flex-direction:row !important;height:48px !important;border-radius:26px !important;gap:8px !important;padding:0 !important;color:var(--ds-rail-ink);transition:flex .28s cubic-bezier(.4,0,.2,1),background .2s !important}
   html:root body .mob-nav-icon{width:24px;height:24px;display:grid !important;place-items:center;font-size:0 !important;color:var(--ds-rail-ink);transform:none !important}
@@ -19582,9 +19586,9 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
   }
   .mob-fab-inner svg{width:26px;height:26px}
   .mob-fab-label{display:none !important}
-  .content{padding:74px 16px calc(120px + env(safe-area-inset-bottom,0px)) !important}
-  #ai-fab{bottom:calc(98px + env(safe-area-inset-bottom,0px)) !important;right:16px !important;width:46px !important;height:46px !important}
-  .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px)) !important}
+  .content{padding:calc(74px + env(safe-area-inset-top,0px)) 16px calc(104px + env(safe-area-inset-bottom,0px)) !important}
+  #ai-fab{bottom:calc(86px + env(safe-area-inset-bottom,0px)) !important;right:16px !important;width:46px !important;height:46px !important}
+  .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px)) !important}
 }
 /* quick sheet */
 .mob-sheet{border-radius:28px 28px 0 0 !important;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important}
@@ -19766,7 +19770,7 @@ html:root body .gl-drow{background:var(--glass-bg) !important;border:1px solid v
 #ai-fab{opacity:.92}
 /* ---------- 17. Mobile drawer ---------- */
 @media (max-width:768px){
-  html:root body .sb{background:var(--glass-bg2) !important;border-radius:0 28px 28px 0 !important;box-shadow:var(--ds-shadow-lg) !important;border-right:1px solid var(--glass-border) !important;width:260px !important;padding-top:70px;backdrop-filter:none !important}
+  html:root body .sb{background:var(--glass-bg2) !important;border-radius:0 28px 28px 0 !important;box-shadow:var(--ds-shadow-lg) !important;border-right:1px solid var(--glass-border) !important;width:260px !important;padding-top:calc(70px + env(safe-area-inset-top,0px));backdrop-filter:none !important}
   html:root body .sb .sb-nav{padding:6px 12px 24px !important;gap:2px}
   html:root body .sb .sb-item{padding:12px 14px !important;margin:0 !important;width:100% !important;font-size:15px !important;font-weight:600 !important;gap:12px !important;background:transparent !important;border:0 !important;box-shadow:none !important;color:var(--t)}
   html:root body .sb .sb-item.active{background:color-mix(in srgb,var(--g) 14%,transparent) !important;color:var(--g) !important}
@@ -19917,27 +19921,30 @@ html:root body .sb-toggle-btn:not(.is-collapsed){color:var(--g)}
 .ds-dock{display:none}
 @media (max-width:768px){
   html:root body .mob-nav{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s}
-  html:root body.ds-hasdock .mob-nav,html:root body.ds-bare .mob-nav{transform:translateY(calc(100% + 32px));opacity:0;visibility:hidden;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .3s}
+  html:root body.ds-hasdock .mob-nav,html:root body.ds-bare .mob-nav{transform:translateY(calc(100% + 24px));opacity:0;visibility:hidden;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .3s}
   .ds-dock{
-    position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:960;display:flex;align-items:center;gap:10px;pointer-events:none;
-    transform:translateY(calc(100% + 40px));opacity:0;visibility:hidden;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .32s;
+    position:fixed;left:0;right:0;bottom:0;z-index:960;display:flex;align-items:center;gap:10px;pointer-events:none;
+    height:calc(68px + env(safe-area-inset-bottom,0px));padding:8px max(14px,env(safe-area-inset-right,0px)) env(safe-area-inset-bottom,0px) max(14px,env(safe-area-inset-left,0px));
+    background:var(--ds-rail);border-top:1px solid var(--ds-rail-bd);border-radius:24px 24px 0 0;box-shadow:var(--ds-bar-shadow);
+    transform:translateY(calc(100% + 24px));opacity:0;visibility:hidden;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .32s;
   }
-  .ds-dock::before{content:'';position:absolute;left:-12px;right:-12px;bottom:calc(-12px - env(safe-area-inset-bottom,0px));height:104px;background:var(--ds-dock-fade);z-index:-1;pointer-events:none}
-  body.ds-hasdock .ds-dock{transform:none;opacity:1;visibility:visible;transition-delay:0s}
+  .ds-dock::before{display:none}
+  body.ds-hasdock .ds-dock{transform:none;opacity:1;visibility:visible;transition-delay:0s;pointer-events:auto}
+  body:has(.modal-bg.open) .ds-dock{z-index:90}
   .ds-dock>*{pointer-events:auto}
   .ds-dk{
-    height:56px;border-radius:30px;font:inherit;font-weight:800;font-size:15.5px;letter-spacing:0;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 20px;cursor:pointer;
-    color:var(--t);background:var(--glass-bg2);border:1px solid var(--glass-border-hi);box-shadow:var(--ds-shadow-lg);transition:transform .15s,filter .2s,opacity .2s;white-space:nowrap;
+    height:52px;border-radius:28px;font:inherit;font-weight:800;font-size:15.5px;letter-spacing:0;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 20px;cursor:pointer;
+    color:var(--ds-rail-hi);background:var(--ds-rail-ic);border:1px solid var(--ds-rail-bd);box-shadow:none;transition:transform .15s,filter .2s,opacity .2s;white-space:nowrap;
   }
   .ds-dk svg{width:21px;height:21px;flex:0 0 21px}
   .ds-dk:active{transform:scale(.96)}
-  .ds-dk.pri{flex:1 1 auto;min-width:0;background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent;box-shadow:0 16px 30px -12px color-mix(in srgb,var(--g) 80%,transparent)}
-  .ds-dk.red{background:var(--red);color:#fff;box-shadow:0 16px 30px -12px color-mix(in srgb,var(--red) 80%,transparent)}
+  .ds-dk.pri{flex:1 1 auto;min-width:0;background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent;box-shadow:0 10px 22px -12px color-mix(in srgb,var(--g) 75%,transparent)}
+  .ds-dk.red{background:var(--red);color:#fff;border-color:transparent;box-shadow:0 10px 22px -12px color-mix(in srgb,var(--red) 75%,transparent)}
   .ds-dk[disabled]{opacity:.42;pointer-events:none}
-  .ds-dock.n3 .ds-dk:not(.pri){width:56px;flex:0 0 56px;padding:0}
+  .ds-dock.n3 .ds-dk:not(.pri){width:52px;flex:0 0 52px;padding:0}
   .ds-dock.n3 .ds-dk:not(.pri) span{display:none}
   @media (max-width:360px){.ds-dk{padding:0 16px;font-size:15px}.ds-dock{gap:8px}}
-  html:root body.ds-hasdock .content{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px)) !important}
+  html:root body.ds-hasdock .content{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px)) !important}
   html:root body.ds-bare .content{padding-bottom:calc(36px + env(safe-area-inset-bottom,0px)) !important}
   html:root body.ds-hasdock #ai-fab{bottom:calc(90px + env(safe-area-inset-bottom,0px)) !important}
   html:root body.ds-bare #ai-fab{bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important}
@@ -19961,7 +19968,7 @@ html:root body .sb-toggle-btn:not(.is-collapsed){color:var(--g)}
 .ds-mini span{color:var(--t2);font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @keyframes dsPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
 @media (max-width:768px){
-  html:root body.ds-hasbar .ds-mini{bottom:calc(94px + env(safe-area-inset-bottom,0px))}
+  html:root body.ds-hasbar .ds-mini{bottom:calc(82px + env(safe-area-inset-bottom,0px))}
   html:root body.ds-hasdock .ds-mini{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   html:root body.ds-bare .ds-mini{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 }
@@ -20021,6 +20028,15 @@ html:root body #page-profile .st-nav{flex-direction:row !important;margin:0 !imp
 html:root body #page-profile .st-nv{justify-content:center;flex:1 0 auto;padding:10px 16px !important;font-size:13.5px !important;border-radius:999px !important}
 html:root body #page-profile .st-sec{scroll-margin-top:var(--ds-sm,130px) !important}
 @media (max-width:520px){html:root body #page-profile .st-nv{flex:0 0 auto;padding:10px 14px !important}}
+
+/* ---------- 21. Bottom bar v14 : docked edge-to-edge bar + device safe areas ---------- */
+/* The page now runs under the status bar / home indicator (viewport-fit=cover); everything below keeps clear of them.
+   env() is 0 on devices without such areas, so Android / desktop look exactly as designed. */
+.topbar::before{content:'';position:absolute;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:#0a0d0c;pointer-events:none}
+@media (max-width:768px){
+  #onboardScreen{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  html:root body .mob-sheet{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important}
+}
 
 </style>
 <script id="ds-js">

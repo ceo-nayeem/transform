@@ -28,4 +28,4 @@ Onboarding Studio: **Admin Backend → Onboarding** — build the first-run expe
    ├─ index.html  sw.js  manifest.webmanifest
    └─ icons/
 ```
-Latest: website Clean Soft redesign — dark/light toggle, Login + Continue header, button carousels, "Continue free" checkout (§19); app Clean Soft redesign (§18), Onboarding Studio (§17), inline trend + log panel (§15), Back-button stack & vertical height ruler (§14), BMI & Height body map (GITHUB-GUIDE §13), Goals 2.0 (§12).
+Latest: app-shell update — Back button + page title on mobile sub-pages (top bar pinned only on Home), contextual bottom bar / action dock (Log meal on Library, red Start·Pause on Timer), desktop Back + breadcrumb with expandable sidebar, theme-aware rail & bottom bar (§20); website Clean Soft redesign — dark/light toggle, Login + Continue header, button carousels, "Continue free" checkout (§19); app Clean Soft redesign (§18), Onboarding Studio (§17), inline trend + log panel (§15), Back-button stack & vertical height ruler (§14), BMI & Height body map (GITHUB-GUIDE §13), Goals 2.0 (§12).

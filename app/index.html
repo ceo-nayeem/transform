@@ -3181,7 +3181,10 @@ setTimeout(endBootSplash, 15000);
 <div class="topbar">
   <div class="topbar-left">
     <button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobSidebar()" aria-label="Menu">☰</button>
-    <button class="sb-toggle-btn" id="sbToggleBtn" onclick="toggleSidebarCollapse()" title="Expand/collapse sidebar" aria-label="Expand or collapse sidebar"><span>☰</span></button>
+    <button class="sb-toggle-btn" id="sbToggleBtn" onclick="toggleSidebarCollapse()" title="Expand sidebar" aria-label="Expand sidebar" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3.5"/><path d="M9.5 4.5v15"/></svg></button>
+    <button class="ds-back" id="dsBack" onclick="dsGoBack()" title="Back" aria-label="Go back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
+    <span class="ds-bar-title" id="dsBarTitle">Dashboard</span>
+    <nav class="ds-crumb" id="dsCrumb" aria-label="You are here"><button type="button" class="ds-crumb-link" id="dsCrumbHome" onclick="dsGoHome()">Home</button><i class="ds-crumb-sep">/</i><span class="ds-crumb-page" id="dsCrumbPage">Dashboard</span><i class="ds-crumb-sep ds-crumb-sep2">/</i><b class="ds-crumb-sub" id="dsCrumbSub"></b></nav>
     <span class="app-brand" id="appBrand">FIT//OS <span id="topPagePath">/ Dashboard</span></span>
   </div>
   <div class="topbar-right">
@@ -19290,7 +19293,7 @@ window.addEventListener('load', _pwaRefreshInstallItem);
 <style id="ds-css">
 /*DS-CSS-START*/
 /* =====================================================================
-   FIT//OS — "Clean Soft" design layer (v11)
+   FIT//OS — "Clean Soft" design layer (v12)
    Inspiration: soft light canvas + white rounded cards, one confident accent,
    big plain headings, pill segmented tabs, round icon quick-actions, floating
    rail / bottom nav. Everything below is an override layer: it only changes
@@ -19318,6 +19321,9 @@ window.addEventListener('load', _pwaRefreshInstallItem);
   --ds-rail-bd:rgba(255,255,255,.08);
   --ds-rail-ic:rgba(255,255,255,.07);
   --ds-rail-ink:rgba(255,255,255,.72);
+  --ds-rail-hover:rgba(255,255,255,.18);--ds-rail-hi:#ffffff;
+  --ds-rail-shadow:0 24px 50px -22px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.08) inset;
+  --ds-dock-fade:linear-gradient(180deg,rgba(10,13,12,0),rgba(10,13,12,.88) 62%);
   --ds-topbar:color-mix(in srgb,#0a0d0c 72%,transparent);
   --ds-h:'Plus Jakarta Sans',var(--ds-font);
 }
@@ -19334,10 +19340,14 @@ html.alpha{
   --ds-ink-on-accent:#ffffff;
   --ds-chip:rgba(20,28,26,.06);
   --ds-chip-on:#ffffff;
-  --ds-rail:linear-gradient(180deg,#4b5053,#2b2f31);
-  --ds-rail-bd:rgba(255,255,255,.12);
-  --ds-rail-ic:rgba(255,255,255,.12);
-  --ds-rail-ink:rgba(255,255,255,.78);
+  /* light theme: the rail / bottom bar are LIGHT surfaces now (they used to stay graphite in both themes) */
+  --ds-rail:#ffffff;
+  --ds-rail-bd:rgba(20,28,26,.08);
+  --ds-rail-ic:rgba(20,28,26,.055);
+  --ds-rail-ink:rgba(20,28,26,.62);
+  --ds-rail-hover:rgba(20,28,26,.10);--ds-rail-hi:#14181a;
+  --ds-rail-shadow:0 1px 2px rgba(20,28,26,.05),0 22px 44px -22px rgba(20,28,26,.32);
+  --ds-dock-fade:linear-gradient(180deg,rgba(236,238,239,0),rgba(236,238,239,.92) 62%);
   --ds-topbar:color-mix(in srgb,#eceeef 78%,transparent);
 }
 
@@ -19494,7 +19504,6 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
 .date-disp{font-weight:600 !important;font-size:13.5px !important;letter-spacing:0 !important}
 .avatar,.avatar.avatar-sm{background:var(--g) !important;color:var(--ds-ink-on-accent) !important;border-radius:50% !important;box-shadow:none !important;font-weight:800;letter-spacing:0}
 .profile-menu-btn{border-radius:999px !important;padding:3px 10px 3px 3px !important}
-@media (min-width:769px){.sb-toggle-btn{display:none !important}}
 @media (max-width:768px){
   .topbar{height:58px !important;padding:8px 14px !important}
   .sync-indicator{display:none !important}
@@ -19507,7 +19516,7 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
   .sb .sb-nav{
     flex:0 0 auto !important;margin:auto 0 auto 20px !important;width:70px !important;padding:12px 6px !important;gap:6px !important;
     border-radius:38px !important;background:var(--ds-rail) !important;border:1px solid var(--ds-rail-bd);
-    box-shadow:0 24px 50px -22px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.08) inset !important;overflow:visible !important;justify-content:flex-start !important;
+    box-shadow:var(--ds-rail-shadow) !important;overflow:visible !important;justify-content:flex-start !important;
   }
   .sb .sb-item{
     width:58px !important;height:auto !important;min-height:0 !important;padding:6px 0 8px !important;border-radius:30px !important;flex-direction:column !important;gap:5px !important;
@@ -19519,16 +19528,15 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
     background:var(--ds-rail-ic);color:var(--ds-rail-ink);transition:background .2s,color .2s,transform .2s;
   }
   .sb .sb-icon svg{width:21px;height:21px}
-  .sb .sb-item:hover .sb-icon{background:rgba(255,255,255,.2);color:#fff;transform:translateY(-1px)}
+  .sb .sb-item:hover .sb-icon{background:var(--ds-rail-hover);color:var(--ds-rail-hi);transform:translateY(-1px)}
   .sb .sb-item::after{
     content:attr(data-tip) !important;position:static !important;inset:auto !important;border:0 !important;border-radius:0 !important;opacity:1 !important;transform:none !important;animation:none !important;
     font-size:10.5px;font-weight:600;color:var(--ds-rail-ink);letter-spacing:0;line-height:1;text-align:center;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
   .sb .sb-item:hover::after{animation:none !important}
   .sb .sb-item.active.active{background:transparent !important;box-shadow:none !important}
-  .sb .sb-item.active .sb-icon{background:#fff;color:var(--g2);box-shadow:0 8px 18px -8px rgba(0,0,0,.5)}
-  html:not(.alpha) .sb .sb-item.active .sb-icon{background:var(--g);color:var(--ds-ink-on-accent)}
-  .sb .sb-item.active::after{color:#fff}
+  .sb .sb-item.active .sb-icon{background:var(--g);color:var(--ds-ink-on-accent);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--g) 70%,transparent)}
+  .sb .sb-item.active::after{color:var(--ds-rail-hi)}
   .sb .notif-dot{top:4px !important;right:8px !important;background:var(--red) !important}
   #sbLabelLayer,.sb-tip-bubble,#sbTip{display:none !important}
 }
@@ -19548,18 +19556,15 @@ html.alpha .modal-bg{background:rgba(20,28,26,.28) !important}
   html:root body .mob-nav{
     left:12px !important;right:12px !important;bottom:calc(12px + env(safe-area-inset-bottom,0px)) !important;height:68px !important;border-radius:36px !important;
     background:var(--ds-rail) !important;border:1px solid var(--ds-rail-bd) !important;padding:0 8px !important;gap:2px !important;
-    box-shadow:0 22px 44px -16px rgba(0,0,0,.65),0 1px 0 rgba(255,255,255,.08) inset !important;backdrop-filter:none !important;align-items:center !important;
+    box-shadow:var(--ds-rail-shadow) !important;backdrop-filter:none !important;align-items:center !important;
   }
   html:root body .mob-nav-item{flex:1 1 0 !important;flex-direction:row !important;height:48px !important;border-radius:26px !important;gap:8px !important;padding:0 !important;color:var(--ds-rail-ink);transition:flex .28s cubic-bezier(.4,0,.2,1),background .2s !important}
   html:root body .mob-nav-icon{width:24px;height:24px;display:grid !important;place-items:center;font-size:0 !important;color:var(--ds-rail-ink);transform:none !important}
   .mob-nav-icon svg{width:22px;height:22px}
-  html:root body .mob-nav-label{display:none !important;font-size:13px !important;font-weight:700 !important;color:#14181a !important;letter-spacing:0 !important;text-transform:none !important}
-  html:root body .mob-nav-item.active{flex:2.2 1 0 !important;background:#fff !important}
-  html:not(.alpha):root body .mob-nav-item.active{background:var(--g) !important}
-  html:not(.alpha):root body .mob-nav-item.active .mob-nav-label{color:var(--ds-ink-on-accent) !important}
+  html:root body .mob-nav-label{display:none !important;font-size:13px !important;font-weight:700 !important;color:var(--ds-ink-on-accent) !important;letter-spacing:0 !important;text-transform:none !important}
+  html:root body .mob-nav-item.active{flex:2.2 1 0 !important;background:var(--g) !important}
   html:root body .mob-nav-item.active .mob-nav-label{display:block !important}
-  html:root body .mob-nav-item.active .mob-nav-icon{color:var(--g2) !important;transform:none !important}
-  html:not(.alpha):root body .mob-nav-item.active .mob-nav-icon{color:var(--ds-ink-on-accent) !important}
+  html:root body .mob-nav-item.active .mob-nav-icon{color:var(--ds-ink-on-accent) !important;transform:none !important}
   .mob-nav-dot{top:8px !important;right:10px !important}
   html:root body .mob-fab{flex:0 0 58px !important;width:58px;height:58px;align-self:center;margin:-22px 6px 0}
   html:root body .mob-fab-inner{
@@ -19816,6 +19821,142 @@ html:root body .day-pill.active .dp-name,html:root body .day-pill.active .dp-num
 html:root body .hx-stage{border-radius:var(--radius-lg) !important;border:1px solid var(--glass-border) !important;box-shadow:var(--ds-shadow) !important}
 .hx-hud,.hx-ttl,.hx-stage [class*="hud"]{letter-spacing:.04em !important;font-family:var(--ds-font) !important}
 
+/* ---------- 19. App shell (v12) : back button, breadcrumb, contextual bottom bar, expandable rail ---------- */
+
+/* 19a. native-app feel: no tap flash, no accidental selection on chrome, no double-tap zoom, no rubber-band chaining */
+html{-webkit-tap-highlight-color:transparent}
+button,[onclick],.sb-item,.mob-nav-item,.mob-fab,.ds-dock,.ds-back,.ds-mini{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.topbar,.sb,.mob-nav,.ds-dock,.ds-mini,.mob-sheet,button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text}
+html,body{overscroll-behavior-y:none}
+.content{overscroll-behavior-y:contain}
+.page.active{animation:dsPageIn .26s cubic-bezier(.2,.7,.2,1) backwards}
+@keyframes dsPageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.page.active{animation:none}.mob-nav,.ds-dock,.ds-mini{transition:none !important}}
+
+/* 19b. top-left cluster: sidebar toggle · Back · page title / breadcrumb */
+.topbar-left{gap:10px !important}
+.ds-back,html:root body .sb-toggle-btn{
+  width:40px;height:40px;flex:0 0 40px;border-radius:50% !important;display:inline-grid;place-items:center;padding:0;cursor:pointer;color:var(--t);
+  background:var(--glass-bg);border:1px solid var(--glass-border);box-shadow:none;transition:transform .16s,background .2s,opacity .2s,border-color .2s;
+}
+html:root body .sb-toggle-btn{display:inline-grid !important}
+@media (max-width:768px){html:root body .sb-toggle-btn{display:none !important}}
+.ds-back svg,.sb-toggle-btn svg{width:20px;height:20px}
+.sb-toggle-btn span{display:none}
+.ds-back:hover,.sb-toggle-btn:hover{background:var(--glass-bg2);border-color:var(--glass-border-hi)}
+.ds-back:active,.sb-toggle-btn:active{transform:scale(.92)}
+.ds-back:disabled{opacity:.36;pointer-events:none}
+html:root body .sb-toggle-btn:not(.is-collapsed){color:var(--g)}
+.ds-bar-title{display:none;font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ds-crumb{display:none;align-items:center;gap:8px;min-width:0;font-size:14.5px;font-weight:600;color:var(--t2);white-space:nowrap}
+.ds-crumb-link{background:none;border:0;padding:5px 6px;margin:0 -4px;font:inherit;color:inherit;cursor:pointer;border-radius:9px}
+.ds-crumb-link:hover{color:var(--t);background:var(--ds-chip)}
+.ds-crumb-sep{font-style:normal;opacity:.4}
+.ds-crumb-page{color:var(--t2)}
+.ds-crumb-sub{font-weight:800;color:var(--t);overflow:hidden;text-overflow:ellipsis}
+.ds-crumb.is-home .ds-crumb-link,.ds-crumb.is-home .ds-crumb-sep{display:none}
+.ds-crumb.is-home .ds-crumb-page,.ds-crumb.no-sub .ds-crumb-page{color:var(--t);font-weight:800}
+.ds-crumb.no-sub .ds-crumb-sep2,.ds-crumb.no-sub .ds-crumb-sub{display:none}
+
+/* desktop: logo is gone, Back + "where am I" take its place; the top bar stays pinned */
+@media (min-width:769px){
+  html:root body .app-brand{display:none !important}
+  .ds-crumb{display:flex}
+}
+
+/* 19c. desktop rail: collapsed (default) or expanded with full labels */
+@media (min-width:769px){
+  html:root body .sb{transition:width .32s cubic-bezier(.4,0,.2,1),flex-basis .32s cubic-bezier(.4,0,.2,1) !important}
+  html:root body .sb:not(.collapsed){width:272px !important;flex:0 0 272px !important}
+  html:root body .sb:not(.collapsed) .sb-nav{
+    width:236px !important;padding:10px !important;gap:2px !important;align-items:stretch !important;border-radius:30px !important;
+    max-height:calc(100vh - 100px);overflow-y:auto !important;overflow-x:hidden !important;scrollbar-width:none;
+  }
+  html:root body .sb:not(.collapsed) .sb-nav::-webkit-scrollbar{display:none}
+  html:root body .sb:not(.collapsed) .sb-sec{display:block !important;padding:14px 12px 4px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ds-rail-ink);opacity:.65}
+  html:root body .sb:not(.collapsed) .sb-sec:first-child{padding-top:6px}
+  html:root body .sb:not(.collapsed) .sb-item{width:100% !important;flex-direction:row !important;align-items:center !important;gap:12px !important;padding:5px 14px 5px 5px !important;border-radius:28px !important;position:relative}
+  html:root body .sb:not(.collapsed) .sb-item::after{display:none !important}
+  html:root body .sb:not(.collapsed) .sb-icon{width:40px !important;height:40px !important;flex:0 0 40px}
+  html:root body .sb:not(.collapsed) .sb-item .sb-label{display:block !important;flex:1;font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ds-rail-ink) !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html:root body .sb:not(.collapsed) .sb-item:hover{background:var(--ds-rail-ic) !important}
+  html:root body .sb:not(.collapsed) .sb-item:hover .sb-label{color:var(--ds-rail-hi) !important}
+  html:root body .sb:not(.collapsed) .sb-item.active.active{background:var(--g) !important}
+  html:root body .sb:not(.collapsed) .sb-item.active .sb-label{color:var(--ds-ink-on-accent) !important}
+  html:root body .sb:not(.collapsed) .sb-item.active .sb-icon{background:color-mix(in srgb,var(--ds-ink-on-accent) 14%,transparent);color:var(--ds-ink-on-accent);box-shadow:none}
+  html:root body .sb:not(.collapsed) .sb-badge:not([style*="display:none"]):not([style*="display: none"]){display:inline-grid !important;margin-left:auto;flex:0 0 auto}
+  html:root body .sb:not(.collapsed) #mlBadge,html:root body .sb:not(.collapsed) #ilBadge{display:none !important}
+  html:root body .sb:not(.collapsed) .notif-dot{top:12px !important;right:14px !important}
+}
+
+/* 19d. mobile: top bar only pinned on Home; everywhere else Back + page name that scrolls away with the page */
+@media (max-width:768px){
+  .ds-back{display:none}
+  html:root body.ds-sub .ds-back{display:inline-grid}
+  html:root body.ds-sub .ds-bar-title{display:block}
+  html:root body.ds-sub .app-brand,html:root body.ds-sub #mobMenuBtn{display:none !important}
+  html:root body.ds-sub .topbar{
+    background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-bottom:0 !important;
+    transform:translate3d(0,var(--ds-tb-y,0px),0);will-change:transform;
+  }
+  html:root body.ds-sub .topbar-left{flex:1 1 auto;min-width:0}
+  html:root body.ds-sub .topbar-right{flex:0 0 auto}
+}
+
+/* 19e. mobile: bottom bar only on its own destinations; contextual action dock everywhere else */
+.ds-dock{display:none}
+@media (max-width:768px){
+  html:root body .mob-nav{transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s}
+  html:root body.ds-hasdock .mob-nav,html:root body.ds-bare .mob-nav{transform:translateY(calc(100% + 32px));opacity:0;visibility:hidden;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .3s}
+  .ds-dock{
+    position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:960;display:flex;align-items:center;gap:10px;pointer-events:none;
+    transform:translateY(calc(100% + 40px));opacity:0;visibility:hidden;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .32s;
+  }
+  .ds-dock::before{content:'';position:absolute;left:-12px;right:-12px;bottom:calc(-12px - env(safe-area-inset-bottom,0px));height:104px;background:var(--ds-dock-fade);z-index:-1;pointer-events:none}
+  body.ds-hasdock .ds-dock{transform:none;opacity:1;visibility:visible;transition-delay:0s}
+  .ds-dock>*{pointer-events:auto}
+  .ds-dk{
+    height:56px;border-radius:30px;font:inherit;font-weight:800;font-size:15.5px;letter-spacing:0;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 20px;cursor:pointer;
+    color:var(--t);background:var(--glass-bg2);border:1px solid var(--glass-border-hi);box-shadow:var(--ds-shadow-lg);transition:transform .15s,filter .2s,opacity .2s;white-space:nowrap;
+  }
+  .ds-dk svg{width:21px;height:21px;flex:0 0 21px}
+  .ds-dk:active{transform:scale(.96)}
+  .ds-dk.pri{flex:1 1 auto;min-width:0;background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent;box-shadow:0 16px 30px -12px color-mix(in srgb,var(--g) 80%,transparent)}
+  .ds-dk.red{background:var(--red);color:#fff;box-shadow:0 16px 30px -12px color-mix(in srgb,var(--red) 80%,transparent)}
+  .ds-dk[disabled]{opacity:.42;pointer-events:none}
+  .ds-dock.n3 .ds-dk:not(.pri){width:56px;flex:0 0 56px;padding:0}
+  .ds-dock.n3 .ds-dk:not(.pri) span{display:none}
+  @media (max-width:360px){.ds-dk{padding:0 16px;font-size:15px}.ds-dock{gap:8px}}
+  html:root body.ds-hasdock .content{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px)) !important}
+  html:root body.ds-bare .content{padding-bottom:calc(36px + env(safe-area-inset-bottom,0px)) !important}
+  html:root body.ds-hasdock #ai-fab{bottom:calc(90px + env(safe-area-inset-bottom,0px)) !important}
+  html:root body.ds-bare #ai-fab{bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important}
+  html:root body.ds-hasdock .toast{bottom:calc(96px + env(safe-area-inset-bottom,0px)) !important}
+  html:root body.ds-bare .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px)) !important}
+  /* the timer page's own inline Start / Pause / Reset rows are replaced by the dock */
+  html:root body.ds-hasdock .ds-tm-inline{display:none !important}
+  /* software keyboard open: get every floating bar out of the way */
+  html:root body.ds-kb .mob-nav,html:root body.ds-kb .ds-dock,html:root body.ds-kb #ai-fab,html:root body.ds-kb .ds-mini{display:none !important}
+}
+
+/* 19f. running-timer chip (shown when a timer / stopwatch keeps running on another page) */
+.ds-mini{
+  position:fixed;left:50%;bottom:24px;z-index:955;display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 16px 0 14px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--glass-border-hi);background:var(--glass-bg2);color:var(--t);box-shadow:var(--ds-shadow-lg);font:inherit;font-weight:700;font-size:13.5px;
+  transform:translate(-50%,24px);opacity:0;visibility:hidden;transition:transform .28s cubic-bezier(.4,0,.2,1),opacity .2s,visibility 0s .28s;
+}
+.ds-mini.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition-delay:0s}
+.ds-mini i{width:8px;height:8px;border-radius:50%;background:var(--red);animation:dsPulse 1.4s ease-in-out infinite}
+.ds-mini b{font-weight:800;font-variant-numeric:tabular-nums}
+.ds-mini span{color:var(--t2);font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@keyframes dsPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@media (max-width:768px){
+  html:root body.ds-hasbar .ds-mini{bottom:calc(94px + env(safe-area-inset-bottom,0px))}
+  html:root body.ds-hasdock .ds-mini{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  html:root body.ds-bare .ds-mini{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+}
+
 </style>
 <script id="ds-js">
 /* FIT//OS Clean Soft — dashboard hero. Presentation only: reads values the dashboard already computed. */
@@ -19852,6 +19993,249 @@ function dsHeroUpdate(){
   var fill = $('dsGoalFill'); if (fill) fill.style.width = Math.max(0, Math.min(100, pct)) + '%';
 }
 try { dsHeroUpdate(); } catch (e) {}
+
+/* =====================================================================
+   FIT//OS app shell (v12) — Back button, breadcrumb, contextual bottom bar,
+   scroll behaviour, running-timer chip. Only drives the shell; every page,
+   handler and data path is the app's own.
+   ===================================================================== */
+(function () {
+  if (window.__dsShell) return; window.__dsShell = true;
+  var body = document.body, $ = function (id) { return document.getElementById(id); };
+  var mq = window.matchMedia('(max-width:768px)');
+  var sc = $('mainContent'), tb = document.querySelector('.topbar');
+  var BAR_PAGES = { dashboard: 1, fitness: 1, track: 1 };       // pages the 5-tab bottom bar belongs to
+  var backFlag = false, popAt = 0, memo = {};
+
+  function page() { return (typeof _curPage === 'string' && _curPage) || 'dashboard'; }
+  function title(id) { return (typeof pageTitles !== 'undefined' && pageTitles[id]) || (id.charAt(0).toUpperCase() + id.slice(1)); }
+  function btnFor(id) {
+    var out = null;
+    document.querySelectorAll('.sb-item').forEach(function (b) { if ((b.getAttribute('onclick') || '').indexOf("'" + id + "'") >= 0) out = b; });
+    return out;
+  }
+  function go(id) { nav(btnFor(id), id); }
+  function toTop(smooth) { if (sc) { try { sc.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' }); } catch (e) { sc.scrollTop = 0; } } }
+  function focusField(id) {
+    var el = $(id); if (!el) return;
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+    setTimeout(function () { try { el.focus({ preventScroll: true }); } catch (e) {} }, 380);
+  }
+
+  /* ---------- icons ---------- */
+  var IC = {
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    meal: '<path d="M7 3.5v7M4.5 3.5v4.2a2.5 2.5 0 0 0 5 0V3.5M7 10.7v9.8M16.5 20.5V3.5c-2.3 1.2-3.5 3.6-3.5 6.5v2.2h3.5"/>',
+    heart: '<path d="M12 20.3s-8-4.6-8-10.4C4 7 6.1 5 8.6 5c1.5 0 2.7.7 3.4 1.9C12.7 5.7 13.9 5 15.4 5 17.9 5 20 7 20 9.9c0 5.8-8 10.4-8 10.4z"/>',
+    reset: '<path d="M4.5 12a7.5 7.5 0 1 0 2.3-5.4M4.5 4.5v4h4"/>',
+    flag: '<path d="M6 20.5V4M6 5h11l-2.3 3.6L17 12H6"/>',
+    play: '<path d="M8 5.2v13.6a.6.6 0 0 0 .9.5l10.6-6.8a.6.6 0 0 0 0-1L8.9 4.7a.6.6 0 0 0-.9.5z" fill="currentColor" stroke="none"/>',
+    pause: '<rect x="6.2" y="4.8" width="4" height="14.4" rx="1.3" fill="currentColor" stroke="none"/><rect x="13.8" y="4.8" width="4" height="14.4" rx="1.3" fill="currentColor" stroke="none"/>'
+  };
+  function ico(n) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + '</svg>'; }
+
+  /* ---------- actions the dock can fire ---------- */
+  function tState() {
+    var m = (typeof TM !== 'undefined' && TM.mode) || 'timer', running, paused;
+    if (m === 'stopwatch') { running = TM.sw.running; paused = !running && TM.sw.elapsed > 0; }
+    else if (m === 'interval') { running = TM.iv.running; paused = !running && !!TM.iv.paused; }
+    else { m = 'timer'; running = TM.t.running; paused = !running && TM.t.remaining > 0 && TM.t.remaining < TM.t.total; }
+    return { mode: m, running: running, paused: paused };
+  }
+  var ACT = {
+    logMeal: function () {
+      go('fitness');
+      setTimeout(function () { try { switchFitnessTab('diet'); } catch (e) {} var el = $('ntr-add-section'); if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} } }, 90);
+    },
+    newMeal: function () { focusField('mla-name'); },
+    newIngr: function () { focusField('il-name'); },
+    logHealth: function () { switchHealthTab('log'); toTop(); },
+    tPrimary: function () {
+      var s = tState();
+      if (s.mode === 'timer') { if (s.running || s.paused) pauseTimer(); else startCustomTimer(); }
+      else if (s.mode === 'stopwatch') { if (s.running) swPause(); else swStart(); }
+      else { if (s.running) ivPause(); else ivStart(); }
+    },
+    tReset: function () { var m = tState().mode; if (m === 'stopwatch') swReset(); else if (m === 'interval') ivReset(); else resetTimer(); },
+    tLap: function () { if (TM.sw.running) swLap(); }
+  };
+
+  /* ---------- which contextual buttons does this page get? (null = none) ---------- */
+  function dockSpec(id) {
+    try {
+      if (id === 'library') {
+        return libraryActiveTab === 'ingredientlibrary'
+          ? [{ act: 'newIngr', cls: 'pri', icon: 'plus', text: 'Add ingredient' }]
+          : [{ act: 'newMeal', cls: '', icon: 'plus', text: 'New meal' }, { act: 'logMeal', cls: 'pri', icon: 'meal', text: 'Log meal' }];
+      }
+      if (id === 'health') return healthActiveTab === 'log' ? null : [{ act: 'logHealth', cls: 'pri', icon: 'heart', text: 'Log health' }];
+      if (id === 'timer') {
+        var s = tState(), p = [{ act: 'tReset', cls: '', icon: 'reset', text: 'Reset' },
+          { act: 'tPrimary', cls: 'pri red', icon: s.running ? 'pause' : 'play', text: s.running ? 'Pause' : s.paused ? 'Resume' : 'Start' }];
+        if (s.mode === 'stopwatch') p.push({ act: 'tLap', cls: '', icon: 'flag', text: 'Lap', disabled: !s.running });
+        return p;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  /* ---------- dock + running-timer chip elements ---------- */
+  var dock = document.createElement('div'); dock.className = 'ds-dock'; dock.id = 'dsDock'; dock.setAttribute('role', 'toolbar'); dock.setAttribute('aria-label', 'Page actions');
+  var mini = document.createElement('button'); mini.className = 'ds-mini'; mini.id = 'dsMini'; mini.type = 'button'; mini.setAttribute('aria-label', 'Open running timer');
+  body.appendChild(dock); body.appendChild(mini);
+  var dockSig = '';
+  function renderDock(spec) {
+    var sig = spec ? JSON.stringify(spec) : '';
+    if (sig === dockSig) return; dockSig = sig;
+    dock.classList.toggle('n3', !!spec && spec.length >= 3);   // 3 buttons → side buttons become icon-only
+    dock.innerHTML = spec ? spec.map(function (b) {
+      return '<button type="button" class="ds-dk ' + (b.cls || '') + '" data-act="' + b.act + '" aria-label="' + b.text + '"' + (b.disabled ? ' disabled' : '') + '>' + ico(b.icon) + '<span>' + b.text + '</span></button>';
+    }).join('') : '';
+  }
+  dock.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-act]'); if (!b || b.disabled) return;
+    var f = ACT[b.getAttribute('data-act')];
+    if (f) { try { f(); } catch (err) { console.warn(err); } setTimeout(updateDock, 0); setTimeout(updateDock, 160); }
+  });
+  function updateDock() { if (page() === 'timer' || page() === 'library' || page() === 'health') renderDock(dockSpec(page())); }
+
+  /* ---------- breadcrumb / titles / which bottom bar ---------- */
+  function subLabel(id) {
+    try {
+      if (id === 'fitness') return fitActiveTab === 'workout' ? 'Workout' : 'Diet';
+      if (id === 'track') return trackActiveTab === 'goals' ? 'Goals & Progress' : 'Habits';
+      if (id === 'health') return { overview: 'Overview', trends: 'Trends', log: 'Log', history: 'History' }[healthActiveTab] || 'Overview';
+      if (id === 'library') return libraryActiveTab === 'ingredientlibrary' ? 'Ingredients' : 'Meals';
+      if (id === 'timer') return { timer: 'Countdown', stopwatch: 'Stopwatch', interval: 'Interval' }[TM.mode] || 'Countdown';
+    } catch (e) {}
+    return '';
+  }
+  function setText(el, t) { if (el && el.textContent !== t) el.textContent = t; }
+  function updateShell() {
+    var id = page(), home = id === 'dashboard', spec = BAR_PAGES[id] ? null : dockSpec(id);
+    var mode = BAR_PAGES[id] ? 'bar' : (spec && spec.length ? 'dock' : 'bare');
+    body.classList.toggle('ds-home', home); body.classList.toggle('ds-sub', !home);
+    body.classList.toggle('ds-hasbar', mode === 'bar'); body.classList.toggle('ds-hasdock', mode === 'dock'); body.classList.toggle('ds-bare', mode === 'bare');
+    renderDock(spec);
+    var sub = subLabel(id), crumb = $('dsCrumb');
+    setText($('dsCrumbPage'), title(id)); setText($('dsCrumbSub'), sub); setText($('dsBarTitle'), ({ timer: 'Timer', profile: 'Settings' })[id] || title(id));
+    if (crumb) { crumb.classList.toggle('is-home', home); crumb.classList.toggle('no-sub', !sub); }
+    var bk = $('dsBack'); if (bk) { bk.disabled = home; bk.setAttribute('aria-disabled', home ? 'true' : 'false'); }
+    if (id === 'track') {                                    // Track page = the "Habits" tab of the bottom bar
+      document.querySelectorAll('.mob-nav-item').forEach(function (el) { el.classList.toggle('active', el.id === 'mn-habits'); });
+    }
+    applyTb(); updateMini();
+  }
+
+  /* ---------- Back / Home ---------- */
+  window.dsGoHome = function () { go('dashboard'); };
+  window.dsGoBack = function () {
+    if (page() === 'dashboard') return;
+    var st = null; try { st = history.state; } catch (e) {}
+    if (st && st.fb) { backFlag = true; setTimeout(function () { backFlag = false; }, 700); try { history.back(); return; } catch (e) {} }
+    window.dsGoHome();                                       // no history to step back through → Home
+  };
+
+  /* ---------- mobile top bar scrolls away with the page (Home keeps it pinned) ---------- */
+  var tick = false;
+  function applyTb() {
+    tick = false; if (!tb || !sc) return;
+    var y = (mq.matches && !body.classList.contains('ds-home')) ? -Math.min(Math.max(sc.scrollTop, 0), 90) : 0;
+    tb.style.setProperty('--ds-tb-y', y + 'px');
+  }
+  if (sc) sc.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(applyTb); } }, { passive: true });
+  if (mq.addEventListener) mq.addEventListener('change', applyTb);
+
+  /* ---------- new page starts at the top; Back returns to where you were ---------- */
+  window.addEventListener('popstate', function () { popAt = Date.now(); }, true);
+  var _nav = window.nav;
+  window.nav = function (btn, id) {
+    var prev = page(); try { memo[prev] = sc ? sc.scrollTop : 0; } catch (e) {}
+    var r = _nav.apply(this, arguments), now = page();
+    if (now !== prev && sc) {
+      var y = (backFlag || Date.now() - popAt < 500) ? (memo[now] || 0) : 0;
+      sc.scrollTop = y; if (y) setTimeout(function () { sc.scrollTop = y; }, 140);
+    }
+    try { updateShell(); } catch (e) { console.warn(e); }
+    return r;
+  };
+  ['switchFitnessTab', 'switchTrackTab', 'switchHealthTab', 'switchLibraryTab', 'switchTimerMode'].forEach(function (fn) {
+    var o = window[fn]; if (typeof o !== 'function') return;
+    window[fn] = function () { var r = o.apply(this, arguments); try { updateShell(); } catch (e) {} return r; };
+  });
+
+  /* ---------- sidebar expand / collapse button ---------- */
+  function syncSb() {
+    var sb = document.querySelector('.sb'), b = $('sbToggleBtn'); if (!sb || !b) return;
+    var col = sb.classList.contains('collapsed'), t = col ? 'Expand sidebar' : 'Collapse sidebar';
+    b.title = t; b.setAttribute('aria-label', t); b.setAttribute('aria-pressed', col ? 'false' : 'true'); b.classList.toggle('is-collapsed', col);
+  }
+  if (typeof window.toggleSidebarCollapse === 'function') {
+    var _tsc = window.toggleSidebarCollapse;
+    window.toggleSidebarCollapse = function () { var r = _tsc.apply(this, arguments); syncSb(); return r; };
+  }
+
+  /* ---------- running timer chip ---------- */
+  function miniState() {
+    if (typeof TM === 'undefined') return null;
+    if (TM.t.running) return { t: fmtTime(Math.max(0, TM.t.remaining)), l: TM.t.label || 'Timer', m: 'timer' };
+    if (TM.sw.running) { var d = $('sw-display'); return { t: d ? d.textContent.replace(/\.\d$/, '') : '', l: 'Stopwatch', m: 'stopwatch' }; }
+    if (TM.iv.running) return { t: fmtTime(Math.max(0, TM.iv.phaseRemaining)), l: ({ work: 'Work', rest: 'Rest', warmup: 'Warm-up', cooldown: 'Cool-down' }[TM.iv.phase] || 'Interval') + ' · ' + TM.iv.currentRound + '/' + TM.iv.rounds, m: 'interval' };
+    return null;
+  }
+  var miniSig = '';
+  function updateMini() {
+    var s = null; try { s = miniState(); } catch (e) {}
+    var show = !!s && page() !== 'timer';
+    if (show) { var sig = s.t + '|' + s.l; if (sig !== miniSig) { miniSig = sig; mini.innerHTML = '<i></i><b>' + s.t + '</b><span>' + s.l.replace(/</g, '&lt;') + '</span>'; } mini._m = s.m; }
+    mini.classList.toggle('show', show);
+  }
+  mini.addEventListener('click', function () {
+    var m = mini._m || 'timer'; go('timer'); setTimeout(function () { try { switchTimerMode(m); } catch (e) {} }, 30);
+  });
+  setInterval(function () { try { updateMini(); if (page() === 'timer') updateDock(); } catch (e) {} }, 300);
+
+  /* ---------- small native-app touches ---------- */
+  document.addEventListener('click', function (e) {          // tap the active tab again → back to top
+    var t = e.target.closest && e.target.closest('.mob-nav-item.active,.sb-item.active,#dsBarTitle');
+    if (t) toTop(true);
+  }, true);
+  document.addEventListener('pointerdown', function (e) {    // tiny haptic tick on the bars (where the device supports it)
+    if (e.target.closest && e.target.closest('.mob-nav-item,.mob-fab,.ds-dk,.ds-back')) { try { navigator.vibrate && navigator.vibrate(8); } catch (x) {} }
+  }, { passive: true });
+  var TXT = /^(text|number|search|email|tel|url|password|date|time|datetime-local|)$/i;
+  document.addEventListener('focusin', function (e) {        // keyboard up → hide floating bars
+    var t = e.target; if (!mq.matches || !t || !t.tagName) return;
+    if (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && TXT.test(t.getAttribute('type') || ''))) body.classList.add('ds-kb');
+  });
+  document.addEventListener('focusout', function () {
+    setTimeout(function () { var a = document.activeElement; if (!a || !(a.tagName === 'TEXTAREA' || a.tagName === 'INPUT')) body.classList.remove('ds-kb'); }, 140);
+  });
+  (function () {                                              // iOS standalone has no system back gesture → swipe from the left edge
+    var sx = 0, sy = 0, on = false;
+    function enabled() { return window.__dsEdge || (/iPhone|iPad|iPod/.test(navigator.userAgent) && (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches))); }
+    document.addEventListener('touchstart', function (e) {
+      on = false; if (!enabled() || !mq.matches || page() === 'dashboard' || e.touches.length !== 1) return;
+      var t = e.touches[0]; if (t.clientX <= 18) { on = true; sx = t.clientX; sy = t.clientY; }
+    }, { passive: true });
+    document.addEventListener('touchend', function (e) {
+      if (!on) return; on = false; var t = e.changedTouches[0];
+      if (t.clientX - sx > 80 && Math.abs(t.clientY - sy) < 60) window.dsGoBack();
+    }, { passive: true });
+  })();
+  (function () {                                              // browser / status-bar colour follows the theme
+    function sync() {
+      var m = document.querySelector('meta[name="theme-color"]'); if (!m) return;
+      var bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); if (bg) m.setAttribute('content', bg);
+    }
+    try { new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-accent'] }); } catch (e) {}
+    sync();
+  })();
+
+  /* ---------- init ---------- */
+  ['sw-start-btn', 'iv-start-btn', 't-pause-btn'].forEach(function (id) { var e = $(id); if (e && e.parentElement) e.parentElement.classList.add('ds-tm-inline'); });
+  syncSb(); updateShell();
+})();
 
 </script>
 </body>

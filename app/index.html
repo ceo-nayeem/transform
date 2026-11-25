@@ -3210,7 +3210,7 @@ setTimeout(endBootSplash, 15000);
         </div>
       </div>
     </div>
-    <div class="streak-chip" title="Current streak"><span class="streak-fire-badge" aria-hidden="true">🔥</span><span id="streakDisp">0 Days</span></div>
+    <div class="streak-chip" title="Current streak"><span class="streak-fire-badge" aria-hidden="true">🔥</span><span id="streakDisp">0 Days</span><span class="ds-streak-n" id="dsStreakN">0</span></div>
     <div class="date-nav" id="dateNav">
       <button class="date-nav-arrow" onclick="dashDateShift(-1)" title="Previous day" aria-label="Previous day">‹</button>
       <button class="date-disp" id="dateDisp" onclick="toggleDatePicker(event)" title="Pick a date"></button>
@@ -3258,6 +3258,15 @@ setTimeout(endBootSplash, 15000);
     <div class="sb-item" onclick="nav(this,'library')" data-tip="Library"><span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.6A1.6 1.6 0 0 1 5.6 4H19v12.6H5.6A1.6 1.6 0 0 0 4 18.2z"/><path d="M4 18.2A1.6 1.6 0 0 0 5.6 19.8H19"/></svg></span><span class="sb-label">Library</span><span class="sb-badge" id="mlBadge">0</span><span class="sb-badge" id="ilBadge">0</span></div>
     <div class="sb-item" onclick="nav(this,'timer')" data-tip="Tools"><span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.2" r="7.3"/><path d="M12 9.2v4.2l2.6 1.6M9.5 3h5"/></svg></span><span class="sb-label">Timer &amp; Stopwatch</span><span class="sb-badge" id="timerBadge" style="display:none">Run</span></div>
 
+  </div>
+  <div class="ds-sbp" id="dsSbp">
+    <button type="button" class="ds-sbp-card" onclick="closeMobSidebar();nav(null,'profile')" aria-label="Profile and settings"><span class="avatar" id="dsSbpAv">BM</span><span class="ds-sbp-t"><b id="dsSbpName">—</b><small id="dsSbpPlan">Profile &amp; settings</small></span><span class="ds-sbp-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg></span></button>
+    <div class="ds-sbp-acts">
+      <button type="button" id="dsSbpUp" onclick="closeMobSidebar();openUpgrade()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.8 2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><span id="dsSbpUpLbl">Upgrade to Pro</span></button>
+      <button type="button" id="dsSbpInstall" style="display:none" onclick="closeMobSidebar();pwaInstall()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m-4.6-4.6L12 15l4.6-4.6M5 19.5h14"/></svg><span>Install the app</span></button>
+      <button type="button" id="dsSbpAdmin" style="display:none" onclick="closeMobSidebar();openAdminBackend()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.1"/><path d="M12 3v2.6M12 18.4V21M3 12h2.6M18.4 12H21M5.6 5.6l1.9 1.9M16.5 16.5l1.9 1.9M18.4 5.6l-1.9 1.9M7.5 16.5l-1.9 1.9"/></svg><span>Go to Backend</span></button>
+      <button type="button" class="danger" onclick="closeMobSidebar();doLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6v8M7.2 6.6a7.5 7.5 0 1 0 9.6 0"/></svg><span>Log out</span></button>
+    </div>
   </div>
 </div>
 
@@ -19890,7 +19899,7 @@ html:root body .sb-toggle-btn:not(.is-collapsed){color:var(--g)}
   html:root body .sb:not(.collapsed) .notif-dot{top:12px !important;right:14px !important}
 }
 
-/* 19d. mobile: top bar only pinned on Home; everywhere else Back + page name that scrolls away with the page */
+/* 19d. mobile: Home keeps the full pinned bar; other pages keep Back + page name pinned (v13) */
 @media (max-width:768px){
   .ds-back{display:none}
   html:root body.ds-sub .ds-back{display:inline-grid}
@@ -19898,7 +19907,7 @@ html:root body .sb-toggle-btn:not(.is-collapsed){color:var(--g)}
   html:root body.ds-sub .app-brand,html:root body.ds-sub #mobMenuBtn{display:none !important}
   html:root body.ds-sub .topbar{
     background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-bottom:0 !important;
-    transform:translate3d(0,var(--ds-tb-y,0px),0);will-change:transform;
+    transition:background .2s,border-color .2s;
   }
   html:root body.ds-sub .topbar-left{flex:1 1 auto;min-width:0}
   html:root body.ds-sub .topbar-right{flex:0 0 auto}
@@ -19956,6 +19965,62 @@ html:root body .sb-toggle-btn:not(.is-collapsed){color:var(--g)}
   html:root body.ds-hasdock .ds-mini{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   html:root body.ds-bare .ds-mini{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 }
+
+/* ---------- 20. App shell (v13) : circle streak, profile in the drawer, pinned Back+title, sticky tab bars ---------- */
+
+/* 20a. mobile top bar: streak is a circle, theme toggle a circle, profile leaves the bar (it lives at the bottom of the drawer) */
+.ds-streak-n{display:none}
+@media (max-width:768px){
+  html:root body .streak-chip{display:inline-flex !important;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:42px;height:42px;flex:0 0 42px;padding:0 !important;border-radius:50% !important;line-height:1;letter-spacing:0 !important}
+  html:root body .streak-chip #streakDisp{display:none}
+  html:root body .streak-chip .ds-streak-n{display:block;font-weight:800;font-size:12.5px;line-height:1;font-variant-numeric:tabular-nums}
+  html:root body .streak-chip .streak-fire-badge{width:auto;height:auto;font-size:15px;line-height:1;background:none}
+  html:root body .theme-toggle-circle{width:42px;height:42px;flex:0 0 42px}
+  html:root body .profile-menu{display:none !important}
+  html:root body .topbar-right{gap:8px !important}
+  /* sub pages: Back + title are pinned; the right-hand buttons fade away as you scroll, the bar turns to glass */
+  html:root body.ds-sub.ds-scrolled .topbar{background:var(--ds-topbar) !important;backdrop-filter:blur(18px) saturate(1.4) !important;-webkit-backdrop-filter:blur(18px) saturate(1.4) !important;border-bottom:1px solid var(--glass-border) !important;pointer-events:auto}
+  html:root body.ds-sub .topbar-right{transform:translate3d(0,var(--ds-tb-y,0px),0);opacity:var(--ds-tb-o,1);will-change:transform,opacity}
+  html:root body.ds-sub .topbar.ds-tbr-off .topbar-right{visibility:hidden}
+}
+
+/* 20b. profile block at the bottom of the mobile drawer */
+.ds-sbp{display:none}
+@media (max-width:768px){
+  html:root body .sb{display:flex !important;flex-direction:column;z-index:260 !important}
+  html:root body .sb-overlay{z-index:250 !important}
+  html:root body .sb .sb-nav{flex:1 1 auto;min-height:0;overflow-y:auto}
+  .ds-sbp{display:block;flex:0 0 auto;padding:12px 14px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--glass-border)}
+  .ds-sbp-card{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:20px;border:1px solid var(--glass-border);background:var(--ds-chip);color:var(--t);text-align:left;cursor:pointer;font:inherit}
+  .ds-sbp-card .avatar{width:42px;height:42px;flex:0 0 42px;font-size:15px;display:grid;place-items:center}
+  .ds-sbp-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .ds-sbp-t b{font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ds-sbp-t small{font-size:12px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ds-sbp-go svg{width:18px;height:18px;color:var(--t2);display:block}
+  .ds-sbp-acts{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+  .ds-sbp-acts button{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;background:transparent;border-radius:14px;font:inherit;font-weight:600;font-size:14.5px;color:var(--t);text-align:left;cursor:pointer}
+  .ds-sbp-acts button svg{width:19px;height:19px;flex:0 0 19px;color:var(--t2)}
+  .ds-sbp-acts button.danger,.ds-sbp-acts button.danger svg{color:var(--red)}
+  .ds-sbp-acts button:active,.ds-sbp-card:active{background:color-mix(in srgb,var(--t) 8%,transparent)}
+}
+
+/* 20c. sticky tab bars: every page that has tabs keeps them pinned right under the top bar (Back + title) */
+.ds-stick{position:sticky;top:var(--ds-stick,0px);z-index:40;padding:6px 0;margin:-6px 0 calc(var(--ds-om,22px) - 6px)}
+.ds-stick.p2{top:calc(var(--ds-stick,0px) + var(--ds-p1h,0px));z-index:39}
+.ds-stick::before{
+  content:'';position:absolute;z-index:-1;top:0;bottom:0;left:calc(-1 * var(--ds-padx,16px));right:calc(-1 * var(--ds-padx,16px));
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
+  border-bottom:1px solid var(--glass-border);opacity:0;transition:opacity .16s;pointer-events:none;
+}
+.ds-stick.is-stuck::before{opacity:1}
+html:root body .ds-stick>.ds-sb{margin:0 !important;position:static}
+
+/* 20d. Profile & settings: the left rail becomes a horizontal tab bar (same as phones) on every screen size */
+html:root body #page-profile .st-layout{display:block !important}
+html:root body #page-profile .st-nav{flex-direction:row !important;margin:0 !important;border-radius:999px !important;padding:5px !important;gap:4px !important;overflow-x:auto !important;overflow-y:hidden !important;top:auto !important}
+html:root body #page-profile .st-nv{justify-content:center;flex:1 0 auto;padding:10px 16px !important;font-size:13.5px !important;border-radius:999px !important}
+html:root body #page-profile .st-sec{scroll-margin-top:var(--ds-sm,130px) !important}
+@media (max-width:520px){html:root body #page-profile .st-nv{flex:0 0 auto;padding:10px 14px !important}}
 
 </style>
 <script id="ds-js">
@@ -20124,8 +20189,70 @@ try { dsHeroUpdate(); } catch (e) {}
     if (id === 'track') {                                    // Track page = the "Habits" tab of the bottom bar
       document.querySelectorAll('.mob-nav-item').forEach(function (el) { el.classList.toggle('active', el.id === 'mn-habits'); });
     }
-    applyTb(); updateMini();
+    dsTabs(); sbpSync(); applyTb(); updateMini();
   }
+
+
+  /* ---------- sticky tab bars: wrap every tab row so it can pin under the top bar ---------- */
+  function wrapBar(bar, lvl) {
+    if (!bar || !bar.parentElement) return null;
+    if (bar.parentElement.classList.contains('ds-stick')) return bar.parentElement;
+    var om = parseFloat(getComputedStyle(bar).marginBottom) || 0;
+    var w = document.createElement('div'); w.className = 'ds-stick p' + lvl; w.style.setProperty('--ds-om', om + 'px');
+    bar.parentElement.insertBefore(w, bar); w.appendChild(bar); bar.classList.add('ds-sb');
+    return w;
+  }
+  function stickVars() {
+    if (!sc || !tb) return;
+    var cs = getComputedStyle(sc), pt = parseFloat(cs.paddingTop) || 0, px = parseFloat(cs.paddingLeft) || 0;
+    var tbH = tb.getBoundingClientRect().height || 58;
+    sc.style.setProperty('--ds-stick', (tbH - pt) + 'px');        // sticky offsets are measured from the scroller's content box
+    sc.style.setProperty('--ds-padx', px + 'px');
+    var p1 = document.querySelector('.page.active .ds-stick.p1'), h = p1 ? p1.offsetHeight : 0;
+    sc.style.setProperty('--ds-p1h', h + 'px');
+    sc.style.setProperty('--ds-sm', (tbH + h + 14) + 'px');       // scroll-margin for in-page anchors (Settings sections)
+  }
+  var inTabs = false;
+  function dsTabs() {
+    if (inTabs) return; inTabs = true;
+    try {
+      ['fit-tab-diet', 'track-tab-habits', 'library-tab-meallibrary', 'tab-timer', 'hxt-overview'].forEach(function (id) { var b = $(id); if (b) wrapBar(b.parentElement, 1); });
+      wrapBar($('stNav'), 1);
+      wrapBar(document.querySelector('#page-workout .wk-tabs'), 2);
+      wrapBar($('hb-tabs'), 2);
+      document.querySelectorAll('.gl-tabs').forEach(function (g) { wrapBar(g, 2); });
+      stickVars();
+    } finally { inTabs = false; }
+  }
+  var tabT = 0;
+  function tabsSoon() { clearTimeout(tabT); tabT = setTimeout(function () { dsTabs(); applyTb(); }, 60); }
+  ['glRoot', 'page-habits', 'page-workout'].forEach(function (id) {
+    var e = $(id); if (e && window.MutationObserver) { try { new MutationObserver(tabsSoon).observe(e, { childList: true, subtree: true }); } catch (x) {} }
+  });
+  window.addEventListener('resize', tabsSoon);
+
+  /* ---------- mobile drawer: profile block at the bottom ---------- */
+  function sbpSync() {
+    var t = function (id) { var e = $(id); return e ? (e.textContent || '').trim() : ''; };
+    setText($('dsSbpAv'), t('topAvatarEl') || 'ME'); setText($('dsSbpName'), t('topUserNameDisp') || 'Profile');
+    var chip = t('ddProChip'); setText($('dsSbpPlan'), (chip ? chip + ' · ' : '') + 'Profile & settings');
+    setText($('dsSbpUpLbl'), t('upgradeMenuLbl') || 'Upgrade to Pro');
+    [['goToBackendMenuItem', 'dsSbpAdmin'], ['installAppMenuItem', 'dsSbpInstall']].forEach(function (p) {
+      var o = $(p[0]), n = $(p[1]); if (o && n) n.style.display = o.style.display === 'none' ? 'none' : '';
+    });
+  }
+  if (typeof window.toggleMobSidebar === 'function') {
+    var _tms = window.toggleMobSidebar;
+    window.toggleMobSidebar = function () { sbpSync(); return _tms.apply(this, arguments); };
+  }
+
+  /* ---------- streak circle shows just the number ---------- */
+  (function () {
+    var sd = $('streakDisp'), sn = $('dsStreakN'); if (!sd || !sn) return;
+    function sync() { var m = (sd.textContent || '').match(/\d+/); setText(sn, m ? m[0] : '0'); }
+    try { new MutationObserver(sync).observe(sd, { childList: true, characterData: true, subtree: true }); } catch (e) {}
+    sync();
+  })();
 
   /* ---------- Back / Home ---------- */
   window.dsGoHome = function () { go('dashboard'); };
@@ -20140,8 +20267,18 @@ try { dsHeroUpdate(); } catch (e) {}
   var tick = false;
   function applyTb() {
     tick = false; if (!tb || !sc) return;
-    var y = (mq.matches && !body.classList.contains('ds-home')) ? -Math.min(Math.max(sc.scrollTop, 0), 90) : 0;
-    tb.style.setProperty('--ds-tb-y', y + 'px');
+    var st = Math.max(sc.scrollTop, 0), sub = mq.matches && !body.classList.contains('ds-home');
+    tb.style.setProperty('--ds-tb-y', (sub ? -Math.min(st, 60) : 0) + 'px');
+    var o = sub ? Math.max(0, 1 - st / 44) : 1;
+    tb.style.setProperty('--ds-tb-o', o.toFixed(2));
+    tb.classList.toggle('ds-tbr-off', sub && o < 0.05);
+    body.classList.toggle('ds-scrolled', st > 6);
+    // which sticky tab bars are currently pinned? (they get a glass band behind them)
+    var tbH = tb.getBoundingClientRect().height || 58, p1 = parseFloat(sc.style.getPropertyValue('--ds-p1h')) || 0;
+    document.querySelectorAll('.page.active .ds-stick').forEach(function (w) {
+      var want = tbH + (w.classList.contains('p2') ? p1 : 0);
+      w.classList.toggle('is-stuck', st > 2 && Math.abs(w.getBoundingClientRect().top - want) < 1.5);
+    });
   }
   if (sc) sc.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(applyTb); } }, { passive: true });
   if (mq.addEventListener) mq.addEventListener('change', applyTb);

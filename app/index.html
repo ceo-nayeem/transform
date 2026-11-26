@@ -5706,6 +5706,7 @@ body.gl-lock{overflow:hidden}
         <div class="admin-sb-item" id="adminNav-coupons" onclick="adminNav('coupons')">✦ <span class="lbl">Coupons</span></div>
         <div class="admin-sb-item" id="adminNav-ingredients" onclick="adminNav('ingredients')">◍ <span class="lbl">Ingredient Library</span></div>
         <div class="admin-sb-item" id="adminNav-workouts" onclick="adminNav('workouts')">⊞ <span class="lbl">Workout Library</span></div>
+        <div class="admin-sb-item" id="adminNav-images" onclick="adminNav('images')">▣ <span class="lbl">Images</span></div>
         <div class="admin-sb-item" id="adminNav-trash" onclick="adminNav('trash')">🗑 <span class="lbl">Trash</span><span class="lock-tag" id="adminTrashCountTag" style="display:none">0</span></div>
         <div class="admin-sb-sec">Configuration</div>
         <div class="admin-sb-item" id="adminNav-appconfig" onclick="adminNav('appconfig')">⚙ <span class="lbl">App Config</span></div>
@@ -5937,6 +5938,15 @@ body.gl-lock{overflow:hidden}
             <button class="admin-exit-btn" onclick="loadAdminAppConfig(true)">⟳ Refresh</button>
           </div>
           <div id="adminAppConfigBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading configuration…</div></div>
+        </div>
+
+        <!-- ===== IMAGES SECTION ===== -->
+        <div id="admin-sec-images" class="admin-sec" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div class="admin-card-title" style="margin:0">Images</div>
+            <button class="admin-exit-btn" onclick="loadAdminImages(true)">⟳ Reload</button>
+          </div>
+          <div id="adminImgBody"><div style="font-size:11px;color:var(--t2);padding:10px">Loading images…</div></div>
         </div>
 
         <!-- ===== ONBOARDING STUDIO SECTION ===== -->
@@ -6682,6 +6692,7 @@ function loginSuccess(id, docId, silent) {
   saveSession(id, docId);
   updateAdminMenuVisibility();
   loadGlobalIngredients();
+  try { if (window.IMGX) IMGX.load(); } catch (e) {}
   loadGlobalWorkouts();
   if (typeof loadEntitlement === 'function') loadEntitlement();
   if (!silent) toast('Welcome back, ' + (S.cfg.name || id) + '!');
@@ -14027,7 +14038,7 @@ var GLOBAL_INGREDIENTS = [];
 function _setGlobalIngredients(items) {
   GLOBAL_INGREDIENTS = (Array.isArray(items) ? items : []).map(function(i){
     return { id: 'g_' + String(i.id), name: String(i.name || ''), baseWeight: +i.baseWeight || 100, unit: i.unit || 'g',
-             cal: +i.cal || 0, pro: +i.pro || 0, carb: +i.carb || 0, fat: +i.fat || 0, fiber: +i.fiber || 0, _global: true };
+             cal: +i.cal || 0, pro: +i.pro || 0, carb: +i.carb || 0, fat: +i.fat || 0, fiber: +i.fiber || 0, img: (window.IMGX ? IMGX.clean(i.img) : ''), _global: true };
   }).filter(function(i){ return i.name; });
   try { if (document.getElementById('ilBadge')) document.getElementById('ilBadge').textContent = getAllIngredients().length; } catch(e) {}
   try { if (document.getElementById('ilGlobalList')) renderIngredientLibrary(); } catch(e) {}
@@ -17385,7 +17396,8 @@ function _ingClean(raw) {
     name: String(raw.name || '').trim().slice(0,80),
     baseWeight: Math.max(1, _ingNum(raw.baseWeight, 100000)) || 100,
     unit: ['g','pcs','ml','kg','oz','tbsp','tsp'].indexOf(raw.unit) >= 0 ? raw.unit : 'g',
-    cal: _ingNum(raw.cal), pro: _ingNum(raw.pro), carb: _ingNum(raw.carb), fat: _ingNum(raw.fat), fiber: _ingNum(raw.fiber)
+    cal: _ingNum(raw.cal), pro: _ingNum(raw.pro), carb: _ingNum(raw.carb), fat: _ingNum(raw.fat), fiber: _ingNum(raw.fiber),
+    ...((window.IMGX && IMGX.clean(raw.img)) ? { img: IMGX.clean(raw.img) } : {})
   };
 }
 function _ingNewId() { return 'gi' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
@@ -17483,7 +17495,7 @@ async function adminIngSaveEdit(id) {
   var name = String(g('name')||'').trim();
   if (!name) { toast('Name required'); return; }
   if (ADMIN_ING_CACHE.some(function(i){ return i.id !== id && i.name.toLowerCase() === name.toLowerCase(); })) { toast('Another item has this name'); return; }
-  var after = _ingClean({ id: id, name: name, baseWeight: g('baseWeight'), unit: g('unit'), cal: g('cal'), pro: g('pro'), carb: g('carb'), fat: g('fat'), fiber: g('fiber') });
+  var after = _ingClean({ id: id, name: name, baseWeight: g('baseWeight'), unit: g('unit'), cal: g('cal'), pro: g('pro'), carb: g('carb'), fat: g('fat'), fiber: g('fiber'), img: before.img });
   ADMIN_ING_CACHE[idx] = after; ADMIN_ING_EDIT = null;
   if (await adminIngPersist('INGREDIENT_UPDATED', id, before, after)) toast('Updated');
   else { ADMIN_ING_CACHE[idx] = before; renderAdminIngredients(); }
@@ -19245,6 +19257,10 @@ window.addEventListener('load', _pwaRefreshInstallItem);
   // closes the top-most open popup / sheet / drawer; returns true if something was closed
   function closeOverlay(){
     var el, t;
+    el = document.getElementById('mealTypeModal'); if (el) { el.remove(); return true; }
+    el = document.getElementById('lbQuick'); if (el && el.classList.contains('on')) { if (typeof lbQuickClose === 'function') lbQuickClose(); return true; }
+    el = document.querySelector('.lb-create.on'); if (el) { if (typeof lbCloseCreate === 'function') lbCloseCreate(); return true; }
+    el = document.getElementById('lbOv'); if (el && el.classList.contains('on')) { if (typeof lbClose === 'function') lbClose(); return true; }
     el = document.getElementById('bmEd'); if (el) { if (typeof bmEdClose === 'function') bmEdClose(); else el.remove(); return true; }
     el = document.getElementById('glSheet'); if (el) { el.remove(); return true; }
     el = document.getElementById('glDetail'); if (el) { if (typeof glClose === 'function') glClose(); else el.remove(); return true; }
@@ -20128,8 +20144,8 @@ try { dsHeroUpdate(); } catch (e) {}
       go('fitness');
       setTimeout(function () { try { switchFitnessTab('diet'); } catch (e) {} var el = $('ntr-add-section'); if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} } }, 90);
     },
-    newMeal: function () { focusField('mla-name'); },
-    newIngr: function () { focusField('il-name'); },
+    newMeal: function () { if (window.lbOpenCreate) window.lbOpenCreate('meal'); else focusField('mla-name'); },
+    newIngr: function () { if (window.lbOpenCreate) window.lbOpenCreate('ing'); else focusField('il-name'); },
     logHealth: function () { switchHealthTab('log'); toTop(); },
     tPrimary: function () {
       var s = tState();
@@ -20388,6 +20404,1109 @@ try { dsHeroUpdate(); } catch (e) {}
   /* ---------- init ---------- */
   ['sw-start-btn', 'iv-start-btn', 't-pause-btn'].forEach(function (id) { var e = $(id); if (e && e.parentElement) e.parentElement.classList.add('ds-tm-inline'); });
   syncSb(); updateShell();
+})();
+
+</script>
+<style id="lib-css">
+/* =====================================================================
+   FIT//OS — Images + Library UI (v15)   — Log Food / Meal detail look
+   ===================================================================== */
+.lb-img{display:block;width:100%;height:100%;object-fit:cover;background:#fff;border:0}
+body.lb-lock #mainContent{overflow:hidden !important}
+
+/* ---------- page header: search + actions + chips ---------- */
+.lb-page>.g4{display:none !important}
+.lb-old{display:none !important}
+.lb-top{display:flex;flex-direction:column;gap:10px;margin:0 0 12px}
+.lb-top-s{min-width:0}
+.lb-search{display:flex;align-items:center;gap:10px;height:50px;padding:0 16px;border-radius:18px;background:var(--glass-bg);border:1px solid var(--glass-border-hi,var(--glass-border));margin:0;cursor:text;transition:border-color .15s,box-shadow .15s}
+.lb-search:focus-within{border-color:var(--g);box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 18%,transparent)}
+.lb-si{display:grid;place-items:center;color:var(--t2);flex:none}
+.lb-si svg{width:20px;height:20px}
+html:root body .lb-search .inp{border:0 !important;background:transparent !important;box-shadow:none !important;padding:0 !important;height:100% !important;flex:1;min-width:0;width:100%;font-size:15px !important;outline:0 !important}
+.lb-acts{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px}
+.lb-act{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 18px;border-radius:17px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;color:var(--t);background:var(--ds-chip);border:1px solid var(--glass-border);transition:transform .15s,filter .2s;white-space:nowrap}
+.lb-act svg{width:19px;height:19px;flex:none}
+.lb-act:active{transform:scale(.97)}
+.lb-act.pri{background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent;box-shadow:0 10px 22px -12px color-mix(in srgb,var(--g) 75%,transparent)}
+.lb-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.lb-chip{height:34px;padding:0 15px;border-radius:999px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:var(--ds-chip);color:var(--t2);border:1px solid transparent;transition:background .15s,color .15s}
+.lb-chip.on{background:var(--g);color:var(--ds-ink-on-accent)}
+.lb-sum{font-size:12.5px;color:var(--t2);margin:0 2px 6px}
+.lb-sum b{color:var(--t);font-weight:800}
+@media(min-width:760px){
+  .lb-top{flex-direction:row;align-items:center;gap:12px}
+  .lb-top-s{flex:1}
+  .lb-acts{flex:0 0 auto}
+}
+
+/* ---------- section headers ---------- */
+.lb-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:22px 2px 12px}
+.lb-h b{font-size:19px;font-weight:800;letter-spacing:-.01em;color:var(--t)}
+.lb-h span{font-size:12.5px;color:var(--t2);font-weight:600}
+.lb-h button{background:none;border:0;color:var(--g);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:2px 0}
+.lb-none{padding:18px;text-align:center;font-size:13.5px;color:var(--t2)}
+
+/* ---------- favorites grid + cards ---------- */
+.lb-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:760px){.lb-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}}
+.lb-card{background:var(--card);border:1px solid var(--glass-border);border-radius:24px;padding:8px 8px 12px;cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s;min-width:0}
+.lb-card:hover{border-color:var(--glass-border-hi,var(--glass-border));box-shadow:var(--ds-shadow)}
+.lb-card:active{transform:scale(.985)}
+.lb-cimg{position:relative;aspect-ratio:4/3;border-radius:17px;overflow:hidden;background:#fff}
+.lb-card b{display:block;margin:10px 6px 0;font-size:14.5px;font-weight:800;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-card small{display:block;margin:2px 6px 0;font-size:12.5px;color:var(--t2)}
+.lb-fv{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:0;cursor:pointer;color:var(--t2);background:transparent;flex:none;transition:color .15s,transform .15s}
+.lb-fv svg{width:19px;height:19px}
+.lb-fv:not(.on) svg{fill:none}
+.lb-fv.on{color:#ff5d73}
+.lb-fv:active{transform:scale(.85)}
+.lb-cimg .lb-fv{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff}
+.lb-cimg .lb-fv.on{color:#ff5d73}
+.lb-favempty{display:flex;align-items:center;gap:14px;padding:12px;border-radius:20px;border:1px dashed var(--glass-border-hi,var(--glass-border));color:var(--t2);font-size:13.5px}
+.lb-favempty .lb-img{width:56px;height:56px;border-radius:14px;flex:none}
+.lb-favempty i{font-style:normal;color:#ff5d73}
+
+/* ---------- rows ---------- */
+.lb-rows{display:flex;flex-direction:column;gap:10px}
+@media(min-width:1000px){.lb-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+.lb-wrap{position:relative;min-width:0}
+.lb-wrap.sel .lb-row{border-color:var(--g)}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 10px;border-radius:22px;background:var(--card);border:1px solid var(--glass-border);cursor:pointer;min-width:0;transition:border-color .15s,box-shadow .15s,transform .12s}
+.lb-row:hover{border-color:var(--glass-border-hi,var(--glass-border))}
+.lb-row:active{transform:scale(.99)}
+.lb-th{width:58px;height:58px;border-radius:16px;overflow:hidden;flex:none;background:#fff;border:1px solid var(--glass-border)}
+.lb-th.lg{width:72px;height:72px;border-radius:18px}
+.lb-rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.lb-rt b{display:block;font-size:15px;font-weight:800;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-rt small{font-size:12px;color:var(--t2);font-weight:600}
+.lb-l2{display:flex;flex-wrap:wrap;align-items:center;gap:3px 12px;font-size:12.5px;color:var(--t2);font-weight:600}
+.lb-l2 em{font-style:normal;color:var(--o);font-weight:800}
+.lb-l2 u{text-decoration:none;color:var(--t2)}
+.lb-mac{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.lb-mac .d{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px}
+.lb-mac .d:first-child{margin-left:0}
+.lb-plus{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:0;cursor:pointer;color:var(--t);background:var(--ds-chip);flex:none;transition:background .15s,color .15s,transform .12s}
+.lb-plus svg{width:20px;height:20px}
+.lb-plus:hover,.lb-plus:active{background:var(--g);color:var(--ds-ink-on-accent)}
+.lb-plus:active{transform:scale(.9)}
+.lb-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:9.5px;font-weight:800;letter-spacing:.08em;background:var(--ds-chip);color:var(--o2);vertical-align:middle}
+.lb-more{display:block;width:100%;margin:12px 0 0;height:46px;border-radius:16px;border:1px dashed var(--glass-border-hi,var(--glass-border));background:transparent;color:var(--t2);font:inherit;font-weight:700;cursor:pointer}
+.lb-more:hover{color:var(--t);border-color:var(--t2)}
+
+/* ingredient rows: select + edit + delete */
+.lb-cb2{width:19px;height:19px;accent-color:var(--g);flex:none;margin:0 0 0 4px;cursor:pointer}
+.lb-ib2{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--t2);cursor:pointer;flex:none}
+.lb-ib2 svg{width:18px;height:18px}
+.lb-ib2:hover{background:var(--ds-chip);color:var(--t)}
+.lb-ib2.del:hover{color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent)}
+.lb-copy{height:36px;padding:0 15px;border-radius:99px;border:1px solid var(--glass-border-hi,var(--glass-border));background:transparent;color:var(--t);font:inherit;font-weight:700;font-size:13px;cursor:pointer;flex:none}
+.lb-copy:hover{background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent}
+.lb-wrap .edit-form{margin:8px 4px 2px}
+.lb-tool{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+.lb-sel{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--t2);font-weight:600;cursor:pointer}
+.lb-sel input{width:18px;height:18px;accent-color:var(--g)}
+.lb-tb{height:34px;padding:0 14px;border-radius:99px;border:1px solid var(--glass-border-hi,var(--glass-border));background:var(--ds-chip);color:var(--t);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.lb-tb.danger{color:var(--red)}
+.lb-sort{margin-left:auto;height:36px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--t);font:inherit;font-size:12.5px;padding:0 10px}
+
+/* ---------- empty states ---------- */
+.lb-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:26px 18px;border-radius:26px;background:var(--card);border:1px solid var(--glass-border)}
+.lb-empty .lb-img{width:150px;height:110px;border-radius:20px;object-fit:cover;margin-bottom:6px}
+.lb-empty b{font-size:17px;font-weight:800}
+.lb-empty p{margin:0 0 8px;color:var(--t2);font-size:13.5px;max-width:320px}
+
+/* ---------- detail view ---------- */
+.lb-ov{position:fixed;inset:0;z-index:1200;visibility:hidden;pointer-events:none;transition:visibility 0s .3s}
+.lb-ov.on{visibility:visible;pointer-events:auto;transition-delay:0s}
+.lb-bd{position:absolute;inset:0;background:rgba(6,10,9,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;transition:opacity .28s}
+.lb-ov.on .lb-bd{opacity:1}
+.lb-sheet{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);background-image:radial-gradient(120% 55% at 50% 0%,color-mix(in srgb,var(--g) 16%,transparent),transparent 70%);transform:translateY(28px);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .24s}
+.lb-ov.on .lb-sheet{transform:none;opacity:1}
+.lb-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.lb-hero{position:relative;height:300px;background:#fff}
+.lb-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.34),transparent 32%,transparent 52%,var(--bg) 99%);pointer-events:none}
+.lb-hero .lb-img{height:100%}
+.lb-ib{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));z-index:5;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:0;cursor:pointer;color:#fff;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.lb-ib svg{width:21px;height:21px}
+.lb-ib.l{left:14px}.lb-ib.r{right:14px}
+.lb-ib.fv:not(.on) svg{fill:none}
+.lb-ib.fv.on{color:#ff5d73}
+html.alpha .lb-ib{background:rgba(255,255,255,.78);color:#14181a}
+html.alpha .lb-ib.fv.on{color:#e8334f}
+.lb-body{position:relative;max-width:640px;margin:0 auto;padding:0 16px 28px}
+.lb-rings{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:-52px;position:relative;z-index:2}
+.lb-rc{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px 10px;border-radius:22px;background:var(--card);border:1px solid var(--glass-border);box-shadow:var(--ds-shadow)}
+.lb-ring{position:relative;width:54px;height:54px;margin-bottom:3px}
+.lb-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.lb-ring circle{fill:none;stroke-width:4}
+.lb-ring .b{stroke:var(--ds-chip-on,rgba(128,128,128,.2));opacity:.55}
+.lb-ring .f{stroke-linecap:round;transition:stroke-dasharray .35s}
+.lb-ring em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:var(--t)}
+.lb-rc b{font-size:15px;font-weight:800;color:var(--t);line-height:1}
+.lb-rc b u{text-decoration:none;font-size:11px;font-weight:600;color:var(--t2);margin-left:2px}
+.lb-rc small{font-size:11.5px;color:var(--t2);font-weight:600}
+.lb-rcap{text-align:center;font-size:11px;color:var(--t2);margin:7px 0 0;letter-spacing:.02em}
+.lb-title{margin:16px 0 8px;font-size:25px;line-height:1.15;font-weight:800;letter-spacing:-.02em;color:var(--t);word-break:break-word}
+.lb-subl{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;font-size:14px;color:var(--t2);font-weight:600}
+.lb-subl>span{display:inline-flex;align-items:center;gap:6px}
+.lb-subl svg{width:17px;height:17px}
+.lb-subl i{width:1px;height:14px;background:var(--glass-border-hi,var(--glass-border))}
+.lb-chips2{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.lb-chips2 span{height:36px;padding:0 17px;display:inline-flex;align-items:center;border-radius:99px;font-size:13px;font-weight:700;background:var(--ds-chip);color:var(--t);border:1px solid var(--glass-border)}
+.lb-chips2 span.on{background:linear-gradient(90deg,var(--g),color-mix(in srgb,var(--g) 55%,#8ff0d2));color:var(--ds-ink-on-accent);border-color:transparent}
+.lb-hd{margin:20px 0 10px;font-size:15px;font-weight:800;color:var(--t)}
+.lb-ings{border-radius:20px;border:1px solid var(--glass-border);background:var(--card);overflow:hidden}
+.lb-ings>div{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--glass-border);font-size:13.5px}
+.lb-ings>div:last-child{border-bottom:0}
+.lb-ings span{flex:1;min-width:0;font-weight:700;color:var(--t);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-ings em{font-style:normal;color:var(--t2);font-size:12.5px}
+.lb-ings b{color:var(--o);font-weight:800;min-width:62px;text-align:right}
+.lb-note{padding:12px 14px;border-radius:18px;background:var(--card);border:1px solid var(--glass-border);font-size:13.5px;color:var(--t2);line-height:1.5}
+.lb-ins{padding:14px;border-radius:20px;background:var(--card);border:1px solid var(--glass-border)}
+.lb-mini{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:10px;font-size:12.5px;color:var(--t2);font-weight:600}
+.lb-mini span{display:inline-flex;align-items:center;gap:6px}
+.lb-mini i{width:8px;height:8px;border-radius:50%}
+.lb-mini b{color:var(--t);font-weight:800}
+.lb-ins p{margin:0 0 6px;font-size:13.5px;line-height:1.6;color:var(--t2)}
+.lb-ins small{font-size:11px;color:var(--t2);opacity:.7}
+.lb-amt{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:20px;background:var(--card);border:1px solid var(--glass-border)}
+.lb-amt label{font-size:14px;font-weight:800}
+.lb-amt small{width:100%;font-size:11.5px;color:var(--t2);margin-top:-2px}
+.lb-amtb{display:inline-flex;align-items:center;gap:2px;padding:4px;border-radius:16px;background:var(--ds-chip)}
+.lb-amtb button{width:38px;height:38px;border-radius:12px;border:0;background:transparent;color:var(--t);font-size:20px;font-weight:700;cursor:pointer}
+.lb-amtb button:active{background:var(--g);color:var(--ds-ink-on-accent)}
+html:root body .lb-amtb input{width:74px;height:38px;text-align:center;border:0 !important;background:transparent !important;color:var(--t);font:inherit;font-weight:800;font-size:16px;padding:0 !important;box-shadow:none !important;outline:0}
+.lb-amtb span{color:var(--t2);font-size:13px;font-weight:700;padding-right:8px}
+.lb-imgedit{margin-top:18px;border-radius:18px;border:1px dashed var(--glass-border-hi,var(--glass-border));padding:4px 14px}
+.lb-imgedit summary{list-style:none;display:flex;align-items:center;gap:8px;height:42px;cursor:pointer;font-size:13.5px;font-weight:700;color:var(--t2)}
+.lb-imgedit summary::-webkit-details-marker{display:none}
+.lb-imgedit summary svg{width:17px;height:17px}
+.lb-imgrow{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 8px}
+.lb-imgrow .inp{flex:1 1 200px;min-width:0}
+.lb-imgedit small{display:block;margin:0 0 10px;font-size:11.5px;color:var(--t2);line-height:1.5}
+.lb-foot{flex:none;display:flex;gap:10px;align-items:center;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--ds-rail);border-top:1px solid var(--ds-rail-bd);border-radius:24px 24px 0 0;box-shadow:var(--ds-bar-shadow)}
+.lb-fb{height:52px;padding:0 22px;border-radius:28px;border:1px solid var(--ds-rail-bd);background:var(--ds-rail-ic);color:var(--ds-rail-hi);font:inherit;font-weight:800;font-size:15px;cursor:pointer;display:inline-grid;place-items:center;white-space:nowrap}
+.lb-fb:active{transform:scale(.97)}
+.lb-fb.pri{flex:1;background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent;box-shadow:0 10px 22px -12px color-mix(in srgb,var(--g) 75%,transparent)}
+.lb-fb.del{width:52px;padding:0;color:var(--red)}
+.lb-fb svg{width:21px;height:21px}
+@media(min-width:900px){
+  .lb-sheet{inset:0 0 0 auto;width:510px;border-left:1px solid var(--glass-border);border-radius:30px 0 0 30px;box-shadow:var(--ds-shadow-lg);transform:translateX(44px)}
+  .lb-ov.on .lb-sheet{transform:none}
+  .lb-hero{height:320px}
+  .lb-foot{border-radius:0}
+}
+
+/* ---------- create / quick-add sheets ---------- */
+.lb-create{position:fixed;inset:0;z-index:1150;visibility:hidden;pointer-events:none;transition:visibility 0s .28s}
+.lb-create.on{visibility:visible;pointer-events:auto;transition-delay:0s}
+.lb-cbd{position:absolute;inset:0;background:rgba(6,10,9,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;transition:opacity .26s}
+.lb-create.on .lb-cbd{opacity:1}
+.lb-cp{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateY(30px);opacity:0;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .22s}
+.lb-create.on .lb-cp{transform:none;opacity:1}
+.lb-ch{flex:none;display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px}
+.lb-ch b{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.lb-x{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:0;background:var(--ds-chip);color:var(--t);cursor:pointer}
+.lb-x svg{width:19px;height:19px}
+.lb-cb{flex:1;min-height:0;overflow-y:auto;padding:6px 16px calc(28px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+.lb-qp{margin:0 0 14px;color:var(--t2);font-size:13.5px}
+.lb-qg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.lb-chk{display:flex;align-items:center;gap:10px;margin:2px 0 16px;font-size:13.5px;color:var(--t2);font-weight:600;cursor:pointer}
+.lb-chk input{width:18px;height:18px;accent-color:var(--g)}
+@media(min-width:900px){
+  .lb-cp{inset:50% auto auto 50%;width:700px;max-width:92vw;max-height:88vh;border-radius:30px;border:1px solid var(--glass-border);box-shadow:var(--ds-shadow-lg);transform:translate(-50%,-47%)}
+  .lb-create.on .lb-cp{transform:translate(-50%,-50%)}
+  .lb-q .lb-cp{width:520px}
+}
+
+/* ---------- "Log as" sheet ---------- */
+.lb-mt{position:fixed;inset:0;z-index:9000;display:flex;align-items:flex-end;justify-content:center}
+.lb-mt-bd{position:absolute;inset:0;background:rgba(6,10,9,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:lbFade .2s}
+.lb-mt-card{position:relative;width:100%;max-width:460px;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:28px 28px 0 0;background:var(--bg);border:1px solid var(--glass-border);box-shadow:var(--ds-shadow-lg);animation:lbUp .28s cubic-bezier(.2,.8,.2,1)}
+.lb-mt-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.lb-mt-q{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin:0 2px 10px}
+.lb-mt-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lb-mt-g button{height:50px;border-radius:17px;border:1px solid var(--glass-border);background:var(--ds-chip);color:var(--t);font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;transition:transform .12s,background .15s}
+.lb-mt-g button:active{transform:scale(.97)}
+.lb-mt-g button.sug{background:var(--g);color:var(--ds-ink-on-accent);border-color:transparent}
+.lb-mt-g button:hover{border-color:var(--g)}
+.lb-mt-x{width:100%;margin-top:12px;height:44px;border:0;background:transparent;color:var(--t2);font:inherit;font-weight:700;cursor:pointer}
+@media(min-width:700px){.lb-mt{align-items:center}.lb-mt-card{border-radius:28px}}
+@keyframes lbUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes lbFade{from{opacity:0}to{opacity:1}}
+
+/* ---------- thumbnails on the Diet page's logged meals ---------- */
+.lb-lt{width:48px;height:48px;border-radius:14px;overflow:hidden;flex:none;margin-right:12px;background:#fff;border:1px solid var(--glass-border);align-self:center}
+@media(prefers-reduced-motion:reduce){.lb-sheet,.lb-cp,.lb-mt-card,.lb-mt-bd{transition:none !important;animation:none !important}}
+
+/* =====================================================================
+   Admin → Images
+   ===================================================================== */
+#adminShellOverlay .im-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+#adminShellOverlay .im-stat{font-size:13px;color:var(--t2)}
+#adminShellOverlay .im-stat b{color:var(--t)}
+#adminShellOverlay .im-acts{display:flex;gap:8px}
+#adminShellOverlay .im-note{font-size:12.5px;line-height:1.6;color:var(--t2);background:var(--a-glass-soft,rgba(128,128,128,.08));border:1px solid var(--a-hairline,rgba(128,128,128,.2));border-radius:14px;padding:11px 14px;margin:0 0 12px}
+#adminShellOverlay .im-note b{color:var(--t)}
+#adminShellOverlay .im-note code,#adminShellOverlay .adm-empty code{background:var(--a-hairline-soft,rgba(128,128,128,.15));padding:1px 6px;border-radius:6px;font-size:12px}
+#adminShellOverlay .im-q{width:100%;margin:0 0 6px}
+#adminShellOverlay .im-grp{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);font-weight:800;margin:16px 2px 8px}
+#adminShellOverlay .im-row{display:flex;gap:12px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--a-hairline-soft,rgba(128,128,128,.14));flex-wrap:wrap}
+#adminShellOverlay .im-row:last-child{border-bottom:0}
+#adminShellOverlay .im-th{position:relative;display:block;width:56px;height:56px;border-radius:12px;overflow:hidden;flex:none;background:#fff;border:1px solid var(--a-hairline,rgba(128,128,128,.25))}
+#adminShellOverlay .im-th .bad{position:absolute;inset:0;display:grid;place-items:center;background:rgba(214,48,72,.88);color:#fff;font-weight:900;font-size:20px}
+#adminShellOverlay .im-main{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:3px}
+#adminShellOverlay .im-main b{font-size:13.5px}
+#adminShellOverlay .im-main span{font-size:12px;color:var(--t2)}
+#adminShellOverlay .im-main small{font-size:11px;opacity:.65}
+#adminShellOverlay .im-row.rule .im-main{flex-direction:row;flex-wrap:wrap;gap:8px}
+#adminShellOverlay .im-row.rule .im-main .admin-inp{flex:1 1 150px;min-width:0}
+#adminShellOverlay .im-in{flex:1.5 1 300px;display:flex;gap:8px;min-width:0;align-items:center}
+#adminShellOverlay .im-in .admin-inp{flex:1;min-width:0}
+#adminShellOverlay .im-ta{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;resize:vertical}
+@media(max-width:820px){#adminShellOverlay .im-in{flex-basis:100%}}
+
+/* v15 polish */
+body.lb-lock #ai-fab{display:none !important}
+.lb-sheet.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:calc(70px + env(safe-area-inset-top,0px));background:linear-gradient(var(--bg) 62%,transparent);z-index:4;pointer-events:none}
+.lb-amtb input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.lb-amtb input::-webkit-outer-spin-button,.lb-amtb input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+</style>
+<script id="lib-js">
+/* =====================================================================
+   FIT//OS — Images + Library UI (v15)
+   1. IMGX  : central image registry (white placeholder by default, links pasted in Admin → Images)
+   2. Library UI : Log Food style Meals / Ingredients pages, detail view, quick add, meal-type sheet
+   ===================================================================== */
+(function () {
+  'use strict';
+  if (window.__lbInit) return; window.__lbInit = 1;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function num(v) { v = parseFloat(v); return isFinite(v) ? v : 0; }
+  function r1(n) { return Math.round(n * 10) / 10; }
+  function rd(n) { return Math.round(n); }
+  function sget() { return (typeof S !== 'undefined') ? S : null; }
+  function tst(m) { try { toast(m); } catch (e) { } }
+  function sav() { try { save(); } catch (e) { } }
+
+  /* =================================================================
+     1. IMAGE REGISTRY
+     ================================================================= */
+  var WHITE = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 3"><rect width="4" height="3" fill="#ffffff"/></svg>');
+  var TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Pre-workout', 'Post-workout'];
+  var SLOTS = [
+    { id: 'meal.default', g: 'Meals', l: 'Default meal image', h: 'Any meal without its own image or a matching rule', u: 'Library · Favorites · Recent · Meal detail · Diet log' },
+    { id: 'meal.type.Breakfast', g: 'Meals', l: 'Breakfast', h: 'Meals saved as Breakfast', u: 'Library · Meal detail' },
+    { id: 'meal.type.Lunch', g: 'Meals', l: 'Lunch', h: 'Meals saved as Lunch', u: 'Library · Meal detail' },
+    { id: 'meal.type.Dinner', g: 'Meals', l: 'Dinner', h: 'Meals saved as Dinner', u: 'Library · Meal detail' },
+    { id: 'meal.type.Snack', g: 'Meals', l: 'Snack', h: 'Meals saved as Snack', u: 'Library · Meal detail' },
+    { id: 'meal.type.Pre-workout', g: 'Meals', l: 'Pre-workout', h: 'Meals saved as Pre-workout', u: 'Library · Meal detail' },
+    { id: 'meal.type.Post-workout', g: 'Meals', l: 'Post-workout', h: 'Meals saved as Post-workout', u: 'Library · Meal detail' },
+    { id: 'ing.default', g: 'Ingredients', l: 'Default ingredient image', h: 'Any ingredient without its own image or a matching rule', u: 'Ingredient library · Ingredient detail' },
+    { id: 'empty.meals', g: 'Empty screens', l: 'No meals saved yet', h: 'Shown on the Meals page when the library is empty', u: 'Library → Meals' },
+    { id: 'empty.favs', g: 'Empty screens', l: 'No favorites yet', h: 'Shown in the Favorites block before any ♥', u: 'Library → Meals' },
+    { id: 'empty.ing', g: 'Empty screens', l: 'No ingredients yet', h: 'Shown on the Ingredients page when it is empty', u: 'Library → Ingredients' }
+  ];
+  var KEY = 'fitos_img_cfg';
+  var cfg = { v: 0, slots: {}, rules: [] };
+
+  function fixUrl(u) {
+    u = String(u == null ? '' : u).trim(); if (!u) return '';
+    var m;
+    if ((m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/)) || (m = u.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([\w-]+)/))) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    if ((m = u.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^?#]+)/i))) return 'https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3];
+    if (/^https?:\/\/(www\.)?dropbox\.com\//i.test(u)) { u = u.replace(/([?&])dl=\d/, '$1raw=1'); if (!/[?&]raw=1/.test(u)) u += (u.indexOf('?') > -1 ? '&' : '?') + 'raw=1'; return u; }
+    if ((m = u.match(/^https?:\/\/(?:www\.)?imgur\.com\/(?:a\/)?(\w+)$/i))) return 'https://i.imgur.com/' + m[1] + '.jpg';
+    return u;
+  }
+  function clean(u) {
+    u = fixUrl(u); if (!u || u.length > 2000) return '';
+    if (/^https?:\/\/[^\s"'<>]+$/i.test(u)) return u;
+    if (/^data:image\/(png|jpe?g|webp|gif|avif|svg\+xml)[;,]/i.test(u) && u.length <= 20000) return u;
+    if (/^(?!.*:)(?!.*\/\/)[\w\-.\/ %]+\.(png|jpe?g|webp|gif|svg|avif)(\?[\w=&.\-]*)?$/i.test(u)) return u;
+    return '';
+  }
+  function sanitize(d) {
+    var c = { v: 0, slots: {}, rules: [] };
+    if (!d || typeof d !== 'object') return c;
+    c.v = +d.v || 0;
+    var s = d.slots || {};
+    Object.keys(s).forEach(function (k) { if (/^[\w.\-]{1,60}$/.test(k)) { var u = clean(s[k]); if (u) c.slots[k] = u; } });
+    (Array.isArray(d.rules) ? d.rules : []).slice(0, 400).forEach(function (r) {
+      if (!r) return; var k = String(r.k || '').toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 80), u = clean(r.u);
+      var sc = (r.s === 'meal' || r.s === 'ing') ? r.s : 'all';
+      if (k && u) c.rules.push({ k: k, u: u, s: sc });
+    });
+    return c;
+  }
+  try { var raw = localStorage.getItem(KEY); if (raw) cfg = sanitize(JSON.parse(raw)); } catch (e) { }
+
+  function slot(id) { return cfg.slots[id] || ''; }
+  function rule(kind, name) {
+    name = String(name || '').toLowerCase(); if (!name) return '';
+    for (var i = 0; i < cfg.rules.length; i++) {
+      var r = cfg.rules[i]; if (r.s !== 'all' && r.s !== kind) continue;
+      var ks = r.k.split(',');
+      for (var j = 0; j < ks.length; j++) { var k = ks[j].trim(); if (k && name.indexOf(k) >= 0) return r.u; }
+    }
+    return '';
+  }
+  function forMeal(m) {
+    if (!m) return WHITE;
+    return clean(m.img) || rule('meal', m.name) || slot('meal.type.' + (m.type || '')) || slot('meal.default') || WHITE;
+  }
+  function forIng(i) {
+    if (!i) return WHITE;
+    return clean(i.img) || rule('ing', i.name) || slot('ing.default') || WHITE;
+  }
+  // a logged meal (no image of its own): reuse the library meal with the same name, else rules / type / default
+  function forLogged(m) {
+    var s = sget(), n = String(m && m.name || '').toLowerCase();
+    if (s && s.mealLibrary) { for (var i = 0; i < s.mealLibrary.length; i++) { var l = s.mealLibrary[i]; if (String(l.name || '').toLowerCase() === n) return forMeal(l); } }
+    return forMeal(m);
+  }
+  function hydrate(root) {
+    (root || document).querySelectorAll('img[data-slot]').forEach(function (im) { im.src = slot(im.getAttribute('data-slot')) || WHITE; });
+  }
+  function refreshAll() {
+    try { hydrate(); } catch (e) { }
+    try { if (typeof renderMealLibrary === 'function') renderMealLibrary(); } catch (e) { }
+    try { if (typeof renderIngredientLibrary === 'function') renderIngredientLibrary(); } catch (e) { }
+    try { if (typeof renderNutrition === 'function' && sget() && $('mealList')) renderNutrition(); } catch (e) { }
+    try { if (LB) lbRefresh(); } catch (e) { }
+  }
+  function setCfg(c) {
+    cfg = sanitize(c);
+    try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { }
+    refreshAll();
+  }
+  async function load() {
+    try {
+      var snap = await window._fsGetDoc(window._fsDoc(window._db, 'global', 'images'));
+      if (snap.exists()) { var d = snap.data(), j = null; try { j = JSON.parse(d.json); } catch (e) { } j = j || {}; j.v = d.v || j.v || 0; setCfg(j); return; }
+      setCfg({});
+    } catch (e) { console.warn('Image config unavailable:', e && e.message); }
+  }
+  function im(url, cls, alt) {
+    return '<img class="lb-img ' + (cls || '') + '" src="' + esc(url) + '" alt="' + esc(alt || '') + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" draggable="false">';
+  }
+  document.addEventListener('error', function (e) {
+    var t = e.target; if (t && t.tagName === 'IMG' && t.classList.contains('lb-img') && t.getAttribute('src') !== WHITE) { t.setAttribute('data-bad', '1'); t.src = WHITE; }
+  }, true);
+
+  window.IMGX = { WHITE: WHITE, SLOTS: SLOTS, TYPES: TYPES, fix: fixUrl, clean: clean, sanitize: sanitize, slot: slot, forMeal: forMeal, forIng: forIng, forLogged: forLogged,
+    rule: rule, hydrate: hydrate, load: load, setCfg: setCfg, cfg: function () { return JSON.parse(JSON.stringify(cfg)); }, img: im };
+
+  /* =================================================================
+     2. SHARED HELPERS (macros, rings, tags, insights)
+     ================================================================= */
+  var COL = { k: 'var(--o)', p: 'var(--g)', c: 'var(--c)', f: 'var(--p)' };
+  function goals() { var c = (sget() && S.cfg) || {}; return { k: c.calGoal || 2200, p: c.protGoal || 160, c: c.carbGoal || 220, f: c.fatGoal || 65 }; }
+  function dots(p, c, f) {
+    return '<span class="lb-mac"><i class="d" style="background:' + COL.p + '"></i>P ' + rd(p) + 'g<i class="d" style="background:' + COL.c + '"></i>C ' + rd(c) + 'g<i class="d" style="background:' + COL.f + '"></i>F ' + rd(f) + 'g</span>';
+  }
+  function ringCard(val, unit, label, goal, color) {
+    var C = 2 * Math.PI * 16, pct = goal > 0 ? Math.max(0, Math.min(1, val / goal)) : 0;
+    return '<div class="lb-rc"><div class="lb-ring"><svg viewBox="0 0 40 40" aria-hidden="true"><circle class="b" cx="20" cy="20" r="16"/><circle class="f" cx="20" cy="20" r="16" style="stroke:' + color + ';stroke-dasharray:' + (pct * C).toFixed(1) + ' ' + C.toFixed(1) + '"/></svg><em>' + Math.round(pct * 100) + '%</em></div><b>' + (unit === 'kcal' ? rd(val) : r1(val)) + '<u>' + unit + '</u></b><small>' + label + '</small></div>';
+  }
+  function ringsHTML(k, p, c, f) {
+    var g = goals();
+    return ringCard(k, 'kcal', 'Calories', g.k, COL.k) + ringCard(p, 'g', 'Protein', g.p, COL.p) + ringCard(c, 'g', 'Carbs', g.c, COL.c) + ringCard(f, 'g', 'Fat', g.f, COL.f);
+  }
+  function tagsFor(k, p, c, f, fb, nIng) {
+    var t = []; if (!(k > 0)) return t;
+    var pp = p * 4 / k, cp = c * 4 / k, fp = f * 9 / k;
+    if (pp >= 0.3 || p >= 30) t.push('High protein');
+    if (cp <= 0.2) t.push('Low carb');
+    if (fb >= 6) t.push('High fiber');
+    if (fp <= 0.2) t.push('Low fat');
+    if (k <= 300) t.push('Light'); else if (k >= 700) t.push('Hearty');
+    if (nIng && nIng <= 3) t.push('Quick & easy');
+    if (!t.length) t.push('Balanced');
+    return t.slice(0, 4);
+  }
+  function insightsFor(k, p, c, f, fb) {
+    if (!(k > 0)) return 'Add calories and macros to see a breakdown here.';
+    var pp = Math.round(p * 4 / k * 100), cp = Math.round(c * 4 / k * 100), fp = Math.round(f * 9 / k * 100), g = goals(), out = [];
+    out.push('Protein supplies about ' + pp + '% of the calories (' + r1(p) + ' g)' + (pp >= 30 ? ' — a strong pick for muscle recovery.' : pp >= 20 ? ' — a solid amount for maintaining muscle.' : ' — on the low side, so pair it with a protein source.'));
+    out.push('Carbs make up ' + cp + '% and fat ' + fp + '%' + (cp >= 55 ? ': energy-dense, handy around workouts.' : fp >= 45 ? ': rich in fats, so keep the portion in mind.' : ': a fairly balanced split.'));
+    if (fb >= 5) out.push('It also brings ' + r1(fb) + ' g of fiber, which helps you stay full.');
+    out.push('That is ' + Math.round(k / g.k * 100) + '% of your daily calorie goal (' + g.k + ' kcal).');
+    return out.join(' ');
+  }
+  function suggestType() { var h = new Date().getHours(); return h < 10 ? 'Breakfast' : h < 15 ? 'Lunch' : h < 18 ? 'Snack' : h < 22 ? 'Dinner' : 'Snack'; }
+  function isDesktop() { return window.matchMedia && window.matchMedia('(min-width:900px)').matches; }
+
+  /* =================================================================
+     3. MEAL / INGREDIENT MODELS
+     ================================================================= */
+  function mealById(id) { var s = sget(); if (!s || !s.mealLibrary) return null; id = String(id); for (var i = 0; i < s.mealLibrary.length; i++) if (String(s.mealLibrary[i].id) === id) return s.mealLibrary[i]; return null; }
+  function ingById(id) {
+    var s = sget(); id = String(id); var i, a;
+    if (s && s.ingredientLibrary) { for (i = 0; i < s.ingredientLibrary.length; i++) if (String(s.ingredientLibrary[i].id) === id) return s.ingredientLibrary[i]; }
+    try { a = GLOBAL_INGREDIENTS; for (i = 0; i < a.length; i++) if (String(a[i].id) === id) return a[i]; } catch (e) { }
+    return null;
+  }
+
+  /* =================================================================
+     4. DOM RESTRUCTURE (one-time) — keeps every original id the app logic relies on
+     ================================================================= */
+  var ICON = {
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.6-3.6"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>',
+    heart: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20.3s-8-4.6-8-10.4C4 7 6.1 5 8.6 5c1.5 0 2.7.7 3.4 1.9C12.7 5.7 13.9 5 15.4 5 17.9 5 20 7 20 9.9c0 5.8-8 10.4-8 10.4z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M10 7V4.8h4V7M6.5 7l.8 12.2h9.4L17.5 7M10 11v5.5M14 11v5.5"/></svg>',
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    fire: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c.6 3.2 4.5 4.8 4.5 9.2A4.5 4.5 0 0 1 12 17a4.5 4.5 0 0 1-4.5-4.8c0-1.6.8-2.8 1.6-3.7.2 1 .8 1.7 1.5 1.9C10.4 8 10.6 5.3 12 3zM9 20.5h6"/></svg>',
+    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M8 6.5h12M8 12h12M8 17.5h12M4 6.5h.01M4 12h.01M4 17.5h.01"/></svg>',
+    pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/></svg>'
+  };
+  var UI = { favAll: false, ingScope: 'all', ingLimit: 40, mealLimit: 12 };
+  var builtM = false, builtI = false;
+
+  function wrapSearch(input) {
+    if (!input || input.parentNode.classList.contains('lb-search')) return;
+    var w = document.createElement('label'); w.className = 'lb-search';
+    w.innerHTML = '<span class="lb-si">' + ICON.search + '</span>';
+    input.parentNode.insertBefore(w, input); w.appendChild(input);
+  }
+  function buildMeals() {
+    var page = $('page-meallibrary'); if (!page || builtM) return; builtM = true;
+    page.classList.add('lb-page');
+    var inp = $('ml-search'), sel = $('ml-filter'), row = inp && inp.parentNode;
+    if (inp) { inp.placeholder = 'Search meals…'; inp.setAttribute('autocomplete', 'off'); }
+    var top = document.createElement('div'); top.className = 'lb-top';
+    top.innerHTML = '<div class="lb-top-s" id="lbSearchSlot"></div>'
+      + '<div class="lb-acts"><button type="button" class="lb-act pri" onclick="lbOpenCreate(\'meal\')">' + ICON.plus + '<span>New meal</span></button>'
+      + '<button type="button" class="lb-act" onclick="lbQuickOpen()">' + ICON.bolt + '<span>Quick add</span></button></div>';
+    row.parentNode.insertBefore(top, row);
+    wrapSearch(inp); $('lbSearchSlot').appendChild(inp.parentNode);
+    row.style.display = 'none';
+    var chips = document.createElement('div'); chips.className = 'lb-chips'; chips.id = 'lbTypes';
+    top.parentNode.insertBefore(chips, top.nextSibling);
+    var sum = document.createElement('div'); sum.className = 'lb-sum'; sum.id = 'lbSum';
+    chips.parentNode.insertBefore(sum, chips.nextSibling);
+    // old section header "SAVED MEALS"
+    var heads = page.querySelectorAll(':scope > .sec-head');
+    if (heads[0]) heads[0].classList.add('lb-old');
+    // the add-meal form → create sheet
+    var addHead = heads[1], box = addHead && addHead.nextElementSibling;
+    if (addHead && box) {
+      var cs = document.createElement('div'); cs.className = 'lb-create'; cs.id = 'mlCreate';
+      cs.innerHTML = '<div class="lb-cbd" onclick="lbCloseCreate()"></div><div class="lb-cp"><div class="lb-ch"><b>New meal</b><button type="button" class="lb-x" onclick="lbCloseCreate()" aria-label="Close">' + ICON.close + '</button></div><div class="lb-cb"></div></div>';
+      document.body.appendChild(cs); var body = cs.querySelector('.lb-cb');
+      addHead.style.display = 'none'; body.appendChild(box);
+      var ig = document.createElement('div'); ig.className = 'inp-group'; ig.style.marginBottom = '10px';
+      ig.innerHTML = '<div class="inp-label">Image link (optional)</div><input class="inp" id="mla-img" type="url" placeholder="Paste an image link — or leave blank" autocomplete="off"/>';
+      var notes = $('mla-notes'); if (notes) notes.parentNode.parentNode.insertBefore(ig, notes.parentNode);
+    }
+  }
+  function buildIngs() {
+    var page = $('page-ingredientlibrary'); if (!page || builtI) return; builtI = true;
+    page.classList.add('lb-page');
+    var inp = $('il-search'); var row = inp && inp.parentNode;
+    if (inp) { inp.placeholder = 'Search ingredients…'; inp.removeAttribute('style'); inp.setAttribute('autocomplete', 'off'); }
+    var top = document.createElement('div'); top.className = 'lb-top';
+    top.innerHTML = '<div class="lb-top-s" id="lbSearchSlotI"></div><div class="lb-acts"><button type="button" class="lb-act pri" onclick="lbOpenCreate(\'ing\')">' + ICON.plus + '<span>Add ingredient</span></button></div>';
+    row.parentNode.insertBefore(top, row);
+    wrapSearch(inp); $('lbSearchSlotI').appendChild(inp.parentNode);
+    row.style.display = 'none';
+    var chips = document.createElement('div'); chips.className = 'lb-chips'; chips.id = 'lbIngScope';
+    top.parentNode.insertBefore(chips, top.nextSibling);
+    var sum = document.createElement('div'); sum.className = 'lb-sum'; sum.id = 'lbSumI';
+    chips.parentNode.insertBefore(sum, chips.nextSibling);
+    var heads = page.querySelectorAll(':scope > .sec-head');
+    var addHead = heads[0], box = addHead && addHead.nextElementSibling;
+    if (addHead && box) {
+      var cs = document.createElement('div'); cs.className = 'lb-create'; cs.id = 'ilCreate';
+      cs.innerHTML = '<div class="lb-cbd" onclick="lbCloseCreate()"></div><div class="lb-cp"><div class="lb-ch"><b>New ingredient</b><button type="button" class="lb-x" onclick="lbCloseCreate()" aria-label="Close">' + ICON.close + '</button></div><div class="lb-cb"></div></div>';
+      document.body.appendChild(cs); addHead.style.display = 'none'; cs.querySelector('.lb-cb').appendChild(box);
+      var ig = document.createElement('div'); ig.className = 'inp-group'; ig.style.marginBottom = '10px';
+      ig.innerHTML = '<div class="inp-label">Image link (optional)</div><input class="inp" id="il-img" type="url" placeholder="Paste an image link — or leave blank" autocomplete="off"/>';
+      var btn = box.querySelector('button.btn.full'); if (btn) box.insertBefore(ig, btn);
+    }
+  }
+  window.lbOpenCreate = function (kind) {
+    buildMeals(); buildIngs();
+    var el = $(kind === 'ing' ? 'ilCreate' : 'mlCreate'); if (!el) return;
+    lbCloseCreate(); el.classList.add('on'); document.body.classList.add('lb-lock');
+    setTimeout(function () { var f = $(kind === 'ing' ? 'il-name' : 'mla-name'); if (f) { try { f.focus({ preventScroll: true }); } catch (e) { } } }, 280);
+  };
+  window.lbCloseCreate = function () {
+    document.querySelectorAll('.lb-create.on').forEach(function (e) { e.classList.remove('on'); });
+    if (!$('lbOv') || !$('lbOv').classList.contains('on')) document.body.classList.remove('lb-lock');
+  };
+
+  /* =================================================================
+     5. MEALS PAGE RENDER
+     ================================================================= */
+  function mealRow(m) {
+    var id = esc(m.id);
+    return '<div class="lb-row" onclick="lbOpenMeal(\'' + id + '\')" role="button" tabindex="0"><div class="lb-th">' + im(forMeal(m), '', m.name) + '</div>'
+      + '<div class="lb-rt"><b>' + esc(m.name) + '</b><span class="lb-l2"><em>' + rd(m.kcal) + ' kcal</em>' + dots(m.protein, m.carbs, m.fat) + '</span></div>'
+      + '<button type="button" class="lb-fv' + (m.fav ? ' on' : '') + '" onclick="event.stopPropagation();lbFav(\'' + id + '\')" aria-label="Favorite">' + ICON.heart + '</button>'
+      + '<button type="button" class="lb-plus" onclick="event.stopPropagation();lbLogMeal(\'' + id + '\')" aria-label="Log this meal">' + ICON.plus + '</button></div>';
+  }
+  function mealCard(m) {
+    var id = esc(m.id);
+    return '<div class="lb-card" onclick="lbOpenMeal(\'' + id + '\')" role="button" tabindex="0"><div class="lb-cimg">' + im(forMeal(m), '', m.name)
+      + '<button type="button" class="lb-fv on" onclick="event.stopPropagation();lbFav(\'' + id + '\')" aria-label="Remove from favorites">' + ICON.heart + '</button></div>'
+      + '<b>' + esc(m.name) + '</b><small>' + rd(m.kcal) + ' kcal</small></div>';
+  }
+  function emptyBlock(slotId, title, text, btn) {
+    return '<div class="lb-empty">' + im(slot(slotId) || WHITE, 'e', '') + '<b>' + title + '</b><p>' + text + '</p>' + (btn || '') + '</div>';
+  }
+  window.renderMealLibrary = function () {
+    var s = sget(); if (!s) return; if (!s.mealLibrary) s.mealLibrary = [];
+    buildMeals();
+    var lib = s.mealLibrary, total = lib.length;
+    var cats = {}; lib.forEach(function (m) { cats[m.type] = 1; });
+    var avgCal = total ? rd(lib.reduce(function (a, m) { return a + (m.kcal || 0); }, 0) / total) : 0;
+    var avgPro = total ? rd(lib.reduce(function (a, m) { return a + (m.protein || 0); }, 0) / total) : 0;
+    var set = function (id, v) { var e = $(id); if (e) e.textContent = v; };
+    set('ml-total', total); set('ml-cats', Object.keys(cats).length); set('ml-avgcal', avgCal); set('ml-avgpro', avgPro + 'g'); set('mlBadge', total);
+    var sum = $('lbSum'); if (sum) sum.innerHTML = total ? '<b>' + total + '</b> saved · avg <b>' + avgCal + '</b> kcal · <b>' + avgPro + '</b> g protein' : '';
+    var q = (($('ml-search') || {}).value || '').toLowerCase().trim(), f = ($('ml-filter') || {}).value || '';
+    var chips = $('lbTypes');
+    if (chips) {
+      var all = [''].concat(TYPES);
+      chips.innerHTML = all.map(function (t) { return '<button type="button" class="lb-chip' + (f === t ? ' on' : '') + '" onclick="lbType(\'' + t + '\')">' + (t || 'All') + '</button>'; }).join('');
+    }
+    var list = $('mlList'); if (!list) return;
+    if (!total) { list.innerHTML = emptyBlock('empty.meals', 'No meals saved yet', 'Save a meal once, then log it again in one tap.', '<button type="button" class="lb-act pri" onclick="lbOpenCreate(\'meal\')">' + ICON.plus + '<span>Create your first meal</span></button>'); return; }
+    var flt = lib.filter(function (m) { return (!q || String(m.name || '').toLowerCase().indexOf(q) >= 0 || String(m.notes || '').toLowerCase().indexOf(q) >= 0) && (!f || m.type === f); });
+    var h = '';
+    if (q || f) {
+      h += '<div class="lb-h"><b>Results</b><span>' + flt.length + '</span></div>';
+      h += flt.length ? '<div class="lb-rows">' + flt.map(mealRow).join('') + '</div>' : '<div class="lb-none">No meals match.</div>';
+      list.innerHTML = h; return;
+    }
+    var favs = lib.filter(function (m) { return m.fav; });
+    h += '<div class="lb-h"><b>Favorites</b>' + (favs.length > 4 ? '<button type="button" onclick="lbToggleFav()">' + (UI.favAll ? 'Show less' : 'See all') + '</button>' : '') + '</div>';
+    h += favs.length ? '<div class="lb-grid">' + (UI.favAll ? favs : favs.slice(0, 4)).map(mealCard).join('') + '</div>'
+      : '<div class="lb-favempty">' + im(slot('empty.favs') || WHITE, 'e', '') + '<span>Tap the <i>♥</i> on a meal to keep your go-to meals here.</span></div>';
+    var logged = lib.filter(function (m) { return m.lastLogged; }).sort(function (a, b) { return b.lastLogged - a.lastLogged; }).slice(0, 5), rtitle = 'Recent meals';
+    if (!logged.length) { logged = lib.slice().sort(function (a, b) { return num(b.id) - num(a.id); }).slice(0, 4); rtitle = 'Recently added'; }
+    h += '<div class="lb-h"><b>' + rtitle + '</b></div><div class="lb-rows">' + logged.map(mealRow).join('') + '</div>';
+    var shown = flt.slice(0, UI.mealLimit);
+    h += '<div class="lb-h"><b>All meals</b><span>' + total + '</span></div><div class="lb-rows">' + shown.map(mealRow).join('') + '</div>';
+    if (flt.length > shown.length) h += '<button type="button" class="lb-more" onclick="UI_more(\'meal\')">Show more (' + (flt.length - shown.length) + ')</button>';
+    list.innerHTML = h;
+  };
+  window.UI_more = function (k) { if (k === 'meal') { UI.mealLimit += 20; renderMealLibrary(); } else { UI.ingLimit += 40; renderIngredientLibrary(); } };
+  window.lbType = function (t) { var s = $('ml-filter'); if (s) s.value = t; renderMealLibrary(); };
+  window.lbToggleFav = function () { UI.favAll = !UI.favAll; renderMealLibrary(); };
+  window.lbFav = function (id) {
+    var m = mealById(id); if (!m) return;
+    m.fav = !m.fav; sav(); renderMealLibrary();
+    if (LB && LB.kind === 'meal' && String(LB.id) === String(id)) lbRefresh();
+    tst(m.fav ? '♥ Added to favorites' : 'Removed from favorites');
+  };
+  window.lbLogMeal = function (id) { if (typeof logLibraryMealById === 'function') logLibraryMealById(mealById(id) ? mealById(id).id : id); };
+
+  /* =================================================================
+     6. INGREDIENTS PAGE RENDER
+     ================================================================= */
+  function ingMac(i, mult) {
+    mult = mult || 1;
+    return '<em>' + rd(i.cal * mult) + ' kcal</em>' + dots(i.pro * mult, i.carb * mult, i.fat * mult);
+  }
+  function ingRowMine(item, lib, selected) {
+    var idx = lib.indexOf(item), bw = item.baseWeight || 100, id = esc(item.id), u = esc(item.unit || 'g');
+    return '<div class="lb-wrap' + (selected ? ' sel' : '') + '" data-id="' + id + '" data-idx="' + idx + '" draggable="true" ondragstart="ilDragStart(event,' + idx + ')" ondragover="ilDragOver(event,' + idx + ')" ondrop="ilDrop(event,' + idx + ')" ondragend="ilDragEnd()">'
+      + '<div class="lb-row" onclick="lbOpenIng(\'' + id + '\')" role="button" tabindex="0">'
+      + '<input type="checkbox" class="lb-cb2" ' + (selected ? 'checked ' : '') + 'onclick="event.stopPropagation()" onchange="ilToggleSel(' + item.id + ',this.checked)" aria-label="Select">'
+      + '<div class="lb-th">' + im(forIng(item), '', item.name) + '</div>'
+      + '<div class="lb-rt"><b>' + esc(item.name) + '</b><span class="lb-l2"><u>per ' + bw + u + '</u>' + ingMac(item) + '</span></div>'
+      + '<button type="button" class="lb-ib2" onclick="event.stopPropagation();openIngredientEdit(' + item.id + ')" aria-label="Edit values">' + ICON.pen + '</button>'
+      + '<button type="button" class="lb-ib2 del" onclick="event.stopPropagation();deleteIngredientFromLibrary(' + item.id + ')" aria-label="Delete">' + ICON.trash + '</button></div>'
+      + '<div class="edit-form" id="il-edit-' + id + '">'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'
+      + '<div class="inp-group" style="flex:3;min-width:120px"><div class="inp-label">Name</div><input class="inp" id="ile-name-' + id + '" type="text" value="' + esc(item.name) + '"/></div>'
+      + '<div class="inp-group" style="flex:1;min-width:70px"><div class="inp-label">Base</div><input class="inp" id="ile-base-' + id + '" type="number" value="' + bw + '"/></div>'
+      + '<div class="inp-group" style="min-width:65px"><div class="inp-label">Unit</div><select class="inp" id="ile-unit-' + id + '">' + ['g', 'pcs', 'ml', 'kg', 'oz', 'tbsp', 'tsp'].map(function (x) { return '<option value="' + x + '"' + ((item.unit || 'g') === x ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></div></div>'
+      + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">'
+      + [['cal', 'Cal'], ['pro', 'PRO(g)'], ['carb', 'CARB(g)'], ['fat', 'FAT(g)'], ['fiber', 'FIBER(g)']].map(function (x) { return '<div class="inp-group"><div class="inp-label">' + x[1] + '</div><input class="inp" id="ile-' + x[0] + '-' + id + '" type="number" value="' + (item[x[0]] || 0) + '"/></div>'; }).join('')
+      + '</div><div class="edit-form-actions"><button class="btn sm" onclick="saveIngredientEdit(' + item.id + ')">Save</button><button class="btn sm danger" onclick="openIngredientEdit(' + item.id + ')">Cancel</button></div></div></div>';
+  }
+  function ingRowMain(item) {
+    var id = esc(item.id), bw = item.baseWeight || 100;
+    return '<div class="lb-wrap"><div class="lb-row" onclick="lbOpenIng(\'' + id + '\')" role="button" tabindex="0">'
+      + '<div class="lb-th">' + im(forIng(item), '', item.name) + '</div>'
+      + '<div class="lb-rt"><b>' + esc(item.name) + ' <span class="lb-tag">MAIN</span></b><span class="lb-l2"><u>per ' + bw + esc(item.unit || 'g') + '</u>' + ingMac(item) + '</span></div>'
+      + '<button type="button" class="lb-copy" onclick="event.stopPropagation();ilCopyGlobal(\'' + id + '\')" title="Copy to my library to customise">Copy</button></div></div>';
+  }
+  window.lbIngScope = function (k) { UI.ingScope = k; UI.ingLimit = 40; renderIngredientLibrary(); };
+  window.renderIngredientLibrary = function () {
+    var s = sget(); if (!s) return; if (!s.ingredientLibrary) s.ingredientLibrary = [];
+    buildIngs();
+    var lib = s.ingredientLibrary, total = lib.length, main = [];
+    try { main = GLOBAL_INGREDIENTS || []; } catch (e) { }
+    var set = function (id, v) { var e = $(id); if (e) e.textContent = v; };
+    var avgCal = total ? rd(lib.reduce(function (a, i) { return a + i.cal; }, 0) / total) : 0;
+    var avgPro = total ? (lib.reduce(function (a, i) { return a + i.pro; }, 0) / total).toFixed(1) : 0;
+    var last = total ? lib[lib.length - 1].name : '—';
+    set('il-total', total); set('il-avgcal', avgCal); set('il-avgpro', avgPro + 'g'); set('il-last', last.length > 12 ? last.slice(0, 12) + '…' : last);
+    try { set('ilBadge', getAllIngredients().length); } catch (e) { set('ilBadge', total); }
+    var q = (($('il-search') || {}).value || '').toLowerCase().trim();
+    var sortVal = (($('il-sort') || {}).value) || UI.sort || 'default'; UI.sort = sortVal;
+    var chips = $('lbIngScope');
+    if (chips) {
+      var sc = [['all', 'All'], ['mine', 'My items (' + total + ')']]; if (main.length) sc.push(['main', 'Main library (' + main.length + ')']);
+      chips.innerHTML = sc.map(function (x) { return '<button type="button" class="lb-chip' + (UI.ingScope === x[0] ? ' on' : '') + '" onclick="lbIngScope(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('');
+    }
+    var sum = $('lbSumI'); if (sum) sum.innerHTML = total ? '<b>' + total + '</b> of your own · avg <b>' + avgCal + '</b> kcal · <b>' + avgPro + '</b> g protein per base' : '';
+    var box = $('ilList'); if (!box) return;
+    var gl = $('ilGlobalList'); if (gl) gl.innerHTML = '';
+    var mine = q ? lib.filter(function (i) { return i.name.toLowerCase().indexOf(q) >= 0; }) : lib.slice();
+    if (sortVal === 'name-az') mine.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    else if (sortVal === 'name-za') mine.sort(function (a, b) { return b.name.localeCompare(a.name); });
+    else if (sortVal === 'cal-hi') mine.sort(function (a, b) { return b.cal - a.cal; });
+    else if (sortVal === 'cal-lo') mine.sort(function (a, b) { return a.cal - b.cal; });
+    else if (sortVal === 'pro-hi') mine.sort(function (a, b) { return b.pro - a.pro; });
+    var mn = q ? main.filter(function (i) { return i.name.toLowerCase().indexOf(q) >= 0; }) : main.slice();
+    if (sortVal === 'name-az') mn.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    else if (sortVal === 'name-za') mn.sort(function (a, b) { return b.name.localeCompare(a.name); });
+    else if (sortVal === 'cal-hi') mn.sort(function (a, b) { return b.cal - a.cal; });
+    else if (sortVal === 'cal-lo') mn.sort(function (a, b) { return a.cal - b.cal; });
+    else if (sortVal === 'pro-hi') mn.sort(function (a, b) { return b.pro - a.pro; });
+    var showMine = UI.ingScope !== 'main', showMain = UI.ingScope !== 'mine';
+    var h = '';
+    try { _ilSelected.forEach(function (id) { if (!lib.some(function (i) { return i.id === id; })) _ilSelected.delete(id); }); } catch (e) { }
+    var selCount = 0; try { selCount = _ilSelected.size; } catch (e) { }
+    if (showMine && lib.length) {
+      var allSel = mine.length > 0 && mine.every(function (i) { return _ilSelected.has(i.id); });
+      h += '<div class="lb-tool"><label class="lb-sel"><input type="checkbox" class="lib-chk-all" ' + (allSel ? 'checked' : '') + ' onchange="ilSelectAll(this.checked)"><span>' + (selCount ? selCount + ' selected' : 'Select') + '</span></label>'
+        + (selCount ? '<button type="button" class="lb-tb" onclick="ilBulkLog()">Log</button><button type="button" class="lb-tb" onclick="ilBulkEdit()">Edit</button><button type="button" class="lb-tb danger" onclick="ilBulkDelete()">Delete</button>' : '')
+        + '<select class="lb-sort" id="il-sort" onchange="renderIngredientLibrary()"><option value="default">Sort: Default</option><option value="name-az">Name A→Z</option><option value="name-za">Name Z→A</option><option value="cal-hi">Calories ↓</option><option value="cal-lo">Calories ↑</option><option value="pro-hi">Protein ↓</option></select></div>';
+    }
+    var left = UI.ingLimit;
+    if (showMine) {
+      h += '<div class="lb-h"><b>My ingredients</b><span>' + mine.length + '</span></div>';
+      if (!lib.length) h += emptyBlock('empty.ing', 'No ingredients yet', 'Add the foods you eat often with their nutrition per base amount.', '<button type="button" class="lb-act pri" onclick="lbOpenCreate(\'ing\')">' + ICON.plus + '<span>Add your first ingredient</span></button>');
+      else if (!mine.length) h += '<div class="lb-none">No match in your items.</div>';
+      else { var mm = mine.slice(0, left); left -= mm.length; h += '<div class="lb-rows">' + mm.map(function (i) { return ingRowMine(i, lib, _ilSelected.has(i.id)); }).join('') + '</div>'; }
+    }
+    var more = (showMine ? mine.length - Math.min(mine.length, UI.ingLimit) : 0);
+    if (showMain && main.length) {
+      h += '<div class="lb-h"><b>Main library</b><span>' + mn.length + ' · shared, read-only</span></div>';
+      if (!mn.length) h += '<div class="lb-none">No match in the main library.</div>';
+      else { var mp = mn.slice(0, Math.max(left, 0)); h += '<div class="lb-rows">' + mp.map(ingRowMain).join('') + '</div>'; more += mn.length - mp.length; }
+    }
+    if (more > 0) h += '<button type="button" class="lb-more" onclick="UI_more(\'ing\')">Show more (' + more + ')</button>';
+    box.innerHTML = h;
+    var so = $('il-sort'); if (so) so.value = sortVal;
+  };
+  var _rgb = window.renderGlobalIngredientBlock; window.renderGlobalIngredientBlock = function () { var g = $('ilGlobalList'); if (g) g.innerHTML = ''; };
+
+  /* =================================================================
+     7. DETAIL VIEW (meal / ingredient)
+     ================================================================= */
+  var LB = null;
+  function ensureOv() {
+    var ov = $('lbOv');
+    if (!ov) { ov = document.createElement('div'); ov.id = 'lbOv'; ov.className = 'lb-ov'; ov.innerHTML = '<div class="lb-bd" onclick="lbClose()"></div><div class="lb-sheet" id="lbSheet" role="dialog" aria-modal="true"></div>'; document.body.appendChild(ov); }
+    return ov;
+  }
+  function model() {
+    if (!LB) return null;
+    if (LB.kind === 'meal') {
+      var m = mealById(LB.id); if (!m) return null;
+      return { kind: 'meal', raw: m, name: m.name, img: forMeal(m), k: num(m.kcal), p: num(m.protein), c: num(m.carbs), f: num(m.fat), fb: num(m.fiber), type: m.type, ings: m.ingredients || [], notes: m.notes || '', fav: !!m.fav, own: true };
+    }
+    var i = ingById(LB.id); if (!i) return null;
+    var bw = i.baseWeight || 100, amt = LB.amt > 0 ? LB.amt : bw, r = amt / bw;
+    return { kind: 'ing', raw: i, name: i.name, img: forIng(i), k: num(i.cal) * r, p: num(i.pro) * r, c: num(i.carb) * r, f: num(i.fat) * r, fb: num(i.fiber) * r, unit: i.unit || 'g', base: bw, amt: amt, own: !i._global, main: !!i._global };
+  }
+  function bodyHTML(M) {
+    var h = '<button type="button" class="lb-ib l" onclick="lbClose()" aria-label="Back">' + ICON.back + '</button>'
+      + (M.kind === 'meal' ? '<button type="button" class="lb-ib r fv' + (M.fav ? ' on' : '') + '" onclick="lbFav(\'' + esc(LB.id) + '\')" aria-label="Favorite">' + ICON.heart + '</button>' : '')
+      + '<div class="lb-scroll"><div class="lb-hero">' + im(M.img, 'lb-hi', M.name) + '</div><div class="lb-body">';
+    h += '<div class="lb-rings" id="lbRings">' + ringsHTML(M.k, M.p, M.c, M.f) + '</div><div class="lb-rcap">Share of your daily goals</div>';
+    h += '<h2 class="lb-title">' + esc(M.name) + (M.main ? ' <span class="lb-tag">MAIN</span>' : '') + '</h2>';
+    if (M.kind === 'meal') {
+      h += '<div class="lb-subl"><span>' + ICON.fire + '<span id="lbKc">' + rd(M.k) + ' kcal</span></span><i></i><span>' + ICON.list + M.ings.length + ' ingredient' + (M.ings.length === 1 ? '' : 's') + '</span>' + (M.type && M.type !== 'Meal' ? '<i></i><span>' + esc(M.type) + '</span>' : '') + '</div>';
+    } else {
+      h += '<div class="lb-amt"><label for="lbAmt">Amount</label><div class="lb-amtb"><button type="button" onclick="lbAmtStep(-1)" aria-label="Less">−</button><input id="lbAmt" type="number" min="0" step="any" value="' + (r1(M.amt)) + '" oninput="lbAmtIn(this.value)"><span>' + esc(M.unit) + '</span><button type="button" onclick="lbAmtStep(1)" aria-label="More">+</button></div><small>Base: ' + M.base + esc(M.unit) + '</small></div>';
+    }
+    h += '<div class="lb-chips2" id="lbTags">' + tagsFor(M.k, M.p, M.c, M.f, M.fb, M.ings && M.ings.length).map(function (t, i) { return '<span class="' + (i === 0 ? 'on' : '') + '">' + t + '</span>'; }).join('') + '</div>';
+    if (M.kind === 'meal') {
+      h += '<div class="lb-hd">Ingredients</div>';
+      h += M.ings.length ? '<div class="lb-ings">' + M.ings.map(function (g) { return '<div><span>' + esc(g.name) + '</span><em>' + esc(g.weight) + ' g</em><b>' + rd(num(g.cal)) + ' kcal</b></div>'; }).join('') + '</div>' : '<div class="lb-none" style="text-align:left">No ingredient breakdown saved for this meal.</div>';
+      if (M.notes) h += '<div class="lb-hd">Notes</div><div class="lb-note">' + esc(M.notes) + '</div>';
+    }
+    h += '<div class="lb-hd">Micros &amp; insights</div><div class="lb-ins"><div class="lb-mini"><span><i style="background:' + COL.p + '"></i>Protein <b id="lbmp">' + r1(M.p) + 'g</b></span><span><i style="background:' + COL.c + '"></i>Carbs <b id="lbmc">' + r1(M.c) + 'g</b></span><span><i style="background:' + COL.f + '"></i>Fat <b id="lbmf">' + r1(M.f) + 'g</b></span><span><i style="background:var(--t2)"></i>Fiber <b id="lbmb">' + r1(M.fb) + 'g</b></span></div><p id="lbInsT">' + insightsFor(M.k, M.p, M.c, M.f, M.fb) + '</p><small>Auto-generated from the macros.</small></div>';
+    if (M.own) {
+      h += '<details class="lb-imgedit"><summary>' + ICON.pen + 'Change image</summary><div class="lb-imgrow"><input id="lbImgIn" type="url" class="inp" placeholder="Paste an image link (https://…)" value="' + esc(M.raw.img || '') + '" autocomplete="off"><button type="button" class="lb-tb" onclick="lbImgSave()">Save</button><button type="button" class="lb-tb" onclick="lbImgClear()">Use default</button></div><small>Direct image link, or a Google Drive / Dropbox / GitHub share link. Leave empty to use the default picture.</small></details>';
+    }
+    h += '</div></div><div class="lb-foot">';
+    if (M.kind === 'meal') h += '<button type="button" class="lb-fb del" onclick="lbDel()" aria-label="Delete meal">' + ICON.trash + '</button><button type="button" class="lb-fb pri" onclick="lbLogCur()">Log meal</button>';
+    else if (M.main) h += '<button type="button" class="lb-fb" onclick="lbCopyCur()">Copy to my library</button><button type="button" class="lb-fb pri" onclick="lbLogCur()">Log ingredient</button>';
+    else h += '<button type="button" class="lb-fb del" onclick="lbDel()" aria-label="Delete ingredient">' + ICON.trash + '</button><button type="button" class="lb-fb" onclick="lbEditCur()">Edit values</button><button type="button" class="lb-fb pri" onclick="lbLogCur()">Log ingredient</button>';
+    h += '</div>';
+    return h;
+  }
+  function lbShow() {
+    var M = model(); if (!M) return false;
+    var ov = ensureOv(), sh = $('lbSheet'); sh.innerHTML = bodyHTML(M); sh.classList.remove('sc');
+    var sc = sh.querySelector('.lb-scroll'); if (sc) sc.addEventListener('scroll', function () { sh.classList.toggle('sc', sc.scrollTop > 190); }, { passive: true });
+    return true;
+  }
+  function lbRefresh() {
+    var ov = $('lbOv'); if (!ov || !ov.classList.contains('on') || !LB) return;
+    var sc = ov.querySelector('.lb-scroll'), y = sc ? sc.scrollTop : 0;
+    if (!lbShow()) { lbClose(); return; }
+    var sc2 = ov.querySelector('.lb-scroll'); if (sc2) sc2.scrollTop = y;
+  }
+  function openDetail(kind, id) {
+    LB = { kind: kind, id: id, amt: 0 };
+    if (!lbShow()) { LB = null; return; }
+    var ov = $('lbOv'); ov.classList.add('on'); document.body.classList.add('lb-lock');
+    var sc = ov.querySelector('.lb-scroll'); if (sc) sc.scrollTop = 0;
+    setTimeout(function () { try { ov.querySelector('.lb-ib.l').focus({ preventScroll: true }); } catch (e) { } }, 300);
+  }
+  window.lbOpenMeal = function (id) { openDetail('meal', id); };
+  window.lbOpenIng = function (id) { openDetail('ing', id); };
+  window.lbClose = function () {
+    var ov = $('lbOv'); if (!ov || !ov.classList.contains('on')) return;
+    ov.classList.remove('on'); LB = null;
+    if (!document.querySelector('.lb-create.on')) document.body.classList.remove('lb-lock');
+  };
+  window.lbAmtIn = function (v) {
+    if (!LB || LB.kind !== 'ing') return; LB.amt = Math.max(0, num(v));
+    var M = model(); if (!M) return;
+    var r = $('lbRings'); if (r) r.innerHTML = ringsHTML(M.k, M.p, M.c, M.f);
+    var t = $('lbTags'); if (t) t.innerHTML = tagsFor(M.k, M.p, M.c, M.f, M.fb, 0).map(function (x, i) { return '<span class="' + (i === 0 ? 'on' : '') + '">' + x + '</span>'; }).join('');
+    var set = function (id, v) { var e = $(id); if (e) e.textContent = v; };
+    set('lbmp', r1(M.p) + 'g'); set('lbmc', r1(M.c) + 'g'); set('lbmf', r1(M.f) + 'g'); set('lbmb', r1(M.fb) + 'g'); set('lbInsT', insightsFor(M.k, M.p, M.c, M.f, M.fb));
+  };
+  window.lbAmtStep = function (d) {
+    var M = model(); if (!M) return; var step = M.base >= 50 ? 10 : 1; var n = Math.max(0, M.amt + d * step);
+    LB.amt = n; var inp = $('lbAmt'); if (inp) inp.value = r1(n); lbAmtIn(n);
+  };
+  window.lbImgSave = function () {
+    var M = model(); if (!M || !M.own) return; var v = (($('lbImgIn') || {}).value || '').trim();
+    if (v && !clean(v)) { tst('That link does not look like an image link'); return; }
+    M.raw.img = v ? clean(v) : ''; if (!M.raw.img) delete M.raw.img; sav(); refreshAll(); tst(v ? 'Image updated' : 'Using the default image');
+  };
+  window.lbImgClear = function () { var i = $('lbImgIn'); if (i) i.value = ''; lbImgSave(); };
+  window.lbDel = function () {
+    if (!LB) return; var s = sget();
+    if (LB.kind === 'meal') { var idx = s.mealLibrary.indexOf(mealById(LB.id)); if (idx < 0) return; var n = s.mealLibrary.length; deleteLibraryMeal(idx); if (s.mealLibrary.length < n) lbClose(); }
+    else { var it = ingById(LB.id); if (!it || it._global) return; var c = s.ingredientLibrary.length; deleteIngredientFromLibrary(it.id); if (s.ingredientLibrary.length < c) lbClose(); }
+  };
+  window.lbEditCur = function () { if (!LB) return; var id = LB.id; lbClose(); setTimeout(function () { try { openIngredientEdit(isNaN(+id) ? id : +id); var e = $('il-edit-' + id); if (e) e.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (x) { } }, 120); };
+  window.lbCopyCur = function () { if (!LB) return; ilCopyGlobal(String(LB.id)); };
+  window.lbLogCur = function () {
+    var M = model(); if (!M) return;
+    if (M.kind === 'meal') { logLibraryMealById(M.raw.id); return; }
+    var amt = M.amt, i = M.raw, ig = { name: i.name, weight: r1(amt), cal: r1(M.k), pro: r1(M.p), carb: r1(M.c), fat: r1(M.f), fiber: r1(M.fb) };
+    var tmp = { name: i.name + ' (' + r1(amt) + esc(M.unit) + ')', kcal: rd(M.k), protein: rd(M.p), carbs: rd(M.c), fat: rd(M.f), img: M.img, __ing: true };
+    showMealTypeModal(tmp, function (type) {
+      var d = getDay((typeof ntrDate !== 'undefined' && ntrDate) || S.today), now = new Date();
+      d.meals.push({ name: i.name, type: type, time: ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2), kcal: rd(M.k), protein: rd(M.p), carbs: rd(M.c), fat: rd(M.f), fiber: rd(M.fb), omega3: 0, notes: r1(amt) + ' ' + M.unit + ' · from library', ingredients: [ig] });
+      try { sortMealsByType(d.meals); } catch (e) { }
+      sav(); try { renderNutrition(); } catch (e) { } tst('✅ ' + i.name + ' logged as ' + type + '!');
+    });
+  };
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var mt = $('mealTypeModal'); if (mt) { mt.remove(); return; }
+    if ($('lbQuick') && $('lbQuick').classList.contains('on')) { lbQuickClose(); return; }
+    if (document.querySelector('.lb-create.on')) { lbCloseCreate(); return; }
+    if ($('lbOv') && $('lbOv').classList.contains('on')) lbClose();
+  });
+
+  /* =================================================================
+     8. QUICK ADD
+     ================================================================= */
+  window.lbQuickOpen = function () {
+    var q = $('lbQuick');
+    if (!q) {
+      q = document.createElement('div'); q.id = 'lbQuick'; q.className = 'lb-create lb-q';
+      q.innerHTML = '<div class="lb-cbd" onclick="lbQuickClose()"></div><div class="lb-cp"><div class="lb-ch"><b>Quick add</b><button type="button" class="lb-x" onclick="lbQuickClose()" aria-label="Close">' + ICON.close + '</button></div><div class="lb-cb">'
+        + '<p class="lb-qp">Log calories and macros straight into today — no ingredients needed.</p>'
+        + '<div class="inp-group" style="margin-bottom:10px"><div class="inp-label">Meal name</div><input class="inp" id="lbq-name" type="text" placeholder="e.g. Protein shake" autocomplete="off"/></div>'
+        + '<div class="lb-qg"><div class="inp-group"><div class="inp-label">Calories</div><input class="inp" id="lbq-k" type="number" min="0" placeholder="0"/></div><div class="inp-group"><div class="inp-label">Protein (g)</div><input class="inp" id="lbq-p" type="number" min="0" placeholder="0"/></div><div class="inp-group"><div class="inp-label">Carbs (g)</div><input class="inp" id="lbq-c" type="number" min="0" placeholder="0"/></div><div class="inp-group"><div class="inp-label">Fat (g)</div><input class="inp" id="lbq-f" type="number" min="0" placeholder="0"/></div></div>'
+        + '<div class="inp-group" style="margin:10px 0"><div class="inp-label">Meal type</div><select class="inp" id="lbq-t">' + TYPES.map(function (t) { return '<option>' + t + '</option>'; }).join('') + '</select></div>'
+        + '<label class="lb-chk"><input type="checkbox" id="lbq-s"> Also save to my meal library</label>'
+        + '<button type="button" class="btn full" onclick="lbQuickGo()">Log to today</button></div></div>';
+      document.body.appendChild(q);
+    }
+    $('lbq-t').value = suggestType();
+    lbCloseCreate(); q.classList.add('on'); document.body.classList.add('lb-lock');
+    setTimeout(function () { try { $('lbq-name').focus({ preventScroll: true }); } catch (e) { } }, 280);
+  };
+  window.lbQuickClose = function () { var q = $('lbQuick'); if (q) q.classList.remove('on'); if (!document.querySelector('.lb-create.on') && !($('lbOv') && $('lbOv').classList.contains('on'))) document.body.classList.remove('lb-lock'); };
+  window.lbQuickGo = function () {
+    var g = function (id) { return ($(id) || {}).value; }, k = num(g('lbq-k')), p = num(g('lbq-p')), c = num(g('lbq-c')), f = num(g('lbq-f')), type = g('lbq-t') || 'Snack';
+    if (!(k > 0) && !(p > 0) && !(c > 0) && !(f > 0)) { tst('Enter calories or macros'); return; }
+    var kc = k > 0 ? k : p * 4 + c * 4 + f * 9, name = String(g('lbq-name') || '').trim() || type, now = new Date();
+    var d = getDay((typeof ntrDate !== 'undefined' && ntrDate) || S.today);
+    var meal = { name: name, type: type, time: ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2), kcal: rd(kc), protein: rd(p), carbs: rd(c), fat: rd(f), fiber: 0, omega3: 0, notes: 'quick add', ingredients: [] };
+    d.meals.push(meal); try { sortMealsByType(d.meals); } catch (e) { }
+    if ($('lbq-s') && $('lbq-s').checked) { try { saveMealToLibrary({ name: name, type: type, kcal: meal.kcal, protein: meal.protein, carbs: meal.carbs, fat: meal.fat, fiber: 0, notes: '', ingredients: [] }); } catch (e) { } }
+    sav(); try { renderNutrition(); } catch (e) { }
+    ['lbq-name', 'lbq-k', 'lbq-p', 'lbq-c', 'lbq-f'].forEach(function (id) { $(id).value = ''; }); $('lbq-s').checked = false;
+    lbQuickClose(); tst('✅ ' + name + ' logged as ' + type + '!');
+  };
+
+  /* =================================================================
+     9. "LOG AS" SHEET (replaces the old meal-type popup)
+     ================================================================= */
+  window.showMealTypeModal = function (meal, callback) {
+    var old = $('mealTypeModal'); if (old) old.remove();
+    var sug = suggestType(), modal = document.createElement('div'); modal.id = 'mealTypeModal'; modal.className = 'lb-mt';
+    var pic = meal.img ? clean(meal.img) || WHITE : (meal.id != null ? forMeal(meal) : forMeal(meal));
+    modal.innerHTML = '<div class="lb-mt-bd" onclick="document.getElementById(\'mealTypeModal\').remove()"></div><div class="lb-mt-card" role="dialog" aria-modal="true" aria-label="Log meal">'
+      + '<div class="lb-mt-top"><div class="lb-th lg">' + im(pic, '', meal.name) + '</div><div class="lb-rt"><small>Log meal</small><b>' + esc(meal.name) + '</b><span class="lb-l2"><em>' + rd(num(meal.kcal)) + ' kcal</em>' + dots(num(meal.protein), num(meal.carbs), num(meal.fat)) + '</span></div></div>'
+      + '<div class="lb-mt-q">Log as</div><div class="lb-mt-g">' + TYPES.map(function (t) { return '<button type="button" class="' + (t === sug ? 'sug' : '') + '" onclick="document.getElementById(\'mealTypeModal\')._cb(\'' + t + '\')">' + t + '</button>'; }).join('') + '</div>'
+      + '<button type="button" class="lb-mt-x" onclick="document.getElementById(\'mealTypeModal\').remove()">Cancel</button></div>';
+    modal._cb = function (type) {
+      modal.remove();
+      try { if (meal && meal.id != null && !meal.__ing) { meal.lastLogged = Date.now(); meal.logCount = (meal.logCount || 0) + 1; } } catch (e) { }
+      callback(type);
+      try { lbClose(); } catch (e) { }
+      try { if (typeof renderMealLibrary === 'function') renderMealLibrary(); } catch (e) { }
+    };
+    document.body.appendChild(modal);
+  };
+
+  /* =================================================================
+     10. WRAPPERS — save forms (close sheets, keep image link), Diet-log thumbnails
+     ================================================================= */
+  var _smtl = window.saveMealToLibrary;
+  if (typeof _smtl === 'function') window.saveMealToLibrary = function (mealObj) {
+    var s = sget(), n0 = s && s.mealLibrary ? s.mealLibrary.length : 0, link = '';
+    if (!mealObj) link = clean(($('mla-img') || {}).value);
+    var r = _smtl.apply(this, arguments);
+    try {
+      if (s.mealLibrary.length > n0) {
+        if (link) s.mealLibrary[s.mealLibrary.length - 1].img = link;
+        if (!mealObj) { if ($('mla-img')) $('mla-img').value = ''; lbCloseCreate(); }
+        sav(); renderMealLibrary();
+      }
+    } catch (e) { }
+    return r;
+  };
+  var _aitl = window.addIngredientToLibrary;
+  if (typeof _aitl === 'function') window.addIngredientToLibrary = function () {
+    var s = sget(), n0 = s && s.ingredientLibrary ? s.ingredientLibrary.length : 0, link = clean(($('il-img') || {}).value);
+    var r = _aitl.apply(this, arguments);
+    try {
+      if (s.ingredientLibrary.length > n0) {
+        if (link) s.ingredientLibrary[s.ingredientLibrary.length - 1].img = link;
+        if ($('il-img')) $('il-img').value = ''; lbCloseCreate(); sav(); renderIngredientLibrary();
+      }
+    } catch (e) { }
+    return r;
+  };
+  var _ilc = window.ilCopyGlobal;
+  if (typeof _ilc === 'function') window.ilCopyGlobal = function (gid) {
+    var r = _ilc.apply(this, arguments);
+    try { var g = GLOBAL_INGREDIENTS.find(function (i) { return String(i.id) === String(gid); }); var s = sget(); if (g && g.img) { var mine = s.ingredientLibrary.find(function (i) { return i.name.toLowerCase() === g.name.toLowerCase(); }); if (mine && !mine.img) { mine.img = g.img; sav(); } } renderIngredientLibrary(); } catch (e) { }
+    return r;
+  };
+  // thumbnails on the Diet page's logged meals
+  var _rn = window.renderNutrition;
+  if (typeof _rn === 'function') window.renderNutrition = function () {
+    var r = _rn.apply(this, arguments);
+    try {
+      var d = getDay((typeof ntrDate !== 'undefined' && ntrDate) || S.today), items = document.querySelectorAll('#mealList > .meal-item');
+      items.forEach(function (el, i) {
+        var m = d.meals[i], top = el.querySelector('.meal-top'); if (!m || !top || top.querySelector('.lb-lt')) return;
+        var t = document.createElement('span'); t.className = 'lb-lt'; t.innerHTML = im(forLogged(m), '', m.name); top.insertBefore(t, top.firstChild);
+      });
+    } catch (e) { }
+    return r;
+  };
+
+  /* =================================================================
+     11. INIT
+     ================================================================= */
+  function init() {
+    buildMeals(); buildIngs();
+    try { hydrate(); } catch (e) { }
+    try { if (sget()) { renderMealLibrary(); renderIngredientLibrary(); } } catch (e) { }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  // the app builds its state after login — re-render once data has arrived
+  var _tries = 0, _iv = setInterval(function () { _tries++; try { if (sget() && sget().mealLibrary && $('mlList')) { renderMealLibrary(); renderIngredientLibrary(); } } catch (e) { } if (_tries > 12) clearInterval(_iv); }, 1500);
+  ['switchLibraryTab'].forEach(function (fn) { var o = window[fn]; if (typeof o !== 'function') return; window[fn] = function () { var r = o.apply(this, arguments); try { renderMealLibrary(); renderIngredientLibrary(); } catch (e) { } return r; }; });
+})();
+
+</script>
+<script id="imgadm-js">
+/* =====================================================================
+   Admin → Images  (paste image links; Publish once → every user sees them)
+   Stored at Firestore  global/images  { v, updatedAt, updatedBy, json }
+   ===================================================================== */
+(function () {
+  'use strict';
+  if (window.__imAdm) return; window.__imAdm = 1;
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function tst(m) { try { toast(m); } catch (e) { } }
+
+  var AI = { loaded: false, busy: false, tab: 'places', q: '', iq: '', pub: null, draft: null, ing: {}, pubV: 0, ingLimit: 60 };
+  var TABS = [['places', 'Places'], ['rules', 'Auto-match'], ['ing', 'Main ingredients'], ['help', 'Backup & help']];
+
+  function blank() { return { v: 0, slots: {}, rules: [] }; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function cleanDraft() {
+    var d = { v: AI.pubV, slots: {}, rules: [] };
+    Object.keys(AI.draft.slots).forEach(function (k) { var u = IMGX.clean(AI.draft.slots[k]); if (u) d.slots[k] = u; });
+    AI.draft.rules.forEach(function (r) { var k = String(r.k || '').trim(), u = IMGX.clean(r.u); if (k && u) d.rules.push({ k: k.toLowerCase(), u: u, s: r.s || 'all' }); });
+    return d;
+  }
+  function ingChanges() { return Object.keys(AI.ing).length; }
+  function changes() {
+    if (!AI.draft) return 0;
+    var a = JSON.stringify({ s: cleanDraft().slots, r: cleanDraft().rules }), b = JSON.stringify({ s: IMGX.sanitize(AI.pub).slots, r: IMGX.sanitize(AI.pub).rules });
+    return (a === b ? 0 : 1) + ingChanges();
+  }
+  function thumb(u) { var c = IMGX.clean(u); return '<span class="im-th">' + IMGX.img(c || IMGX.WHITE, '', '') + (u && !c ? '<b class="bad" title="Not a valid image link">!</b>' : '') + '</span>'; }
+
+  window.loadAdminImages = async function (force) {
+    var host = $('adminImgBody'); if (!host) return;
+    if (AI.loaded && !force) { render(); return; }
+    host.innerHTML = '<div class="adm-empty"><b>Loading images…</b></div>';
+    try {
+      var snap = await window._fsGetDoc(window._fsDoc(window._db, 'global', 'images')), j = null, v = 0;
+      if (snap.exists()) { var d = snap.data(); v = d.v || 0; try { j = JSON.parse(d.json); } catch (e) { } }
+      AI.pub = IMGX.sanitize(j || blank()); AI.pubV = v; AI.draft = clone(AI.pub); AI.draft.rules = AI.draft.rules.map(function (r) { return { k: r.k, u: r.u, s: r.s }; });
+      AI.ing = {}; AI.loaded = true;
+      try { if (typeof ADMIN_ING_CACHE === 'undefined' || !ADMIN_ING_CACHE) await loadAdminIngredients(true); } catch (e) { }
+      render();
+    } catch (e) {
+      console.error(e);
+      host.innerHTML = '<div class="adm-empty"><b>Could not load</b><p>' + esc(e && e.message || e) + '</p><p style="font-size:12px;opacity:.8">Make sure the Firestore rules from GITHUB-GUIDE are published (global/images uses the existing <code>global</code> rule).</p><button class="adm-btn" onclick="loadAdminImages(true)">Retry</button></div>';
+    }
+  };
+
+  function statLine() {
+    var c = cleanDraft(), n = Object.keys(c.slots).length, tot = IMGX.SLOTS.length, ri = 0;
+    try { ADMIN_ING_CACHE.forEach(function (i) { var o = AI.ing[i.id]; if (o !== undefined ? IMGX.clean(o) : IMGX.clean(i.img)) ri++; }); } catch (e) { }
+    return '<b>' + n + '</b> / ' + tot + ' places · <b>' + c.rules.length + '</b> auto-match rules · <b>' + ri + '</b> main ingredients with an image';
+  }
+  function head() {
+    var n = changes();
+    return '<div class="im-top"><div class="im-stat" id="imStat">' + statLine() + '</div><div class="im-acts"><button class="adm-btn" id="imDiscard" onclick="imDiscard()"' + (n ? '' : ' disabled') + '>Discard</button><button class="adm-btn ok" id="imPub" onclick="imPublish()"' + (n ? '' : ' disabled') + '>' + (n ? 'Publish changes' : 'Published ✓') + '</button></div></div>'
+      + '<div class="adm-tabs">' + TABS.map(function (t) { return '<button class="adm-tab' + (AI.tab === t[0] ? ' on' : '') + '" onclick="imTab(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div>';
+  }
+  function tabPlaces() {
+    var q = AI.q.toLowerCase(), groups = {}, order = [];
+    IMGX.SLOTS.forEach(function (s) { if (q && (s.l + ' ' + s.g + ' ' + s.h + ' ' + s.id).toLowerCase().indexOf(q) < 0) return; if (!groups[s.g]) { groups[s.g] = []; order.push(s.g); } groups[s.g].push(s); });
+    var h = '<div class="im-note">Paste a direct image link next to a place, then press <b>Publish changes</b>. Empty = blank white placeholder. The app picks the first match: <b>the item\'s own image → Auto-match rule → its meal type → default</b>.</div>';
+    h += '<input class="admin-inp im-q" id="imQ" type="search" placeholder="Search places…" value="' + esc(AI.q) + '" oninput="imQ(this.value)">';
+    if (!order.length) return h + '<div class="adm-empty"><b>No place matches</b></div>';
+    order.forEach(function (g) {
+      h += '<div class="im-grp">' + esc(g) + '</div><div class="adm-list">';
+      groups[g].forEach(function (s) {
+        var v = AI.draft.slots[s.id] || '';
+        h += '<div class="im-row" data-k="' + esc(s.id) + '">' + thumb(v) + '<div class="im-main"><b>' + esc(s.l) + '</b><span>' + esc(s.h) + '</span><small>Used in: ' + esc(s.u) + '</small></div>'
+          + '<div class="im-in"><input class="admin-inp" type="url" placeholder="Paste image link…" value="' + esc(v) + '" oninput="imSlot(\'' + esc(s.id) + '\',this)" spellcheck="false" autocomplete="off"><button class="adm-btn" onclick="imSlotClear(\'' + esc(s.id) + '\')" title="Back to white placeholder">Clear</button></div></div>';
+      });
+      h += '</div>';
+    });
+    return h;
+  }
+  function ruleRow(r, i) {
+    return '<div class="im-row rule" data-i="' + i + '">' + thumb(r.u) + '<div class="im-main"><input class="admin-inp" type="text" placeholder="Words in the name, e.g. chicken, murgi" value="' + esc(r.k) + '" oninput="imRule(' + i + ',\'k\',this.value)" spellcheck="false"><select class="admin-inp" onchange="imRule(' + i + ',\'s\',this.value)"><option value="all"' + (r.s === 'all' ? ' selected' : '') + '>Meals + ingredients</option><option value="meal"' + (r.s === 'meal' ? ' selected' : '') + '>Meals only</option><option value="ing"' + (r.s === 'ing' ? ' selected' : '') + '>Ingredients only</option></select></div>'
+      + '<div class="im-in"><input class="admin-inp" type="url" placeholder="Paste image link…" value="' + esc(r.u) + '" oninput="imRule(' + i + ',\'u\',this.value)" spellcheck="false" autocomplete="off"><button class="adm-btn danger" onclick="imRuleDel(' + i + ')">Remove</button></div></div>';
+  }
+  function tabRules() {
+    var h = '<div class="im-note"><b>Set one image for many items.</b> Any meal or ingredient whose name contains the words gets that image automatically — e.g. <code>chicken</code> → a chicken photo, so every chicken meal/ingredient shows it. Separate several words with commas (<code>egg, anda</code>). Rules are checked from top to bottom; an item\'s own image always wins.</div>';
+    h += '<div class="adm-list" id="imRules">' + (AI.draft.rules.length ? AI.draft.rules.map(ruleRow).join('') : '<div class="adm-empty" style="padding:22px"><b>No rules yet</b><p>Add your first one below.</p></div>') + '</div>';
+    h += '<div style="margin-top:10px"><button class="adm-btn ok" onclick="imRuleAdd()">+ Add rule</button></div>';
+    return h;
+  }
+  function ingList() {
+    var list = []; try { list = ADMIN_ING_CACHE || []; } catch (e) { }
+    var q = AI.iq.toLowerCase(), f = q ? list.filter(function (i) { return i.name.toLowerCase().indexOf(q) >= 0; }) : list, shown = f.slice(0, AI.ingLimit);
+    if (!list.length) return '<div class="adm-empty"><b>Main library is empty</b><p>Add ingredients in Ingredient Library first.</p></div>';
+    var h = '<div class="adm-list">' + shown.map(function (i) {
+      var v = AI.ing[i.id] !== undefined ? AI.ing[i.id] : (i.img || '');
+      return '<div class="im-row" data-id="' + esc(i.id) + '">' + thumb(v) + '<div class="im-main"><b>' + esc(i.name) + '</b><span>per ' + esc(i.baseWeight) + esc(i.unit) + ' · ' + esc(i.cal) + ' kcal</span></div><div class="im-in"><input class="admin-inp" type="url" placeholder="Paste image link…" value="' + esc(v) + '" oninput="imIng(\'' + esc(i.id) + '\',this)" spellcheck="false" autocomplete="off"><button class="adm-btn" onclick="imIngClear(\'' + esc(i.id) + '\')">Clear</button></div></div>';
+    }).join('') + '</div>';
+    if (f.length > shown.length) h += '<div style="margin-top:10px"><button class="adm-btn" onclick="imIngMore()">Show more (' + (f.length - shown.length) + ')</button></div>';
+    if (!f.length) h = '<div class="adm-empty"><b>No ingredient matches</b></div>';
+    return h;
+  }
+  function tabIng() {
+    return '<div class="im-note">Give a main-library ingredient its own picture. For many at once, prefer <b>Auto-match</b> (one rule can cover dozens of items).</div><input class="admin-inp im-q" id="imIq" type="search" placeholder="Search main ingredients…" value="' + esc(AI.iq) + '" oninput="imIq(this.value)"><div id="imIngList">' + ingList() + '</div>';
+  }
+  function tabHelp() {
+    return '<div class="im-note"><b>Which link works?</b> A <u>direct</u> link to the picture (ends with .jpg / .png / .webp), or a share link from Google Drive (file set to “Anyone with the link”), Dropbox, GitHub or Imgur — these are converted automatically. The preview next to the box turns into the picture when the link is good; a red “!” means it is not an image link.</div>'
+      + '<div class="im-note"><b>Keep the repo light.</b> Use WebP/JPG around 100–200 KB per picture. If you upload to GitHub, put files in <code>app/img/</code> and paste the path like <code>img/meals/chicken.webp</code>. Otherwise use an image host and paste its link.</div>'
+      + '<div class="im-grp">Backup</div><textarea class="admin-inp im-ta" id="imExport" readonly rows="6">' + esc(JSON.stringify(cleanDraft(), null, 1)) + '</textarea>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px"><button class="adm-btn" onclick="imCopy()">Copy backup</button></div>'
+      + '<div class="im-grp">Restore</div><textarea class="admin-inp im-ta" id="imImport" rows="5" placeholder="Paste a backup here…"></textarea><div style="margin-top:8px"><button class="adm-btn warn" onclick="imImport()">Load into draft</button></div>';
+  }
+  function render() {
+    var host = $('adminImgBody'); if (!host || !AI.draft) return;
+    var body = AI.tab === 'places' ? tabPlaces() : AI.tab === 'rules' ? tabRules() : AI.tab === 'ing' ? tabIng() : tabHelp();
+    host.innerHTML = head() + '<div class="im-body">' + body + '</div>';
+  }
+  function sync() {
+    var n = changes(), p = $('imPub'), d = $('imDiscard'), s = $('imStat');
+    if (p) { p.disabled = !n; p.textContent = n ? 'Publish changes' : 'Published ✓'; } if (d) d.disabled = !n; if (s) s.innerHTML = statLine();
+  }
+  function setThumb(row, v) {
+    var t = row && row.querySelector('.im-th'); if (t) t.outerHTML = thumb(v);
+  }
+  window.imTab = function (t) { AI.tab = t; render(); };
+  window.imQ = function (v) { AI.q = v; var pos = (($('imQ') || {}).selectionStart); render(); var e = $('imQ'); if (e) { e.focus(); try { e.setSelectionRange(pos, pos); } catch (x) { } } };
+  window.imIq = function (v) { AI.iq = v; AI.ingLimit = 60; var l = $('imIngList'); if (l) l.innerHTML = ingList(); };
+  window.imIngMore = function () { AI.ingLimit += 100; var l = $('imIngList'); if (l) l.innerHTML = ingList(); };
+  window.imSlot = function (id, el) { AI.draft.slots[id] = el.value.trim(); setThumb(el.closest('.im-row'), el.value.trim()); sync(); };
+  window.imSlotClear = function (id) { delete AI.draft.slots[id]; render(); };
+  window.imRule = function (i, key, v) { var r = AI.draft.rules[i]; if (!r) return; r[key] = key === 'u' ? v.trim() : v; if (key === 'u') setThumb(document.querySelector('#imRules .im-row[data-i="' + i + '"]'), v.trim()); sync(); };
+  window.imRuleAdd = function () { AI.draft.rules.push({ k: '', u: '', s: 'all' }); render(); var rows = document.querySelectorAll('#imRules .im-row'); var last = rows[rows.length - 1]; if (last) { var i = last.querySelector('input'); if (i) i.focus(); } };
+  window.imRuleDel = function (i) { AI.draft.rules.splice(i, 1); render(); sync(); };
+  window.imIng = function (id, el) { var v = el.value.trim(), cur = ''; try { cur = (ADMIN_ING_CACHE.find(function (i) { return i.id === id; }) || {}).img || ''; } catch (e) { } if (v === cur) delete AI.ing[id]; else AI.ing[id] = v; setThumb(el.closest('.im-row'), v); sync(); };
+  window.imIngClear = function (id) { AI.ing[id] = ''; var l = $('imIngList'); if (l) l.innerHTML = ingList(); sync(); };
+  window.imDiscard = function () { if (!confirm('Discard all unpublished image changes?')) return; AI.draft = clone(AI.pub); AI.draft.rules = AI.draft.rules.map(function (r) { return { k: r.k, u: r.u, s: r.s }; }); AI.ing = {}; render(); };
+  window.imCopy = function () { var t = $('imExport'); if (!t) return; t.select(); try { document.execCommand('copy'); tst('Backup copied'); } catch (e) { tst('Select the text and copy it'); } };
+  window.imImport = function () {
+    var t = (($('imImport') || {}).value || '').trim(); if (!t) { tst('Paste a backup first'); return; }
+    try { var c = IMGX.sanitize(JSON.parse(t)); AI.draft = { v: AI.pubV, slots: c.slots, rules: c.rules.map(function (r) { return { k: r.k, u: r.u, s: r.s }; }) }; render(); tst('Loaded into the draft — review, then Publish'); }
+    catch (e) { tst('That is not a valid backup'); }
+  };
+  window.imPublish = async function () {
+    if (AI.busy) return; var n = changes(); if (!n) return;
+    var bad = []; Object.keys(AI.draft.slots).forEach(function (k) { if (AI.draft.slots[k] && !IMGX.clean(AI.draft.slots[k])) bad.push(k); });
+    AI.draft.rules.forEach(function (r) { if ((r.u && !IMGX.clean(r.u)) ) bad.push('rule “' + r.k + '”'); });
+    Object.keys(AI.ing).forEach(function (id) { if (AI.ing[id] && !IMGX.clean(AI.ing[id])) bad.push('ingredient'); });
+    if (bad.length && !confirm(bad.length + ' link(s) are not valid image links and will be skipped. Publish the rest?')) return;
+    AI.busy = true; var btn = $('imPub'); if (btn) { btn.disabled = true; btn.textContent = 'Publishing…'; }
+    try {
+      var c = cleanDraft(), v = (AI.pubV || 0) + 1, u = (typeof _adminEmail === 'function' ? _adminEmail() : 'admin');
+      await window._fsSetDoc(window._fsDoc(window._db, 'global', 'images'), { v: v, updatedAt: new Date().toISOString(), updatedBy: u, json: JSON.stringify(c) });
+      if (ingChanges()) {
+        var before = ADMIN_ING_CACHE.map(function (i) { return Object.assign({}, i); });
+        ADMIN_ING_CACHE.forEach(function (i) { if (AI.ing[i.id] !== undefined) { var cu = IMGX.clean(AI.ing[i.id]); if (cu) i.img = cu; else delete i.img; } });
+        var ok = await adminIngPersist('INGREDIENT_IMAGES', 'images', { count: ingChanges() }, { count: ingChanges() });
+        if (!ok) { ADMIN_ING_CACHE.length = 0; before.forEach(function (i) { ADMIN_ING_CACHE.push(i); }); throw new Error('Main ingredient images were not saved'); }
+      }
+      AI.pubV = v; AI.pub = IMGX.sanitize(c); AI.draft = clone(AI.pub); AI.draft.rules = AI.draft.rules.map(function (r) { return { k: r.k, u: r.u, s: r.s }; }); AI.ing = {};
+      c.v = v; IMGX.setCfg(c);
+      try { writeAuditLog('IMAGES_PUBLISHED', 'images', 'config', { v: v - 1 }, { v: v }); } catch (e) { }
+      tst('✅ Images published — users see them now');
+    } catch (e) { console.error(e); tst('Could not publish: ' + (e && e.message || e)); }
+    AI.busy = false; render();
+  };
+
+  // hook into the admin navigation
+  if (Array.isArray(window.ADMIN_SECTIONS) && ADMIN_SECTIONS.indexOf('images') < 0) ADMIN_SECTIONS.push('images');
+  var _an = window.adminNav;
+  if (typeof _an === 'function') window.adminNav = function (section) { var r = _an.apply(this, arguments); if (section === 'images') { try { loadAdminImages(false); } catch (e) { console.error(e); } } return r; };
 })();
 
 </script>

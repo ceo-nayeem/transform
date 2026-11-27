@@ -1,0 +1,9 @@
+{
+  "name": "fitos-agent-runner",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Runs the FIT//OS marketing agents on a schedule (GitHub Actions)",
+  "main": "agent-runner.js",
+  "engines": { "node": ">=18" },
+  "dependencies": { "firebase-admin": "^12.7.0" }
+}

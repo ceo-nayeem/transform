@@ -437,3 +437,182 @@ Firebase Console → Firestore Database → **Rules** → নতুন `firestor
 
 **টেস্ট চেকলিস্ট:** (১) ফোনে Home-এ টপ বার স্থির, Library-তে ◀ Back + নাম এবং স্ক্রল করলে উপরে চলে যায়? (২) Library-তে বটম বার নেই, "Log meal" আছে? (৩) Timer পেজে লাল Start → Pause/Resume/Reset ঠিকঠাক, অন্য পেজে গেলে চিপ দেখায়? (৪) Light মোডে বটম বার ও (ডেস্কটপে) সাইডবার সাদা, Dark-এ গাঢ়? (৫) ডেস্কটপে লোগো নেই, ◀ Back + breadcrumb আছে? (৬) ▣ চাপলে সাইডবার expand/collapse, রিলোডের পরেও মনে রাখে?
 
+---
+
+## ২১. অ্যাপ-শেল আপডেট #২ — প্রোফাইল সাইডবারে, গোল streak, Back+টাইটেল ফিক্সড, ট্যাব বার ফিক্সড, Settings-এ অনুভূমিক ট্যাব (নতুন)
+
+**মোবাইল টপ বার**
+| জিনিস | আগে | এখন |
+|---|---|---|
+| **প্রোফাইল আইকন** | টপ-রাইটে | টপ বার থেকে **সরানো**। এখন **সাইডবার (More / ☰) ড্রয়ারের একদম নিচে**: নাম + ইনিশিয়াল + প্ল্যান ("FREE · Profile & settings") কার্ড — চাপলে Profile পেজ খোলে; তার নিচে **Upgrade to Pro, Install the app, Go to Backend (শুধু owner), Log out**। |
+| **Streak ("1 Day")** | চওড়া পিল (মোবাইলে লুকানো ছিল) | **গোল (circle) বাটন** — 🔥 + শুধু সংখ্যা। থিম বাটনও গোল। দুটোই Home-এ ফিক্সড। |
+| **অন্য পেজে** | Back+টাইটেল সহ পুরো বার স্ক্রলে উপরে চলে যেত | **◀ Back বাটন ও পেজের টাইটেল স্ক্রলের পরেও ফিক্সড।** streak ও থিম বাটন পেজের একদম উপরে দেখা যায়, স্ক্রল করলে মিলিয়ে যায় (টপ বারে শুধু Back + টাইটেল থাকে)। স্ক্রল করলে বারের পেছনে হালকা glass ব্যাকগ্রাউন্ড আসে। |
+
+**ট্যাব বার ফিক্সড (মোবাইল + ডেস্কটপ)** — যে পেজে ভেতরে ট্যাব আছে, স্ক্রল করলে ট্যাব বার টপ বারের (Back+টাইটেল) ঠিক নিচে আটকে থাকে, যাতে পরের ট্যাব খুঁজে পাওয়া যায়:
+- **Fitness** (Diet | Workout) — Workout-এর ভেতরের (Session | Progress | History) ট্যাবও তার নিচে সারি দিয়ে ফিক্সড।
+- **Track** (Habits | Goals) — Habits-এর (Today | Tracker | Insights | Manage) ও Goals-এর (Active | Completed | Paused) ট্যাবও নিচে ফিক্সড।
+- **Health** (Overview | Trends | Log | History), **Library** (Meals | Ingredients), **Timer** (Countdown | Stopwatch | Interval), **Profile & Settings** (Account … Danger)।
+- যে পেজে ভেতরের ট্যাব নেই (Dashboard ইত্যাদি) সেখানে শুধু টাইটেল + Back ফিক্সড।
+
+**Profile & Settings**
+- ল্যাপটপ/ডেস্কটপে বাঁ-দিকের উল্লম্ব সাইডবার **সরানো** — মোবাইলের মতোই **অনুভূমিক ট্যাব বার** (Account · Profile · Targets · Appearance · Habits · Data · Danger)। কনটেন্ট এখন পুরো প্রস্থ পায়।
+- মোবাইলে ট্যাব বার আর "মাঝখানে" আটকায় না — স্ক্রল করলে **Back/টাইটেলের ঠিক নিচে** আটকে থাকে। ট্যাব চাপলে সেকশন ফিক্সড বারের নিচে এসে থামে (ঢাকা পড়ে না)।
+
+**বাড়তি ঠিকঠাক:** ড্রয়ার খুললে বটম বারের ওপরে আসে (আগে নিচের অংশ ঢাকা পড়ত); ডেস্কটপের টপ বার (প্রোফাইল অ্যাভাটার, streak পিল, তারিখ) আগের মতোই।
+
+**আপলোড করতে হলে**
+1. `app-shell-update-2.zip` খুলুন → `app/index.html` ও `app/sw.js` আপনার GitHub repo-র `app/` ফোল্ডারে বদলান (সাথে `GITHUB-GUIDE.md`, `README.md`)। ওয়েবসাইট/Firebase/rules বদলাতে হয়নি।
+2. Commit → Pages লাইভ হলে ব্রাউজারে **Ctrl+Shift+R**। (Service-worker cache `fitos-v13`।)
+
+**টেস্ট চেকলিস্ট:** (১) ফোনে Home-এর টপ-রাইটে প্রোফাইল নেই, গোল streak + থিম আছে? (২) More চাপলে ড্রয়ারের নিচে প্রোফাইল কার্ড ও Log out দেখা যায়? (৩) Library/Fitness-এ স্ক্রল করলে Back+টাইটেল ও ট্যাব বার ওপরেই থাকে? (৪) Settings-এ স্ক্রল করলে ট্যাব বার Back/টাইটেলের নিচে লেগে থাকে? (৫) ল্যাপটপে Settings-এর বাঁ সাইডবার নেই, উপরে অনুভূমিক ট্যাব আছে? (৬) Dark ও Light দুই মোডেই ঠিক দেখায়?
+
+
+
+## ২২. বটম বার ফিক্স — নিচে/ডানে/বাঁয়ে কোনো গ্যাপ নেই, ডিভাইসের এজে ফিক্সড (নতুন)
+
+**মোবাইল বটম বার (Home / Fitness / Track-এর ৫-ট্যাব বার)**
+| জিনিস | আগে | এখন |
+|---|---|---|
+| **অবস্থান** | ভাসমান পিল — বাঁ/ডান ১২px ও নিচে ১২px ফাঁক | **ডিভাইসের এজে লেগে ফিক্সড** — বাঁ, ডান, নিচে **কোনো গ্যাপ নেই**, পুরো প্রস্থ জুড়ে একটাই বক্স |
+| **আকার** | চারদিকে গোল (পিল) | **শুধু উপরের দুই কোণ গোল (২৪px), নিচের কোণ সোজা** — স্কয়ার ধাঁচের বক্স |
+| **বাকি সব** | — | **আগের মতোই**: active ট্যাবের সবুজ পিল ও লেবেল, মাঝের গোল "+" বাটন, আইকন, ডট, Dark/Light থিমের রঙ। বারের উপরের দিকে হালকা ছায়া/বর্ডার। |
+
+**কনটেক্সট ডক (Library "Log meal", Health "Log health", Timer Start/Pause/Reset)** — ডকও একই স্টাইলে: ফ্লোটিং বাটনের বদলে এজ-টু-এজ বার, উপরের কোণ গোল, ভেতরে আগের মতোই বাটন।
+
+**iPhone-এর জন্য (home indicator / status bar):** `viewport-fit=cover` যোগ হয়েছে — অ্যাপ এখন পুরো স্ক্রিন জুড়ে চলে, তাই iPhone-এ PWA হিসেবে চালালে বারের নিচে কালো ফাঁক থাকে না; বারের রঙ নিচের home-indicator অংশ পর্যন্ত নামে (বারের উচ্চতা = ৬৮px + safe-area)। উপরে status bar-এর জায়গা আলাদা করে ছাড়া হয় (টপ বার, কনটেন্ট, ড্রয়ার সব সেই অনুযায়ী নিচে নামে)। Android/ডেস্কটপে safe-area ০, তাই কোনো বাড়তি ফাঁক আসে না।
+
+**সাথে ঠিকঠাক করা:** পেজের নিচের padding, AI বাটন, toast, চলমান-টাইমার চিপ — সবই নতুন বারের উচ্চতা ধরে সাজানো (কিছুই বারের নিচে ঢাকা পড়ে না); কিবোর্ড খুললে বার আগের মতো লুকায়; modal খুললে ডক modal-এর নিচে থাকে।
+
+**আপলোড করতে হলে**
+1. `bottom-bar-update.zip` খুলুন → `app/index.html` ও `app/sw.js` আপনার GitHub repo-র `app/` ফোল্ডারে বদলান (সাথে `GITHUB-GUIDE.md`, `README.md`)। ওয়েবসাইট/Firebase/rules বদলাতে হয়নি।
+2. Commit → Pages লাইভ হলে ব্রাউজারে **Ctrl+Shift+R**। (Service-worker cache `fitos-v14`।) iPhone-এ PWA হলে: হোম-স্ক্রিন আইকন মুছে আবার "Add to Home Screen" দিলে নতুন `viewport-fit` পুরোপুরি কাজ করে।
+
+**টেস্ট চেকলিস্ট:** (১) ফোনে Home-এ বটম বারের নিচে/বাঁয়ে/ডানে ফাঁক নেই? (২) বারের উপরের কোণ গোল, নিচের কোণ সোজা? (৩) Library/Timer/Health-এ নিচের ডক-ও একই এজ-টু-এজ বার? (৪) Dark ও Light দুই মোডেই ঠিক দেখায়? (৫) নিচে স্ক্রল করলে শেষ কার্ড বারের নিচে ঢাকা পড়ে না?
+
+
+## ২৩. Image সিস্টেম + নতুন Log Food / Meal ডিজাইন (নতুন)
+
+### ক) Admin Backend → **Images** (এক জায়গা থেকে সব ছবি)
+Admin → Management → **Images**। চারটা ট্যাব:
+| ট্যাব | কাজ |
+|---|---|
+| **Places** | নির্দিষ্ট জায়গার ছবি: *Default meal image*, Breakfast/Lunch/Dinner/Snack/Pre/Post-workout, *Default ingredient image*, খালি-স্ক্রিনের ছবি (কোনো meal নেই / favorite নেই / ingredient নেই)। প্রতিটার পাশে **লিংক paste করার বক্স + preview**। |
+| **Auto-match** | **একটা লিংক → অনেক আইটেম।** যেমন `chicken, murgi` → একটা মুরগির ছবি; নামে এই শব্দ থাকলেই প্রতিটা meal/ingredient ওই ছবি পাবে। (Meals / Ingredients / দুটোই বেছে নেওয়া যায়) |
+| **Main ingredients** | Main library-র প্রতিটা ingredient-এর আলাদা ছবি; সার্চ করে লিংক paste। |
+| **Backup & help** | পুরো সেটিং JSON হিসেবে কপি / restore; কোন লিংক চলে তার নিয়ম। |
+
+**ব্যবহার:** লিংক paste করুন → preview-তে ছবি এলে লিংক ঠিক (লাল **!** মানে ছবির লিংক নয়) → উপরে ডানে **Publish changes** চাপুন। সবার অ্যাপে সাথে সাথে (পরের লোডে) ছবি দেখা যায়। Publish না চাপা পর্যন্ত কিছু বদলায় না (Discard দিয়ে ফেরত যাওয়া যায়)।
+
+**কোন ছবি দেখাবে — অগ্রাধিকার:** ১) আইটেমের নিজের ছবি (user meal/ingredient-এ "Change image" থেকে দেওয়া) → ২) Auto-match rule → ৩) meal type-এর ছবি (Breakfast…) → ৪) Default → ৫) **সাদা blank placeholder**। লিংক ভাঙা হলে নিজে থেকে সাদা placeholder-এ ফিরে যায়।
+
+**কোন লিংক চলে:** সরাসরি ছবির লিংক (.jpg/.png/.webp), অথবা Google Drive ("Anyone with the link"), Dropbox, GitHub (`…/blob/…`), Imgur-এর share লিংক — এগুলো নিজে থেকে সরাসরি লিংকে বদলে যায়। GitHub repo-তে ছবি রাখলে `app/img/` ফোল্ডারে রেখে `img/meals/chicken.webp` লিখলেই হয়।
+
+**কীভাবে গুছিয়ে রাখলে সহজ হয় (সুপারিশ):**
+1. **অল্প ছবি দিয়ে শুরু:** আগে Places-এ ১১টা (default + meal type + ingredient default) — এতেই পুরো অ্যাপ সুন্দর দেখাবে।
+2. **Auto-match বেশি ব্যবহার করুন:** ২০–৩০টা শব্দ (chicken, rice, egg, fish, dal, oats, salad, banana…) দিলে শত শত meal/ingredient-এ ছবি চলে আসবে, আলাদা করে খোঁজা লাগবে না।
+3. **ফাইল ছোট রাখুন:** WebP/JPG, ৮০০px চওড়া, ১০০–২০০ KB। ৩০০ MB লাগবে না — ২০–৫০ MB-তেই কাজ হয়ে যায়।
+4. বড় সংগ্রহ হলে ছবি ইমেজ-হোস্টে (Cloudinary/ImgBB) রেখে শুধু লিংক দিন; GitHub repo হালকা থাকবে।
+
+**ডাটা কোথায়:** Firestore `global/images` (`{v, updatedAt, updatedBy, json}`); Main ingredient-এর ছবি `global/ingredientLibrary`-র item-এর `img` ফিল্ডে। **Firestore rules বদলাতে হয়নি** (বিদ্যমান `global` নিয়মেই চলে: সবাই পড়তে পারে, শুধু owner লিখতে পারে)। প্রতিবার Publish হলে Audit Log-এ `IMAGES_PUBLISHED` লেখা হয়।
+
+### খ) নতুন জায়গায় ছবি বসাতে চাইলে (ভবিষ্যতে)
+আমাকে শুধু বলুন "অমুক জায়গায় ছবি চাই" — আমি ওই জায়গায় `<img data-slot="নাম">` বসিয়ে Images → Places-এ নতুন সারি যোগ করে দেব; সাদা placeholder নিয়ে শুরু হবে, আপনি লিংক paste করলেই চলে আসবে। (কোডে: `lib.js`-এর `SLOTS` তালিকায় এক লাইন।)
+
+### গ) নতুন Library / Log ডিজাইন (Log Food রেফারেন্স অনুযায়ী)
+**Library → Meals**
+- উপরে বড় **সার্চ বার**, তার পাশে/নিচে **New meal** ও **Quick add** (নাম+ক্যালরি+macro দিয়ে সরাসরি আজকের লগে), meal-type **chips**।
+- **Favorites** (ছবি-কার্ড, ♥ চাপলেই যোগ/বাদ; "See all"), **Recent meals** (সর্বশেষ log করা; না থাকলে "Recently added"), **All meals** — প্রতিটা সারিতে ছবি, ক্যালরি, P/C/F রঙিন ডট, ♥ ও **+** (এক ট্যাপে log)।
+- Meal-এ চাপলে **Detail view**: বড় ছবি, ৪টা **macro রিং** (ক্যালরি/প্রোটিন/কার্ব/ফ্যাট — দৈনিক goal-এর %), নাম, kcal | ইনগ্রেডিয়েন্ট সংখ্যা | type, অটো **ট্যাগ** (High protein, Low carb, High fiber, Light…), ingredient তালিকা, **Micros & insights** (macro থেকে অটো-তৈরি ব্যাখ্যা — AI নয়), "Change image" (নিজের লিংক), নিচে **Log meal** বাটন। মোবাইলে পুরো স্ক্রিন, ল্যাপটপে ডান পাশের ড্রয়ার।
+- **New meal** চাপলে আগের ফর্মটাই একটা সুন্দর sheet-এ খোলে (সাথে "Image link" ঘর)।
+- Meal log করার popup এখন ছবি + ম্যাক্রোসহ "Log as" sheet; সময় অনুযায়ী Breakfast/Lunch/Dinner আগে থেকে হাইলাইট।
+
+**Library → Ingredients** — একই ডিজাইন: সার্চ, **All / My items / Main library** চিপ, ছবিসহ সারি, Copy (Main থেকে নিজের লাইব্রেরিতে)। আগের সব ফিচার আছে (সিলেক্ট, বাল্ক Log/Edit/Delete, ✎ এডিট, ড্র্যাগ-সর্ট)। Ingredient-এ চাপলে detail view-তে **Amount (g) বদলালে রিং/ক্যালরি লাইভ বদলায়** এবং সেই পরিমাণে **Log ingredient** করা যায়।
+
+**Fitness → Diet:** আজকের log করা meal-গুলোর পাশে ছোট ছবি।
+
+### ঘ) আপলোড
+1. `image-system-update.zip` খুলুন → `app/index.html` ও `app/sw.js` আপনার repo-র `app/` ফোল্ডারে বদলান (সাথে `GITHUB-GUIDE.md`, `README.md`)।
+2. Commit → Pages লাইভ হলে **Ctrl+Shift+R**। (Service-worker cache `fitos-v15`।) Firestore rules/ওয়েবসাইট বদলাতে হয়নি।
+
+**টেস্ট চেকলিস্ট:** (১) Library → Meals নতুন ডিজাইনে (সার্চ, Favorites, Recent) খোলে, ছবির জায়গায় সাদা বক্স? (২) meal-এ চাপলে detail + রিং, **Log meal** কাজ করে? (৩) Admin → Images → একটা লিংক paste করে Publish → অ্যাপ রিফ্রেশ দিলে ছবি আসে? (৪) Auto-match-এ `chicken` দিলে নামে chicken আছে এমন সব আইটেমে ছবি আসে? (৫) ল্যাপটপে ও Light মোডেও ঠিক দেখায়?
+
+
+## ২৪. Library আপডেট: সব Meal কার্ড-শেপে, Detail স্ক্রলে ছবি+টাইটেল fixed, ল্যাপটপে popup (নতুন)
+
+**১) সব meal এখন Favorites-এর মতো বড় কার্ডে**
+- Favorites, Recent meals, All meals এবং সার্চ Results — সবখানে একই কার্ড। **মোবাইলে ২টা, ল্যাপটপে ৪টা** পাশাপাশি।
+- কার্ডে: ছবি (ডানে ♥), নাম, নিচে **kcal** ও ছোট macro pill — P (Protein) · C (Carbs) · F (Fat) · Fib (Fiber)।
+- কার্ডের **ডান-নিচের কোণায়** কার্ডের কোণের সাথে মেলানো গোল **+ বাটন** — চাপলে নিচের Log meal বাটনের মতোই "Log as" sheet খোলে (Breakfast/Lunch/…), সেখান থেকে log হয়।
+- কোন nutrient কার্ডে দেখাবে তা বাছাই: Library → Meals-এ **Card info** বাটন → Calories / Protein / Carbs / Fat / Fiber / Omega-3 চালু-বন্ধ করুন (এই ডিভাইসে মনে থাকে)। ডিফল্ট: Calories, Protein, Carbs, Fat, Fiber।
+- Ingredients তালিকা আগের মতো সারি (row) ডিজাইনে থাকল, কারণ সেখানে select/bulk/edit/sort আছে।
+
+**২) Detail view (meal / ingredient) — স্ক্রলে ছবি ও টাইটেল fixed**
+- ছবি ও নাম (title) উপরে স্থির থাকে; শুধু নিচের অংশ (রিং, ট্যাগ, ingredient, insights…) স্ক্রল হয়। নিচের Log বাটনও স্থির। মোবাইল ও ল্যাপটপ দুটোতেই।
+
+**৩) ল্যাপটপে side drawer নয়, মাঝখানে card popup**
+- ≥৭৬০px স্ক্রিনে detail এখন স্ক্রিনের মাঝে একটা কার্ড-popup (চারপাশে গ্যাপ, পিছনে ঝাপসা ব্যাকড্রপ; ব্যাকড্রপে ক্লিক / Esc / Back দিয়ে বন্ধ)। মোবাইলে আগের মতো ফুল-স্ক্রিন।
+
+**আপলোড:** `library-cards-update.zip` → `app/index.html`, `app/sw.js` (cache `fitos-v16`), `GITHUB-GUIDE.md`, `README.md` রিপোতে বদলান। Firestore rules/ওয়েবসাইটে কিছু বদলাতে হয়নি। কমিট → Ctrl+Shift+R।
+
+**টেস্ট চেকলিস্ট:** (১) All meals-এ কার্ড (মোবাইলে ২, ল্যাপটপে ৪)? (২) কার্ডের ডান-নিচে + চাপলে Log-as sheet? (৩) Card info থেকে Fiber বন্ধ করলে কার্ড থেকে সরে যায়? (৪) detail-এ স্ক্রল করলে ছবি+নাম স্থির? (৫) ল্যাপটপে detail মাঝখানের popup?
+
+
+## ২৫. Marketing Agents — ব্যাকএন্ডে "এজেন্ট" ইউজার, যারা নিজে নিজে সব এন্ট্রি করে (নতুন)
+
+### ক) এটা কী
+Admin Backend → **Marketing Agents**। আপনার **নিজের** (টেস্ট/মার্কেটিং) Gmail-এর অ্যাকাউন্টকে "এজেন্ট" বানান, একটা **personality** দিন — এজেন্ট তখন একজন আসল ইউজারের মতো নিয়মিত করবে: **Habit tick, Meal log (ingredient সহ), পানি, Workout, Vitals (sleep/HR/BP), Weigh-in (ওজন/BF/waist)**। ডাটা সরাসরি ওই অ্যাকাউন্টে জমা হয় — তারপর আপনি ওই Gmail দিয়ে লগইন করলে সব ইন্টারফেস ভরা পাবেন (Dashboard, Library, Habits, Health, Workout…), স্ক্রিনশট/কনটেন্ট বানানোর জন্য।
+
+> ⚠ শুধু **আপনার নিজের** অ্যাকাউন্ট ব্যবহার করুন। এজেন্ট ওই অ্যাকাউন্টে বানানো (fake) এন্ট্রি লিখে। আসল কাস্টমারের অ্যাকাউন্টে কখনো নয়। (প্রতিটা এজেন্ট শুধু নিজের অ্যাকাউন্টে লেখে, অন্য ইউজারকে ছোঁয় না।)
+
+### খ) এজেন্ট বানানোর ধাপ
+1. Admin → **Marketing Agents** → **＋ Add agent**।
+2. অ্যাকাউন্ট বাছুন (সার্চ করা যায়)। **শর্ত:** ওই Gmail দিয়ে অন্তত একবার অ্যাপে সাইন-ইন করা থাকতে হবে (না থাকলে পরিষ্কার error দেখায়, কিছু লেখে না)।
+3. **Personality বাছুন** (৮টা প্রিসেট): Office worker · fat loss / Gym regular · lean bulk / Busy parent / Beginner · inconsistent / Runner / Wellness · vegetarian & yoga / Student / Athlete · hyper consistent।
+4. চাইলে সব বদলান: নাম, বয়স, উচ্চতা, শুরুর ও টার্গেট ওজন, ঘুম/জাগার সময়, **time zone**, habits (১৭টা থেকে), daily kcal, meals/দিন, খাবারে বাদ (meat/fish/egg/dairy), workout স্টাইল/দিন/সময়, এবং **৬টা স্লাইডার** — Consistency, Training drive, Diet quality, Hydration, Logging detail, Vitals tracking।
+5. **Show a sample day** চাপলে ওই personality-র একটা পুরো দিনের এন্ট্রি আগে থেকেই দেখা যায়; 🎲 Shuffle দিলে অন্য রকম দিন।
+6. **Fill past days** — প্রথমবারেই ৭/১৪/৩০/৬০/৯০ দিনের ইতিহাস বানিয়ে দেয় (গ্রাফ/স্ট্রিক ভরা দেখাবে)।
+7. **Create agent** → সাথে সাথে প্রথম রান হয়ে যায়।
+
+### গ) এজেন্ট কী কী করে (সত্যিকারের ইউজারের মতো)
+- **দিনের ছন্দ:** সকাল ৭টার দিকে breakfast, ১টায় lunch, রাতে dinner, বিকেলে snack/post-workout, সারা দিন ২৫০ ml করে পানি, workout নিজের সময়ে, habit টাইম-অফ-ডে অনুযায়ী।
+- **Meal:** ৩৬টা বাস্তব খাবারের টেমপ্লেট (ভাত-ডাল, রুই মাছ, চিকেন কারি, রুটি-ডিম, ওটস, দই…) থেকে, personality-র kcal টার্গেটে পরিমাণ মিলিয়ে ingredient-সহ log। Library-তে ২২টা ingredient ও ১৪টা saved meal (তিনটা Favorite) বসায়, log করা meal-এ "Recent meals" আপডেট হয়।
+- **Workout:** PPL / Upper-Lower / Full body / Bro split / Home / Cardio / Yoga — set, rep, kg সহ, সপ্তাহে সপ্তাহে ধীরে ধীরে ওজন বাড়ে।
+- **Habit:** amount/timer/check/avoid সব ধরন; কোনো দিন কম করে (partial), কোনো দিন মিস, মাঝে মাঝে ছোট নোট।
+- **মানুষের মতো অনিয়ম:** Consistency কম হলে পুরো দিন ফাঁকা/হালকা থাকে; Diet quality কম হলে Fri/Sat বেশি খায়; ওজন টার্গেটের দিকে ধীরে নামে/বাড়ে, সাথে BF/waist মেলানো।
+- **একই এন্ট্রি দুইবার হয় না** — প্রতিটা ইভেন্টের আলাদা id; যতবারই চালান।
+
+### ঘ) পেজের বাটন
+| বাটন | কাজ |
+|---|---|
+| **⚡ Run now** | এখনকার সময় পর্যন্ত যা যা বাকি, লিখে দেয় |
+| **⏪ Backfill** | পেছনের ১–১৮০ দিন ভরে (আগেরগুলো থাকে) |
+| **📜 Log** | এজেন্ট কখন কী করল তার তালিকা |
+| **✎ Persona** | personality বদলান (ভবিষ্যতের এন্ট্রি বদলায়, আগেরগুলো থাকে) |
+| **Pause / Resume** | একজনকে থামান/চালান; **Pause all** = সবাই |
+| **Remove** | এজেন্ট-মোড বন্ধ; অ্যাকাউন্ট ও আগের ডাটা থেকে যায় |
+| **Run all now** | সব সক্রিয় এজেন্ট একসাথে |
+
+Dashboard-এর ইউজার সংখ্যায় এজেন্ট অ্যাকাউন্ট **ধরা হয় না** (আসল সংখ্যা পরিষ্কার থাকে)।
+
+### ঙ) 🔁 পুরোপুরি অটোমেটিক করা (একবারের সেটআপ — ৫ মিনিট)
+আপনার সাইটে সার্ভার নেই, তাই **GitHub Actions** (ফ্রি) প্রতি ৩ ঘণ্টায় রানারটা চালায় — আপনার কিছু করতে হয় না।
+1. **Service account key:** Firebase Console → ⚙ Project settings → **Service accounts** → **Generate new private key** → একটা `.json` ডাউনলোড হবে (গোপন রাখুন, কাউকে দেবেন না, repo-তে commit করবেন না)।
+2. **GitHub secret:** আপনার repo → Settings → Secrets and variables → Actions → **New repository secret** → নাম ঠিক এটা: `FIREBASE_SERVICE_ACCOUNT` → মান = .json ফাইলের **পুরো লেখা** paste।
+3. **ফাইল আপলোড:** zip-এর এই ফাইলগুলো repo-র root-এ রাখুন (ফোল্ডারসহ): `.github/workflows/agents.yml`, `tools/agent-runner.js`, `tools/agent-engine.js`, `tools/package.json`। (সাথে নতুন `app/index.html`, `app/sw.js`।) **`.github` ফোল্ডার GitHub-এ আপলোডে লুকানো ফোল্ডার — drag-drop করলে সেটাও যায়; না গেলে "Add file → Create new file" এ `.github/workflows/agents.yml` লিখে paste করুন।**
+4. **চালু করুন:** repo → **Actions** ট্যাব → "FIT-OS Agents" → **Run workflow**। ১ মিনিটে Marketing Agents পেজে লেখা আসবে **RUNNING · last auto-run … ago**।
+
+এরপর প্রতি ৩ ঘণ্টায় নিজে নিজে চলবে (GitHub কখনো ১০–৩০ মিনিট দেরি করে — স্বাভাবিক)। কোনো ধাপ ভুল হলে পেজে হলুদ **NOT RUNNING** দেখায়, আর Actions → ফেল-হওয়া রানের লগে কারণ লেখা থাকে।
+
+**খরচ:** ফ্রি। Firestore reads/writes অল্প (৫ এজেন্ট ≈ দিনে কয়েক হাজার read — ফ্রি কোটার (৫০,০০০/দিন) ভেতরে)।
+**মনে রাখুন:** ৬০ দিন repo-তে কোনো কার্যক্রম না থাকলে GitHub scheduled workflow বন্ধ করে দিতে পারে — Actions ট্যাব থেকে আবার Enable করলেই হয় (বা যেকোনো commit)।
+
+### চ) ডাটা কোথায় থাকে
+- কনফিগ + স্টেট: Firestore `admin/agents` (শুধু owner পড়তে/লিখতে পারে — **Firestore rules বদলাতে হয়নি**)।
+- এন্ট্রি: এজেন্টের নিজের `users/{uid}/…` (ঠিক অ্যাপের নিজের ফরম্যাটে; owner-এর লেখার অনুমতি আগে থেকেই আছে)।
+- Admin → Audit Log-এ `AGENT_CREATED / AGENT_UPDATED / AGENT_RUN / AGENT_REMOVED` লেখা হয়।
+- যদি এজেন্টের অ্যাকাউন্ট আপনি তখনই খুলে রাখেন, নতুন এন্ট্রি দেখতে ট্যাব ফোকাস/রিফ্রেশ করুন (অ্যাপ নিজেই "Updated from another device" দেখিয়ে লোড করে)।
+
+### ছ) আপলোড
+`marketing-agents-update.zip` → `app/index.html`, `app/sw.js` (cache `fitos-v17`), `tools/…`, `.github/workflows/agents.yml`, `GITHUB-GUIDE.md`, `README.md` রিপোতে বসান → Commit → Ctrl+Shift+R। তারপর (ঙ)-এর ধাপ।
+
+**টেস্ট চেকলিস্ট:** (১) Admin সাইডবারে **Marketing Agents**? (২) Add agent → অ্যাকাউন্ট → personality → Create-এ কয়েক সেকেন্ডে এন্ট্রি জমে (Log দেখুন)? (৩) ওই Gmail দিয়ে অ্যাপে লগইন করলে Dashboard/Diet/Habits/Library ভরা? (৪) Run now দুইবার চাপলে ডুপ্লিকেট হয় না? (৫) Automation setup শেষে পেজে RUNNING?
